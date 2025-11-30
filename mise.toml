@@ -1,0 +1,7 @@
+[tools]
+node = "24"
+rust = "latest"
+python = "3.12"
+
+[env]
+DICEE_ENV = "development"
