@@ -2,419 +2,467 @@
 import { onMount } from 'svelte';
 import {
 	initEngine,
-	rollDice,
-	rerollDice,
 	scoreAllCategories,
 	calculateProbabilities,
-	CATEGORIES,
 	type ScoringResult,
-	type ProbabilityResult,
-} from '$lib/engine';
+} from '$lib/engine.js';
+import type {
+	Category,
+	CategoryProbability,
+	StatsProfile,
+} from '$lib/types.js';
+import { game } from '$lib/stores/game.svelte.js';
 
-let dice = $state<number[]>([1, 1, 1, 1, 1]);
-let kept = $state<boolean[]>([false, false, false, false, false]);
-let rollsRemaining = $state(3);
-let scores = $state<ScoringResult[]>([]);
-let probabilities = $state<ProbabilityResult | null>(null);
+// Components
+import { DiceTray } from '$lib/components/dice/index.js';
+import { Scorecard } from '$lib/components/scorecard/index.js';
+import { StatsToggle, GameStatus } from '$lib/components/hud/index.js';
+
+// State
 let ready = $state(false);
-let showStats = $state(true);
+let scores = $state<ScoringResult[]>([]);
+let probabilities = $state<CategoryProbability[]>([]);
+let bestEV = $state(0);
+let rolling = $state(false);
+
+// Derived from game state
+const dice = $derived(game.dice.values);
+const kept = $derived(game.dice.kept);
+const rollsRemaining = $derived(game.rollsRemaining);
+const statsEnabled = $derived(game.statsEnabled);
+const statsProfile = $derived(game.statsProfile);
+const isGameActive = $derived(game.isGameActive);
+const isGameOver = $derived(game.isGameOver);
+const turnNumber = $derived(game.turnNumber);
+const canRoll = $derived(game.canRoll);
+const canScore = $derived(game.canScore);
+
+// Scorecard values
+const scorecardScores = $derived(game.scorecard.scores);
+const upperSubtotal = $derived(game.scorecard.upperSubtotal);
+const upperBonus = $derived(game.scorecard.upperBonus);
+const upperTotal = $derived(game.scorecard.upperTotal);
+const lowerTotal = $derived(game.scorecard.lowerTotal);
+const grandTotal = $derived(game.scorecard.grandTotal);
 
 onMount(async () => {
 	await initEngine();
 	ready = true;
-	roll();
+	game.startGame();
+	doRoll();
 });
 
-function roll() {
-	if (rollsRemaining <= 0) return;
+async function doRoll() {
+	if (!canRoll) return;
 
-	if (rollsRemaining === 3) {
-		dice = rollDice();
-		kept = [false, false, false, false, false];
-	} else {
-		dice = rerollDice(dice, kept);
-	}
+	rolling = true;
 
-	rollsRemaining--;
+	// Brief visual delay for roll feel
+	await new Promise((r) => setTimeout(r, 100));
+
+	game.roll();
 	updateAnalysis();
+
+	rolling = false;
 }
 
 function toggleKeep(index: number) {
-	if (rollsRemaining === 3 || rollsRemaining === 0) return;
-	kept[index] = !kept[index];
+	if (game.rollNumber === 0 || rollsRemaining === 0) return;
+	game.dice.toggleKeep(index);
+	updateAnalysis();
+}
+
+function keepAll() {
+	game.dice.keepAll();
+	updateAnalysis();
+}
+
+function releaseAll() {
+	game.dice.releaseAll();
 	updateAnalysis();
 }
 
 function updateAnalysis() {
-	scores = scoreAllCategories(dice);
-	probabilities = calculateProbabilities(dice, kept, rollsRemaining);
+	scores = scoreAllCategories(game.dice.values);
+	const result = calculateProbabilities(
+		game.dice.values,
+		game.dice.kept,
+		rollsRemaining,
+	);
+	probabilities = result.categories;
+	bestEV = result.bestEV;
 }
 
-function newTurn() {
-	rollsRemaining = 3;
-	kept = [false, false, false, false, false];
-	roll();
+function scoreCategory(category: Category) {
+	if (!canScore) return;
+	if (!game.scorecard.isAvailable(category)) return;
+
+	game.score(category);
+
+	// Start next turn if game not over
+	if (!isGameOver) {
+		doRoll();
+	}
 }
 
-function formatPercent(n: number): string {
-	return (n * 100).toFixed(1) + '%';
+function newGame() {
+	game.startGame();
+	doRoll();
 }
 
-function formatEV(n: number): string {
-	return n.toFixed(1);
+function handleStatsToggle() {
+	game.toggleStats();
 }
 
-function getCategoryName(cat: string): string {
-	const names: Record<string, string> = {
-		Ones: 'Ones',
-		Twos: 'Twos',
-		Threes: 'Threes',
-		Fours: 'Fours',
-		Fives: 'Fives',
-		Sixes: 'Sixes',
-		ThreeOfAKind: '3 of a Kind',
-		FourOfAKind: '4 of a Kind',
-		FullHouse: 'Full House',
-		SmallStraight: 'Sm Straight',
-		LargeStraight: 'Lg Straight',
-		Yahtzee: 'Yahtzee',
-		Chance: 'Chance',
-	};
-	return names[cat] || cat;
-}
-
-function getHeatColor(ev: number, maxEv: number): string {
-	if (maxEv === 0) return 'var(--heat-0)';
-	const intensity = ev / maxEv;
-	if (intensity > 0.9) return 'var(--heat-best)';
-	if (intensity > 0.7) return 'var(--heat-good)';
-	if (intensity > 0.4) return 'var(--heat-mid)';
-	return 'var(--heat-low)';
+function handleProfileChange(profile: StatsProfile) {
+	game.setStatsProfile(profile);
 }
 </script>
 
 <svelte:head>
-	<title>Dicee - Probability Engine</title>
+	<title>Dicee - Probability Learning Game</title>
+	<meta name="description" content="Learn probability through the classic dice game Yahtzee" />
 </svelte:head>
 
 {#if !ready}
-	<div class="loading">Loading engine...</div>
+	<div class="loading">
+		<div class="loading-content">
+			<h1 class="loading-title">DICEE</h1>
+			<p class="loading-text">Loading probability engine...</p>
+		</div>
+	</div>
 {:else}
-	<main>
-		<header>
-			<h1>DICEE</h1>
-			<p class="tagline">Educational Probability Platform</p>
+	<div class="game-container" class:game-over={isGameOver}>
+		<!-- Header -->
+		<header class="header">
+			<h1 class="logo">DICEE</h1>
+			<p class="tagline">Probability Learning Game</p>
 		</header>
 
-		<section class="dice-tray">
-			<div class="dice-container">
-				{#each dice as die, i}
-					<button
-						class="die"
-						class:kept={kept[i]}
-						onclick={() => toggleKeep(i)}
-						disabled={rollsRemaining === 3 || rollsRemaining === 0}
-					>
-						<span class="pip">{die}</span>
-						{#if kept[i]}
-							<span class="keep-badge">KEEP</span>
-						{/if}
-					</button>
-				{/each}
+		<!-- Context Zone (Game Status) -->
+		<div class="context-zone">
+			<GameStatus
+				{turnNumber}
+				{grandTotal}
+				{isGameOver}
+				onNewGame={newGame}
+			/>
+		</div>
+
+		{#if !isGameOver}
+			<!-- Action Zone (Dice Tray) -->
+			<div class="action-zone">
+				<DiceTray
+					{dice}
+					{kept}
+					{rollsRemaining}
+					{canRoll}
+					canKeep={game.rollNumber > 0 && rollsRemaining > 0}
+					{rolling}
+					onRoll={doRoll}
+					onToggleKeep={toggleKeep}
+					onKeepAll={keepAll}
+					onReleaseAll={releaseAll}
+				/>
+
+				<!-- Stats Control -->
+				<div class="stats-control-wrapper">
+					<StatsToggle
+						enabled={statsEnabled}
+						profile={statsProfile}
+						onToggle={handleStatsToggle}
+						onProfileChange={handleProfileChange}
+					/>
+				</div>
 			</div>
 
-			<div class="controls">
-				<button class="roll-btn" onclick={roll} disabled={rollsRemaining === 0}>
-					{rollsRemaining === 3 ? 'ROLL' : `REROLL (${rollsRemaining})`}
-				</button>
-				{#if rollsRemaining === 0}
-					<button class="new-turn-btn" onclick={newTurn}>NEW TURN</button>
-				{/if}
+			<!-- Decision Zone (Scorecard) -->
+			<div class="decision-zone">
+				<Scorecard
+					scores={scorecardScores}
+					potentialScores={scores}
+					{probabilities}
+					{upperSubtotal}
+					{upperBonus}
+					{upperTotal}
+					{lowerTotal}
+					{grandTotal}
+					{statsEnabled}
+					{statsProfile}
+					{canScore}
+					onScore={scoreCategory}
+				/>
 			</div>
+		{:else}
+			<!-- Game Over Display -->
+			<div class="game-over-zone">
+				<div class="final-results">
+					<h2>Game Complete!</h2>
 
-			<label class="stats-toggle">
-				<input type="checkbox" bind:checked={showStats} />
-				Show Statistics
-			</label>
-		</section>
-
-		<section class="scorecard">
-			<h2>SCORECARD</h2>
-			<div class="categories">
-				{#each scores as score, i}
-					{@const prob = probabilities?.categories[i]}
-					{@const isBest = probabilities?.best_category === score.category}
-					<div
-						class="category"
-						class:best={isBest}
-						style="--heat: {getHeatColor(prob?.expected_value ?? 0, probabilities?.best_ev ?? 1)}"
-					>
-						<span class="cat-name">{getCategoryName(score.category)}</span>
-						<span class="cat-score">{score.score}</span>
-						{#if showStats && prob}
-							<span class="cat-ev">EV: {formatEV(prob.expected_value)}</span>
-							<span class="cat-prob">{formatPercent(prob.probability)}</span>
+					<div class="score-breakdown">
+						<div class="breakdown-row">
+							<span class="breakdown-label">Upper Section</span>
+							<span class="breakdown-value">{upperSubtotal}</span>
+						</div>
+						{#if upperBonus > 0}
+							<div class="breakdown-row bonus">
+								<span class="breakdown-label">Upper Bonus</span>
+								<span class="breakdown-value">+{upperBonus}</span>
+							</div>
 						{/if}
-						{#if isBest}
-							<span class="best-badge">BEST</span>
-						{/if}
-						<div class="heat-bar" style="width: {((prob?.expected_value ?? 0) / (probabilities?.best_ev || 1)) * 100}%"></div>
+						<div class="breakdown-row">
+							<span class="breakdown-label">Lower Section</span>
+							<span class="breakdown-value">{lowerTotal}</span>
+						</div>
+						<div class="breakdown-row total">
+							<span class="breakdown-label">Grand Total</span>
+							<span class="breakdown-value">{grandTotal}</span>
+						</div>
 					</div>
-				{/each}
+
+					<button class="play-again-btn" onclick={newGame}>
+						Play Again
+					</button>
+				</div>
 			</div>
-		</section>
-	</main>
+		{/if}
+	</div>
 {/if}
 
 <style>
-	:root {
-		--bg: #f5f5f0;
-		--fg: #1a1a1a;
-		--border: #000;
-		--accent: #ffd700;
-		--heat-best: #ffd700;
-		--heat-good: #ffeb80;
-		--heat-mid: #fff4bf;
-		--heat-low: #fffae6;
-		--heat-0: transparent;
-	}
-
-	:global(body) {
-		margin: 0;
-		padding: 0;
-		font-family: 'IBM Plex Mono', 'Courier New', monospace;
-		background: var(--bg);
-		color: var(--fg);
-	}
-
+	/* Loading Screen */
 	.loading {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		height: 100vh;
-		font-size: 1.5rem;
+		min-height: 100vh;
+		background: var(--color-background);
 	}
 
-	main {
+	.loading-content {
+		text-align: center;
+	}
+
+	.loading-title {
+		font-size: var(--text-display);
+		font-weight: var(--weight-black);
+		letter-spacing: var(--tracking-widest);
+		margin-bottom: var(--space-2);
+	}
+
+	.loading-text {
+		font-size: var(--text-body);
+		color: var(--color-text-muted);
+		animation: pulse 1.5s ease-in-out infinite;
+	}
+
+	@keyframes pulse {
+		0%,
+		100% {
+			opacity: 0.5;
+		}
+		50% {
+			opacity: 1;
+		}
+	}
+
+	/* Game Container */
+	.game-container {
+		min-height: 100vh;
 		max-width: 800px;
 		margin: 0 auto;
-		padding: 2rem 1rem;
+		padding: var(--space-2);
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
 	}
 
-	header {
+	/* Header */
+	.header {
 		text-align: center;
-		margin-bottom: 2rem;
-		border: 3px solid var(--border);
-		padding: 1rem;
+		padding: var(--space-2) var(--space-3);
+		border: var(--border-thick);
+		background: var(--color-surface);
 	}
 
-	h1 {
+	.logo {
+		font-size: var(--text-h1);
+		font-weight: var(--weight-black);
+		letter-spacing: var(--tracking-widest);
 		margin: 0;
-		font-size: 3rem;
-		font-weight: 900;
-		letter-spacing: 0.2em;
 	}
 
 	.tagline {
-		margin: 0.5rem 0 0;
-		font-size: 0.875rem;
+		font-size: var(--text-small);
+		color: var(--color-text-muted);
 		text-transform: uppercase;
-		letter-spacing: 0.1em;
+		letter-spacing: var(--tracking-wider);
+		margin: var(--space-1) 0 0;
 	}
 
-	.dice-tray {
-		border: 3px solid var(--border);
-		padding: 1.5rem;
-		margin-bottom: 2rem;
+	/* Zones (Mobile-first: stacked) */
+	.context-zone {
+		flex-shrink: 0;
 	}
 
-	.dice-container {
-		display: flex;
-		justify-content: center;
-		gap: 1rem;
-		margin-bottom: 1.5rem;
-	}
-
-	.die {
-		width: 60px;
-		height: 60px;
-		border: 3px solid var(--border);
-		background: white;
-		font-size: 2rem;
-		font-weight: bold;
-		cursor: pointer;
-		position: relative;
-		transition: transform 0.1s;
-	}
-
-	.die:hover:not(:disabled) {
-		transform: translateY(-4px);
-	}
-
-	.die:disabled {
-		cursor: default;
-		opacity: 0.7;
-	}
-
-	.die.kept {
-		background: var(--accent);
-		transform: translateY(-8px);
-		box-shadow: 0 8px 0 var(--border);
-	}
-
-	.pip {
-		font-family: inherit;
-	}
-
-	.keep-badge {
-		position: absolute;
-		bottom: -20px;
-		left: 50%;
-		transform: translateX(-50%);
-		font-size: 0.625rem;
-		font-weight: bold;
-		background: var(--fg);
-		color: var(--bg);
-		padding: 2px 4px;
-	}
-
-	.controls {
-		display: flex;
-		justify-content: center;
-		gap: 1rem;
-		margin-bottom: 1rem;
-	}
-
-	.roll-btn,
-	.new-turn-btn {
-		padding: 0.75rem 2rem;
-		font-size: 1rem;
-		font-weight: bold;
-		text-transform: uppercase;
-		border: 3px solid var(--border);
-		cursor: pointer;
-		font-family: inherit;
-	}
-
-	.roll-btn {
-		background: var(--accent);
-	}
-
-	.roll-btn:disabled {
-		background: #ccc;
-		cursor: not-allowed;
-	}
-
-	.new-turn-btn {
-		background: white;
-	}
-
-	.stats-toggle {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-		font-size: 0.875rem;
-		cursor: pointer;
-	}
-
-	.scorecard {
-		border: 3px solid var(--border);
-		padding: 1.5rem;
-	}
-
-	h2 {
-		margin: 0 0 1rem;
-		font-size: 1.25rem;
-		font-weight: 900;
-		letter-spacing: 0.1em;
-	}
-
-	.categories {
+	.action-zone {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: var(--space-2);
 	}
 
-	.category {
-		display: grid;
-		grid-template-columns: 1fr auto auto auto auto;
-		gap: 1rem;
+	.stats-control-wrapper {
+		display: flex;
+		justify-content: center;
+	}
+
+	.decision-zone {
+		flex: 1;
+		overflow-y: auto;
+	}
+
+	/* Game Over */
+	.game-over-zone {
+		flex: 1;
+		display: flex;
 		align-items: center;
-		padding: 0.5rem;
-		border: 2px solid var(--border);
-		position: relative;
-		overflow: hidden;
-		background: white;
+		justify-content: center;
 	}
 
-	.category.best {
-		border-color: var(--accent);
-		border-width: 3px;
+	.final-results {
+		text-align: center;
+		padding: var(--space-4);
+		background: var(--color-surface);
+		border: var(--border-thick);
+		max-width: 400px;
+		width: 100%;
 	}
 
-	.heat-bar {
-		position: absolute;
-		left: 0;
-		top: 0;
-		height: 100%;
-		background: var(--heat);
-		z-index: 0;
-		transition: width 0.3s ease;
+	.final-results h2 {
+		margin: 0 0 var(--space-3);
+		font-size: var(--text-h2);
 	}
 
-	.cat-name,
-	.cat-score,
-	.cat-ev,
-	.cat-prob,
-	.best-badge {
-		position: relative;
-		z-index: 1;
+	.score-breakdown {
+		margin-bottom: var(--space-3);
 	}
 
-	.cat-name {
-		font-weight: bold;
+	.breakdown-row {
+		display: flex;
+		justify-content: space-between;
+		padding: var(--space-1) var(--space-2);
+		border-bottom: var(--border-thin);
 	}
 
-	.cat-score {
-		font-weight: bold;
-		min-width: 3ch;
-		text-align: right;
+	.breakdown-row:last-child {
+		border-bottom: none;
 	}
 
-	.cat-ev,
-	.cat-prob {
-		font-size: 0.75rem;
-		color: #666;
-		min-width: 6ch;
-		text-align: right;
+	.breakdown-label {
+		font-weight: var(--weight-medium);
 	}
 
-	.best-badge {
-		background: var(--accent);
-		padding: 2px 6px;
-		font-size: 0.625rem;
-		font-weight: bold;
+	.breakdown-value {
+		font-family: var(--font-mono);
+		font-weight: var(--weight-bold);
+		font-variant-numeric: tabular-nums;
 	}
 
-	@media (max-width: 600px) {
-		.dice-container {
-			gap: 0.5rem;
+	.breakdown-row.bonus {
+		color: var(--color-success);
+	}
+
+	.breakdown-row.total {
+		background: var(--color-accent);
+		margin-top: var(--space-2);
+		padding: var(--space-2);
+		font-size: var(--text-h3);
+	}
+
+	.breakdown-row.total .breakdown-value {
+		font-size: var(--text-h2);
+	}
+
+	.play-again-btn {
+		padding: var(--space-2) var(--space-4);
+		font-size: var(--text-body);
+		font-weight: var(--weight-bold);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+		background: var(--color-accent);
+		border: var(--border-thick);
+		cursor: pointer;
+		transition:
+			transform var(--transition-fast),
+			background var(--transition-fast);
+	}
+
+	.play-again-btn:hover {
+		background: var(--color-accent-dark);
+		transform: translateY(-2px);
+	}
+
+	.play-again-btn:active {
+		transform: translateY(0);
+	}
+
+	/* Desktop Layout */
+	@media (min-width: 1024px) {
+		.game-container {
+			max-width: 1200px;
+			padding: var(--space-3);
 		}
 
-		.die {
-			width: 50px;
-			height: 50px;
-			font-size: 1.5rem;
+		/* Two-column layout for action + decision */
+		.game-container:not(.game-over) {
+			display: grid;
+			grid-template-areas:
+				'header header'
+				'context context'
+				'action decision';
+			grid-template-columns: 1fr 1fr;
+			grid-template-rows: auto auto 1fr;
+			gap: var(--space-3);
 		}
 
-		.category {
-			grid-template-columns: 1fr auto auto;
+		.header {
+			grid-area: header;
 		}
 
-		.cat-ev,
-		.cat-prob {
-			display: none;
+		.context-zone {
+			grid-area: context;
+		}
+
+		.action-zone {
+			grid-area: action;
+			position: sticky;
+			top: var(--space-3);
+			align-self: start;
+		}
+
+		.decision-zone {
+			grid-area: decision;
+			overflow: visible;
+		}
+	}
+
+	/* Mobile optimizations */
+	@media (max-width: 480px) {
+		.game-container {
+			padding: var(--space-1);
+			gap: var(--space-1);
+		}
+
+		.header {
+			padding: var(--space-1) var(--space-2);
+		}
+
+		.logo {
+			font-size: var(--text-h2);
+		}
+
+		.tagline {
+			font-size: var(--text-tiny);
 		}
 	}
 </style>

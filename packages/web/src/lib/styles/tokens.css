@@ -1,0 +1,190 @@
+/**
+ * Dicee Design System Tokens
+ * Neo-Brutalist design language per RFC-002
+ *
+ * Core tenets:
+ * - Hard edges (no rounded corners)
+ * - High contrast (black/white primary)
+ * - Visible structure (borders delineate)
+ * - Typography as UI (functional, not decorative)
+ * - Honest interactivity (buttons look like buttons)
+ */
+
+:root {
+	/* ==========================================================================
+	 * Color Palette
+	 * ========================================================================== */
+
+	/* Primary */
+	--color-background: #fafafa;
+	--color-surface: #ffffff;
+	--color-border: #000000;
+	--color-text: #0a0a0a;
+	--color-text-muted: #666666;
+
+	/* Accent (Electric Gold) */
+	--color-accent: #ffd700;
+	--color-accent-dark: #b8860b;
+	--color-accent-light: #fff4bf;
+
+	/* Semantic */
+	--color-success: #10b981;
+	--color-warning: #f59e0b;
+	--color-danger: #ef4444;
+	--color-disabled: #9ca3af;
+
+	/* Decision Quality */
+	--color-optimal: var(--color-success);
+	--color-good: #22c55e;
+	--color-acceptable: var(--color-warning);
+	--color-suboptimal: #f97316;
+	--color-poor: var(--color-danger);
+
+	/* Heat Map */
+	--heat-best: var(--color-accent);
+	--heat-good: #ffeb80;
+	--heat-mid: #fff4bf;
+	--heat-low: #fffae6;
+	--heat-none: transparent;
+
+	/* Casino Felt (Dice Tray) */
+	--color-felt: #1a5928;
+	--color-felt-light: #2d7a3e;
+
+	/* ==========================================================================
+	 * Typography
+	 * ========================================================================== */
+
+	/* Font Stacks */
+	--font-sans: "Inter Variable", "SF Pro", -apple-system, system-ui, sans-serif;
+	--font-mono: "JetBrains Mono", "IBM Plex Mono", "SF Mono", "Courier New",
+		monospace;
+
+	/* Type Scale (Major Third: 1.250) */
+	--text-display: 3rem; /* 48px */
+	--text-h1: 2.375rem; /* 38px */
+	--text-h2: 1.875rem; /* 30px */
+	--text-h3: 1.5rem; /* 24px */
+	--text-body: 1rem; /* 16px */
+	--text-small: 0.875rem; /* 14px */
+	--text-tiny: 0.75rem; /* 12px */
+	--text-micro: 0.625rem; /* 10px */
+
+	/* Font Weights */
+	--weight-normal: 400;
+	--weight-medium: 500;
+	--weight-semibold: 600;
+	--weight-bold: 700;
+	--weight-black: 900;
+
+	/* Letter Spacing */
+	--tracking-tight: -0.025em;
+	--tracking-normal: 0;
+	--tracking-wide: 0.025em;
+	--tracking-wider: 0.05em;
+	--tracking-widest: 0.1em;
+
+	/* ==========================================================================
+	 * Spacing (8px base unit)
+	 * ========================================================================== */
+
+	--space-0: 0;
+	--space-1: 0.5rem; /* 8px */
+	--space-2: 1rem; /* 16px */
+	--space-3: 1.5rem; /* 24px */
+	--space-4: 2rem; /* 32px */
+	--space-5: 3rem; /* 48px */
+	--space-6: 4rem; /* 64px */
+	--space-7: 6rem; /* 96px */
+	--space-8: 8rem; /* 128px */
+
+	/* ==========================================================================
+	 * Borders (Neo-Brutalist: solid black, no radius)
+	 * ========================================================================== */
+
+	--border-thin: 1px solid var(--color-border);
+	--border-medium: 2px solid var(--color-border);
+	--border-thick: 3px solid var(--color-border);
+	--border-heavy: 4px solid var(--color-border);
+
+	/* Active/Selected States */
+	--border-accent: 3px solid var(--color-accent);
+	--border-success: 3px solid var(--color-success);
+
+	/* ==========================================================================
+	 * Transitions
+	 * ========================================================================== */
+
+	--transition-instant: 50ms ease;
+	--transition-fast: 150ms ease;
+	--transition-medium: 300ms ease;
+	--transition-slow: 500ms ease;
+
+	/* ==========================================================================
+	 * Z-Index Stack (per RFC-002 HUD Architecture)
+	 * ========================================================================== */
+
+	--z-background: 0;
+	--z-game: 100;
+	--z-hud: 300;
+	--z-tooltip: 400;
+	--z-modal: 500;
+	--z-alert: 1000;
+
+	/* ==========================================================================
+	 * Component Sizes
+	 * ========================================================================== */
+
+	/* Dice */
+	--die-size: 60px;
+	--die-size-mobile: 50px;
+	--die-size-large: 80px;
+
+	/* Touch Targets */
+	--touch-target-min: 44px;
+	--touch-target-comfortable: 56px;
+
+	/* ==========================================================================
+	 * Layout Zones (Mobile: 30/60/10 split)
+	 * ========================================================================== */
+
+	--zone-action: 30vh;
+	--zone-decision: 60vh;
+	--zone-context: 10vh;
+
+	/* ==========================================================================
+	 * Breakpoints (reference values, use in media queries)
+	 * ========================================================================== */
+
+	/*
+   * Mobile Portrait: 320-480px
+   * Mobile Landscape: 568-844px
+   * Tablet: 768-1024px
+   * Desktop: 1280px+
+   * Desktop Large: 1440px+
+   */
+}
+
+/* ==========================================================================
+ * Dark Mode (future enhancement)
+ * ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		/* Dark mode tokens would go here */
+		/* Keeping light mode only for v1.0 per RFC */
+	}
+}
+
+/* ==========================================================================
+ * Reduced Motion
+ * ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--transition-instant: 0ms;
+		--transition-fast: 0ms;
+		--transition-medium: 0ms;
+		--transition-slow: 0ms;
+	}
+}
