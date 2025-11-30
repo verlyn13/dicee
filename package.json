@@ -1,0 +1,21 @@
+{
+  "name": "dicee",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @dicee/web dev",
+    "build": "pnpm run build:engine && pnpm --filter @dicee/web build",
+    "build:engine": "cd packages/engine && wasm-pack build --target web --out-dir ../web/src/lib/wasm",
+    "preview": "pnpm --filter @dicee/web preview",
+    "check": "pnpm --filter @dicee/web check",
+    "test": "cargo test --manifest-path packages/engine/Cargo.toml",
+    "test:all": "pnpm test && pnpm --filter @dicee/web test"
+  },
+  "devDependencies": {
+    "wasm-pack": "^0.13.1"
+  },
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=10"
+  }
+}
