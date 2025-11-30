@@ -2,7 +2,7 @@ mod probability;
 mod scoring;
 mod types;
 
-use types::{parse_dice, Category, ScoringResult};
+use types::{parse_dice, Category, CategoryInfo, ScoringResult};
 use wasm_bindgen::prelude::*;
 
 /// Calculate score for a given dice combination and category
@@ -51,4 +51,12 @@ pub fn score_all_categories(dice: &[u8]) -> Result<JsValue, JsValue> {
         .collect();
 
     serde_wasm_bindgen::to_value(&results).map_err(|e| JsValue::from_str(&e.to_string()))
+}
+
+/// Get metadata for all categories (names, sections)
+#[wasm_bindgen]
+pub fn get_categories() -> Result<JsValue, JsValue> {
+    let categories: Vec<CategoryInfo> = Category::all().iter().map(|c| c.info()).collect();
+
+    serde_wasm_bindgen::to_value(&categories).map_err(|e| JsValue::from_str(&e.to_string()))
 }

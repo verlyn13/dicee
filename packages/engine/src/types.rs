@@ -129,3 +129,22 @@ pub struct ProbabilityResult {
     pub best_category: Category,
     pub best_ev: f64,
 }
+
+/// Category metadata for UI display
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CategoryInfo {
+    pub id: u8,
+    pub name: &'static str,
+    pub is_upper: bool,
+}
+
+impl Category {
+    /// Get metadata for this category
+    pub fn info(&self) -> CategoryInfo {
+        CategoryInfo {
+            id: *self as u8,
+            name: self.name(),
+            is_upper: self.is_upper(),
+        }
+    }
+}

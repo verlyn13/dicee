@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "Probability engine for Dicee - Educational Yahtzee Platform"
 license = "MIT"
+repository = "https://github.com/verlyn13/dicee"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
