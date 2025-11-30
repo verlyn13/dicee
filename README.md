@@ -8,20 +8,50 @@ Dicee transforms Yahtzee from a casual dice game into an educational instrument 
 
 ## Status
 
-**Phase:** Documentation-first
-**Implementation:** Not started
+**Phase:** MVP Development
+**Engine:** Rust/WASM probability core (complete)
+**UI:** Svelte 5 with neo-brutalist design (in progress)
+
+## Quick Start
+
+```bash
+# Prerequisites: Node 24+, Rust, pnpm
+mise install  # or install manually
+
+# Install dependencies
+pnpm install
+
+# Build WASM engine
+pnpm run build:engine
+
+# Start dev server
+pnpm dev
+```
+
+## Development
+
+```bash
+pnpm dev          # Start dev server (http://localhost:5173)
+pnpm build        # Build WASM + web app
+pnpm check        # Run all checks (rust + web)
+pnpm test         # Run Rust tests
+pnpm format       # Format all code
+pnpm lint         # Lint all code
+```
 
 ## Architecture
 
-- **Computation:** WASM (Rust) for instant probability calculations (<50ms)
-- **Backend:** TypeScript for decision orchestration, Python for Monte Carlo validation
-- **Frontend:** Svelte 5 (planned)
-- **Design:** Neo-brutalist, accessibility-first
-- **Data:** Event-sourced, PostgreSQL primary store
+```
+packages/
+├── engine/       # Rust → WASM probability engine
+└── web/          # Svelte 5 frontend
+```
+
+- **Engine:** Rust compiled to WASM (~33KB), exact probability calculations
+- **Frontend:** Svelte 5, neo-brutalist design, responsive
+- **Build:** pnpm workspaces, wasm-pack, Vite
 
 ## RFCs
-
-Architectural specifications live in `docs/rfcs/`:
 
 | RFC | Title | Status |
 |-----|-------|--------|

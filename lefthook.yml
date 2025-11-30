@@ -1,0 +1,24 @@
+pre-commit:
+  parallel: true
+  commands:
+    rust-fmt:
+      glob: "packages/engine/src/**/*.rs"
+      run: mise exec -- cargo fmt --check
+      stage_fixed: true
+
+    rust-clippy:
+      glob: "packages/engine/src/**/*.rs"
+      run: mise exec -- cargo clippy -- -D warnings
+
+    biome-check:
+      glob: "packages/web/src/**/*.{ts,js,svelte}"
+      run: mise exec -- pnpm --filter @dicee/web biome:check
+
+    svelte-check:
+      glob: "packages/web/src/**/*.{ts,svelte}"
+      run: mise exec -- pnpm --filter @dicee/web check
+
+pre-push:
+  commands:
+    rust-test:
+      run: mise exec -- cargo test --manifest-path packages/engine/Cargo.toml

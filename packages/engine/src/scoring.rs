@@ -68,8 +68,8 @@ pub fn score(dice: &Dice, category: Category) -> ScoringResult {
 
         // Full house: 3 of one + 2 of another
         Category::FullHouse => {
-            let has_three = counts.iter().any(|&c| c == 3);
-            let has_two = counts.iter().any(|&c| c == 2);
+            let has_three = counts.contains(&3);
+            let has_two = counts.contains(&2);
             if has_three && has_two {
                 (25, true)
             } else {
@@ -80,10 +80,10 @@ pub fn score(dice: &Dice, category: Category) -> ScoringResult {
         // Small straight: 4 consecutive values
         Category::SmallStraight => {
             // Check for 1-2-3-4, 2-3-4-5, or 3-4-5-6
-            let has_small = (counts[0] >= 1 && counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1)
-                || (counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1)
-                || (counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1 && counts[5] >= 1);
-            if has_small {
+            let seq_1234 = counts[0] >= 1 && counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1;
+            let seq_2345 = counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1;
+            let seq_3456 = counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1 && counts[5] >= 1;
+            if seq_1234 || seq_2345 || seq_3456 {
                 (30, true)
             } else {
                 (0, false)
@@ -112,7 +112,7 @@ pub fn score(dice: &Dice, category: Category) -> ScoringResult {
 
         // Yahtzee: all 5 dice the same
         Category::Yahtzee => {
-            let has_five = counts.iter().any(|&c| c == 5);
+            let has_five = counts.contains(&5);
             if has_five {
                 (50, true)
             } else {

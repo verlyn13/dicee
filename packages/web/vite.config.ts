@@ -5,6 +5,6 @@ import wasm from 'vite-plugin-wasm';
 export default defineConfig({
 	plugins: [wasm(), sveltekit()],
 	optimizeDeps: {
-		exclude: ['dicee-engine']
-	}
+		exclude: ['dicee-engine'],
+	},
 });

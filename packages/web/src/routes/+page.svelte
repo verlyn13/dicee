@@ -1,96 +1,96 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import {
-		initEngine,
-		rollDice,
-		rerollDice,
-		scoreAllCategories,
-		calculateProbabilities,
-		CATEGORIES,
-		type ScoringResult,
-		type ProbabilityResult
-	} from '$lib/engine';
+import { onMount } from 'svelte';
+import {
+	initEngine,
+	rollDice,
+	rerollDice,
+	scoreAllCategories,
+	calculateProbabilities,
+	CATEGORIES,
+	type ScoringResult,
+	type ProbabilityResult,
+} from '$lib/engine';
 
-	let dice = $state<number[]>([1, 1, 1, 1, 1]);
-	let kept = $state<boolean[]>([false, false, false, false, false]);
-	let rollsRemaining = $state(3);
-	let scores = $state<ScoringResult[]>([]);
-	let probabilities = $state<ProbabilityResult | null>(null);
-	let ready = $state(false);
-	let showStats = $state(true);
+let dice = $state<number[]>([1, 1, 1, 1, 1]);
+let kept = $state<boolean[]>([false, false, false, false, false]);
+let rollsRemaining = $state(3);
+let scores = $state<ScoringResult[]>([]);
+let probabilities = $state<ProbabilityResult | null>(null);
+let ready = $state(false);
+let showStats = $state(true);
 
-	onMount(async () => {
-		await initEngine();
-		ready = true;
-		roll();
-	});
+onMount(async () => {
+	await initEngine();
+	ready = true;
+	roll();
+});
 
-	function roll() {
-		if (rollsRemaining <= 0) return;
+function roll() {
+	if (rollsRemaining <= 0) return;
 
-		if (rollsRemaining === 3) {
-			dice = rollDice();
-			kept = [false, false, false, false, false];
-		} else {
-			dice = rerollDice(dice, kept);
-		}
-
-		rollsRemaining--;
-		updateAnalysis();
-	}
-
-	function toggleKeep(index: number) {
-		if (rollsRemaining === 3 || rollsRemaining === 0) return;
-		kept[index] = !kept[index];
-		updateAnalysis();
-	}
-
-	function updateAnalysis() {
-		scores = scoreAllCategories(dice);
-		probabilities = calculateProbabilities(dice, kept, rollsRemaining);
-	}
-
-	function newTurn() {
-		rollsRemaining = 3;
+	if (rollsRemaining === 3) {
+		dice = rollDice();
 		kept = [false, false, false, false, false];
-		roll();
+	} else {
+		dice = rerollDice(dice, kept);
 	}
 
-	function formatPercent(n: number): string {
-		return (n * 100).toFixed(1) + '%';
-	}
+	rollsRemaining--;
+	updateAnalysis();
+}
 
-	function formatEV(n: number): string {
-		return n.toFixed(1);
-	}
+function toggleKeep(index: number) {
+	if (rollsRemaining === 3 || rollsRemaining === 0) return;
+	kept[index] = !kept[index];
+	updateAnalysis();
+}
 
-	function getCategoryName(cat: string): string {
-		const names: Record<string, string> = {
-			Ones: 'Ones',
-			Twos: 'Twos',
-			Threes: 'Threes',
-			Fours: 'Fours',
-			Fives: 'Fives',
-			Sixes: 'Sixes',
-			ThreeOfAKind: '3 of a Kind',
-			FourOfAKind: '4 of a Kind',
-			FullHouse: 'Full House',
-			SmallStraight: 'Sm Straight',
-			LargeStraight: 'Lg Straight',
-			Yahtzee: 'Yahtzee',
-			Chance: 'Chance'
-		};
-		return names[cat] || cat;
-	}
+function updateAnalysis() {
+	scores = scoreAllCategories(dice);
+	probabilities = calculateProbabilities(dice, kept, rollsRemaining);
+}
 
-	function getHeatColor(ev: number, maxEv: number): string {
-		if (maxEv === 0) return 'var(--heat-0)';
-		const intensity = ev / maxEv;
-		if (intensity > 0.9) return 'var(--heat-best)';
-		if (intensity > 0.7) return 'var(--heat-good)';
-		if (intensity > 0.4) return 'var(--heat-mid)';
-		return 'var(--heat-low)';
-	}
+function newTurn() {
+	rollsRemaining = 3;
+	kept = [false, false, false, false, false];
+	roll();
+}
+
+function formatPercent(n: number): string {
+	return (n * 100).toFixed(1) + '%';
+}
+
+function formatEV(n: number): string {
+	return n.toFixed(1);
+}
+
+function getCategoryName(cat: string): string {
+	const names: Record<string, string> = {
+		Ones: 'Ones',
+		Twos: 'Twos',
+		Threes: 'Threes',
+		Fours: 'Fours',
+		Fives: 'Fives',
+		Sixes: 'Sixes',
+		ThreeOfAKind: '3 of a Kind',
+		FourOfAKind: '4 of a Kind',
+		FullHouse: 'Full House',
+		SmallStraight: 'Sm Straight',
+		LargeStraight: 'Lg Straight',
+		Yahtzee: 'Yahtzee',
+		Chance: 'Chance',
+	};
+	return names[cat] || cat;
+}
+
+function getHeatColor(ev: number, maxEv: number): string {
+	if (maxEv === 0) return 'var(--heat-0)';
+	const intensity = ev / maxEv;
+	if (intensity > 0.9) return 'var(--heat-best)';
+	if (intensity > 0.7) return 'var(--heat-good)';
+	if (intensity > 0.4) return 'var(--heat-mid)';
+	return 'var(--heat-low)';
+}
 </script>
 
 <svelte:head>

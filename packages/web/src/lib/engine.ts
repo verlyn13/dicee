@@ -1,7 +1,7 @@
 import init, {
 	score_category,
 	score_all_categories,
-	calculate_probabilities
+	calculate_probabilities,
 } from './wasm/dicee_engine.js';
 
 export interface ScoringResult {
@@ -36,7 +36,7 @@ export const CATEGORIES = [
 	'SmallStraight',
 	'LargeStraight',
 	'Yahtzee',
-	'Chance'
+	'Chance',
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
@@ -62,13 +62,13 @@ export function scoreAllCategories(dice: number[]): ScoringResult[] {
 export function calculateProbabilities(
 	dice: number[],
 	kept: boolean[],
-	rollsRemaining: number
+	rollsRemaining: number,
 ): ProbabilityResult {
 	const keptBytes = kept.map((k) => (k ? 1 : 0));
 	const result = calculate_probabilities(
 		new Uint8Array(dice),
 		new Uint8Array(keptBytes),
-		rollsRemaining
+		rollsRemaining,
 	);
 	return result as ProbabilityResult;
 }
@@ -78,5 +78,7 @@ export function rollDice(count: number = 5): number[] {
 }
 
 export function rerollDice(current: number[], kept: boolean[]): number[] {
-	return current.map((die, i) => (kept[i] ? die : Math.floor(Math.random() * 6) + 1));
+	return current.map((die, i) =>
+		kept[i] ? die : Math.floor(Math.random() * 6) + 1,
+	);
 }

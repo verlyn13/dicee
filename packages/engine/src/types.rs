@@ -11,7 +11,7 @@ pub fn parse_dice(slice: &[u8]) -> Result<Dice, &'static str> {
 
     let mut dice = [0u8; 5];
     for (i, &val) in slice.iter().enumerate() {
-        if val < 1 || val > 6 {
+        if !(1..=6).contains(&val) {
             return Err("each die must be 1-6");
         }
         dice[i] = val;

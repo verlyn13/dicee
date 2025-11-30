@@ -119,7 +119,12 @@ fn calculate_current(dice: &Dice) -> ProbabilityResult {
 }
 
 /// Generate a specific dice outcome given the reroll index
-fn generate_outcome(dice: &Dice, kept: &[bool; 5], outcome_idx: usize, reroll_count: usize) -> Dice {
+fn generate_outcome(
+    dice: &Dice,
+    kept: &[bool; 5],
+    outcome_idx: usize,
+    reroll_count: usize,
+) -> Dice {
     let mut result = *dice;
     let mut idx = outcome_idx;
     let mut reroll_pos = 0;

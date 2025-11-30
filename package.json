@@ -7,11 +7,21 @@
     "build": "pnpm run build:engine && pnpm --filter @dicee/web build",
     "build:engine": "cd packages/engine && wasm-pack build --target web --out-dir ../web/src/lib/wasm",
     "preview": "pnpm --filter @dicee/web preview",
-    "check": "pnpm --filter @dicee/web check",
+    "check": "pnpm run check:rust && pnpm run check:web",
+    "check:rust": "cd packages/engine && cargo fmt --check && cargo clippy -- -D warnings",
+    "check:web": "pnpm --filter @dicee/web check && pnpm --filter @dicee/web biome:check",
     "test": "cargo test --manifest-path packages/engine/Cargo.toml",
-    "test:all": "pnpm test && pnpm --filter @dicee/web test"
+    "test:all": "pnpm test",
+    "lint": "pnpm run lint:rust && pnpm run lint:web",
+    "lint:rust": "cd packages/engine && cargo clippy -- -D warnings",
+    "lint:web": "pnpm --filter @dicee/web biome:check",
+    "format": "pnpm run format:rust && pnpm run format:web",
+    "format:rust": "cd packages/engine && cargo fmt",
+    "format:web": "pnpm --filter @dicee/web format",
+    "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {
+    "lefthook": "^1.10.10",
     "wasm-pack": "^0.13.1"
   },
   "engines": {
