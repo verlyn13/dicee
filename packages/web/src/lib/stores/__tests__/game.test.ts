@@ -125,7 +125,9 @@ describe('GameState: startGame', () => {
 		game.startGame();
 		game.roll();
 
-		const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+			/* Suppress console output in tests */
+		});
 		game.startGame();
 		expect(consoleSpy).toHaveBeenCalled();
 		consoleSpy.mockRestore();
@@ -233,7 +235,9 @@ describe('GameState: score', () => {
 		// Start new turn
 		game.roll();
 
-		const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+			/* Suppress console output in tests */
+		});
 		const result = game.score('Chance');
 		expect(result).toBeNull();
 		consoleSpy.mockRestore();
@@ -269,7 +273,9 @@ describe('GameState: score', () => {
 		newGame.startGame();
 
 		expect(newGame.canScore).toBe(false);
-		const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+			/* Suppress console output in tests */
+		});
 		const result = newGame.score('Chance');
 		expect(result).toBeNull();
 		consoleSpy.mockRestore();

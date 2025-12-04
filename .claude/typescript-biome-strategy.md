@@ -650,6 +650,92 @@ Real-world patterns discovered during development:
 4. **biome-ignore becomes error** - When a rule is disabled via overrides, existing biome-ignore comments become `suppressions/unused` errors
 5. **Run biome standalone** - `pnpm biome:check` gives cleaner output than lefthook for debugging
 
+### Testing Patterns (Added 2025-12-04)
+
+6. **Testing Interface Pattern** - When testing classes with private fields (#field), expose a `__testing` object with controlled setters:
+   ```typescript
+   class AuthState {
+     #loading = $state(true);
+
+     // Testing interface - DO NOT USE IN PRODUCTION
+     __testing = {
+       setLoading: (v: boolean) => { this.#loading = v; },
+       reset: () => { /* reset all private fields */ }
+     };
+   }
+   ```
+
+7. **Mock Type Pattern** - Define mock interfaces that reflect actual mock structure, not production types:
+   ```typescript
+   // ❌ Wrong: Forces cast gymnastics
+   type MockClient = Pick<SupabaseClient, 'auth' | 'from'>;
+
+   // ✅ Right: Mock methods retain Mock interface
+   interface MockAuthMethods {
+     signInAnonymously: Mock;
+     signOut: Mock;
+   }
+   interface MockClient {
+     auth: MockAuthMethods;
+     from: Mock;
+   }
+   // Cast only when passing to production code:
+   auth.init(mockClient as unknown as SupabaseClient<Database>, ...);
+   ```
+
+8. **Empty Block Comment Pattern** - Intentionally empty blocks need comments to satisfy `noEmptyBlockStatements`:
+   ```typescript
+   // ❌ Error: empty block
+   vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+   // ✅ Fixed: explicit intent
+   vi.spyOn(console, 'warn').mockImplementation(() => {
+     /* Suppress console output in tests */
+   });
+   ```
+
+9. **Never-Resolving Promise Pattern** - For testing loading states, same rule applies:
+   ```typescript
+   mockFn.mockImplementation(() =>
+     new Promise(() => {
+       /* Never resolves - simulates hanging async operation */
+     })
+   );
+   ```
+
+10. **Complexity Reduction Pattern** - Extract helpers when `noExcessiveCognitiveComplexity` triggers (max 15):
+    ```typescript
+    // ❌ Before: complexity 19
+    function handleKeyDown(event: KeyboardEvent) {
+      if (!enabled) return;
+      if (isInput(target)) return;
+      switch (key) {
+        case 'r': if (canRoll()) { ... } break;
+        case 'a': if (canKeep()) { ... } break;
+        // more cases...
+      }
+    }
+
+    // ✅ After: extract helpers
+    function isTypingInInput(target: EventTarget | null): boolean { ... }
+    function getKeyAction(key: string): (() => void) | null { ... }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (!enabled || isTypingInInput(event.target)) return;
+      const action = getKeyAction(event.key);
+      if (action) { event.preventDefault(); action(); }
+    }
+    ```
+
+11. **Non-null Assertion Avoidance** - Replace `!` with proper checks:
+    ```typescript
+    // ❌ Risky: non-null assertion
+    if (cache.has(key)) return cache.get(key)!;
+
+    // ✅ Safe: undefined check
+    const cached = cache.get(key);
+    if (cached !== undefined) return cached;
+    ```
+
 ---
 
 ## Sources

@@ -5,8 +5,9 @@
  * Uses mocked Supabase client to test state management.
  */
 
-import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
-import { describe, expect, it, vi } from 'vitest';
+import type { AuthChangeEvent, Session, SupabaseClient, User } from '@supabase/supabase-js';
+import { describe, expect, it, type Mock, vi } from 'vitest';
+import type { Database } from '$lib/types/database';
 
 // =============================================================================
 // Mock Supabase Client
@@ -36,7 +37,26 @@ function createMockSession(user: User): Session {
 	};
 }
 
-function createMockSupabaseClient() {
+/** Mocked auth methods - retains Mock interface for test manipulation */
+interface MockAuthMethods {
+	signInAnonymously: Mock;
+	signInWithOAuth: Mock;
+	signInWithOtp: Mock;
+	linkIdentity: Mock;
+	updateUser: Mock;
+	signOut: Mock;
+	getUserIdentities: Mock;
+	onAuthStateChange: Mock;
+}
+
+/** Mock Supabase client - typed for test usage, castable to real client */
+interface MockSupabaseClient {
+	auth: MockAuthMethods;
+	from: Mock;
+	__triggerAuthChange: (event: AuthChangeEvent, session: Session | null) => void;
+}
+
+function createMockSupabaseClient(): MockSupabaseClient {
 	const authListeners: Array<(event: AuthChangeEvent, session: Session | null) => void> = [];
 
 	return {
@@ -130,7 +150,7 @@ describe('AuthState: init', () => {
 		const auth = await createFreshAuthStore();
 		const mockClient = createMockSupabaseClient();
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 
 		expect(auth.initialized).toBe(true);
 	});
@@ -139,7 +159,7 @@ describe('AuthState: init', () => {
 		const auth = await createFreshAuthStore();
 		const mockClient = createMockSupabaseClient();
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 
 		expect(auth.loading).toBe(false);
 	});
@@ -150,7 +170,7 @@ describe('AuthState: init', () => {
 		const user = createMockUser();
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 
 		expect(auth.session).toStrictEqual(session);
 		expect(auth.user).toStrictEqual(user);
@@ -161,7 +181,7 @@ describe('AuthState: init', () => {
 		const auth = await createFreshAuthStore();
 		const mockClient = createMockSupabaseClient();
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 
 		expect(mockClient.auth.onAuthStateChange).toHaveBeenCalledOnce();
 	});
@@ -170,7 +190,7 @@ describe('AuthState: init', () => {
 		const auth = await createFreshAuthStore();
 		const mockClient = createMockSupabaseClient();
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 		expect(auth.isAuthenticated).toBe(false);
 
 		// Simulate sign in
@@ -188,7 +208,7 @@ describe('AuthState: init', () => {
 		const user = createMockUser();
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 		expect(auth.isAuthenticated).toBe(true);
 
 		// Simulate sign out
@@ -214,7 +234,7 @@ describe('AuthState: Anonymous Sign-In', () => {
 		});
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 
 		expect(auth.isAnonymous).toBe(true);
 	});
@@ -228,7 +248,7 @@ describe('AuthState: Anonymous Sign-In', () => {
 		});
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 
 		expect(auth.isAnonymous).toBe(false);
 	});
@@ -237,7 +257,7 @@ describe('AuthState: Anonymous Sign-In', () => {
 		const auth = await createFreshAuthStore();
 		const mockClient = createMockSupabaseClient();
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 		await auth.signInAnonymously();
 
 		expect(mockClient.auth.signInAnonymously).toHaveBeenCalledOnce();
@@ -256,7 +276,7 @@ describe('AuthState: Anonymous Sign-In', () => {
 				}),
 		);
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 
 		const promise = auth.signInAnonymously();
 		expect(auth.loading).toBe(true);
@@ -274,7 +294,7 @@ describe('AuthState: Anonymous Sign-In', () => {
 			error: new Error('Rate limited'),
 		});
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 
 		await expect(auth.signInAnonymously()).rejects.toThrow('Rate limited');
 	});
@@ -298,11 +318,11 @@ describe('AuthState: Google OAuth', () => {
 		// Mock window.location
 		const originalLocation = window.location;
 		// @ts-expect-error - deleting readonly property for test mock
-		delete window.location;
+		window.location = undefined;
 		// @ts-expect-error - assigning partial Location for test mock
 		window.location = { origin: 'http://localhost:5173' } as Location;
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 		await auth.signInWithGoogle();
 
 		expect(mockClient.auth.signInWithOAuth).toHaveBeenCalledWith({
@@ -320,7 +340,7 @@ describe('AuthState: Google OAuth', () => {
 		const auth = await createFreshAuthStore();
 		const mockClient = createMockSupabaseClient();
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 		await auth.signInWithGoogle('http://localhost:5173/game');
 
 		expect(mockClient.auth.signInWithOAuth).toHaveBeenCalledWith({
@@ -340,11 +360,11 @@ describe('AuthState: Google OAuth', () => {
 		// Mock window.location
 		const originalLocation = window.location;
 		// @ts-expect-error - deleting readonly property for test mock
-		delete window.location;
+		window.location = undefined;
 		// @ts-expect-error - assigning partial Location for test mock
 		window.location = { origin: 'http://localhost:5173' } as Location;
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 		await auth.linkGoogle();
 
 		expect(mockClient.auth.linkIdentity).toHaveBeenCalledWith({
@@ -364,7 +384,7 @@ describe('AuthState: Google OAuth', () => {
 		const user = createMockUser({ is_anonymous: false });
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 
 		await expect(auth.linkGoogle()).rejects.toThrow('User is not anonymous');
 	});
@@ -382,11 +402,11 @@ describe('AuthState: Magic Link', () => {
 		// Mock window.location
 		const originalLocation = window.location;
 		// @ts-expect-error - deleting readonly property for test mock
-		delete window.location;
+		window.location = undefined;
 		// @ts-expect-error - assigning partial Location for test mock
 		window.location = { origin: 'http://localhost:5173' } as Location;
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 		await auth.signInWithEmail('test@example.com');
 
 		expect(mockClient.auth.signInWithOtp).toHaveBeenCalledWith({
@@ -406,7 +426,7 @@ describe('AuthState: Magic Link', () => {
 		const user = createMockUser({ is_anonymous: true });
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 		await auth.linkEmail('upgrade@example.com');
 
 		expect(mockClient.auth.updateUser).toHaveBeenCalledWith({
@@ -426,7 +446,7 @@ describe('AuthState: Sign Out', () => {
 		const user = createMockUser();
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 		await auth.signOut();
 
 		expect(mockClient.auth.signOut).toHaveBeenCalledOnce();
@@ -437,7 +457,7 @@ describe('AuthState: Sign Out', () => {
 		const mockClient = createMockSupabaseClient();
 		mockClient.auth.signOut.mockResolvedValue({ error: new Error('Network error') });
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 
 		await expect(auth.signOut()).rejects.toThrow('Network error');
 	});
@@ -454,7 +474,7 @@ describe('AuthState: Profile Sync', () => {
 		const user = createMockUser({ is_anonymous: false });
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 		await auth.syncProfileAnonymousStatus();
 
 		expect(mockClient.from).toHaveBeenCalledWith('profiles');
@@ -464,7 +484,7 @@ describe('AuthState: Profile Sync', () => {
 		const auth = await createFreshAuthStore();
 		const mockClient = createMockSupabaseClient();
 
-		auth.init(mockClient as any, null, null);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, null, null);
 		await auth.syncProfileAnonymousStatus();
 
 		expect(mockClient.from).not.toHaveBeenCalled();
@@ -482,7 +502,7 @@ describe('AuthState: Derived State', () => {
 		const user = createMockUser({ id: 'specific-user-id' });
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 
 		expect(auth.userId).toBe('specific-user-id');
 	});
@@ -493,7 +513,7 @@ describe('AuthState: Derived State', () => {
 		const user = createMockUser({ email: 'specific@example.com' });
 		const session = createMockSession(user);
 
-		auth.init(mockClient as any, session, user);
+		auth.init(mockClient as unknown as SupabaseClient<Database>, session, user);
 
 		expect(auth.email).toBe('specific@example.com');
 	});

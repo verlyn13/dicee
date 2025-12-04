@@ -148,8 +148,9 @@ export class GameState {
 	 */
 	getPotentialScore(category: Category): number {
 		// Use cached WASM score if available
-		if (this.#cachedScores.has(category)) {
-			return this.#cachedScores.get(category)!;
+		const cached = this.#cachedScores.get(category);
+		if (cached !== undefined) {
+			return cached;
 		}
 		// Fallback to local calculation
 		return this.#getPotentialScoreFallback(category);
@@ -372,14 +373,37 @@ export class GameState {
 		this.#gameCompletedAt = Date.now();
 	}
 
-	#getPotentialScoreFallback(category: Category): number {
-		// Fallback scoring when WASM is not available
-		// Used for initial render before WASM loads
-		const values = this.dice.values;
+	/** Count occurrences of each die value (1-6) */
+	#getDiceCounts(values: number[]): number[] {
 		const counts = [0, 0, 0, 0, 0, 0];
 		for (const v of values) {
 			counts[v - 1]++;
 		}
+		return counts;
+	}
+
+	/** Check if dice form a small straight (4 consecutive) */
+	#isSmallStraight(counts: number[]): boolean {
+		const has1234 = counts[0] >= 1 && counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1;
+		const has2345 = counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1;
+		const has3456 = counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1 && counts[5] >= 1;
+		return has1234 || has2345 || has3456;
+	}
+
+	/** Check if dice form a large straight (5 consecutive) */
+	#isLargeStraight(counts: number[]): boolean {
+		const has12345 =
+			counts[0] === 1 && counts[1] === 1 && counts[2] === 1 && counts[3] === 1 && counts[4] === 1;
+		const has23456 =
+			counts[1] === 1 && counts[2] === 1 && counts[3] === 1 && counts[4] === 1 && counts[5] === 1;
+		return has12345 || has23456;
+	}
+
+	#getPotentialScoreFallback(category: Category): number {
+		// Fallback scoring when WASM is not available
+		// Used for initial render before WASM loads
+		const values = this.dice.values;
+		const counts = this.#getDiceCounts(values);
 		const sum = values.reduce((a, b) => a + b, 0);
 
 		switch (category) {
@@ -401,27 +425,10 @@ export class GameState {
 				return counts.some((c) => c >= 4) ? sum : 0;
 			case 'FullHouse':
 				return counts.includes(3) && counts.includes(2) ? 25 : 0;
-			case 'SmallStraight': {
-				const has1234 = counts[0] >= 1 && counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1;
-				const has2345 = counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1;
-				const has3456 = counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1 && counts[5] >= 1;
-				return has1234 || has2345 || has3456 ? 30 : 0;
-			}
-			case 'LargeStraight': {
-				const has12345 =
-					counts[0] === 1 &&
-					counts[1] === 1 &&
-					counts[2] === 1 &&
-					counts[3] === 1 &&
-					counts[4] === 1;
-				const has23456 =
-					counts[1] === 1 &&
-					counts[2] === 1 &&
-					counts[3] === 1 &&
-					counts[4] === 1 &&
-					counts[5] === 1;
-				return has12345 || has23456 ? 40 : 0;
-			}
+			case 'SmallStraight':
+				return this.#isSmallStraight(counts) ? 30 : 0;
+			case 'LargeStraight':
+				return this.#isLargeStraight(counts) ? 40 : 0;
 			case 'Yahtzee':
 				return counts.includes(5) ? 50 : 0;
 			case 'Chance':

@@ -20,8 +20,10 @@ vi.mock('$lib/stores/auth.svelte', () => {
 			},
 			signInWithEmail: vi.fn().mockResolvedValue(undefined),
 			linkEmail: vi.fn().mockResolvedValue(undefined),
-			__setLoading: (value: boolean) => {
-				loading = value;
+			__testing: {
+				setLoading: (value: boolean) => {
+					loading = value;
+				},
 			},
 		},
 	};
@@ -32,7 +34,7 @@ describe('MagicLinkForm', () => {
 		vi.clearAllMocks();
 		// Reset loading state before each test
 		const { auth } = await import('$lib/stores/auth.svelte');
-		(auth as any).__setLoading(false);
+		auth.__testing.setLoading(false);
 	});
 
 	it('renders email input and submit button', () => {
@@ -163,7 +165,7 @@ describe('MagicLinkForm', () => {
 
 	it('disables input during loading', async () => {
 		const { auth } = await import('$lib/stores/auth.svelte');
-		(auth as any).__setLoading(true);
+		auth.__testing.setLoading(true);
 
 		const { rerender } = render(MagicLinkForm);
 		await rerender({});
@@ -174,7 +176,7 @@ describe('MagicLinkForm', () => {
 
 	it('disables button during loading', async () => {
 		const { auth } = await import('$lib/stores/auth.svelte');
-		(auth as any).__setLoading(true);
+		auth.__testing.setLoading(true);
 
 		const { rerender } = render(MagicLinkForm);
 		await rerender({});
@@ -196,7 +198,7 @@ describe('MagicLinkForm: Form Validation', () => {
 	beforeEach(async () => {
 		vi.clearAllMocks();
 		const { auth } = await import('$lib/stores/auth.svelte');
-		(auth as any).__setLoading(false);
+		auth.__testing.setLoading(false);
 	});
 
 	it('does not call API for whitespace-only email', async () => {
@@ -263,7 +265,7 @@ describe('MagicLinkForm: Accessibility', () => {
 
 	it('is keyboard navigable', async () => {
 		const { auth } = await import('$lib/stores/auth.svelte');
-		(auth as any).__setLoading(false);
+		auth.__testing.setLoading(false);
 
 		render(MagicLinkForm);
 

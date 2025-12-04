@@ -23,8 +23,10 @@ vi.mock('$lib/stores/auth.svelte', () => {
 				await new Promise((r) => setTimeout(r, 10));
 				loading = false;
 			}),
-			__setLoading: (value: boolean) => {
-				loading = value;
+			__testing: {
+				setLoading: (value: boolean) => {
+					loading = value;
+				},
 			},
 		},
 	};
@@ -35,7 +37,7 @@ describe('PlayNowButton', () => {
 		vi.clearAllMocks();
 		// Reset loading state before each test
 		const { auth } = await import('$lib/stores/auth.svelte');
-		(auth as any).__setLoading(false);
+		auth.__testing.setLoading(false);
 	});
 
 	it('renders with correct text', () => {
@@ -82,9 +84,12 @@ describe('PlayNowButton', () => {
 
 		// Make signInAnonymously hang (we don't need to resolve it for this test)
 		(auth.signInAnonymously as ReturnType<typeof vi.fn>).mockImplementation(
-			() => new Promise(() => {}),
+			() =>
+				new Promise(() => {
+					/* Never resolves - simulates hanging async operation */
+				}),
 		);
-		(auth as any).__setLoading(true);
+		auth.__testing.setLoading(true);
 
 		const { rerender } = render(PlayNowButton);
 
@@ -98,7 +103,7 @@ describe('PlayNowButton', () => {
 
 	it('is disabled when loading', async () => {
 		const { auth } = await import('$lib/stores/auth.svelte');
-		(auth as any).__setLoading(true);
+		auth.__testing.setLoading(true);
 
 		const { rerender } = render(PlayNowButton);
 		await rerender({});
@@ -116,7 +121,7 @@ describe('PlayNowButton', () => {
 
 	it('has proper focus styling (accessible)', async () => {
 		const { auth } = await import('$lib/stores/auth.svelte');
-		(auth as any).__setLoading(false);
+		auth.__testing.setLoading(false);
 
 		render(PlayNowButton);
 
@@ -143,7 +148,7 @@ describe('PlayNowButton: Error Handling', () => {
 	beforeEach(async () => {
 		vi.clearAllMocks();
 		const { auth } = await import('$lib/stores/auth.svelte');
-		(auth as any).__setLoading(false);
+		auth.__testing.setLoading(false);
 	});
 
 	it('displays error message on sign-in failure', async () => {

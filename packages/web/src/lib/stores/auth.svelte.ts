@@ -207,6 +207,32 @@ class AuthState {
 			console.error('Failed to sync profile anonymous status:', error);
 		}
 	}
+
+	/**
+	 * Testing interface - DO NOT USE IN PRODUCTION CODE
+	 * Provides controlled access to internal state for unit tests.
+	 */
+	__testing = {
+		setLoading: (value: boolean) => {
+			this.#loading = value;
+		},
+		setSession: (session: Session | null) => {
+			this.#session = session;
+		},
+		setUser: (user: User | null) => {
+			this.#user = user;
+		},
+		setSupabase: (client: SupabaseClient<Database> | null) => {
+			this.#supabase = client;
+		},
+		reset: () => {
+			this.#supabase = null;
+			this.#session = null;
+			this.#user = null;
+			this.#loading = true;
+			this.#initialized = false;
+		},
+	};
 }
 
 // Singleton export for global access

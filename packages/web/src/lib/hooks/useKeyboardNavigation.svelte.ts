@@ -37,59 +37,49 @@ export function useKeyboardNavigation(options: KeyboardNavigationOptions): Keybo
 
 	const enabled = options.enabled ?? true;
 
-	function handleKeyDown(event: KeyboardEvent) {
-		if (!enabled) return;
+	/** Check if user is typing in an input field */
+	function isTypingInInput(target: EventTarget | null): boolean {
+		return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
+	}
 
-		// Ignore if typing in an input
-		if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+	/** Get the action handler for a given key, if valid */
+	function getKeyAction(key: string): (() => void) | null {
+		// Roll dice (R or Space)
+		if ((key === 'r' || key === ' ') && options.canRoll()) {
+			return options.onRoll;
+		}
+
+		// Toggle individual dice (1-5)
+		if (['1', '2', '3', '4', '5'].includes(key) && options.canKeep()) {
+			const index = Number.parseInt(key, 10) - 1;
+			return () => options.onToggleKeep(index);
+		}
+
+		// Keep all dice (A)
+		if (key === 'a' && options.canKeep()) {
+			return options.onKeepAll;
+		}
+
+		// Release all dice (Z)
+		if (key === 'z' && options.canKeep()) {
+			return options.onReleaseAll;
+		}
+
+		return null;
+	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (!enabled || isTypingInInput(event.target)) {
 			return;
 		}
 
 		const key = event.key.toLowerCase();
 		state.lastKey = key;
 
-		switch (key) {
-			// Roll dice
-			case 'r':
-			case ' ':
-				if (options.canRoll()) {
-					event.preventDefault();
-					options.onRoll();
-				}
-				break;
-
-			// Toggle individual dice (1-5)
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-				if (options.canKeep()) {
-					event.preventDefault();
-					const index = Number.parseInt(key, 10) - 1;
-					options.onToggleKeep(index);
-				}
-				break;
-
-			// Keep all dice
-			case 'a':
-				if (options.canKeep()) {
-					event.preventDefault();
-					options.onKeepAll();
-				}
-				break;
-
-			// Release all dice
-			case 'z':
-				if (options.canKeep()) {
-					event.preventDefault();
-					options.onReleaseAll();
-				}
-				break;
-
-			// No action for other keys
-			default:
-				break;
+		const action = getKeyAction(key);
+		if (action) {
+			event.preventDefault();
+			action();
 		}
 	}
 

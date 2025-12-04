@@ -129,8 +129,9 @@ describe('AuthStatus: Sign Out', () => {
 	});
 
 	it('handles sign out error gracefully', async () => {
-		// biome-ignore lint/suspicious/noEmptyBlockStatements: intentional no-op to silence console.error
-		const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+		const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {
+			/* Suppress console output in tests */
+		});
 		mockAuth = createMockAuth({
 			isAuthenticated: true,
 			user: { id: '123' },

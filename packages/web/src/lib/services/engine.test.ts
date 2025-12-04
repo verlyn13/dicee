@@ -273,7 +273,9 @@ describe('engine service', () => {
 			resetEngine();
 			mockEngine.initEngine.mockRejectedValueOnce(new Error('Network error'));
 
-			const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+			const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+				/* Suppress console output in tests */
+			});
 
 			preloadEngine();
 
