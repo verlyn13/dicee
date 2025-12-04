@@ -19,9 +19,14 @@ pkg/
 .vscode/
 !.vscode/settings.json
 !.vscode/README.md
+.windsurf/
+.codex/
 *.swp
 *.swo
 .DS_Store
+
+# Temporary files
+temp-*.md
 
 # Logs
 *.log
