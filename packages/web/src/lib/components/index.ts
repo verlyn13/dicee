@@ -1,8 +1,9 @@
 // Dice Components
-export { Die, DiceTray } from './dice/index.js';
-
+export { DiceTray, Die } from './dice/index.js';
+// HUD Components
+export { GameStatus, StatsToggle } from './hud/index.js';
 // Scorecard Components
 export { CategoryRow, Scorecard } from './scorecard/index.js';
 
-// HUD Components
-export { StatsToggle, GameStatus } from './hud/index.js';
+// UI Components
+export { default as Avatar } from './ui/Avatar.svelte';

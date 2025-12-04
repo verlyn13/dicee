@@ -3,15 +3,11 @@
  * Tests structure, totals calculation display, bonus progress, and accessibility
  */
 
-import type { ScoringResult } from '$lib/engine.js';
-import type {
-	Category,
-	CategoryProbability,
-	StatsProfile,
-} from '$lib/types.js';
 import { fireEvent, render } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
+import type { ScoringResult } from '$lib/engine.js';
+import type { Category, CategoryProbability, StatsProfile } from '$lib/types.js';
 import Scorecard from '../Scorecard.svelte';
 
 // =============================================================================
@@ -183,9 +179,7 @@ describe('Scorecard Component - Totals Display', () => {
 			props: createProps({ upperTotal: 77 }),
 		});
 
-		const sectionTotal = container.querySelector(
-			'.upper-section .section-total',
-		);
+		const sectionTotal = container.querySelector('.upper-section .section-total');
 		const value = sectionTotal?.querySelector('.total-value');
 		expect(value?.textContent).toBe('77');
 	});
@@ -195,9 +189,7 @@ describe('Scorecard Component - Totals Display', () => {
 			props: createProps({ lowerTotal: 150 }),
 		});
 
-		const sectionTotal = container.querySelector(
-			'.lower-section .section-total',
-		);
+		const sectionTotal = container.querySelector('.lower-section .section-total');
 		const value = sectionTotal?.querySelector('.total-value');
 		expect(value?.textContent).toBe('150');
 	});

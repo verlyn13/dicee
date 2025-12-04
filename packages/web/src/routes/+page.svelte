@@ -1,22 +1,27 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import {
-	initEngine,
-	scoreAllCategories,
-	calculateProbabilities,
-	type ScoringResult,
-} from '$lib/engine.js';
-import type {
-	Category,
-	CategoryProbability,
-	StatsProfile,
-} from '$lib/types.js';
-import { game } from '$lib/stores/game.svelte.js';
-
+	AuthStatus,
+	GoogleButton,
+	MagicLinkForm,
+	PlayNowButton,
+} from '$lib/components/auth/index.js';
 // Components
 import { DiceTray } from '$lib/components/dice/index.js';
+import { GameOverModal } from '$lib/components/game/index.js';
+import { GameStatus, KeyboardHelp, StatsToggle } from '$lib/components/hud/index.js';
 import { Scorecard } from '$lib/components/scorecard/index.js';
-import { StatsToggle, GameStatus } from '$lib/components/hud/index.js';
+// Hooks
+import { useKeyboardNavigation } from '$lib/hooks/index.js';
+import {
+	calculateProbabilities,
+	calculateScores,
+	initializeEngine,
+	isEngineReady,
+} from '$lib/services/engine.js';
+import { auth } from '$lib/stores/auth.svelte.js';
+import { game } from '$lib/stores/game.svelte.js';
+import type { Category, CategoryProbability, ScoringResult, StatsProfile } from '$lib/types.js';
 
 // State
 let ready = $state(false);
@@ -24,6 +29,7 @@ let scores = $state<ScoringResult[]>([]);
 let probabilities = $state<CategoryProbability[]>([]);
 let bestEV = $state(0);
 let rolling = $state(false);
+let showGame = $state(false); // Controls whether to show game vs landing
 
 // Derived from game state
 const dice = $derived(game.dice.values);
@@ -45,12 +51,50 @@ const upperTotal = $derived(game.scorecard.upperTotal);
 const lowerTotal = $derived(game.scorecard.lowerTotal);
 const grandTotal = $derived(game.scorecard.grandTotal);
 
+// Keyboard navigation
+const canKeep = $derived(game.rollNumber > 0 && rollsRemaining > 0);
+useKeyboardNavigation({
+	onRoll: () => doRoll(),
+	onToggleKeep: (index) => toggleKeep(index),
+	onKeepAll: () => keepAll(),
+	onReleaseAll: () => releaseAll(),
+	canRoll: () => canRoll && !rolling,
+	canKeep: () => canKeep && !isGameOver,
+	enabled: true,
+});
+
 onMount(async () => {
-	await initEngine();
+	await initializeEngine();
 	ready = true;
+
+	// If user is already authenticated, show game immediately
+	if (auth.isAuthenticated) {
+		startPlaying();
+	}
+});
+
+// Watch for sign out - return to landing when user signs out
+$effect(() => {
+	if (auth.initialized && !auth.isAuthenticated && showGame) {
+		showGame = false;
+	}
+});
+
+function startPlaying() {
+	showGame = true;
 	game.startGame();
 	doRoll();
-});
+}
+
+async function handlePlayNow() {
+	// PlayNowButton handles signInAnonymously, then we start playing
+	startPlaying();
+}
+
+async function handleGoogleSuccess() {
+	// After Google OAuth redirect, user will be authenticated
+	// This is handled by the callback route
+}
 
 async function doRoll() {
 	if (!canRoll) return;
@@ -82,15 +126,21 @@ function releaseAll() {
 	updateAnalysis();
 }
 
-function updateAnalysis() {
-	scores = scoreAllCategories(game.dice.values);
-	const result = calculateProbabilities(
-		game.dice.values,
-		game.dice.kept,
-		rollsRemaining,
-	);
-	probabilities = result.categories;
-	bestEV = result.bestEV;
+async function updateAnalysis() {
+	try {
+		// Fetch scores and probabilities from WASM engine
+		scores = await calculateScores(game.dice.values);
+		probabilities = await calculateProbabilities(game.dice.values, game.dice.kept, rollsRemaining);
+
+		// Find best EV from available categories
+		const availableProbs = probabilities.filter((p) =>
+			game.scorecard.categoriesRemaining.includes(p.category),
+		);
+		bestEV =
+			availableProbs.length > 0 ? Math.max(...availableProbs.map((p) => p.expectedValue)) : 0;
+	} catch (err) {
+		console.warn('Failed to update analysis:', err);
+	}
 }
 
 function scoreCategory(category: Category) {
@@ -131,12 +181,44 @@ function handleProfileChange(profile: StatsProfile) {
 			<p class="loading-text">Loading probability engine...</p>
 		</div>
 	</div>
+{:else if !showGame}
+	<!-- Landing Page -->
+	<div class="landing">
+		<div class="landing-content">
+			<header class="landing-header">
+				<h1 class="landing-title">DICEE</h1>
+				<p class="landing-subtitle">Learn Probability Through Play</p>
+			</header>
+
+			<div class="auth-section">
+				<PlayNowButton onclick={handlePlayNow} />
+
+				<div class="auth-divider">
+					<span class="divider-line"></span>
+					<span class="divider-text">or</span>
+					<span class="divider-line"></span>
+				</div>
+
+				<div class="auth-options">
+					<GoogleButton />
+					<MagicLinkForm />
+				</div>
+			</div>
+
+			<footer class="landing-footer">
+				<p class="landing-note">Play as a guest or sign in to save your progress</p>
+			</footer>
+		</div>
+	</div>
 {:else}
 	<div class="game-container" class:game-over={isGameOver}>
 		<!-- Header -->
 		<header class="header">
-			<h1 class="logo">DICEE</h1>
-			<p class="tagline">Probability Learning Game</p>
+			<div class="header-content">
+				<h1 class="logo">DICEE</h1>
+				<p class="tagline">Probability Learning Game</p>
+			</div>
+			<AuthStatus />
 		</header>
 
 		<!-- Context Zone (Game Status) -->
@@ -173,6 +255,7 @@ function handleProfileChange(profile: StatsProfile) {
 						onToggle={handleStatsToggle}
 						onProfileChange={handleProfileChange}
 					/>
+					<KeyboardHelp />
 				</div>
 			</div>
 
@@ -193,38 +276,16 @@ function handleProfileChange(profile: StatsProfile) {
 					onScore={scoreCategory}
 				/>
 			</div>
-		{:else}
-			<!-- Game Over Display -->
-			<div class="game-over-zone">
-				<div class="final-results">
-					<h2>Game Complete!</h2>
+		{/if}
 
-					<div class="score-breakdown">
-						<div class="breakdown-row">
-							<span class="breakdown-label">Upper Section</span>
-							<span class="breakdown-value">{upperSubtotal}</span>
-						</div>
-						{#if upperBonus > 0}
-							<div class="breakdown-row bonus">
-								<span class="breakdown-label">Upper Bonus</span>
-								<span class="breakdown-value">+{upperBonus}</span>
-							</div>
-						{/if}
-						<div class="breakdown-row">
-							<span class="breakdown-label">Lower Section</span>
-							<span class="breakdown-value">{lowerTotal}</span>
-						</div>
-						<div class="breakdown-row total">
-							<span class="breakdown-label">Grand Total</span>
-							<span class="breakdown-value">{grandTotal}</span>
-						</div>
-					</div>
-
-					<button class="play-again-btn" onclick={newGame}>
-						Play Again
-					</button>
-				</div>
-			</div>
+		{#if isGameOver}
+			<GameOverModal
+				{upperSubtotal}
+				{upperBonus}
+				{lowerTotal}
+				{grandTotal}
+				onPlayAgain={newGame}
+			/>
 		{/if}
 	</div>
 {/if}
@@ -266,6 +327,85 @@ function handleProfileChange(profile: StatsProfile) {
 		}
 	}
 
+	/* Landing Page */
+	.landing {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		padding: var(--space-3);
+		background: var(--color-background);
+	}
+
+	.landing-content {
+		width: 100%;
+		max-width: 400px;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+
+	.landing-header {
+		text-align: center;
+	}
+
+	.landing-title {
+		font-size: var(--text-display);
+		font-weight: var(--weight-black);
+		letter-spacing: var(--tracking-widest);
+		margin: 0;
+	}
+
+	.landing-subtitle {
+		font-size: var(--text-body);
+		color: var(--color-text-muted);
+		margin: var(--space-1) 0 0;
+	}
+
+	.auth-section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		padding: var(--space-3);
+		background: var(--color-surface);
+		border: var(--border-thick);
+	}
+
+	.auth-divider {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		margin: var(--space-1) 0;
+	}
+
+	.divider-line {
+		flex: 1;
+		height: 1px;
+		background: var(--color-border);
+	}
+
+	.divider-text {
+		font-size: var(--text-small);
+		color: var(--color-text-muted);
+		text-transform: lowercase;
+	}
+
+	.auth-options {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.landing-footer {
+		text-align: center;
+	}
+
+	.landing-note {
+		font-size: var(--text-small);
+		color: var(--color-text-muted);
+		margin: 0;
+	}
+
 	/* Game Container */
 	.game-container {
 		min-height: 100vh;
@@ -279,25 +419,31 @@ function handleProfileChange(profile: StatsProfile) {
 
 	/* Header */
 	.header {
-		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		padding: var(--space-2) var(--space-3);
 		border: var(--border-thick);
 		background: var(--color-surface);
 	}
 
+	.header-content {
+		text-align: left;
+	}
+
 	.logo {
-		font-size: var(--text-h1);
+		font-size: var(--text-h2);
 		font-weight: var(--weight-black);
 		letter-spacing: var(--tracking-widest);
 		margin: 0;
 	}
 
 	.tagline {
-		font-size: var(--text-small);
+		font-size: var(--text-tiny);
 		color: var(--color-text-muted);
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-wider);
-		margin: var(--space-1) 0 0;
+		margin: 0;
 	}
 
 	/* Zones (Mobile-first: stacked) */
@@ -319,91 +465,6 @@ function handleProfileChange(profile: StatsProfile) {
 	.decision-zone {
 		flex: 1;
 		overflow-y: auto;
-	}
-
-	/* Game Over */
-	.game-over-zone {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.final-results {
-		text-align: center;
-		padding: var(--space-4);
-		background: var(--color-surface);
-		border: var(--border-thick);
-		max-width: 400px;
-		width: 100%;
-	}
-
-	.final-results h2 {
-		margin: 0 0 var(--space-3);
-		font-size: var(--text-h2);
-	}
-
-	.score-breakdown {
-		margin-bottom: var(--space-3);
-	}
-
-	.breakdown-row {
-		display: flex;
-		justify-content: space-between;
-		padding: var(--space-1) var(--space-2);
-		border-bottom: var(--border-thin);
-	}
-
-	.breakdown-row:last-child {
-		border-bottom: none;
-	}
-
-	.breakdown-label {
-		font-weight: var(--weight-medium);
-	}
-
-	.breakdown-value {
-		font-family: var(--font-mono);
-		font-weight: var(--weight-bold);
-		font-variant-numeric: tabular-nums;
-	}
-
-	.breakdown-row.bonus {
-		color: var(--color-success);
-	}
-
-	.breakdown-row.total {
-		background: var(--color-accent);
-		margin-top: var(--space-2);
-		padding: var(--space-2);
-		font-size: var(--text-h3);
-	}
-
-	.breakdown-row.total .breakdown-value {
-		font-size: var(--text-h2);
-	}
-
-	.play-again-btn {
-		padding: var(--space-2) var(--space-4);
-		font-size: var(--text-body);
-		font-weight: var(--weight-bold);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
-		background: var(--color-accent);
-		border: var(--border-thick);
-		cursor: pointer;
-		transition:
-			transform var(--transition-fast),
-			background var(--transition-fast);
-	}
-
-	.play-again-btn:hover {
-		background: var(--color-accent-dark);
-		transform: translateY(-2px);
-	}
-
-	.play-again-btn:active {
-		transform: translateY(0);
 	}
 
 	/* Desktop Layout */

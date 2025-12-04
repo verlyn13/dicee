@@ -3,12 +3,6 @@
  * Bridges Rust probability engine with TypeScript game state
  */
 
-import init, {
-	score_category,
-	score_all_categories,
-	calculate_probabilities,
-} from './wasm/dicee_engine.js';
-
 import type {
 	Category,
 	CategoryProbability,
@@ -17,6 +11,11 @@ import type {
 	ProbabilityAnalysis,
 } from './types.js';
 import { ALL_CATEGORIES, CATEGORY_TO_INDEX } from './types.js';
+import init, {
+	calculate_probabilities,
+	score_all_categories,
+	score_category,
+} from './wasm/dicee_engine.js';
 
 // =============================================================================
 // WASM Result Types (raw from engine)
@@ -83,10 +82,7 @@ export function isEngineReady(): boolean {
 // Category Mapping
 // =============================================================================
 
-function mapCategoryFromWasm(wasmCategory: {
-	id: number;
-	name: string;
-}): Category {
+function mapCategoryFromWasm(wasmCategory: { id: number; name: string }): Category {
 	return ALL_CATEGORIES[wasmCategory.id];
 }
 
@@ -94,15 +90,9 @@ function mapCategoryFromWasm(wasmCategory: {
 // Scoring Functions
 // =============================================================================
 
-export function scoreCategory(
-	dice: DiceArray,
-	category: Category,
-): ScoringResult {
+export function scoreCategory(dice: DiceArray, category: Category): ScoringResult {
 	const categoryIndex = CATEGORY_TO_INDEX[category];
-	const result = score_category(
-		new Uint8Array(dice),
-		categoryIndex,
-	) as WasmScoringResult;
+	const result = score_category(new Uint8Array(dice), categoryIndex) as WasmScoringResult;
 
 	return {
 		category: mapCategoryFromWasm(result.category),
@@ -112,9 +102,7 @@ export function scoreCategory(
 }
 
 export function scoreAllCategories(dice: DiceArray): ScoringResult[] {
-	const results = score_all_categories(
-		new Uint8Array(dice),
-	) as WasmScoringResult[];
+	const results = score_all_categories(new Uint8Array(dice)) as WasmScoringResult[];
 
 	return results.map((r) => ({
 		category: mapCategoryFromWasm(r.category),
@@ -194,5 +182,5 @@ export function analyzePosition(
 // Convenience Exports
 // =============================================================================
 
-export { ALL_CATEGORIES, CATEGORY_TO_INDEX } from './types.js';
 export type { Category, DiceArray, KeptMask } from './types.js';
+export { ALL_CATEGORIES, CATEGORY_TO_INDEX } from './types.js';

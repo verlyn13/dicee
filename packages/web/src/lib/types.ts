@@ -15,14 +15,7 @@ export type KeptMask = [boolean, boolean, boolean, boolean, boolean];
 // Category Types
 // =============================================================================
 
-export const UPPER_CATEGORIES = [
-	'Ones',
-	'Twos',
-	'Threes',
-	'Fours',
-	'Fives',
-	'Sixes',
-] as const;
+export const UPPER_CATEGORIES = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes'] as const;
 
 export const LOWER_CATEGORIES = [
 	'ThreeOfAKind',
@@ -34,10 +27,7 @@ export const LOWER_CATEGORIES = [
 	'Chance',
 ] as const;
 
-export const ALL_CATEGORIES = [
-	...UPPER_CATEGORIES,
-	...LOWER_CATEGORIES,
-] as const;
+export const ALL_CATEGORIES = [...UPPER_CATEGORIES, ...LOWER_CATEGORIES] as const;
 
 export type UpperCategory = (typeof UPPER_CATEGORIES)[number];
 export type LowerCategory = (typeof LOWER_CATEGORIES)[number];
@@ -105,12 +95,7 @@ export interface Scorecard {
 // Game State Types
 // =============================================================================
 
-export type GameStatus =
-	| 'idle'
-	| 'rolling'
-	| 'keeping'
-	| 'scoring'
-	| 'completed';
+export type GameStatus = 'idle' | 'rolling' | 'keeping' | 'scoring' | 'completed';
 
 export type TurnPhase = 'pre_roll' | 'rolling' | 'deciding' | 'scored';
 
@@ -133,6 +118,16 @@ export interface GameState {
 	// Timestamps
 	gameStartedAt: number | null;
 	gameCompletedAt: number | null;
+}
+
+// =============================================================================
+// Scoring Result Types (from WASM engine)
+// =============================================================================
+
+export interface ScoringResult {
+	category: Category;
+	score: number;
+	valid: boolean;
 }
 
 // =============================================================================

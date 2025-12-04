@@ -1,8 +1,10 @@
 /**
  * Game State Management
  * Orchestrates dice, scorecard, and turn flow
+ * Integrates with WASM probability engine for scoring and analysis
  */
 
+import { calculateProbabilities as calcProbs, calculateScores } from '../services/engine.js';
 import type {
 	Category,
 	CategoryProbability,
@@ -28,10 +30,7 @@ const MAX_TURNS = 13;
 // Decision Quality Calculation
 // =============================================================================
 
-function calculateDecisionQuality(
-	evDifference: number,
-	optimalEV: number,
-): DecisionQuality {
+function calculateDecisionQuality(evDifference: number, optimalEV: number): DecisionQuality {
 	if (evDifference === 0) return 'optimal';
 	const percentLoss = optimalEV > 0 ? evDifference / optimalEV : 0;
 	if (percentLoss <= 0.05) return 'excellent';
@@ -64,6 +63,10 @@ export class GameState {
 	// Probability analysis (from WASM)
 	#currentAnalysis = $state<ProbabilityAnalysis | null>(null);
 
+	// Cached WASM scores for current dice
+	#cachedScores = $state<Map<Category, number>>(new Map());
+	#scoresLoading = $state(false);
+
 	// User preferences
 	#statsProfile = $state<StatsProfile>('intermediate');
 	#statsEnabled = $state(true);
@@ -73,15 +76,11 @@ export class GameState {
 
 	// Derived values
 	readonly isGameActive = $derived(
-		this.#status === 'rolling' ||
-			this.#status === 'keeping' ||
-			this.#status === 'scoring',
+		this.#status === 'rolling' || this.#status === 'keeping' || this.#status === 'scoring',
 	);
 	readonly isGameOver = $derived(this.#status === 'completed');
 	readonly canRoll = $derived(
-		this.isGameActive &&
-			this.#rollNumber < MAX_ROLLS_PER_TURN &&
-			this.#phase !== 'scored',
+		this.isGameActive && this.#rollNumber < MAX_ROLLS_PER_TURN && this.#phase !== 'scored',
 	);
 	readonly canScore = $derived(
 		this.isGameActive && this.#rollNumber > 0 && this.#phase !== 'scored',
@@ -132,6 +131,30 @@ export class GameState {
 		return this.#gameCompletedAt;
 	}
 
+	get turnStartedAt(): number | null {
+		return this.#turnStartedAt;
+	}
+
+	get scoresLoading(): boolean {
+		return this.#scoresLoading;
+	}
+
+	get cachedScores(): Map<Category, number> {
+		return this.#cachedScores;
+	}
+
+	/**
+	 * Get the potential score for a category from cache or fallback
+	 */
+	getPotentialScore(category: Category): number {
+		// Use cached WASM score if available
+		if (this.#cachedScores.has(category)) {
+			return this.#cachedScores.get(category)!;
+		}
+		// Fallback to local calculation
+		return this.#getPotentialScoreFallback(category);
+	}
+
 	// ==========================================================================
 	// Game Flow Actions
 	// ==========================================================================
@@ -155,6 +178,8 @@ export class GameState {
 		this.#turnStartedAt = Date.now();
 		this.#currentAnalysis = null;
 		this.#lastDecision = null;
+		this.#cachedScores = new Map();
+		this.#scoresLoading = false;
 	}
 
 	roll(): DiceArray | null {
@@ -173,10 +198,71 @@ export class GameState {
 		this.#phase = 'deciding';
 		this.#status = 'keeping';
 
-		// Clear previous analysis
+		// Clear previous analysis and scores
 		this.#currentAnalysis = null;
+		this.#cachedScores = new Map();
+
+		// Trigger async score refresh
+		this.refreshScores();
 
 		return result;
+	}
+
+	/**
+	 * Refresh scores from WASM engine
+	 * Called automatically after each roll
+	 */
+	async refreshScores(): Promise<void> {
+		if (this.#rollNumber === 0) return;
+
+		this.#scoresLoading = true;
+		try {
+			const scores = await calculateScores(this.dice.values);
+			const newScores = new Map<Category, number>();
+			for (const result of scores) {
+				newScores.set(result.category, result.score);
+			}
+			this.#cachedScores = newScores;
+		} catch (err) {
+			console.warn('WASM scoring failed, using fallback:', err);
+			// Scores will use fallback calculation
+		} finally {
+			this.#scoresLoading = false;
+		}
+	}
+
+	/**
+	 * Refresh probability analysis from WASM engine
+	 */
+	async refreshAnalysis(): Promise<void> {
+		if (this.#rollNumber === 0) return;
+
+		try {
+			const probs = await calcProbs(this.dice.values, this.dice.kept, this.rollsRemaining);
+
+			// Filter to available categories only
+			const availableProbs = probs.filter((p) =>
+				this.scorecard.categoriesRemaining.includes(p.category),
+			);
+
+			// Find best among available
+			const best = availableProbs.reduce(
+				(best, c) => (c.expectedValue > best.expectedValue ? c : best),
+				availableProbs[0],
+			);
+
+			this.#currentAnalysis = {
+				categories: availableProbs.map((c) => ({
+					...c,
+					isOptimal: c.category === best?.category,
+				})),
+				bestCategory: best?.category ?? 'Chance',
+				bestEV: best?.expectedValue ?? 0,
+				rollsRemaining: this.rollsRemaining,
+			};
+		} catch (err) {
+			console.warn('WASM probability analysis failed:', err);
+		}
 	}
 
 	async rollAnimated(durationMs: number = 500): Promise<DiceArray | null> {
@@ -193,7 +279,13 @@ export class GameState {
 		this.#rollNumber++;
 		this.#phase = 'deciding';
 		this.#status = 'keeping';
+
+		// Clear previous analysis and scores
 		this.#currentAnalysis = null;
+		this.#cachedScores = new Map();
+
+		// Trigger async score refresh
+		this.refreshScores();
 
 		return result;
 	}
@@ -209,9 +301,8 @@ export class GameState {
 			return null;
 		}
 
-		// Get the score from WASM engine (will be wired in next step)
-		// For now, calculate potential score
-		const potentialScore = this.#getPotentialScore(category);
+		// Get score from WASM cache or fallback
+		const potentialScore = this.getPotentialScore(category);
 
 		// Calculate decision quality
 		const feedback = this.#evaluateDecision(category, potentialScore);
@@ -242,10 +333,7 @@ export class GameState {
 
 	getCategoryAnalysis(category: Category): CategoryProbability | null {
 		if (!this.#currentAnalysis) return null;
-		return (
-			this.#currentAnalysis.categories.find((c) => c.category === category) ??
-			null
-		);
+		return this.#currentAnalysis.categories.find((c) => c.category === category) ?? null;
 	}
 
 	// ==========================================================================
@@ -284,9 +372,9 @@ export class GameState {
 		this.#gameCompletedAt = Date.now();
 	}
 
-	#getPotentialScore(category: Category): number {
-		// This will be replaced with WASM scoring
-		// For now, use simple calculation
+	#getPotentialScoreFallback(category: Category): number {
+		// Fallback scoring when WASM is not available
+		// Used for initial render before WASM loads
 		const values = this.dice.values;
 		const counts = [0, 0, 0, 0, 0, 0];
 		for (const v of values) {
@@ -314,12 +402,9 @@ export class GameState {
 			case 'FullHouse':
 				return counts.includes(3) && counts.includes(2) ? 25 : 0;
 			case 'SmallStraight': {
-				const has1234 =
-					counts[0] >= 1 && counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1;
-				const has2345 =
-					counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1;
-				const has3456 =
-					counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1 && counts[5] >= 1;
+				const has1234 = counts[0] >= 1 && counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1;
+				const has2345 = counts[1] >= 1 && counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1;
+				const has3456 = counts[2] >= 1 && counts[3] >= 1 && counts[4] >= 1 && counts[5] >= 1;
 				return has1234 || has2345 || has3456 ? 30 : 0;
 			}
 			case 'LargeStraight': {
@@ -346,16 +431,13 @@ export class GameState {
 		}
 	}
 
-	#evaluateDecision(
-		chosenCategory: Category,
-		points: number,
-	): DecisionFeedback {
-		// Find optimal choice
+	#evaluateDecision(chosenCategory: Category, points: number): DecisionFeedback {
+		// Find optimal choice using cached WASM scores or fallback
 		let optimalCategory: Category = chosenCategory;
 		let optimalPoints = points;
 
 		for (const cat of this.scorecard.categoriesRemaining) {
-			const catPoints = this.#getPotentialScore(cat);
+			const catPoints = this.getPotentialScore(cat);
 			if (catPoints > optimalPoints) {
 				optimalPoints = catPoints;
 				optimalCategory = cat;
@@ -391,6 +473,8 @@ export class GameState {
 		this.#turnStartedAt = null;
 		this.#currentAnalysis = null;
 		this.#lastDecision = null;
+		this.#cachedScores = new Map();
+		this.#scoresLoading = false;
 	}
 }
 

@@ -39,9 +39,7 @@ export function createEmptyScorecard(): Scorecard {
 // Calculation Functions (Pure)
 // =============================================================================
 
-export function calculateUpperSubtotal(
-	scores: Record<Category, number | null>,
-): number {
+export function calculateUpperSubtotal(scores: Record<Category, number | null>): number {
 	return UPPER_CATEGORIES.reduce((sum, cat) => sum + (scores[cat] ?? 0), 0);
 }
 
@@ -49,9 +47,7 @@ export function calculateUpperBonus(upperSubtotal: number): number {
 	return upperSubtotal >= UPPER_BONUS_THRESHOLD ? UPPER_BONUS_VALUE : 0;
 }
 
-export function calculateLowerTotal(
-	scores: Record<Category, number | null>,
-): number {
+export function calculateLowerTotal(scores: Record<Category, number | null>): number {
 	const lowerCats: Category[] = [
 		'ThreeOfAKind',
 		'FourOfAKind',
@@ -64,9 +60,7 @@ export function calculateLowerTotal(
 	return lowerCats.reduce((sum, cat) => sum + (scores[cat] ?? 0), 0);
 }
 
-export function getCategoriesRemaining(
-	scores: Record<Category, number | null>,
-): Category[] {
+export function getCategoriesRemaining(scores: Record<Category, number | null>): Category[] {
 	return ALL_CATEGORIES.filter((cat) => scores[cat] === null);
 }
 
@@ -84,10 +78,7 @@ export function isCategoryAvailable(
 export class ScorecardState {
 	// Reactive state
 	#scores = $state<Record<Category, number | null>>(
-		Object.fromEntries(ALL_CATEGORIES.map((cat) => [cat, null])) as Record<
-			Category,
-			number | null
-		>,
+		Object.fromEntries(ALL_CATEGORIES.map((cat) => [cat, null])) as Record<Category, number | null>,
 	);
 
 	// Derived values (automatically recalculated)
@@ -106,10 +97,7 @@ export class ScorecardState {
 		target: UPPER_BONUS_THRESHOLD,
 		remaining: Math.max(0, UPPER_BONUS_THRESHOLD - this.upperSubtotal),
 		achieved: this.upperBonus > 0,
-		percentage: Math.min(
-			100,
-			(this.upperSubtotal / UPPER_BONUS_THRESHOLD) * 100,
-		),
+		percentage: Math.min(100, (this.upperSubtotal / UPPER_BONUS_THRESHOLD) * 100),
 	});
 
 	// Getters

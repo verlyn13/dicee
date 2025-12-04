@@ -3,28 +3,27 @@
  * Central export for types, stores, and engine
  */
 
-// Types
-export * from './types.js';
+// Engine
+export {
+	analyzePosition,
+	calculateProbabilities,
+	getScore,
+	initEngine,
+	isEngineReady,
+	type ProbabilityResult,
+	type ScoringResult,
+	scoreAllCategories,
+	scoreCategory,
+} from './engine.js';
 
 // Stores
 export {
-	game,
-	dice,
-	scorecard,
-	GameState,
 	DiceState,
+	dice,
+	GameState,
+	game,
 	ScorecardState,
+	scorecard,
 } from './stores/index.js';
-
-// Engine
-export {
-	initEngine,
-	isEngineReady,
-	scoreCategory,
-	scoreAllCategories,
-	getScore,
-	calculateProbabilities,
-	analyzePosition,
-	type ScoringResult,
-	type ProbabilityResult,
-} from './engine.js';
+// Types
+export * from './types.js';

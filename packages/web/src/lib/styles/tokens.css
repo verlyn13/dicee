@@ -57,8 +57,7 @@
 
 	/* Font Stacks */
 	--font-sans: "Inter Variable", "SF Pro", -apple-system, system-ui, sans-serif;
-	--font-mono: "JetBrains Mono", "IBM Plex Mono", "SF Mono", "Courier New",
-		monospace;
+	--font-mono: "JetBrains Mono", "IBM Plex Mono", "SF Mono", "Courier New", monospace;
 
 	/* Type Scale (Major Third: 1.250) */
 	--text-display: 3rem; /* 48px */

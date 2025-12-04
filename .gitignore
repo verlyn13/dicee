@@ -42,3 +42,16 @@ venv/
 
 # Rust
 Cargo.lock
+
+# Claude Code state (session-specific, not shared)
+.claude/state/
+
+# Biome docs (temporary)
+biome-config-docs-current.md
+
+# Playwright artifacts
+playwright-report/
+test-results/
+
+# Windsurf temp files
+temp-windsurf-config.md

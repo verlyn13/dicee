@@ -3,10 +3,10 @@
  * Tests toggle functionality, profile selector, and accessibility
  */
 
-import type { StatsProfile } from '$lib/types.js';
 import { fireEvent, render } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
+import type { StatsProfile } from '$lib/types.js';
 import StatsToggle from '../StatsToggle.svelte';
 
 // =============================================================================
@@ -90,9 +90,7 @@ describe('StatsToggle Component - Profile Selector', () => {
 			props: createProps({ enabled: false }),
 		});
 
-		expect(
-			container.querySelector('.profile-selector'),
-		).not.toBeInTheDocument();
+		expect(container.querySelector('.profile-selector')).not.toBeInTheDocument();
 	});
 
 	it('shows profile selector when enabled', () => {
@@ -116,9 +114,7 @@ describe('StatsToggle Component - Profile Selector', () => {
 			props: createProps({ enabled: true }),
 		});
 
-		expect(
-			container.querySelector('.profile-dropdown'),
-		).not.toBeInTheDocument();
+		expect(container.querySelector('.profile-dropdown')).not.toBeInTheDocument();
 	});
 
 	it('opens dropdown on profile button click', async () => {
@@ -141,9 +137,7 @@ describe('StatsToggle Component - Profile Selector', () => {
 		await fireEvent.click(profileButton);
 		await fireEvent.click(profileButton);
 
-		expect(
-			container.querySelector('.profile-dropdown'),
-		).not.toBeInTheDocument();
+		expect(container.querySelector('.profile-dropdown')).not.toBeInTheDocument();
 	});
 
 	it('shows all three profile options in dropdown', async () => {
@@ -181,9 +175,7 @@ describe('StatsToggle Component - Profile Selector', () => {
 		await fireEvent.click(profileButton);
 
 		const options = container.querySelectorAll('.profile-option');
-		const expertOption = Array.from(options).find((opt) =>
-			opt.textContent?.includes('Expert'),
-		);
+		const expertOption = Array.from(options).find((opt) => opt.textContent?.includes('Expert'));
 		expect(expertOption).toHaveClass('selected');
 	});
 });
@@ -213,9 +205,7 @@ describe('StatsToggle Component - Interactions', () => {
 
 		// Click expert option
 		const options = container.querySelectorAll('.profile-option');
-		const expertOption = Array.from(options).find((opt) =>
-			opt.textContent?.includes('Expert'),
-		)!;
+		const expertOption = Array.from(options).find((opt) => opt.textContent?.includes('Expert'))!;
 		await fireEvent.click(expertOption);
 
 		expect(props.onProfileChange).toHaveBeenCalledWith('expert');
@@ -234,9 +224,7 @@ describe('StatsToggle Component - Interactions', () => {
 		await fireEvent.click(options[0]);
 
 		// Dropdown should close
-		expect(
-			container.querySelector('.profile-dropdown'),
-		).not.toBeInTheDocument();
+		expect(container.querySelector('.profile-dropdown')).not.toBeInTheDocument();
 	});
 
 	it('calls onProfileChange with correct profile values', async () => {
@@ -251,10 +239,7 @@ describe('StatsToggle Component - Interactions', () => {
 
 			const options = container.querySelectorAll('.profile-option');
 			const targetOption = Array.from(options).find((opt) =>
-				opt
-					.querySelector('.option-label')
-					?.textContent?.toLowerCase()
-					.includes(profile),
+				opt.querySelector('.option-label')?.textContent?.toLowerCase().includes(profile),
 			)!;
 			await fireEvent.click(targetOption);
 
@@ -303,16 +288,10 @@ describe('StatsToggle Component - Accessibility', () => {
 			props: createProps({ enabled: false }),
 		});
 
-		expect(container.querySelector('.stats-toggle')).toHaveAttribute(
-			'aria-pressed',
-			'false',
-		);
+		expect(container.querySelector('.stats-toggle')).toHaveAttribute('aria-pressed', 'false');
 
 		rerender(createProps({ enabled: true }));
-		expect(container.querySelector('.stats-toggle')).toHaveAttribute(
-			'aria-pressed',
-			'true',
-		);
+		expect(container.querySelector('.stats-toggle')).toHaveAttribute('aria-pressed', 'true');
 	});
 
 	it('toggle has aria-label', () => {

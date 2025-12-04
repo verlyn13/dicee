@@ -1,0 +1,426 @@
+# Dicee Project: Environment & Secrets Strategy
+# Comprehensive architecture for agentic development
+# Last updated: 2024-12-02
+
+# =============================================================================
+# ENVIRONMENT TAXONOMY
+# =============================================================================
+
+environments:
+  dev:
+    slug: "dev"
+    description: "Local development and feature work"
+    infisical_env: "dev"
+    vercel_target: "development"
+    supabase_branch: null  # Uses local Supabase
+    partykit_preview: null  # Uses local PartyKit
+    purpose:
+      - Local development
+      - Feature branch testing
+      - Unit test execution
+      - Rapid iteration
+    data_policy: "Synthetic/seed data only"
+    access: "All developers"
+
+  staging:
+    slug: "staging"
+    description: "Pre-production testing and QA"
+    infisical_env: "staging"
+    vercel_target: "preview"
+    supabase_branch: "staging"
+    partykit_preview: "staging"
+    purpose:
+      - Integration testing
+      - QA verification
+      - Performance testing
+      - Demo environment
+    data_policy: "Anonymized production-like data"
+    access: "Team members"
+
+  prod:
+    slug: "prod"
+    description: "Production environment"
+    infisical_env: "prod"
+    vercel_target: "production"
+    supabase_branch: "main"
+    partykit_preview: null  # Main deployment
+    purpose:
+      - Live user traffic
+      - Production workloads
+    data_policy: "Real user data - handle with care"
+    access: "Restricted - deployment pipelines only"
+
+# =============================================================================
+# SECRET CATEGORIES & OWNERSHIP
+# =============================================================================
+
+secret_categories:
+  application_secrets:
+    description: "Secrets used by the application at runtime"
+    storage: "Infisical"
+    examples:
+      - API keys for third-party services
+      - Database connection strings
+      - JWT signing keys
+      - Encryption keys
+    injection_method: "infisical run or SDK"
+
+  infrastructure_credentials:
+    description: "Credentials for infrastructure services"
+    storage: "gopass (local) + CI secrets"
+    examples:
+      - Infisical machine identity credentials
+      - GitHub PAT
+      - Vercel tokens
+      - Supabase service keys
+    injection_method: "gopass retrieval or CI environment"
+
+  public_configuration:
+    description: "Non-sensitive configuration exposed to client"
+    storage: "Environment variables (PUBLIC_ prefix)"
+    examples:
+      - PUBLIC_SUPABASE_URL
+      - PUBLIC_SUPABASE_ANON_KEY
+      - PUBLIC_PARTYKIT_HOST
+    injection_method: "Build-time injection"
+
+# =============================================================================
+# SERVICE-TO-SECRET MAPPING
+# =============================================================================
+
+services:
+  infisical:
+    description: "Primary secret management"
+    instance: "https://infisical.jefahnierocks.com"
+    project_id: "b15c7b9c-4e1f-447a-a326-4c382b6db706"
+    project_slug: "dicee-dsmc"
+
+    auth_methods:
+      local_development:
+        method: "User login or machine identity"
+        command: "infisical login --domain=https://infisical.jefahnierocks.com"
+
+      ci_cd:
+        method: "Universal Auth (machine identity)"
+        credentials:
+          client_id: "gopass show -o dicee/infisical/$ENV/client-id"
+          client_secret: "gopass show -o dicee/infisical/$ENV/client-secret"
+
+      rust_sdk:
+        method: "Universal Auth"
+        env_vars:
+          - INFISICAL_CLIENT_ID
+          - INFISICAL_CLIENT_SECRET
+          - INFISICAL_API_URL
+
+    paths:
+      root: "/"
+      web: "/web"
+      engine: "/engine"
+      shared: "/shared"
+
+  supabase:
+    description: "Backend services (Auth, Database, Storage, Edge Functions)"
+
+    secrets_in_infisical:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+      - DATABASE_URL
+
+    local_development:
+      command: "supabase start"
+      dashboard: "http://localhost:54323"
+
+    edge_function_secrets:
+      management: "supabase secrets set"
+      sync_from_infisical: true
+
+  vercel:
+    description: "Frontend deployment platform"
+
+    secrets_in_infisical:
+      - VERCEL_TOKEN  # For CI deployments
+
+    env_var_sync:
+      method: "vercel env pull / push"
+      source: "Infisical export"
+
+    deployment_targets:
+      dev: "Preview (feature branches)"
+      staging: "Preview (staging branch)"
+      prod: "Production (main branch)"
+
+  partykit:
+    description: "Real-time multiplayer infrastructure"
+
+    secrets_in_infisical:
+      - PARTYKIT_TOKEN
+
+    local_development:
+      command: "partykit dev"
+      port: 1999
+
+    deployment:
+      command: "partykit deploy"
+      preview: "partykit deploy --preview $ENV"
+
+  cloudflare:
+    description: "Edge compute, storage, and CDN (Workers, Pages, D1, KV, R2)"
+
+    account_details:
+      account_id: "13eb584192d9cefb730fde0cfd271328"
+      zone_id: "8d5f44e67ab4b37e47b034ff48b03099"
+      domain: "jefahnierocks.com"
+      subdomain: "dicee.jefahnierocks.com"
+
+    credentials_in_gopass:
+      - dicee/cloudflare/api-token
+      - dicee/cloudflare/account-id
+      - dicee/cloudflare/zone-id
+
+    secrets_in_infisical:
+      - CLOUDFLARE_API_TOKEN  # For CI/CD pipelines
+      - CLOUDFLARE_ACCOUNT_ID
+
+    auth_methods:
+      local_development:
+        method: "OAuth via wrangler login or API token"
+        commands:
+          - "wrangler login                                    # OAuth flow"
+          - "export CLOUDFLARE_API_TOKEN=$(gopass show -o dicee/cloudflare/api-token)"
+      ci_cd:
+        method: "API token from Infisical"
+        env_var: "CLOUDFLARE_API_TOKEN"
+
+    services:
+      workers:
+        description: "Serverless functions at the edge"
+        local: "wrangler dev"
+        deploy: "wrangler deploy"
+
+      pages:
+        description: "Static site and JAMstack hosting"
+        deploy: "wrangler pages deploy ./dist"
+
+      d1:
+        description: "SQLite database at the edge"
+        local: "wrangler d1 execute --local"
+        migrate: "wrangler d1 execute --file schema.sql"
+
+      kv:
+        description: "Global key-value storage"
+        local: "Uses local persistence during wrangler dev"
+
+      r2:
+        description: "S3-compatible object storage"
+        usage: "Asset storage, file uploads"
+
+    deployment_targets:
+      dev: "Workers/Pages preview deployments"
+      staging: "wrangler deploy --env staging"
+      prod: "wrangler deploy (production)"
+
+  github:
+    description: "Source control and CI/CD"
+
+    credentials:
+      pat:
+        storage: "gopass dicee/github/pat"
+        usage: "gh cli, API access, CI workflows"
+
+    actions_secrets:
+      source: "Infisical or manual"
+      required:
+        - INFISICAL_CLIENT_ID
+        - INFISICAL_CLIENT_SECRET
+        - VERCEL_TOKEN
+        - CLOUDFLARE_API_TOKEN
+
+# =============================================================================
+# SECRET FLOW ARCHITECTURE
+# =============================================================================
+
+secret_flows:
+  local_development:
+    description: "Developer machine workflow"
+    steps:
+      1_load_credentials:
+        command: "dicee-env dev"
+        result: "INFISICAL_* env vars set from gopass"
+      2_fetch_secrets:
+        command: "infisical run --env=dev -- <command>"
+        alternative: "infisical export --env=dev -o .env.local"
+      3_start_services:
+        commands:
+          - "supabase start"
+          - "partykit dev"
+          - "wrangler dev                             # If using Workers"
+          - "pnpm dev"
+
+  ci_cd_pipeline:
+    description: "Automated deployment workflow"
+    steps:
+      1_authenticate:
+        method: "Universal Auth from GitHub secrets"
+        env_vars:
+          - INFISICAL_CLIENT_ID (from GitHub secrets)
+          - INFISICAL_CLIENT_SECRET (from GitHub secrets)
+      2_fetch_secrets:
+        command: "infisical export --env=$ENV --format=dotenv"
+      3_deploy:
+        commands:
+          - "vercel deploy --target=$VERCEL_TARGET"
+          - "supabase db push"
+          - "partykit deploy"
+          - "wrangler deploy --env=$ENV              # If using Workers"
+          - "wrangler pages deploy ./dist            # If using Pages"
+
+  secret_rotation:
+    description: "When secrets need to be rotated"
+    steps:
+      1_update_infisical:
+        command: "infisical secrets set NEW_SECRET=value --env=$ENV"
+      2_redeploy:
+        trigger: "Automatic via webhook or manual redeploy"
+      3_verify:
+        command: "infisical secrets get NEW_SECRET --env=$ENV"
+
+# =============================================================================
+# AGENT INSTRUCTIONS & GUARDRAILS
+# =============================================================================
+
+agent_guidelines:
+  secret_handling:
+    rules:
+      - "NEVER hardcode secrets in source code"
+      - "NEVER log or print secret values"
+      - "NEVER commit .env files with real secrets"
+      - "ALWAYS use Infisical for application secrets"
+      - "ALWAYS use gopass for infrastructure credentials"
+      - "ALWAYS use --domain flag for self-hosted Infisical"
+
+    retrieval_patterns:
+      infisical_cli:
+        safe: "infisical secrets get SECRET_NAME --env=dev --plain"
+        unsafe: "echo $SECRET_VALUE  # Never print secrets"
+
+      gopass:
+        safe: "gopass show -o dicee/infisical/dev/client-id"
+        unsafe: "gopass show -c  # Avoid clipboard in logs"
+
+      environment:
+        safe: "Use $ENV_VAR in commands"
+        unsafe: "Interpolating secrets into strings that get logged"
+
+  environment_selection:
+    rules:
+      - "Default to 'dev' environment for local work"
+      - "Use 'staging' for integration testing"
+      - "NEVER use 'prod' unless explicitly deploying"
+      - "Always confirm environment before destructive operations"
+
+    verification:
+      before_secret_operations: |
+        # Always verify current environment
+        echo "Current env: $DICEE_ENV"
+        # Or check Infisical config
+        cat .infisical.json | jq '.defaultEnvironment'
+
+  path_conventions:
+    infisical_paths:
+      root: "/ - Shared secrets across all services"
+      web: "/web - Frontend-specific secrets"
+      engine: "/engine - Rust engine secrets"
+
+    gopass_paths:
+      pattern: "dicee/{service}/{environment}/{key}"
+      examples:
+        - "dicee/infisical/dev/client-id"
+        - "dicee/github/pat"
+
+  mcp_integration:
+    description: "Model Context Protocol tool usage"
+
+    available_tools:
+      infisical_mcp:
+        description: "If Infisical MCP server is configured"
+        safe_operations:
+          - "List secrets (names only)"
+          - "Get secret metadata"
+          - "Check secret existence"
+        restricted_operations:
+          - "Get secret values (require explicit confirmation)"
+          - "Set/update secrets (require explicit confirmation)"
+          - "Delete secrets (require explicit confirmation)"
+
+    guardrails:
+      - "MCP tools should not expose secret values in responses"
+      - "Log MCP tool calls but not secret payloads"
+      - "Require human confirmation for write operations"
+
+# =============================================================================
+# COMMAND QUICK REFERENCE
+# =============================================================================
+
+commands:
+  setup:
+    initial:
+      - "infisical login --domain=https://infisical.jefahnierocks.com"
+      - "infisical init  # Select dicee project"
+      - "./scripts/setup-gopass-credentials.sh"
+      - "cp scripts/dicee-env.fish ~/.config/fish/functions/"
+
+  daily_development:
+    start_session:
+      - "dicee-env dev  # Load credentials"
+      - "supabase start"
+      - "infisical run --env=dev -- pnpm dev"
+
+    end_session:
+      - "supabase stop"
+      - "dicee-env --clear"
+
+  secret_management:
+    list:
+      - "infisical secrets --env=dev"
+      - "infisical secrets --env=dev --path=/web"
+    get:
+      - "infisical secrets get API_KEY --env=dev"
+      - "infisical secrets get API_KEY --env=dev --plain"
+    set:
+      - "infisical secrets set API_KEY=value --env=dev"
+      - "infisical secrets set --file=.env.example --env=dev"
+    export:
+      - "infisical export --env=dev -o .env.local"
+      - "infisical export --env=dev --format=json"
+
+  deployment:
+    preview:
+      - "vercel  # Auto-deploys to preview"
+    staging:
+      - "infisical run --env=staging -- vercel --target=preview"
+    production:
+      - "infisical run --env=prod -- vercel --prod"
+
+# =============================================================================
+# VALIDATION CHECKLIST
+# =============================================================================
+
+validation:
+  before_commit:
+    - "Run: infisical scan"
+    - "Check: No .env files with real values"
+    - "Check: No hardcoded secrets in code"
+    - "Check: .gitignore includes sensitive files"
+
+  before_deployment:
+    - "Verify: Correct environment selected"
+    - "Verify: All required secrets exist in target env"
+    - "Verify: Database migrations applied"
+    - "Test: Staging deployment successful"
+
+  secret_hygiene:
+    - "Review: Secret access logs in Infisical"
+    - "Audit: Machine identity usage"
+    - "Rotate: Secrets on schedule or after team changes"

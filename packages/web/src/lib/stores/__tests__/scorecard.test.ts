@@ -5,11 +5,7 @@
 
 import { describe, expect, it } from 'vitest';
 import type { Category } from '../../types.js';
-import {
-	ALL_CATEGORIES,
-	LOWER_CATEGORIES,
-	UPPER_CATEGORIES,
-} from '../../types.js';
+import { ALL_CATEGORIES, LOWER_CATEGORIES, UPPER_CATEGORIES } from '../../types.js';
 import {
 	calculateLowerTotal,
 	calculateUpperBonus,

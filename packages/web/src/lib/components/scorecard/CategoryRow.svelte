@@ -42,8 +42,7 @@ const heatIntensity = $derived.by(() => {
 // Stats visibility based on profile
 const showProbability = $derived(statsEnabled && statsProfile !== 'beginner');
 const showEV = $derived(
-	statsEnabled &&
-		(statsProfile === 'intermediate' || statsProfile === 'expert'),
+	statsEnabled && (statsProfile === 'intermediate' || statsProfile === 'expert'),
 );
 const showSimplified = $derived(statsEnabled && statsProfile === 'beginner');
 

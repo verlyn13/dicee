@@ -9,13 +9,7 @@ interface Props {
 	onclick?: () => void;
 }
 
-let {
-	value,
-	kept = false,
-	disabled = false,
-	rolling = false,
-	onclick,
-}: Props = $props();
+let { value, kept = false, disabled = false, rolling = false, onclick }: Props = $props();
 </script>
 
 <button

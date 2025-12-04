@@ -107,9 +107,7 @@ describe('GameStatus Component - Active Game', () => {
 			props: createProps({ isGameOver: false }),
 		});
 
-		expect(container.querySelector('.game-status')).not.toHaveClass(
-			'game-over',
-		);
+		expect(container.querySelector('.game-status')).not.toHaveClass('game-over');
 	});
 
 	it('hides final score display during active game', () => {
@@ -117,9 +115,7 @@ describe('GameStatus Component - Active Game', () => {
 			props: createProps({ isGameOver: false }),
 		});
 
-		expect(
-			container.querySelector('.final-score-display'),
-		).not.toBeInTheDocument();
+		expect(container.querySelector('.final-score-display')).not.toBeInTheDocument();
 	});
 
 	it('hides new game button during active game', () => {

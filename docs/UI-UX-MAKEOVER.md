@@ -1,0 +1,1565 @@
+# Dicee UI/UX Makeover Guide
+## "Action Math" — Where Statistics Feel Like Superpowers
+
+**Version**: 2.0  
+**Date**: December 2, 2025  
+**Status**: Design Specification for Implementation
+
+---
+
+## Table of Contents
+
+1. [Design Evolution](#design-evolution)
+2. [The Three Pillars of Juice](#the-three-pillars-of-juice)
+3. [Profile Page Design](#profile-page-design)
+4. [Settings & Customization](#settings--customization)
+5. [Spectator Mode](#spectator-mode)
+6. [Component Specifications](#component-specifications)
+7. [Implementation Roadmap](#implementation-roadmap)
+
+---
+
+## Design Evolution
+
+### From Static to Living
+
+Your Neo-Brutalist foundation is **correct**. Hard edges, honest typography, black borders—this communicates "tool for learning" without apology. 
+
+The evolution isn't about changing the aesthetic. It's about making it **breathe**.
+
+```
+BEFORE: A well-designed calculator
+AFTER:  A mathematical instrument that responds to your decisions
+```
+
+### The Unforgettable Element
+
+Every great interface has one thing people remember. For Dicee, it's this:
+
+> **"The numbers are alive. They know what you should do."**
+
+Probability numbers don't just display—they pulse with confidence, twitch with uncertainty, and celebrate when you listen to them.
+
+---
+
+## The Three Pillars of Juice
+
+### Pillar 1: Probability Pulse + Ink Weight
+
+**Concept**: Numbers communicate their confidence through visual behavior, not just value.
+
+#### Typography Animation System
+
+```css
+/* === PROBABILITY PULSE SYSTEM === */
+
+/* Base probability number styling */
+.prob-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  transition: font-weight 400ms ease, 
+              letter-spacing 400ms ease,
+              opacity 400ms ease;
+}
+
+/* === CONFIDENCE TIERS === */
+
+/* TIER 1: Certain (90-100%) — Slow, confident pulse */
+.prob-certain {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  animation: pulse-certain 3s ease-in-out infinite;
+}
+
+@keyframes pulse-certain {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.02); 
+    opacity: 0.95;
+  }
+}
+
+/* TIER 2: Likely (60-89%) — Moderate breathing */
+.prob-likely {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  animation: pulse-likely 2s ease-in-out infinite;
+}
+
+@keyframes pulse-likely {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+}
+
+/* TIER 3: Uncertain (30-59%) — Subtle unease */
+.prob-uncertain {
+  font-weight: 500;
+  letter-spacing: 0;
+  animation: pulse-uncertain 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-uncertain {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+/* TIER 4: Unlikely (10-29%) — Nervous twitch */
+.prob-unlikely {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  animation: twitch 0.3s ease infinite;
+}
+
+@keyframes twitch {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-0.5px); }
+  75% { transform: translateX(0.5px); }
+}
+
+/* TIER 5: Improbable (0-9%) — Frantic jitter */
+.prob-improbable {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  opacity: 0.7;
+  animation: jitter 0.15s ease infinite;
+}
+
+@keyframes jitter {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-1px, 0.5px); }
+  50% { transform: translate(0.5px, -0.5px); }
+  75% { transform: translate(-0.5px, -1px); }
+}
+
+/* === INK WEIGHT: Category Row Confidence === */
+
+.category-row {
+  transition: border-left-width 300ms ease,
+              background-color 300ms ease;
+}
+
+/* Optimal choice gets heavier "ink" */
+.category-row.optimal {
+  border-left: 4px solid var(--color-accent);
+  font-weight: 600;
+}
+
+/* Near-optimal gets medium weight */
+.category-row.good {
+  border-left: 3px solid var(--color-success);
+  font-weight: 500;
+}
+
+/* Suboptimal fades back */
+.category-row.suboptimal {
+  border-left: 2px solid transparent;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* Trap (scoring 0) gets warning */
+.category-row.trap {
+  border-left: 2px solid var(--color-danger);
+  opacity: 0.6;
+}
+```
+
+#### Svelte Component Logic
+
+```svelte
+<!-- ProbabilityValue.svelte -->
+<script lang="ts">
+  export let probability: number; // 0-100
+  export let isOptimal: boolean = false;
+  
+  $: tier = getTier(probability);
+  $: tierClass = `prob-${tier}`;
+  
+  function getTier(p: number): string {
+    if (p >= 90) return 'certain';
+    if (p >= 60) return 'likely';
+    if (p >= 30) return 'uncertain';
+    if (p >= 10) return 'unlikely';
+    return 'improbable';
+  }
+</script>
+
+<span 
+  class="prob-value {tierClass}"
+  class:optimal={isOptimal}
+  aria-label="{probability}% probability"
+>
+  {probability.toFixed(1)}%
+</span>
+
+<style>
+  .optimal {
+    color: var(--color-accent-dark);
+    text-shadow: 0 0 8px var(--color-accent-light);
+  }
+</style>
+```
+
+---
+
+### Pillar 2: Procedural Audio System
+
+**Concept**: Sound generated by code, not files. Crunchy, mechanical, honest.
+
+#### Audio Engine Architecture
+
+```typescript
+// audio/DiceeAudioEngine.ts
+
+export class DiceeAudioEngine {
+  private ctx: AudioContext | null = null;
+  private masterGain: GainNode | null = null;
+  private enabled: boolean = true;
+  
+  constructor() {
+    // Lazy initialization on first user interaction
+  }
+  
+  private init(): void {
+    if (this.ctx) return;
+    
+    this.ctx = new AudioContext();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.value = 0.3; // Conservative default
+    this.masterGain.connect(this.ctx.destination);
+  }
+  
+  setVolume(level: number): void {
+    if (this.masterGain) {
+      this.masterGain.gain.value = Math.max(0, Math.min(1, level));
+    }
+  }
+  
+  setEnabled(enabled: boolean): void {
+    this.enabled = enabled;
+  }
+
+  // === SOUND EFFECTS ===
+  
+  /**
+   * Sharp mechanical tick - selecting/deselecting a die
+   * Like a typewriter key or mechanical switch
+   */
+  tick(): void {
+    if (!this.enabled) return;
+    this.init();
+    
+    const osc = this.ctx!.createOscillator();
+    const gain = this.ctx!.createGain();
+    
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(1200, this.ctx!.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(600, this.ctx!.currentTime + 0.03);
+    
+    gain.gain.setValueAtTime(0.15, this.ctx!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.03);
+    
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    
+    osc.start();
+    osc.stop(this.ctx!.currentTime + 0.03);
+  }
+  
+  /**
+   * Heavy thud - dice settling after roll
+   * Low frequency impact with quick decay
+   */
+  thud(): void {
+    if (!this.enabled) return;
+    this.init();
+    
+    const osc = this.ctx!.createOscillator();
+    const gain = this.ctx!.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(80, this.ctx!.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, this.ctx!.currentTime + 0.15);
+    
+    gain.gain.setValueAtTime(0.4, this.ctx!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.15);
+    
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    
+    osc.start();
+    osc.stop(this.ctx!.currentTime + 0.15);
+  }
+  
+  /**
+   * Score confirmation - typewriter strike + zing
+   */
+  score(): void {
+    if (!this.enabled) return;
+    this.init();
+    
+    // Typewriter strike
+    const strike = this.ctx!.createOscillator();
+    const strikeGain = this.ctx!.createGain();
+    
+    strike.type = 'sawtooth';
+    strike.frequency.setValueAtTime(2000, this.ctx!.currentTime);
+    strike.frequency.exponentialRampToValueAtTime(400, this.ctx!.currentTime + 0.05);
+    
+    strikeGain.gain.setValueAtTime(0.1, this.ctx!.currentTime);
+    strikeGain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.05);
+    
+    strike.connect(strikeGain);
+    strikeGain.connect(this.masterGain!);
+    
+    strike.start();
+    strike.stop(this.ctx!.currentTime + 0.05);
+    
+    // Confirmation zing (delayed)
+    setTimeout(() => {
+      const zing = this.ctx!.createOscillator();
+      const zingGain = this.ctx!.createGain();
+      
+      zing.type = 'sine';
+      zing.frequency.setValueAtTime(880, this.ctx!.currentTime);
+      zing.frequency.exponentialRampToValueAtTime(1320, this.ctx!.currentTime + 0.1);
+      
+      zingGain.gain.setValueAtTime(0.08, this.ctx!.currentTime);
+      zingGain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.15);
+      
+      zing.connect(zingGain);
+      zingGain.connect(this.masterGain!);
+      
+      zing.start();
+      zing.stop(this.ctx!.currentTime + 0.15);
+    }, 30);
+  }
+  
+  /**
+   * Shake buildup - tension before roll
+   * Escalating static/rumble
+   */
+  shakeStart(): OscillatorNode | null {
+    if (!this.enabled) return null;
+    this.init();
+    
+    const noise = this.ctx!.createOscillator();
+    const gain = this.ctx!.createGain();
+    const filter = this.ctx!.createBiquadFilter();
+    
+    noise.type = 'sawtooth';
+    noise.frequency.value = 60;
+    
+    filter.type = 'lowpass';
+    filter.frequency.value = 200;
+    
+    gain.gain.setValueAtTime(0.05, this.ctx!.currentTime);
+    // Ramp up over 2 seconds
+    gain.gain.linearRampToValueAtTime(0.2, this.ctx!.currentTime + 2);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain!);
+    
+    noise.start();
+    
+    return noise; // Return so caller can stop it
+  }
+  
+  /**
+   * The Quickening - probability aligned perfectly
+   * Electric zap + harmonic resolution
+   */
+  quickening(): void {
+    if (!this.enabled) return;
+    this.init();
+    
+    // Electric zap
+    const zap = this.ctx!.createOscillator();
+    const zapGain = this.ctx!.createGain();
+    
+    zap.type = 'square';
+    zap.frequency.setValueAtTime(2400, this.ctx!.currentTime);
+    zap.frequency.exponentialRampToValueAtTime(100, this.ctx!.currentTime + 0.08);
+    
+    zapGain.gain.setValueAtTime(0.15, this.ctx!.currentTime);
+    zapGain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.08);
+    
+    zap.connect(zapGain);
+    zapGain.connect(this.masterGain!);
+    
+    zap.start();
+    zap.stop(this.ctx!.currentTime + 0.08);
+    
+    // Harmonic resolution chord (slightly delayed)
+    setTimeout(() => {
+      [440, 554, 659].forEach((freq, i) => {
+        const osc = this.ctx!.createOscillator();
+        const gain = this.ctx!.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        
+        gain.gain.setValueAtTime(0.06, this.ctx!.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.4);
+        
+        osc.connect(gain);
+        gain.connect(this.masterGain!);
+        
+        osc.start(this.ctx!.currentTime + i * 0.02);
+        osc.stop(this.ctx!.currentTime + 0.4);
+      });
+    }, 50);
+  }
+  
+  /**
+   * Yahtzee! - Full celebration
+   * Impact + ascending arpeggio + shimmer
+   */
+  yahtzee(): void {
+    if (!this.enabled) return;
+    this.init();
+    
+    // Big impact
+    const impact = this.ctx!.createOscillator();
+    const impactGain = this.ctx!.createGain();
+    
+    impact.type = 'sawtooth';
+    impact.frequency.setValueAtTime(100, this.ctx!.currentTime);
+    impact.frequency.exponentialRampToValueAtTime(30, this.ctx!.currentTime + 0.2);
+    
+    impactGain.gain.setValueAtTime(0.3, this.ctx!.currentTime);
+    impactGain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.2);
+    
+    impact.connect(impactGain);
+    impactGain.connect(this.masterGain!);
+    
+    impact.start();
+    impact.stop(this.ctx!.currentTime + 0.2);
+    
+    // Ascending arpeggio
+    const notes = [523, 659, 784, 1047, 1319]; // C5 major arpeggio
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = this.ctx!.createOscillator();
+        const gain = this.ctx!.createGain();
+        
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        
+        gain.gain.setValueAtTime(0.1, this.ctx!.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.3);
+        
+        osc.connect(gain);
+        gain.connect(this.masterGain!);
+        
+        osc.start();
+        osc.stop(this.ctx!.currentTime + 0.3);
+      }, 100 + i * 80);
+    });
+  }
+  
+  /**
+   * Ambient probability tone (optional, for advanced users)
+   * Subtle chord representing current game state EV
+   */
+  ambientChord(evNormalized: number): void {
+    if (!this.enabled) return;
+    this.init();
+    
+    // Map EV (0-1) to pitch (220-880 Hz)
+    const baseFreq = 220 + (evNormalized * 660);
+    
+    const osc = this.ctx!.createOscillator();
+    const gain = this.ctx!.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.value = baseFreq;
+    
+    gain.gain.setValueAtTime(0.02, this.ctx!.currentTime); // Very quiet
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 1);
+    
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    
+    osc.start();
+    osc.stop(this.ctx!.currentTime + 1);
+  }
+}
+
+// Singleton instance
+export const audio = new DiceeAudioEngine();
+```
+
+---
+
+### Pillar 3: The Quickening
+
+**Concept**: Visual celebration when probability and outcome align.
+
+#### Core Visual Effects
+
+```css
+/* === THE QUICKENING: When Math Aligns === */
+
+/* Chromatic aberration split */
+@keyframes chromatic-split {
+  0% {
+    text-shadow: 
+      -2px 0 var(--color-danger),
+      2px 0 var(--color-success);
+    filter: none;
+  }
+  50% {
+    text-shadow: 
+      -3px 0 var(--color-danger),
+      3px 0 var(--color-success);
+    filter: brightness(1.2);
+  }
+  100% {
+    text-shadow: none;
+    filter: none;
+  }
+}
+
+.quickening-text {
+  animation: chromatic-split 200ms ease-out;
+}
+
+/* Border inversion flash */
+@keyframes border-invert {
+  0%, 100% {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+  50% {
+    background: var(--color-border);
+    border-color: var(--color-surface);
+    color: var(--color-surface);
+  }
+}
+
+.quickening-row {
+  animation: border-invert 150ms ease-out;
+}
+
+/* Score punch (spring) */
+@keyframes score-punch {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.15); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.quickening-score {
+  animation: score-punch 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* === YAHTZEE SPECIAL === */
+
+/* Full screen flash overlay */
+.yahtzee-flash {
+  position: fixed;
+  inset: 0;
+  background: white;
+  pointer-events: none;
+  z-index: 9999;
+  animation: flash-out 300ms ease-out forwards;
+}
+
+@keyframes flash-out {
+  0% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/* All borders invert */
+@keyframes yahtzee-invert {
+  0%, 100% {
+    filter: none;
+  }
+  20%, 80% {
+    filter: invert(1);
+  }
+}
+
+.yahtzee-celebration {
+  animation: yahtzee-invert 400ms ease-out;
+}
+
+/* Gold text on black background */
+.yahtzee-highlight {
+  background: var(--color-border) !important;
+  color: var(--color-accent) !important;
+  transition: all 300ms ease;
+}
+```
+
+#### Svelte Integration
+
+```svelte
+<!-- QuickeningOverlay.svelte -->
+<script lang="ts">
+  import { audio } from '$lib/audio/DiceeAudioEngine';
+  import { fade } from 'svelte/transition';
+  
+  export let trigger: 'none' | 'optimal' | 'yahtzee' = 'none';
+  
+  let showFlash = false;
+  
+  $: if (trigger === 'yahtzee') {
+    showFlash = true;
+    audio.yahtzee();
+    setTimeout(() => showFlash = false, 300);
+  } else if (trigger === 'optimal') {
+    audio.quickening();
+  }
+</script>
+
+{#if showFlash}
+  <div class="yahtzee-flash" transition:fade={{ duration: 300 }}></div>
+{/if}
+```
+
+---
+
+## Profile Page Design
+
+### Design Philosophy
+
+The profile page is your **statistical identity**—a visual representation of how you think probabilistically. It should feel like a **fighter pilot's career dossier**: cold, factual, impressive.
+
+### Layout Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  PROFILE HEADER                                      │   │
+│  │  ┌──────────┐                                       │   │
+│  │  │          │   PLAYER_NAME                         │   │
+│  │  │  AVATAR  │   ══════════════                      │   │
+│  │  │          │   Joined: Dec 2024  •  Games: 847     │   │
+│  │  └──────────┘   Optimal Rate: 73.2%                 │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌─────────────────────┐  ┌─────────────────────────────┐  │
+│  │  CAREER STATS       │  │  SIGNATURE MOVES            │  │
+│  │  ═══════════════    │  │  ════════════════           │  │
+│  │                     │  │                             │  │
+│  │  Total Score        │  │  "The Calculator"           │  │
+│  │  ▓▓▓▓▓▓▓▓▓▓ 247,832 │  │  Scored 50+ Full Houses    │  │
+│  │                     │  │                             │  │
+│  │  High Score         │  │  "Against All Odds"         │  │
+│  │  ▓▓▓▓▓▓▓▓░░ 312     │  │  Hit 5% probability 10x    │  │
+│  │                     │  │                             │  │
+│  │  Yahtzees           │  │  "The Streak"               │  │
+│  │  ▓▓▓▓░░░░░░ 23      │  │  12 optimal moves in a row │  │
+│  │                     │  │                             │  │
+│  └─────────────────────┘  └─────────────────────────────┘  │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  PROBABILITY MASTERY                                 │   │
+│  │  ═══════════════════                                 │   │
+│  │                                                      │   │
+│  │  Your Decisions vs Optimal                           │   │
+│  │  ┌─────────────────────────────────────────────┐    │   │
+│  │  │  ████████████████████░░░░░░░░               │    │   │
+│  │  │  73.2% optimal                              │    │   │
+│  │  └─────────────────────────────────────────────┘    │   │
+│  │                                                      │   │
+│  │  Category Breakdown                                  │   │
+│  │  ┌────────────────────────────────────────────┐     │   │
+│  │  │ ONES        ████████░░ 82%                 │     │   │
+│  │  │ TWOS        ███████░░░ 71%                 │     │   │
+│  │  │ THREES      █████████░ 89%                 │     │   │
+│  │  │ ...                                        │     │   │
+│  │  │ YAHTZEE     ██████████ 94%                 │     │   │
+│  │  └────────────────────────────────────────────┘     │   │
+│  │                                                      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  RECENT GAMES                                        │   │
+│  │  ════════════                                        │   │
+│  │                                                      │   │
+│  │  ┌────────────────────────────────────────────┐     │   │
+│  │  │ Dec 2  •  Score: 287  •  Optimal: 11/13    │     │   │
+│  │  │ ▓▓▓▓▓▓▓▓▓▓▓░░ 85%                 [REPLAY] │     │   │
+│  │  └────────────────────────────────────────────┘     │   │
+│  │  ┌────────────────────────────────────────────┐     │   │
+│  │  │ Dec 1  •  Score: 243  •  Optimal: 9/13     │     │   │
+│  │  │ ▓▓▓▓▓▓▓▓▓░░░░ 69%                 [REPLAY] │     │   │
+│  │  └────────────────────────────────────────────┘     │   │
+│  │                                                      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Visual Specifications
+
+#### Avatar System
+
+**Generation**: Use DiceBear with a custom "dice" seed based on user ID.
+
+```typescript
+// Generate deterministic avatar from user ID
+function getAvatarUrl(userId: string): string {
+  // Use bottts style for robotic/mathematical feel
+  return `https://api.dicebear.com/7.x/bottts/svg?seed=${userId}&backgroundColor=ffd700&backgroundType=solid`;
+}
+```
+
+**Display**:
+- Size: 80px × 80px (mobile), 120px × 120px (desktop)
+- Border: 3px solid black
+- No border-radius (stays brutalist)
+
+#### Stats Bars
+
+**Visual Language**: Horizontal bars with segmented fills.
+
+```css
+.stat-bar {
+  height: 24px;
+  background: var(--color-background);
+  border: 2px solid var(--color-border);
+  position: relative;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 500ms ease-out;
+}
+
+/* Segmented style (every 10%) */
+.stat-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 10%,
+    var(--color-border) 10%,
+    var(--color-border) calc(10% + 1px)
+  );
+  pointer-events: none;
+}
+```
+
+#### Signature Moves (Achievements)
+
+**Design**: Monochromatic badges with brutalist typography.
+
+```css
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.badge-earned {
+  background: var(--color-accent);
+}
+
+.badge-locked {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+```
+
+**Achievement Examples**:
+
+| Badge | Name | Requirement |
+|-------|------|-------------|
+| 🎯 | "The Calculator" | 50 Full Houses scored |
+| 🎲 | "Yahtzee Master" | 10 Yahtzees |
+| 📊 | "Statistician" | 80%+ optimal rate over 50 games |
+| 🔥 | "Hot Streak" | 10+ optimal moves in a row |
+| 🎰 | "Against All Odds" | Hit <10% probability 10 times |
+| 🧠 | "Perfect Game" | 13/13 optimal decisions |
+| ⚡ | "Speed Demon" | Complete game in under 3 minutes |
+
+#### Recent Games List
+
+**Design**: Compact cards with replay capability.
+
+```svelte
+<!-- GameHistoryCard.svelte -->
+<script lang="ts">
+  export let game: {
+    date: Date;
+    score: number;
+    optimalCount: number;
+    totalTurns: number;
+  };
+  
+  $: optimalPercent = (game.optimalCount / game.totalTurns) * 100;
+  $: dateStr = game.date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric' 
+  });
+</script>
+
+<article class="game-card">
+  <div class="game-meta">
+    <time>{dateStr}</time>
+    <span class="divider">•</span>
+    <span class="score">Score: {game.score}</span>
+    <span class="divider">•</span>
+    <span class="optimal">Optimal: {game.optimalCount}/{game.totalTurns}</span>
+  </div>
+  
+  <div class="game-bar">
+    <div 
+      class="game-bar-fill" 
+      style="width: {optimalPercent}%"
+    ></div>
+    <span class="game-bar-label">{optimalPercent.toFixed(0)}%</span>
+  </div>
+  
+  <button class="replay-btn">REPLAY</button>
+</article>
+
+<style>
+  .game-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+  }
+  
+  .game-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  
+  .game-bar {
+    grid-column: 1 / -1;
+    height: 20px;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    position: relative;
+  }
+  
+  .game-bar-fill {
+    height: 100%;
+    background: var(--color-accent);
+  }
+  
+  .game-bar-label {
+    position: absolute;
+    right: var(--space-1);
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+  }
+  
+  .replay-btn {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    padding: var(--space-1);
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  
+  .replay-btn:hover {
+    background: var(--color-accent);
+  }
+</style>
+```
+
+---
+
+## Settings & Customization
+
+### Settings Panel Design
+
+**Location**: Slide-out panel from right edge (mobile) or modal (desktop).
+
+```
+┌─────────────────────────────────────────┐
+│  SETTINGS                         [✕]   │
+│  ════════                               │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  AUDIO                          │   │
+│  │  ─────                          │   │
+│  │                                 │   │
+│  │  Sound Effects    [■■■■■░░░░░]  │   │
+│  │                                 │   │
+│  │  [✓] Dice sounds               │   │
+│  │  [✓] Score confirmations       │   │
+│  │  [ ] Ambient probability tones │   │
+│  │                                 │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  HAPTICS                        │   │
+│  │  ───────                        │   │
+│  │                                 │   │
+│  │  Vibration        [■■■■■■░░░░]  │   │
+│  │                                 │   │
+│  │  [✓] Die selection             │   │
+│  │  [✓] Roll feedback             │   │
+│  │  [✓] Score confirmation        │   │
+│  │                                 │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  STATISTICS DISPLAY             │   │
+│  │  ──────────────────             │   │
+│  │                                 │   │
+│  │  Default Mode:                  │   │
+│  │  ┌───────────────────────────┐  │   │
+│  │  │ ( ) Always Off            │  │   │
+│  │  │ (•) On After First Roll   │  │   │
+│  │  │ ( ) Always On             │  │   │
+│  │  └───────────────────────────┘  │   │
+│  │                                 │   │
+│  │  Probability Format:            │   │
+│  │  ┌───────────────────────────┐  │   │
+│  │  │ (•) Percentage (73.2%)    │  │   │
+│  │  │ ( ) Fraction (3/4)        │  │   │
+│  │  │ ( ) Odds (3:1)            │  │   │
+│  │  └───────────────────────────┘  │   │
+│  │                                 │   │
+│  │  [✓] Show optimal indicator    │   │
+│  │  [✓] Show heat map             │   │
+│  │  [ ] Animate probability       │   │
+│  │      (Pulse/twitch effects)    │   │
+│  │                                 │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  VISUAL                         │   │
+│  │  ──────                         │   │
+│  │                                 │   │
+│  │  Theme:                         │   │
+│  │  ┌──────┐ ┌──────┐ ┌──────┐    │   │
+│  │  │ LITE │ │ DARK │ │ AUTO │    │   │
+│  │  │  ◉   │ │  ○   │ │  ○   │    │   │
+│  │  └──────┘ └──────┘ └──────┘    │   │
+│  │                                 │   │
+│  │  [✓] Reduce motion             │   │
+│  │  [✓] High contrast mode        │   │
+│  │                                 │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  ACCOUNT                        │   │
+│  │  ───────                        │   │
+│  │                                 │   │
+│  │  [Export My Data]              │   │
+│  │                                 │   │
+│  │  [Delete Account]              │   │
+│  │                                 │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+### Settings Component Specifications
+
+#### Slider Control
+
+```css
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 24px;
+  background: var(--color-background);
+  border: 2px solid var(--color-border);
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 28px;
+  background: var(--color-accent);
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+}
+
+/* Filled portion */
+.slider-container {
+  position: relative;
+}
+
+.slider-fill {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  height: calc(100% - 4px);
+  background: var(--color-accent);
+  pointer-events: none;
+}
+```
+
+#### Checkbox Control
+
+```css
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+
+.checkbox-box {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox-box.checked {
+  background: var(--color-accent);
+}
+
+.checkbox-box.checked::after {
+  content: '✓';
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.checkbox-label {
+  font-size: 14px;
+}
+```
+
+#### Radio Group
+
+```css
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--color-border);
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.radio-option:last-child {
+  border-bottom: none;
+}
+
+.radio-option:hover {
+  background: var(--color-accent-light);
+}
+
+.radio-option.selected {
+  background: var(--color-accent);
+}
+
+.radio-dot {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.radio-option.selected .radio-dot {
+  background: var(--color-border);
+}
+```
+
+#### Theme Selector
+
+```css
+.theme-selector {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.theme-option {
+  flex: 1;
+  padding: var(--space-2);
+  text-align: center;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.theme-option:hover {
+  background: var(--color-accent-light);
+}
+
+.theme-option.selected {
+  background: var(--color-accent);
+  border-width: 3px;
+}
+
+.theme-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+```
+
+---
+
+## Spectator Mode
+
+### Design Philosophy
+
+Watching someone play should feel like observing a chess match or poker hand: you see their **decision space**, not just their actions.
+
+### Layout Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  SPECTATING: PLAYER_NAME                             │   │
+│  │  ══════════════════════                              │   │
+│  │                                                      │   │
+│  │  Turn 7/13  •  Score: 142  •  Watching: 3 others    │   │
+│  │                                                      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │                                                      │   │
+│  │            LIVE DICE DISPLAY                         │   │
+│  │                                                      │   │
+│  │     ┌───┐  ┌───┐  ┌───┐  ┌───┐  ┌───┐              │   │
+│  │     │ 3 │  │ 3 │  │ 5 │  │ 3 │  │ 6 │              │   │
+│  │     └───┘  └───┘  └───┘  └───┘  └───┘              │   │
+│  │      HELD   HELD                 HELD               │   │
+│  │                                                      │   │
+│  │  Rolls: 2/3                                         │   │
+│  │                                                      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌───────────────────────┐  ┌───────────────────────────┐  │
+│  │  THEIR VIEW           │  │  OPTIMAL ANALYSIS         │  │
+│  │  ══════════           │  │  ════════════════         │  │
+│  │                       │  │                           │  │
+│  │  ┌─────────────────┐  │  │  Best Move:               │  │
+│  │  │ Three 3s   9    │  │  │  ┌───────────────────┐   │  │
+│  │  │ ████████  54%   │  │  │  │  THREE OF A KIND  │   │  │
+│  │  └─────────────────┘  │  │  │  EV: 18.2         │   │  │
+│  │  ┌─────────────────┐  │  │  │  ★ OPTIMAL        │   │  │
+│  │  │ 3 of Kind  12   │  │  │  └───────────────────┘   │  │
+│  │  │ ██████████ 78%  │  │  │                           │  │
+│  │  │ ★ OPTIMAL       │  │  │  Alternative:             │  │
+│  │  └─────────────────┘  │  │  ┌───────────────────┐   │  │
+│  │  ┌─────────────────┐  │  │  │  THREES           │   │  │
+│  │  │ Full House  0   │  │  │  │  EV: 12.0         │   │  │
+│  │  │ ░░░░░░░░░░  0%  │  │  │  │  -34% EV loss     │   │  │
+│  │  └─────────────────┘  │  │  └───────────────────┘   │  │
+│  │                       │  │                           │  │
+│  └───────────────────────┘  └───────────────────────────┘  │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  DECISION TIMELINE                                   │   │
+│  │  ═════════════════                                   │   │
+│  │                                                      │   │
+│  │  T1   T2   T3   T4   T5   T6   T7                   │   │
+│  │  ●────●────●────○────●────●────◌                    │   │
+│  │  ✓    ✓    ✓    ✗    ✓    ✓    ?                   │   │
+│  │                                                      │   │
+│  │  Optimal Rate: 83% (5/6)                            │   │
+│  │                                                      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  SPECTATOR REACTIONS                        [HIDE]   │   │
+│  │  ═══════════════════                                 │   │
+│  │                                                      │   │
+│  │  🎲  Nice hold!                          - Viewer A  │   │
+│  │  📊  Should have taken Full House...    - Viewer B  │   │
+│  │  ⚡  THE QUICKENING                      - System    │   │
+│  │                                                      │   │
+│  │  ┌─────────────────────────────────────┐            │   │
+│  │  │  Type a reaction...          [SEND] │            │   │
+│  │  └─────────────────────────────────────┘            │   │
+│  │                                                      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Spectator-Specific Features
+
+#### Decision Timeline
+
+A horizontal visualization of the player's choices:
+
+```css
+.timeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.timeline-turn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.timeline-dot.optimal {
+  background: var(--color-success);
+}
+
+.timeline-dot.suboptimal {
+  background: var(--color-danger);
+}
+
+.timeline-dot.pending {
+  background: var(--color-accent);
+  animation: pulse 1s infinite;
+}
+
+.timeline-connector {
+  width: 24px;
+  height: 2px;
+  background: var(--color-border);
+}
+
+.timeline-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+```
+
+#### Optimal Analysis Panel
+
+Shows spectators what the math says, regardless of what the player sees:
+
+```svelte
+<!-- OptimalAnalysis.svelte -->
+<script lang="ts">
+  export let recommendations: Array<{
+    category: string;
+    ev: number;
+    isOptimal: boolean;
+  }>;
+  
+  $: sorted = [...recommendations].sort((a, b) => b.ev - a.ev);
+  $: best = sorted[0];
+  $: alternative = sorted[1];
+  $: evDiff = ((best.ev - alternative.ev) / best.ev * 100).toFixed(0);
+</script>
+
+<div class="analysis">
+  <h4>Best Move:</h4>
+  <div class="analysis-card optimal">
+    <span class="category">{best.category}</span>
+    <span class="ev">EV: {best.ev.toFixed(1)}</span>
+    <span class="badge">★ OPTIMAL</span>
+  </div>
+  
+  <h4>Alternative:</h4>
+  <div class="analysis-card">
+    <span class="category">{alternative.category}</span>
+    <span class="ev">EV: {alternative.ev.toFixed(1)}</span>
+    <span class="loss">-{evDiff}% EV loss</span>
+  </div>
+</div>
+```
+
+#### Spectator Reactions
+
+Lightweight chat with predefined quick reactions:
+
+**Quick Reactions**:
+- 🎲 "Nice roll!"
+- 📊 "Interesting choice..."
+- ⚡ "THE QUICKENING"
+- 🎯 "Perfect play"
+- 🤔 "Hmm..."
+
+```css
+.reaction {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  font-size: 13px;
+  animation: slide-in 200ms ease-out;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reaction-icon {
+  font-size: 16px;
+}
+
+.reaction-text {
+  flex: 1;
+}
+
+.reaction-author {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* System reactions (Quickening, Yahtzee) */
+.reaction.system {
+  background: var(--color-accent);
+  border: 2px solid var(--color-border);
+  font-weight: 700;
+}
+```
+
+#### Live State Sync
+
+**Visual Indicators**:
+
+```css
+/* Live indicator */
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--color-danger);
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.live-badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Viewer count */
+.viewer-count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.viewer-count::before {
+  content: '👁 ';
+}
+```
+
+---
+
+## Component Specifications
+
+### New Design Tokens
+
+Add these to your `tokens.css`:
+
+```css
+:root {
+  /* === ANIMATION TIMING === */
+  --timing-pulse-certain: 3s;
+  --timing-pulse-likely: 2s;
+  --timing-pulse-uncertain: 1.5s;
+  --timing-twitch: 0.3s;
+  --timing-jitter: 0.15s;
+  
+  /* === Z-INDEX SCALE === */
+  --z-base: 0;
+  --z-dice: 10;
+  --z-overlay: 100;
+  --z-modal: 200;
+  --z-settings: 300;
+  --z-toast: 400;
+  --z-flash: 9999;
+  
+  /* === SPECTATOR COLORS === */
+  --color-live: #EF4444;
+  --color-optimal-marker: var(--color-success);
+  --color-suboptimal-marker: var(--color-danger);
+  --color-pending-marker: var(--color-accent);
+  
+  /* === PROFILE COLORS === */
+  --color-bar-fill: var(--color-accent);
+  --color-bar-empty: var(--color-background);
+  --color-badge-locked: #9CA3AF;
+}
+```
+
+### Reduced Motion Support
+
+All animations must respect user preferences:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  /* Disable probability animations */
+  .prob-certain,
+  .prob-likely,
+  .prob-uncertain,
+  .prob-unlikely,
+  .prob-improbable {
+    animation: none !important;
+  }
+  
+  /* Disable Quickening effects */
+  .quickening-text,
+  .quickening-row,
+  .quickening-score {
+    animation: none !important;
+  }
+  
+  /* Disable live indicator blink */
+  .live-badge::before {
+    animation: none !important;
+  }
+  
+  /* Keep essential state indicators */
+  .optimal { border-left: 4px solid var(--color-success); }
+  .suboptimal { opacity: 0.6; }
+}
+```
+
+---
+
+## Implementation Roadmap
+
+### Phase 1: Juice Foundation (Week 1-2)
+
+**Priority**: High impact, low risk
+
+1. **Probability Pulse CSS** (2 hours)
+   - Add animation classes to existing probability displays
+   - Implement tier classification logic
+
+2. **Audio Engine** (4 hours)
+   - Create `DiceeAudioEngine.ts`
+   - Add tick, thud, score sounds
+   - Wire to existing interactions
+
+3. **Quickening Effects** (3 hours)
+   - CSS keyframe animations
+   - Trigger logic in game state
+
+### Phase 2: Profile Page (Week 3)
+
+**Priority**: User retention
+
+1. **Profile Layout** (4 hours)
+   - Avatar integration (DiceBear)
+   - Stats bars
+   - Recent games list
+
+2. **Achievement System** (6 hours)
+   - Badge definitions
+   - Progress tracking
+   - Display logic
+
+### Phase 3: Settings (Week 4)
+
+**Priority**: Accessibility & customization
+
+1. **Settings Panel** (4 hours)
+   - Slide-out component
+   - Audio/haptics controls
+   - Statistics display options
+
+2. **Theme System** (2 hours)
+   - Dark mode CSS variables
+   - System preference detection
+
+### Phase 4: Spectator Mode (Week 5-6)
+
+**Priority**: Social features
+
+1. **Spectator Layout** (6 hours)
+   - Decision timeline
+   - Optimal analysis panel
+   - Live state sync
+
+2. **Reactions System** (4 hours)
+   - Quick reactions
+   - Chat display
+   - Real-time updates
+
+---
+
+## Appendix: Dark Mode Tokens
+
+```css
+[data-theme="dark"] {
+  --color-background: #0A0A0A;
+  --color-surface: #1A1A1A;
+  --color-border: #FFFFFF;
+  --color-text: #FAFAFA;
+  --color-text-muted: #9CA3AF;
+  
+  --color-accent: #FFD700;
+  --color-accent-dark: #B8860B;
+  --color-accent-light: #3D3000;
+  
+  --color-felt: #0D2810;
+  --color-felt-light: #1A4D20;
+}
+```
+
+---
+
+**Document Version**: 2.0  
+**Status**: Ready for Implementation  
+**Next Review**: After Phase 1 completion

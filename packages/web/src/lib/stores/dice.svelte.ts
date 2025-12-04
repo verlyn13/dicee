@@ -21,19 +21,11 @@ export function rollSingleDie(): DieValue {
 }
 
 export function rollAllDice(): DiceArray {
-	return [
-		rollSingleDie(),
-		rollSingleDie(),
-		rollSingleDie(),
-		rollSingleDie(),
-		rollSingleDie(),
-	];
+	return [rollSingleDie(), rollSingleDie(), rollSingleDie(), rollSingleDie(), rollSingleDie()];
 }
 
 export function rerollDice(current: DiceArray, kept: KeptMask): DiceArray {
-	return current.map((die, i) =>
-		kept[i] ? die : rollSingleDie(),
-	) as DiceArray;
+	return current.map((die, i) => (kept[i] ? die : rollSingleDie())) as DiceArray;
 }
 
 export function countKept(kept: KeptMask): number {

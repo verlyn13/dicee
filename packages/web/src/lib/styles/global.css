@@ -107,8 +107,9 @@ button:disabled {
 	letter-spacing: var(--tracking-wide);
 	background: var(--color-accent);
 	border: var(--border-thick);
-	transition: transform var(--transition-fast), background
-		var(--transition-fast);
+	transition:
+		transform var(--transition-fast),
+		background var(--transition-fast);
 }
 
 .btn:hover:not(:disabled) {

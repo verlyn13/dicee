@@ -3,10 +3,10 @@
  * Tests rendering, interactions, and accessibility for the Die component
  */
 
-import type { DieValue } from '$lib/types.js';
 import { fireEvent, render } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
+import type { DieValue } from '$lib/types.js';
 import Die from '../Die.svelte';
 
 // =============================================================================
@@ -23,17 +23,14 @@ describe('Die Component - Rendering', () => {
 		expect(button).toBeInTheDocument();
 	});
 
-	it.each([1, 2, 3, 4, 5, 6] as DieValue[])(
-		'renders correct pip count for value %i',
-		(value) => {
-			const { container } = render(Die, {
-				props: { value },
-			});
+	it.each([1, 2, 3, 4, 5, 6] as DieValue[])('renders correct pip count for value %i', (value) => {
+		const { container } = render(Die, {
+			props: { value },
+		});
 
-			const pips = container.querySelectorAll('.pip');
-			expect(pips).toHaveLength(value);
-		},
-	);
+		const pips = container.querySelectorAll('.pip');
+		expect(pips).toHaveLength(value);
+	});
 
 	it('renders correct pip pattern for value 1 (center pip)', () => {
 		const { container } = render(Die, {
@@ -247,16 +244,10 @@ describe('Die Component - Accessibility', () => {
 			props: { value: 3 as DieValue, kept: false },
 		});
 
-		expect(container.querySelector('.die')).toHaveAttribute(
-			'aria-pressed',
-			'false',
-		);
+		expect(container.querySelector('.die')).toHaveAttribute('aria-pressed', 'false');
 
 		rerender({ value: 3 as DieValue, kept: true });
-		expect(container.querySelector('.die')).toHaveAttribute(
-			'aria-pressed',
-			'true',
-		);
+		expect(container.querySelector('.die')).toHaveAttribute('aria-pressed', 'true');
 	});
 
 	it('is a button element (keyboard accessible)', () => {

@@ -7,13 +7,7 @@ interface Props {
 	onNewGame?: () => void;
 }
 
-let {
-	turnNumber,
-	totalTurns = 13,
-	grandTotal,
-	isGameOver = false,
-	onNewGame,
-}: Props = $props();
+let { turnNumber, totalTurns = 13, grandTotal, isGameOver = false, onNewGame }: Props = $props();
 
 const turnsRemaining = $derived(totalTurns - turnNumber);
 </script>

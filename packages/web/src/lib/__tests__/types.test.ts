@@ -4,13 +4,6 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import {
-	ALL_CATEGORIES,
-	CATEGORY_DISPLAY_NAMES,
-	CATEGORY_TO_INDEX,
-	LOWER_CATEGORIES,
-	UPPER_CATEGORIES,
-} from '../types.js';
 import type {
 	Category,
 	DecisionQuality,
@@ -19,6 +12,13 @@ import type {
 	KeptMask,
 	StatsProfile,
 	TurnPhase,
+} from '../types.js';
+import {
+	ALL_CATEGORIES,
+	CATEGORY_DISPLAY_NAMES,
+	CATEGORY_TO_INDEX,
+	LOWER_CATEGORIES,
+	UPPER_CATEGORIES,
 } from '../types.js';
 
 // =============================================================================
@@ -32,14 +32,7 @@ describe('Category Arrays', () => {
 		});
 
 		it('contains all upper section categories in correct order', () => {
-			expect(UPPER_CATEGORIES).toEqual([
-				'Ones',
-				'Twos',
-				'Threes',
-				'Fours',
-				'Fives',
-				'Sixes',
-			]);
+			expect(UPPER_CATEGORIES).toEqual(['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes']);
 		});
 
 		it('categories are unique', () => {
@@ -205,10 +198,7 @@ describe('Yahtzee Game Rules', () => {
 			Fives: 25, // 5 fives
 			Sixes: 30, // 5 sixes
 		};
-		const totalMaxUpper = Object.values(maxUpperScores).reduce(
-			(a, b) => a + b,
-			0,
-		);
+		const totalMaxUpper = Object.values(maxUpperScores).reduce((a, b) => a + b, 0);
 		expect(totalMaxUpper).toBe(105);
 
 		// Bonus threshold is 63 (achievable with 3 of each face)
@@ -275,13 +265,7 @@ describe('Type Constraints', () => {
 
 	describe('GameStatus', () => {
 		it('has all expected values', () => {
-			const statuses: GameStatus[] = [
-				'idle',
-				'rolling',
-				'keeping',
-				'scoring',
-				'completed',
-			];
+			const statuses: GameStatus[] = ['idle', 'rolling', 'keeping', 'scoring', 'completed'];
 			expect(statuses).toHaveLength(5);
 		});
 	});

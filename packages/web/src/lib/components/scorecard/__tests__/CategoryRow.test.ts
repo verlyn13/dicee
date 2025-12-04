@@ -3,10 +3,10 @@
  * Tests rendering, stats display, heat map, and accessibility
  */
 
-import type { Category, StatsProfile } from '$lib/types.js';
 import { fireEvent, render } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
+import type { Category, StatsProfile } from '$lib/types.js';
 import CategoryRow from '../CategoryRow.svelte';
 
 // =============================================================================

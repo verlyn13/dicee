@@ -71,9 +71,7 @@ describe('Store Integration - Full Game Flow', () => {
 			game.roll();
 
 			// Score the first available category
-			const available = ALL_CATEGORIES.find((c) =>
-				game.scorecard.isAvailable(c),
-			)!;
+			const available = ALL_CATEGORIES.find((c) => game.scorecard.isAvailable(c))!;
 			expect(available).toBeDefined();
 			game.score(available);
 		}
@@ -384,22 +382,16 @@ describe('Store Integration - Edge Cases', () => {
 		for (let turn = 1; turn <= 13; turn++) {
 			game.roll();
 
-			const available = ALL_CATEGORIES.find(
-				(c) => !scoredCategories.includes(c),
-			)!;
+			const available = ALL_CATEGORIES.find((c) => !scoredCategories.includes(c))!;
 			game.score(available);
 			scoredCategories.push(available);
 
 			// Verify integrity
 			expect(scoredCategories.length).toBe(turn);
-			expect(
-				ALL_CATEGORIES.filter((c) => game.scorecard.isAvailable(c)).length,
-			).toBe(13 - turn);
+			expect(ALL_CATEGORIES.filter((c) => game.scorecard.isAvailable(c)).length).toBe(13 - turn);
 		}
 
 		// All categories should be scored
-		expect(ALL_CATEGORIES.every((c) => game.scorecard.scores[c] !== null)).toBe(
-			true,
-		);
+		expect(ALL_CATEGORIES.every((c) => game.scorecard.scores[c] !== null)).toBe(true);
 	});
 });

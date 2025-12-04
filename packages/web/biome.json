@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -7,57 +7,115 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"ignore": ["node_modules", ".svelte-kit", "build", "src/lib/wasm"]
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!!**/.svelte-kit",
+			"!!**/build",
+			"!!**/playwright-report",
+			"!!**/test-results",
+			"!**/src/lib/wasm"
+		]
 	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab",
-		"indentWidth": 2
+		"indentWidth": 2,
+		"lineWidth": 100
 	},
-	"organizeImports": {
-		"enabled": true
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
 	},
 	"linter": {
 		"enabled": true,
+		"includes": ["**", "!**/*.svelte"],
 		"rules": {
 			"recommended": true,
 			"correctness": {
-				"noUnusedImports": "warn",
-				"noUnusedVariables": "warn"
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error",
+				"noUnusedPrivateClassMembers": "error",
+				"useExhaustiveDependencies": "warn",
+				"noUndeclaredVariables": "error"
 			},
 			"style": {
-				"useConst": "warn",
-				"noNonNullAssertion": "off",
+				"useConst": "error",
+				"noNonNullAssertion": "warn",
 				"noInferrableTypes": "off",
-				"useTemplate": "off"
+				"useTemplate": "warn",
+				"useExponentiationOperator": "warn",
+				"noUselessElse": "warn",
+				"useDefaultParameterLast": "error"
 			},
 			"suspicious": {
-				"noExplicitAny": "warn"
+				"noExplicitAny": "error",
+				"noArrayIndexKey": "warn",
+				"noAssignInExpressions": "error",
+				"noDoubleEquals": "error",
+				"noImplicitAnyLet": "error",
+				"noConfusingVoidType": "warn",
+				"noEmptyBlockStatements": "warn"
+			},
+			"complexity": {
+				"noExcessiveCognitiveComplexity": {
+					"level": "warn",
+					"options": {
+						"maxAllowedComplexity": 15
+					}
+				},
+				"noForEach": "off",
+				"useLiteralKeys": "warn"
+			},
+			"performance": {
+				"noAccumulatingSpread": "warn",
+				"noDelete": "warn"
 			}
 		}
 	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "single",
-			"semicolons": "always"
+			"semicolons": "always",
+			"trailingCommas": "all",
+			"arrowParentheses": "always"
 		}
 	},
 	"overrides": [
 		{
-			"include": ["**/*.svelte"],
+			"includes": ["**/*.test.ts", "**/*.spec.ts", "**/tests/**/*.ts", "**/__tests__/**/*.ts"],
 			"linter": {
 				"rules": {
-					"correctness": {
-						"noUnusedImports": "off",
-						"noUnusedVariables": "off"
+					"suspicious": {
+						"noExplicitAny": "warn"
 					},
 					"style": {
-						"useConst": "off"
+						"noNonNullAssertion": "off"
+					},
+					"correctness": {
+						"noUnusedVariables": "warn"
+					},
+					"complexity": {
+						"noExcessiveCognitiveComplexity": "off"
 					}
 				}
-			},
-			"organizeImports": {
-				"enabled": false
+			}
+		},
+		{
+			"includes": ["**/database.ts", "**/*.d.ts"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useNamingConvention": "off"
+					},
+					"correctness": {
+						"noUnusedVariables": "off"
+					}
+				}
 			}
 		}
 	]

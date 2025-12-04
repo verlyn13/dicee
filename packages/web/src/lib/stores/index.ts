@@ -4,5 +4,5 @@
  */
 
 export { DiceState, dice } from './dice.svelte.js';
-export { ScorecardState, scorecard } from './scorecard.svelte.js';
 export { GameState, game } from './game.svelte.js';
+export { ScorecardState, scorecard } from './scorecard.svelte.js';

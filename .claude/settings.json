@@ -1,0 +1,49 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/verlyn13/Development/personal/dicee/scripts/hooks/session-init.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/verlyn13/Development/personal/dicee/scripts/hooks/session-finalize.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/verlyn13/Development/personal/dicee/scripts/hooks/log-tool-use.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/verlyn13/Development/personal/dicee/scripts/hooks/pre-compact-archive.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

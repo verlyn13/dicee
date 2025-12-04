@@ -4,8 +4,8 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ALL_CATEGORIES } from '../../types.js';
 import type { Category } from '../../types.js';
+import { ALL_CATEGORIES } from '../../types.js';
 import { GameState } from '../game.svelte.js';
 
 // =============================================================================
@@ -292,14 +292,9 @@ describe('GameState: Decision Quality', () => {
 	it('feedback includes quality assessment', () => {
 		const feedback = game.score('Chance');
 		expect(feedback?.quality).toBeDefined();
-		expect([
-			'optimal',
-			'excellent',
-			'good',
-			'acceptable',
-			'suboptimal',
-			'poor',
-		]).toContain(feedback?.quality);
+		expect(['optimal', 'excellent', 'good', 'acceptable', 'suboptimal', 'poor']).toContain(
+			feedback?.quality,
+		);
 	});
 
 	it('feedback includes EV difference', () => {

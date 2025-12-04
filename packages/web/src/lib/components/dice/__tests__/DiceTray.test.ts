@@ -3,10 +3,10 @@
  * Tests rendering, interactions, and game state integration
  */
 
-import type { DiceArray, KeptMask } from '$lib/types.js';
 import { fireEvent, render } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
+import type { DiceArray, KeptMask } from '$lib/types.js';
 import DiceTray from '../DiceTray.svelte';
 
 // =============================================================================

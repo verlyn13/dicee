@@ -1,0 +1,288 @@
+# Gopass Structure for Dicee Project
+# This file documents the credential storage architecture
+# Last updated: 2024-12-02
+#
+# Passphrase for gopass: escapable diameter silk discover
+
+structure:
+  root: "dicee"
+  description: "Centralized credential management for dicee project services"
+
+  services:
+    infisical:
+      description: "Self-hosted secret management (infisical.jefahnierocks.com)"
+      paths:
+        # Shared configuration
+        config:
+          - path: "dicee/infisical/instance-url"
+            value: "https://infisical.jefahnierocks.com"
+            description: "Self-hosted Infisical instance URL"
+          - path: "dicee/infisical/project-id"
+            value: "b15c7b9c-4e1f-447a-a326-4c382b6db706"
+            description: "Infisical project ID"
+          - path: "dicee/infisical/project-slug"
+            value: "dicee-dsmc"
+            description: "Infisical project slug"
+          - path: "dicee/infisical/org-name"
+            value: "Admin Org"
+            description: "Infisical organization name"
+
+        # Development environment
+        dev:
+          - path: "dicee/infisical/dev/identity-name"
+            value: "dicee-dev"
+          - path: "dicee/infisical/dev/identity-id"
+            value: "6498077a-7556-40c2-8cb5-670ad807cdf1"
+          - path: "dicee/infisical/dev/client-id"
+            value: "bc5b0a8d-00c0-4f88-bb73-f56f4905ecf8"
+          - path: "dicee/infisical/dev/client-secret"
+            value: "[MANUAL_ENTRY]"
+            sensitive: true
+
+        # Staging environment
+        staging:
+          - path: "dicee/infisical/staging/identity-name"
+            value: "dicee-staging"
+          - path: "dicee/infisical/staging/identity-id"
+            value: "4c650723-024e-475d-b1e5-4f98652e16f3"
+          - path: "dicee/infisical/staging/client-id"
+            value: "2448afb7-27de-49b1-a9c9-aaf99d40fec6"
+          - path: "dicee/infisical/staging/client-secret"
+            value: "[MANUAL_ENTRY]"
+            sensitive: true
+
+        # Production environment
+        prod:
+          - path: "dicee/infisical/prod/identity-name"
+            value: "dicee-prod"
+          - path: "dicee/infisical/prod/identity-id"
+            value: "7a36ab38-c72d-4668-8e82-22ea2b858c69"
+          - path: "dicee/infisical/prod/client-id"
+            value: "c3a61530-ad44-48c1-beb8-fdad4d4042c0"
+          - path: "dicee/infisical/prod/client-secret"
+            value: "[MANUAL_ENTRY]"
+            sensitive: true
+
+    google_cloud:
+      description: "Google Cloud OAuth credentials for Supabase Auth"
+      project:
+        name: "dicee"
+        id: "dicee-480100"
+        number: "1071795876982"
+      paths:
+        oauth:
+          - path: "dicee/google/oauth-client-id"
+            value: "[MANUAL_ENTRY]"
+            description: "OAuth 2.0 Web Client ID"
+            sensitive: false
+          - path: "dicee/google/oauth-client-secret"
+            value: "[MANUAL_ENTRY]"
+            description: "OAuth 2.0 Client Secret"
+            sensitive: true
+
+    github:
+      description: "GitHub credentials for dicee project"
+      paths:
+        pat:
+          - path: "dicee/github/pat"
+            description: "Fine-grained PAT for dicee repository"
+            sensitive: true
+          - path: "dicee/github/pat-name"
+            description: "PAT name/description for reference"
+          - path: "dicee/github/pat-expiry"
+            description: "PAT expiration date"
+
+    supabase:
+      description: "Supabase backend services (Auth, Database, Storage, Edge Functions)"
+      paths:
+        config:
+          - path: "dicee/supabase/project-name"
+            value: "dicee"
+            description: "Supabase project name"
+          - path: "dicee/supabase/project-ref"
+            value: "[MANUAL_ENTRY]"
+            description: "Project reference ID (e.g., abcdefghijk)"
+            sensitive: false
+          - path: "dicee/supabase/region"
+            value: "[MANUAL_ENTRY]"
+            description: "Supabase region (e.g., us-east-1)"
+            sensitive: false
+
+        credentials:
+          - path: "dicee/supabase/db-password"
+            value: "[MANUAL_ENTRY]"
+            description: "Database password (set during project creation)"
+            sensitive: true
+          - path: "dicee/supabase/publishable-key"
+            value: "[MANUAL_ENTRY]"
+            description: "Publishable key (safe for client-side with RLS enabled)"
+            sensitive: false
+          - path: "dicee/supabase/secret-key"
+            value: "[MANUAL_ENTRY]"
+            description: "Secret key (backend only - NEVER expose to client!)"
+            sensitive: true
+          - path: "dicee/supabase/mcp-token"
+            value: "[STORED]"
+            description: "Personal Access Token for MCP server authentication (Windsurf/Claude Code)"
+            sensitive: true
+            usage: "Enables persistent auth for MCP clients without browser OAuth"
+
+      infisical_mapping:
+        description: "These secrets are synced to Infisical for runtime use"
+        secrets:
+          - gopass: "dicee/supabase/project-ref"
+            infisical: "PUBLIC_SUPABASE_URL"
+            transform: "https://${value}.supabase.co"
+          - gopass: "dicee/supabase/publishable-key"
+            infisical: "PUBLIC_SUPABASE_ANON_KEY"
+          - gopass: "dicee/supabase/secret-key"
+            infisical: "SUPABASE_SERVICE_ROLE_KEY"
+          - gopass: "dicee/supabase/db-password"
+            infisical: "DATABASE_URL"
+            transform: "postgresql://postgres:${value}@db.${project-ref}.supabase.co:5432/postgres"
+
+    vercel:
+      description: "Vercel frontend deployment platform"
+      paths:
+        config:
+          - path: "dicee/vercel/project-name"
+            value: "dicee-web"
+            description: "Vercel project name"
+          - path: "dicee/vercel/project-id"
+            value: "[MANUAL_ENTRY]"
+            description: "Vercel project ID (from vercel link)"
+            sensitive: false
+          - path: "dicee/vercel/org-id"
+            value: "[MANUAL_ENTRY]"
+            description: "Vercel org/team ID"
+            sensitive: false
+
+        credentials:
+          - path: "dicee/vercel/token"
+            value: "[MANUAL_ENTRY]"
+            description: "Vercel API token for deployments"
+            sensitive: true
+
+    partykit:
+      description: "PartyKit real-time multiplayer infrastructure"
+      paths:
+        config:
+          - path: "dicee/partykit/project-name"
+            value: "dicee-rooms"
+            description: "PartyKit project name"
+
+        credentials:
+          - path: "dicee/partykit/token"
+            value: "[MANUAL_ENTRY]"
+            description: "PartyKit API token"
+            sensitive: true
+
+    cloudflare:
+      description: "Cloudflare credentials for Workers, Pages, D1, KV, R2"
+      paths:
+        config:
+          - path: "dicee/cloudflare/account-id"
+            value: "13eb584192d9cefb730fde0cfd271328"
+            description: "Cloudflare account ID"
+          - path: "dicee/cloudflare/zone-id"
+            value: "8d5f44e67ab4b37e47b034ff48b03099"
+            description: "Zone ID for jefahnierocks.com"
+          - path: "dicee/cloudflare/domain"
+            value: "jefahnierocks.com"
+            description: "Primary domain"
+          - path: "dicee/cloudflare/subdomain"
+            value: "dicee.jefahnierocks.com"
+            description: "Dicee project subdomain"
+
+        api_tokens:
+          - path: "dicee/cloudflare/api-token"
+            value: "[MANUAL_ENTRY]"
+            description: "Primary API token for wrangler CLI"
+            sensitive: true
+            permissions:
+              - "Workers Scripts: Edit"
+              - "Workers KV Storage: Edit"
+              - "D1: Edit"
+              - "Workers R2 Storage: Edit"
+              - "Account Settings: Read"
+              - "Zone Settings: Read"
+              - "DNS: Edit"
+          - path: "dicee/cloudflare/api-token-name"
+            description: "Token name for reference"
+          - path: "dicee/cloudflare/api-token-expiry"
+            description: "Token expiration date"
+
+# Usage patterns for retrieval
+usage:
+  cli:
+    # Get a single value
+    single: "gopass show -o dicee/infisical/dev/client-id"
+
+    # Export for shell use
+    export_env: |
+      export INFISICAL_CLIENT_ID=$(gopass show -o dicee/infisical/dev/client-id)
+      export INFISICAL_CLIENT_SECRET=$(gopass show -o dicee/infisical/dev/client-secret)
+
+    # Infisical login with gopass
+    infisical_login: |
+      infisical login \
+        --method=universal-auth \
+        --client-id=$(gopass show -o dicee/infisical/$ENV/client-id) \
+        --client-secret=$(gopass show -o dicee/infisical/$ENV/client-secret) \
+        --domain=$(gopass show -o dicee/infisical/instance-url)
+
+  fish_functions:
+    description: "Fish shell helper functions"
+    code: |
+      # Add to ~/.config/fish/functions/dicee-env.fish
+      function dicee-env --description "Export Infisical credentials for dicee"
+          set -l env $argv[1]
+          if test -z "$env"
+              set env "dev"
+          end
+
+          set -gx INFISICAL_API_URL (gopass show -o dicee/infisical/instance-url)
+          set -gx INFISICAL_CLIENT_ID (gopass show -o dicee/infisical/$env/client-id)
+          set -gx INFISICAL_CLIENT_SECRET (gopass show -o dicee/infisical/$env/client-secret)
+          set -gx INFISICAL_PROJECT_ID (gopass show -o dicee/infisical/project-id)
+
+          echo "Loaded Infisical credentials for: $env"
+      end
+
+  rust_sdk:
+    description: "Rust SDK authentication pattern"
+    code: |
+      // Read from environment (set via dicee-env function or CI)
+      let client_id = std::env::var("INFISICAL_CLIENT_ID")?;
+      let client_secret = std::env::var("INFISICAL_CLIENT_SECRET")?;
+      let base_url = std::env::var("INFISICAL_API_URL")
+          .unwrap_or_else(|_| "https://infisical.jefahnierocks.com".to_string());
+
+      let mut client = Client::builder()
+          .base_url(&base_url)
+          .build()
+          .await?;
+
+      let auth = AuthMethod::new_universal_auth(&client_id, &client_secret);
+      client.login(auth).await?;
+
+  cloudflare:
+    description: "Cloudflare/Wrangler authentication patterns"
+    wrangler_auth: |
+      # Set CLOUDFLARE_API_TOKEN for wrangler CLI
+      export CLOUDFLARE_API_TOKEN=$(gopass show -o dicee/cloudflare/api-token)
+
+      # Alternative: CLOUDFLARE_ACCOUNT_ID if needed
+      export CLOUDFLARE_ACCOUNT_ID=$(gopass show -o dicee/cloudflare/account-id)
+
+      # Verify auth
+      wrangler whoami
+
+    fish_function: |
+      # Add to ~/.config/fish/functions/dicee-cf.fish
+      function dicee-cf --description "Load Cloudflare credentials for dicee"
+          set -gx CLOUDFLARE_API_TOKEN (gopass show -o dicee/cloudflare/api-token)
+          set -gx CLOUDFLARE_ACCOUNT_ID (gopass show -o dicee/cloudflare/account-id)
+          echo "Loaded Cloudflare credentials"
+          wrangler whoami
+      end

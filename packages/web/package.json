@@ -5,20 +5,29 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
+		"dev:mobile": "./scripts/mobile-test.sh",
+		"dev:network": "vite dev --host",
 		"build": "vite build",
 		"preview": "vite preview",
+		"preview:mobile": "vite preview --host",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
+		"test:e2e": "playwright test",
+		"test:e2e:ui": "playwright test --ui",
+		"test:e2e:full": "CI=1 playwright test",
+		"test:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
 		"biome:check": "biome check .",
 		"biome:fix": "biome check --write .",
-		"format": "biome format --write ."
+		"format": "biome format --write .",
+		"qr": "node scripts/qr.mjs"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
+		"@biomejs/biome": "^2.3.8",
+		"@playwright/test": "^1.49.0",
 		"@sveltejs/adapter-auto": "^7.0.0",
 		"@sveltejs/kit": "^2.48.5",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
@@ -26,6 +35,7 @@
 		"@testing-library/svelte": "^5.2.9",
 		"@testing-library/user-event": "^14.6.1",
 		"jsdom": "^27.2.0",
+		"qrcode-terminal": "^0.12.0",
 		"svelte": "^5.43.8",
 		"svelte-check": "^4.3.4",
 		"typescript": "^5.9.3",
@@ -33,5 +43,11 @@
 		"vite-plugin-wasm": "^3.4.1",
 		"vitest": "^4.0.14",
 		"vitest-axe": "^0.1.0"
+	},
+	"dependencies": {
+		"@dicebear/collection": "^9.2.4",
+		"@dicebear/core": "^9.2.4",
+		"@supabase/ssr": "^0.8.0",
+		"@supabase/supabase-js": "^2.86.0"
 	}
 }

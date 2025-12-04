@@ -10,24 +10,23 @@ interface Props {
 
 let { enabled, profile, onToggle, onProfileChange }: Props = $props();
 
-const profiles: { value: StatsProfile; label: string; description: string }[] =
-	[
-		{
-			value: 'beginner',
-			label: 'Beginner',
-			description: 'Simple guidance without numbers',
-		},
-		{
-			value: 'intermediate',
-			label: 'Intermediate',
-			description: 'Probabilities and expected values',
-		},
-		{
-			value: 'expert',
-			label: 'Expert',
-			description: 'Full analysis tools',
-		},
-	];
+const profiles: { value: StatsProfile; label: string; description: string }[] = [
+	{
+		value: 'beginner',
+		label: 'Beginner',
+		description: 'Simple guidance without numbers',
+	},
+	{
+		value: 'intermediate',
+		label: 'Intermediate',
+		description: 'Probabilities and expected values',
+	},
+	{
+		value: 'expert',
+		label: 'Expert',
+		description: 'Full analysis tools',
+	},
+];
 
 let showDropdown = $state(false);
 
