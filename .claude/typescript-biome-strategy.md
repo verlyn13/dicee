@@ -640,6 +640,18 @@ function createTestProfile(overrides?: Partial<Profile>): Profile {
 
 ---
 
+## Lessons from Practice
+
+Real-world patterns discovered during development:
+
+1. **Test files need different rules** - `biome.json` overrides for `**/__tests__/**/*.ts` disable strict rules that conflict with mocking patterns
+2. **forEach implicit returns** - `arr.forEach(x => fn(x))` returns the result; use braces to make it void
+3. **Promise resolver pattern** - If you declare `let resolve` to capture a Promise's resolver but don't use it, simplify to `new Promise(() => {})`
+4. **biome-ignore becomes error** - When a rule is disabled via overrides, existing biome-ignore comments become `suppressions/unused` errors
+5. **Run biome standalone** - `pnpm biome:check` gives cleaner output than lefthook for debugging
+
+---
+
 ## Sources
 
 - [Biome v2 Announcement](https://biomejs.dev/blog/biome-v2/)

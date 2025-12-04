@@ -265,6 +265,18 @@ Always ask before:
 - [ ] State files updated
 ```
 
+### Lint Quick Fixes (Biome 2.3)
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `noExplicitAny` in test | Mock typing | Already "warn" for test files - ignore |
+| `noUnusedVariables` for Promise resolver | `let resolve; new Promise(r => resolve = r)` | Simplify to `new Promise(() => {})` if unused |
+| `useIterableCallbackReturn` | `forEach(x => fn(x))` returns value | Add braces: `forEach(x => { fn(x); })` |
+| `suppressions/unused` | biome-ignore for disabled rule | Remove the biome-ignore comment |
+| `noUnusedImports` after edit | Removed code, import remains | Remove unused import |
+
+**Pro tip**: Run `pnpm biome:check` standalone before commit to debug - lefthook output has color codes that obscure errors.
+
 ---
 
 ## Escalation Matrix
