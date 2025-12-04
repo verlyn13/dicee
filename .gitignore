@@ -17,6 +17,8 @@ pkg/
 # IDE
 .idea/
 .vscode/
+!.vscode/settings.json
+!.vscode/README.md
 *.swp
 *.swo
 .DS_Store

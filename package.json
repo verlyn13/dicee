@@ -2,7 +2,7 @@
   "name": "dicee",
   "private": true,
   "type": "module",
-  "scripts": {
+ "scripts": {
     "dev": "pnpm --filter @dicee/web dev",
     "build": "pnpm run build:engine && pnpm --filter @dicee/web build",
     "build:engine": "cd packages/engine && wasm-pack build --target web --out-dir ../web/src/lib/wasm",
@@ -18,6 +18,8 @@
     "format": "pnpm run format:rust && pnpm run format:web",
     "format:rust": "cd packages/engine && cargo fmt",
     "format:web": "pnpm --filter @dicee/web format",
+    "web:sync": "pnpm --filter @dicee/web exec svelte-kit sync",
+    "web:vitest": "pnpm --filter @dicee/web exec vitest",
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {

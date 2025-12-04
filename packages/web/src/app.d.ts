@@ -21,7 +21,9 @@ declare global {
 		interface PageData {
 			session: Session | null;
 			user: User | null;
-			supabase: SupabaseClient<Database>;
+			// Note: supabase is provided by +layout.ts and inherited by all pages
+			// It's intentionally not declared here to allow proper type inference
+			// through SvelteKit's generated types
 		}
 		// interface PageState {}
 		// interface Platform {}

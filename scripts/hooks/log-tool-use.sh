@@ -6,6 +6,7 @@
 set -euo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-/Users/verlyn13/Development/personal/dicee}"
+AGENT_NAME="${AGENT_NAME:-claude-code}"
 cd "$PROJECT_DIR"
 
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -18,7 +19,7 @@ TOOL_INFO=$(cat)
 TOOL_NAME=$(echo "$TOOL_INFO" | jq -r '.tool_name // "unknown"' 2>/dev/null || echo "unknown")
 
 # Log to separate tool log file (not memory.jsonl which is owned by MCP)
-echo "{\"type\":\"tool_use\",\"tool\":\"$TOOL_NAME\",\"timestamp\":\"$TIMESTAMP\"}" >> "$LOG_FILE"
+echo "{\"type\":\"tool_use\",\"tool\":\"$TOOL_NAME\",\"timestamp\":\"$TIMESTAMP\",\"agent\":\"$AGENT_NAME\"}" >> "$LOG_FILE"
 
 # Keep log file manageable (last 500 entries)
 if [ -f "$LOG_FILE" ]; then

@@ -220,11 +220,17 @@ pnpm build            # Build all packages
 # Testing
 pnpm test             # Run tests
 pnpm test:e2e         # Run E2E tests
+pnpm web:vitest       # Run Vitest inside @dicee/web (pass args after --)
+
+# Tooling sync
+pnpm web:sync         # Regenerate SvelteKit types in @dicee/web
 
 # Linting
 pnpm lint             # Lint all packages
 pnpm format           # Format with Biome
 ```
+
+> Frontend unit tests must run through `pnpm web:vitest -- <args>` so SvelteKit injects its Vite plugin stack and agent logs capture the scoped test run.
 
 ## Code Standards
 
@@ -253,6 +259,7 @@ pnpm format           # Format with Biome
 - Vitest for unit tests
 - Playwright for E2E tests
 - Test files co-located with source (`*.test.ts`)
+- Svelte component mocks should export `.svelte` fixtures or re-use production components; avoid class/function stand-ins that skip the compiler.
 
 ## Environment Variables
 

@@ -5,13 +5,14 @@
 set -euo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-/Users/verlyn13/Development/personal/dicee}"
+AGENT_NAME="${AGENT_NAME:-claude-code}"
 cd "$PROJECT_DIR"
 
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 LOG_FILE=".claude/state/tool-log.jsonl"
 
 # Log session start to tool log (not memory.jsonl - owned by MCP)
-echo "{\"type\":\"session_start\",\"timestamp\":\"$TIMESTAMP\",\"agent\":\"claude-code\"}" >> "$LOG_FILE"
+echo "{\"type\":\"session_start\",\"timestamp\":\"$TIMESTAMP\",\"agent\":\"$AGENT_NAME\"}" >> "$LOG_FILE"
 
 # Show current phase (to stderr so it appears in hook output)
 if [ -f .claude/state/current-phase.json ]; then
