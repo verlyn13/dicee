@@ -1,9 +1,10 @@
 <script lang="ts">
 /**
- * AuthStatus - Displays current auth state
+ * AuthHeader - Header auth status display
  *
  * Shows user info and sign out button for authenticated users.
- * Can be used in header/navigation areas.
+ * Used in the game header for auth state display.
+ * Note: Renamed from AuthStatus to avoid conflict with Hub's AuthStatusCard.
  */
 import { auth } from '$lib/stores/auth.svelte';
 

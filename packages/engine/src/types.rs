@@ -1,3 +1,10 @@
+//! Legacy types module for WASM API compatibility.
+//!
+//! This module provides backward-compatible types for the original WASM API.
+//! New code should prefer types from `core::category` and `core::turn`.
+
+#![allow(missing_docs)]
+
 use serde::{Deserialize, Serialize};
 
 /// Five dice, each value 1-6

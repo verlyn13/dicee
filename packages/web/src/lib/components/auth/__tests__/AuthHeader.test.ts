@@ -1,13 +1,14 @@
 /**
- * AuthStatus Component Tests
+ * AuthHeader Component Tests
  *
- * Tests for the auth status display component.
+ * Tests for the auth header display component.
+ * Note: Renamed from AuthStatus to avoid conflict with Hub's AuthStatusCard.
  */
 
 import { fireEvent, render, screen } from '@testing-library/svelte';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
-import AuthStatus from '../AuthStatus.svelte';
+import AuthHeader from '../AuthHeader.svelte';
 
 // Create a mock auth state that can be controlled
 const createMockAuth = (overrides = {}) => ({
@@ -28,7 +29,7 @@ vi.mock('$lib/stores/auth.svelte', () => ({
 	},
 }));
 
-describe('AuthStatus', () => {
+describe('AuthHeader', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockAuth = createMockAuth();
@@ -36,7 +37,7 @@ describe('AuthStatus', () => {
 
 	it('does not render when not authenticated', () => {
 		mockAuth = createMockAuth({ isAuthenticated: false });
-		const { container } = render(AuthStatus);
+		const { container } = render(AuthHeader);
 
 		expect(container.querySelector('.auth-status')).not.toBeInTheDocument();
 	});
@@ -46,7 +47,7 @@ describe('AuthStatus', () => {
 			isAuthenticated: true,
 			user: { id: '123' },
 		});
-		render(AuthStatus);
+		render(AuthHeader);
 
 		expect(screen.getByRole('button', { name: 'Sign Out' })).toBeInTheDocument();
 	});
@@ -57,7 +58,7 @@ describe('AuthStatus', () => {
 			isAnonymous: true,
 			user: { id: '123', is_anonymous: true },
 		});
-		render(AuthStatus);
+		render(AuthHeader);
 
 		expect(screen.getByText('Guest')).toBeInTheDocument();
 	});
@@ -69,7 +70,7 @@ describe('AuthStatus', () => {
 			user: { id: '123', email: 'john@example.com' },
 			email: 'john@example.com',
 		});
-		render(AuthStatus);
+		render(AuthHeader);
 
 		expect(screen.getByText('john')).toBeInTheDocument();
 	});
@@ -81,13 +82,13 @@ describe('AuthStatus', () => {
 			user: { id: '123' },
 			email: null,
 		});
-		render(AuthStatus);
+		render(AuthHeader);
 
 		expect(screen.getByText('User')).toBeInTheDocument();
 	});
 });
 
-describe('AuthStatus: Sign Out', () => {
+describe('AuthHeader: Sign Out', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
@@ -97,7 +98,7 @@ describe('AuthStatus: Sign Out', () => {
 			isAuthenticated: true,
 			user: { id: '123' },
 		});
-		render(AuthStatus);
+		render(AuthHeader);
 
 		const button = screen.getByRole('button', { name: 'Sign Out' });
 		await fireEvent.click(button);
@@ -116,7 +117,7 @@ describe('AuthStatus: Sign Out', () => {
 					}),
 			),
 		});
-		render(AuthStatus);
+		render(AuthHeader);
 
 		const button = screen.getByRole('button', { name: 'Sign Out' });
 		fireEvent.click(button);
@@ -137,7 +138,7 @@ describe('AuthStatus: Sign Out', () => {
 			user: { id: '123' },
 			signOut: vi.fn().mockRejectedValue(new Error('Network error')),
 		});
-		render(AuthStatus);
+		render(AuthHeader);
 
 		const button = screen.getByRole('button', { name: 'Sign Out' });
 		await fireEvent.click(button);
@@ -153,7 +154,7 @@ describe('AuthStatus: Sign Out', () => {
 	});
 });
 
-describe('AuthStatus: Styling', () => {
+describe('AuthHeader: Styling', () => {
 	beforeEach(() => {
 		mockAuth = createMockAuth({
 			isAuthenticated: true,
@@ -162,7 +163,7 @@ describe('AuthStatus: Styling', () => {
 	});
 
 	it('applies custom class', () => {
-		const { container } = render(AuthStatus, { props: { class: 'header-auth' } });
+		const { container } = render(AuthHeader, { props: { class: 'header-auth' } });
 
 		const status = container.querySelector('.auth-status');
 		expect(status).toHaveClass('header-auth');
@@ -174,7 +175,7 @@ describe('AuthStatus: Styling', () => {
 			isAnonymous: true,
 			user: { id: '123', is_anonymous: true },
 		});
-		const { container } = render(AuthStatus);
+		const { container } = render(AuthHeader);
 
 		expect(container.querySelector('.guest-badge')).toBeInTheDocument();
 	});
@@ -186,13 +187,13 @@ describe('AuthStatus: Styling', () => {
 			user: { id: '123', email: 'test@example.com' },
 			email: 'test@example.com',
 		});
-		const { container } = render(AuthStatus);
+		const { container } = render(AuthHeader);
 
 		expect(container.querySelector('.user-name')).toBeInTheDocument();
 	});
 });
 
-describe('AuthStatus: Accessibility', () => {
+describe('AuthHeader: Accessibility', () => {
 	beforeEach(() => {
 		mockAuth = createMockAuth({
 			isAuthenticated: true,
@@ -201,14 +202,14 @@ describe('AuthStatus: Accessibility', () => {
 	});
 
 	it('has no accessibility violations', async () => {
-		const { container } = render(AuthStatus);
+		const { container } = render(AuthHeader);
 
 		const results = await axe(container);
 		expect(results).toHaveNoViolations();
 	});
 
 	it('sign out button is keyboard accessible', () => {
-		render(AuthStatus);
+		render(AuthHeader);
 
 		const button = screen.getByRole('button', { name: 'Sign Out' });
 		button.focus();
@@ -216,14 +217,14 @@ describe('AuthStatus: Accessibility', () => {
 	});
 
 	it('aria-busy is false when not signing out', () => {
-		render(AuthStatus);
+		render(AuthHeader);
 
 		const button = screen.getByRole('button');
 		expect(button).toHaveAttribute('aria-busy', 'false');
 	});
 });
 
-describe('AuthStatus: Display Name Derivation', () => {
+describe('AuthHeader: Display Name Derivation', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
@@ -235,7 +236,7 @@ describe('AuthStatus: Display Name Derivation', () => {
 			user: { id: '123', email: 'jane.doe@company.org' },
 			email: 'jane.doe@company.org',
 		});
-		render(AuthStatus);
+		render(AuthHeader);
 
 		expect(screen.getByText('jane.doe')).toBeInTheDocument();
 	});
@@ -247,7 +248,7 @@ describe('AuthStatus: Display Name Derivation', () => {
 			user: { id: '123', email: 'weird@@example.com' },
 			email: 'weird@@example.com',
 		});
-		render(AuthStatus);
+		render(AuthHeader);
 
 		// split('@')[0] would return 'weird'
 		expect(screen.getByText('weird')).toBeInTheDocument();

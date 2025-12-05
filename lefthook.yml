@@ -3,12 +3,12 @@ pre-commit:
   commands:
     rust-fmt:
       glob: "packages/engine/src/**/*.rs"
-      run: mise exec -- cargo fmt --check
+      run: mise exec -- cargo fmt --manifest-path packages/engine/Cargo.toml --check
       stage_fixed: true
 
     rust-clippy:
       glob: "packages/engine/src/**/*.rs"
-      run: mise exec -- cargo clippy -- -D warnings
+      run: mise exec -- cargo clippy --manifest-path packages/engine/Cargo.toml -- -D warnings
 
     biome-check:
       glob: "packages/web/src/**/*.{ts,js,svelte}"
