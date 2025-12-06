@@ -1,23 +1,58 @@
 <script lang="ts">
 import type { DieValue } from '$lib/types.js';
+import { haptic } from '$lib/utils/haptics';
 
 interface Props {
 	value: DieValue;
 	kept?: boolean;
 	disabled?: boolean;
 	rolling?: boolean;
+	/** Whether the die just landed (triggers land animation) */
+	landing?: boolean;
 	onclick?: () => void;
 }
 
-let { value, kept = false, disabled = false, rolling = false, onclick }: Props = $props();
+let {
+	value,
+	kept = false,
+	disabled = false,
+	rolling = false,
+	landing = false,
+	onclick,
+}: Props = $props();
+
+// Track previous value for animation
+let previousValue = $state(value);
+let showValueChange = $state(false);
+
+$effect(() => {
+	if (value !== previousValue && !rolling) {
+		showValueChange = true;
+		previousValue = value;
+		// Reset after animation
+		const timeout = setTimeout(() => {
+			showValueChange = false;
+		}, 300);
+		return () => clearTimeout(timeout);
+	}
+});
+
+function handleClick() {
+	if (!disabled && onclick) {
+		haptic('light');
+		onclick();
+	}
+}
 </script>
 
 <button
 	class="die"
 	class:kept
 	class:rolling
+	class:landing
+	class:value-changed={showValueChange}
 	{disabled}
-	{onclick}
+	onclick={handleClick}
 	aria-label="Die showing {value}, {kept ? 'held' : 'not held'}"
 	aria-pressed={kept}
 >
@@ -98,16 +133,59 @@ let { value, kept = false, disabled = false, rolling = false, onclick }: Props =
 	}
 
 	.die.rolling {
-		animation: roll 0.1s ease-in-out infinite;
+		animation: roll 0.08s ease-in-out infinite;
+		filter: blur(0.5px);
+	}
+
+	.die.landing {
+		animation: land 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+	}
+
+	.die.value-changed .face {
+		animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 
 	@keyframes roll {
-		0%,
-		100% {
-			transform: rotate(-3deg);
+		0% {
+			transform: rotate(-4deg) translateY(-2px);
+		}
+		25% {
+			transform: rotate(4deg) translateY(1px);
 		}
 		50% {
-			transform: rotate(3deg);
+			transform: rotate(-3deg) translateY(-1px);
+		}
+		75% {
+			transform: rotate(3deg) translateY(2px);
+		}
+		100% {
+			transform: rotate(-4deg) translateY(-2px);
+		}
+	}
+
+	@keyframes land {
+		0% {
+			transform: scale(1.1) rotate(5deg);
+		}
+		50% {
+			transform: scale(0.95) rotate(-2deg);
+		}
+		100% {
+			transform: scale(1) rotate(0deg);
+		}
+	}
+
+	@keyframes pop {
+		0% {
+			transform: scale(0.8);
+			opacity: 0.5;
+		}
+		50% {
+			transform: scale(1.1);
+		}
+		100% {
+			transform: scale(1);
+			opacity: 1;
 		}
 	}
 

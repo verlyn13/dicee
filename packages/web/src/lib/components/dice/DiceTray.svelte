@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { DiceArray, KeptMask } from '$lib/types.js';
+import { haptic } from '$lib/utils/haptics';
 import Die from './Die.svelte';
 
 interface Props {
@@ -31,6 +32,30 @@ let {
 const isFirstRoll = $derived(rollsRemaining === 3);
 const isFinalRoll = $derived(rollsRemaining === 0);
 const keptCount = $derived(kept.filter(Boolean).length);
+
+// Track landing state for animation
+let wasRolling = $state(false);
+let landing = $state(false);
+
+$effect(() => {
+	if (wasRolling && !rolling) {
+		// Just finished rolling - trigger landing animation
+		landing = true;
+		haptic('medium');
+		const timeout = setTimeout(() => {
+			landing = false;
+		}, 300);
+		return () => clearTimeout(timeout);
+	}
+	wasRolling = rolling;
+});
+
+function handleRoll() {
+	if (canRoll) {
+		haptic('roll');
+		onRoll();
+	}
+}
 </script>
 
 <div class="dice-tray" data-rolling={rolling}>
@@ -43,13 +68,14 @@ const keptCount = $derived(kept.filter(Boolean).length);
 					kept={kept[i]}
 					disabled={!canKeep}
 					{rolling}
+					{landing}
 					onclick={() => canKeep && onToggleKeep(i)}
 				/>
 			{/each}
 		</div>
 
 		<!-- Roll Button -->
-		<button class="roll-btn" onclick={onRoll} disabled={!canRoll}>
+		<button class="roll-btn" class:rolling onclick={handleRoll} disabled={!canRoll}>
 			{#if rolling}
 				ROLLING...
 			{:else if isFirstRoll}
@@ -162,6 +188,21 @@ const keptCount = $derived(kept.filter(Boolean).length);
 	.roll-btn:disabled {
 		background: var(--color-disabled);
 		cursor: not-allowed;
+	}
+
+	.roll-btn.rolling {
+		animation: pulse 0.3s ease-in-out infinite alternate;
+	}
+
+	@keyframes pulse {
+		from {
+			transform: scale(1);
+			opacity: 0.9;
+		}
+		to {
+			transform: scale(1.02);
+			opacity: 1;
+		}
 	}
 
 	/* Quick Actions */

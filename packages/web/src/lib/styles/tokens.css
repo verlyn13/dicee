@@ -120,6 +120,22 @@
 	--transition-slow: 500ms ease;
 
 	/* ==========================================================================
+	 * Shadows (Neo-Brutalist: hard offset shadows)
+	 * ========================================================================== */
+
+	--shadow-brutal: 4px 4px 0 0 var(--color-border);
+	--shadow-brutal-lg: 6px 6px 0 0 var(--color-border);
+	--shadow-brutal-sm: 2px 2px 0 0 var(--color-border);
+
+	/* ==========================================================================
+	 * Border Radius (Neo-Brutalist: minimal, only for specific elements)
+	 * ========================================================================== */
+
+	--radius-none: 0;
+	--radius-sm: 2px;
+	--radius-md: 4px;
+
+	/* ==========================================================================
 	 * Z-Index Stack (per RFC-002 HUD Architecture)
 	 * ========================================================================== */
 
@@ -128,6 +144,7 @@
 	--z-hud: 300;
 	--z-tooltip: 400;
 	--z-modal: 500;
+	--z-bottomsheet: 600;
 	--z-alert: 1000;
 
 	/* ==========================================================================
@@ -166,14 +183,8 @@
 
 /* ==========================================================================
  * Dark Mode (future enhancement)
+ * Keeping light mode only for v1.0 per RFC
  * ========================================================================== */
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		/* Dark mode tokens would go here */
-		/* Keeping light mode only for v1.0 per RFC */
-	}
-}
 
 /* ==========================================================================
  * Reduced Motion

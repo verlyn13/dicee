@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { Category, StatsProfile } from '$lib/types.js';
 import { CATEGORY_DISPLAY_NAMES } from '$lib/types.js';
+import { haptic } from '$lib/utils/haptics';
 
 interface Props {
 	category: Category;
@@ -31,6 +32,24 @@ let {
 // Derived
 const isScored = $derived(score !== null);
 const displayName = $derived(CATEGORY_DISPLAY_NAMES[category]);
+
+// Track score changes for animation
+let previousScore = $state<number | null>(null);
+let showScoreAnimation = $state(false);
+
+$effect(() => {
+	if (score !== null && previousScore === null) {
+		// Just scored - trigger animation
+		showScoreAnimation = true;
+		haptic('success');
+		const timeout = setTimeout(() => {
+			showScoreAnimation = false;
+		}, 600);
+		previousScore = score;
+		return () => clearTimeout(timeout);
+	}
+	previousScore = score;
+});
 
 // Heat intensity (0-1)
 const heatIntensity = $derived.by(() => {
@@ -107,8 +126,8 @@ const categoryIcons: Record<Category, string> = {
 	<!-- Score Display -->
 	<div class="category-score">
 		{#if isScored}
-			<span class="score scored-value">{score}</span>
-			<span class="check">✓</span>
+			<span class="score scored-value" class:score-pop={showScoreAnimation}>{score}</span>
+			<span class="check" class:check-pop={showScoreAnimation}>✓</span>
 		{:else}
 			<span class="score potential-value">{potentialScore}</span>
 		{/if}
@@ -255,6 +274,43 @@ const categoryIcons: Record<Category, string> = {
 	.check {
 		color: var(--color-success);
 		font-weight: var(--weight-bold);
+	}
+
+	/* Score animation */
+	.score-pop {
+		animation: score-count-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+	}
+
+	.check-pop {
+		animation: check-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+	}
+
+	@keyframes score-count-up {
+		0% {
+			transform: scale(0.5);
+			opacity: 0;
+			color: var(--color-accent);
+		}
+		50% {
+			transform: scale(1.3);
+			color: var(--color-accent-dark);
+		}
+		100% {
+			transform: scale(1);
+			opacity: 1;
+			color: var(--color-text);
+		}
+	}
+
+	@keyframes check-appear {
+		0% {
+			transform: scale(0) rotate(-180deg);
+			opacity: 0;
+		}
+		100% {
+			transform: scale(1) rotate(0deg);
+			opacity: 1;
+		}
 	}
 
 	/* Stats */
