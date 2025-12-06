@@ -6,8 +6,7 @@
 import { fireEvent, render } from '@testing-library/svelte';
 import { describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
-import type { ScoringResult } from '$lib/engine.js';
-import type { Category, CategoryProbability, StatsProfile } from '$lib/types.js';
+import type { Category, CategoryProbability, ScoringResult, StatsProfile } from '$lib/types.js';
 import Scorecard from '../Scorecard.svelte';
 
 // =============================================================================

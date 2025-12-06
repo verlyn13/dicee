@@ -1,6 +1,5 @@
 <script lang="ts">
-import type { ScoringResult } from '$lib/engine.js';
-import type { Category, CategoryProbability, StatsProfile } from '$lib/types.js';
+import type { Category, CategoryProbability, ScoringResult, StatsProfile } from '$lib/types.js';
 import { LOWER_CATEGORIES, UPPER_CATEGORIES } from '$lib/types.js';
 import CategoryRow from './CategoryRow.svelte';
 

@@ -4,16 +4,16 @@
  * Integrates with WASM probability engine for scoring and analysis
  */
 
-import { calculateProbabilities as calcProbs, calculateScores } from '../services/engine.js';
+import { analyzeTurnOptimal } from '../services/engine.js';
 import type {
 	Category,
-	CategoryProbability,
+	CategoryAnalysis,
 	DecisionFeedback,
 	DecisionQuality,
 	DiceArray,
 	GameStatus,
-	ProbabilityAnalysis,
 	StatsProfile,
+	TurnAnalysis,
 	TurnPhase,
 } from '../types.js';
 import { DiceState } from './dice.svelte.js';
@@ -60,8 +60,8 @@ export class GameState {
 	#gameCompletedAt = $state<number | null>(null);
 	#turnStartedAt = $state<number | null>(null);
 
-	// Probability analysis (from WASM)
-	#currentAnalysis = $state<ProbabilityAnalysis | null>(null);
+	// Turn analysis (from M1-M4 solver)
+	#currentAnalysis = $state<TurnAnalysis | null>(null);
 
 	// Cached WASM scores for current dice
 	#cachedScores = $state<Map<Category, number>>(new Map());
@@ -107,7 +107,7 @@ export class GameState {
 		return this.#phase;
 	}
 
-	get currentAnalysis(): ProbabilityAnalysis | null {
+	get currentAnalysis(): TurnAnalysis | null {
 		return this.#currentAnalysis;
 	}
 
@@ -210,22 +210,32 @@ export class GameState {
 	}
 
 	/**
-	 * Refresh scores from WASM engine
-	 * Called automatically after each roll
+	 * Refresh analysis from M1-M4 solver.
+	 * Called automatically after each roll.
+	 * Updates both scores and analysis in one call.
 	 */
 	async refreshScores(): Promise<void> {
 		if (this.#rollNumber === 0) return;
 
 		this.#scoresLoading = true;
 		try {
-			const scores = await calculateScores(this.dice.values);
+			const analysis = await analyzeTurnOptimal(
+				this.dice.values,
+				this.rollsRemaining,
+				this.scorecard.categoriesRemaining,
+			);
+
+			// Update cached scores from analysis
 			const newScores = new Map<Category, number>();
-			for (const result of scores) {
-				newScores.set(result.category, result.score);
+			for (const cat of analysis.categories) {
+				newScores.set(cat.category, cat.immediateScore);
 			}
 			this.#cachedScores = newScores;
+
+			// Also store the full analysis
+			this.#currentAnalysis = analysis;
 		} catch (err) {
-			console.warn('WASM scoring failed, using fallback:', err);
+			console.warn('WASM analysis failed, using fallback:', err);
 			// Scores will use fallback calculation
 		} finally {
 			this.#scoresLoading = false;
@@ -233,37 +243,11 @@ export class GameState {
 	}
 
 	/**
-	 * Refresh probability analysis from WASM engine
+	 * Refresh analysis from M1-M4 solver.
+	 * Alias for refreshScores() since new API provides both in one call.
 	 */
 	async refreshAnalysis(): Promise<void> {
-		if (this.#rollNumber === 0) return;
-
-		try {
-			const probs = await calcProbs(this.dice.values, this.dice.kept, this.rollsRemaining);
-
-			// Filter to available categories only
-			const availableProbs = probs.filter((p) =>
-				this.scorecard.categoriesRemaining.includes(p.category),
-			);
-
-			// Find best among available
-			const best = availableProbs.reduce(
-				(best, c) => (c.expectedValue > best.expectedValue ? c : best),
-				availableProbs[0],
-			);
-
-			this.#currentAnalysis = {
-				categories: availableProbs.map((c) => ({
-					...c,
-					isOptimal: c.category === best?.category,
-				})),
-				bestCategory: best?.category ?? 'Chance',
-				bestEV: best?.expectedValue ?? 0,
-				rollsRemaining: this.rollsRemaining,
-			};
-		} catch (err) {
-			console.warn('WASM probability analysis failed:', err);
-		}
+		return this.refreshScores();
 	}
 
 	async rollAnimated(durationMs: number = 500): Promise<DiceArray | null> {
@@ -325,14 +309,14 @@ export class GameState {
 	}
 
 	// ==========================================================================
-	// Probability Analysis
+	// Turn Analysis
 	// ==========================================================================
 
-	setAnalysis(analysis: ProbabilityAnalysis): void {
+	setAnalysis(analysis: TurnAnalysis): void {
 		this.#currentAnalysis = analysis;
 	}
 
-	getCategoryAnalysis(category: Category): CategoryProbability | null {
+	getCategoryAnalysis(category: Category): CategoryAnalysis | null {
 		if (!this.#currentAnalysis) return null;
 		return this.#currentAnalysis.categories.find((c) => c.category === category) ?? null;
 	}

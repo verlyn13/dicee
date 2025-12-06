@@ -198,10 +198,11 @@ describe('GameState: roll', () => {
 
 	it('clears current analysis on roll', () => {
 		game.setAnalysis({
+			action: 'score',
+			recommendedCategory: 'Ones',
+			categoryScore: 3,
+			expectedValue: 3,
 			categories: [],
-			bestCategory: 'Ones',
-			bestEV: 0,
-			rollsRemaining: 2,
 		});
 		expect(game.currentAnalysis).not.toBeNull();
 
@@ -413,10 +414,11 @@ describe('GameState: reset', () => {
 		game.startGame();
 		game.roll();
 		game.setAnalysis({
+			action: 'score',
+			recommendedCategory: 'Ones',
+			categoryScore: 3,
+			expectedValue: 3,
 			categories: [],
-			bestCategory: 'Ones',
-			bestEV: 0,
-			rollsRemaining: 2,
 		});
 		game.reset();
 
@@ -488,10 +490,10 @@ describe('GameState: Stats Profile', () => {
 });
 
 // =============================================================================
-// Probability Analysis Tests
+// Turn Analysis Tests
 // =============================================================================
 
-describe('GameState: Probability Analysis', () => {
+describe('GameState: Turn Analysis', () => {
 	it('starts with null analysis', () => {
 		const game = createGameState();
 		expect(game.currentAnalysis).toBeNull();
@@ -500,18 +502,18 @@ describe('GameState: Probability Analysis', () => {
 	it('allows setting analysis', () => {
 		const game = createGameState();
 		const analysis = {
+			action: 'score' as const,
+			recommendedCategory: 'Ones' as Category,
+			categoryScore: 3,
+			expectedValue: 2.5,
 			categories: [
 				{
 					category: 'Ones' as Category,
-					probability: 0.5,
+					immediateScore: 3,
+					isValid: true,
 					expectedValue: 2.5,
-					currentScore: 3,
-					isOptimal: true,
 				},
 			],
-			bestCategory: 'Ones' as Category,
-			bestEV: 2.5,
-			rollsRemaining: 2,
 		};
 
 		game.setAnalysis(analysis);
@@ -521,25 +523,24 @@ describe('GameState: Probability Analysis', () => {
 	it('getCategoryAnalysis returns correct category', () => {
 		const game = createGameState();
 		const analysis = {
+			action: 'score' as const,
+			recommendedCategory: 'Ones' as Category,
+			categoryScore: 3,
+			expectedValue: 2.5,
 			categories: [
 				{
 					category: 'Ones' as Category,
-					probability: 0.5,
+					immediateScore: 3,
+					isValid: true,
 					expectedValue: 2.5,
-					currentScore: 3,
-					isOptimal: true,
 				},
 				{
 					category: 'Twos' as Category,
-					probability: 0.3,
+					immediateScore: 6,
+					isValid: true,
 					expectedValue: 4.0,
-					currentScore: 6,
-					isOptimal: false,
 				},
 			],
-			bestCategory: 'Ones' as Category,
-			bestEV: 2.5,
-			rollsRemaining: 2,
 		};
 
 		game.setAnalysis(analysis);
@@ -556,10 +557,11 @@ describe('GameState: Probability Analysis', () => {
 	it('getCategoryAnalysis returns null for missing category', () => {
 		const game = createGameState();
 		game.setAnalysis({
+			action: 'score',
+			recommendedCategory: 'Ones',
+			categoryScore: 3,
+			expectedValue: 0,
 			categories: [],
-			bestCategory: 'Ones',
-			bestEV: 0,
-			rollsRemaining: 2,
 		});
 
 		expect(game.getCategoryAnalysis('Yahtzee')).toBeNull();

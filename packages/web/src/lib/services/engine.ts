@@ -7,7 +7,7 @@
  * @module services/engine
  */
 
-import type { Category, CategoryProbability, DiceArray, KeptMask, ScoringResult } from '$lib/types';
+import type { Category, DiceArray, TurnAnalysis } from '$lib/types';
 
 // =============================================================================
 // Types & Interfaces
@@ -142,79 +142,6 @@ async function ensureEngine(): Promise<typeof import('$lib/engine')> {
 }
 
 // =============================================================================
-// Typed API - Scoring
-// =============================================================================
-
-/**
- * Calculate scores for all categories given current dice.
- *
- * @param dice - Array of 5 dice values (1-6)
- * @returns Array of scoring results for all 13 categories
- */
-export async function calculateScores(dice: DiceArray): Promise<ScoringResult[]> {
-	const engine = await ensureEngine();
-	return engine.scoreAllCategories(dice);
-}
-
-/**
- * Calculate score for a single category.
- *
- * @param dice - Current dice values
- * @param category - Which category to score
- * @returns Score for that category
- */
-export async function calculateCategoryScore(dice: DiceArray, category: Category): Promise<number> {
-	const engine = await ensureEngine();
-	return engine.getScore(dice, category);
-}
-
-// =============================================================================
-// Typed API - Probabilities
-// =============================================================================
-
-/**
- * Calculate probabilities and expected values for all available categories.
- *
- * @param dice - Current dice values (1-6)
- * @param kept - Which dice are being kept (true = kept)
- * @param rollsRemaining - Number of rolls left (1-3)
- * @returns Array of probability data for all categories
- */
-export async function calculateProbabilities(
-	dice: DiceArray,
-	kept: KeptMask,
-	rollsRemaining: number = 1,
-): Promise<CategoryProbability[]> {
-	const engine = await ensureEngine();
-	const result = engine.calculateProbabilities(dice, kept, rollsRemaining);
-	return result.categories;
-}
-
-/**
- * Find the category with the highest expected value.
- *
- * @param dice - Current dice values
- * @param kept - Which dice are kept
- * @param rollsRemaining - Rolls remaining
- * @returns Category with best EV, or null if none available
- */
-export async function getBestCategory(
-	dice: DiceArray,
-	kept: KeptMask,
-	rollsRemaining: number = 1,
-): Promise<{ category: Category; expectedValue: number } | null> {
-	const engine = await ensureEngine();
-	const result = engine.calculateProbabilities(dice, kept, rollsRemaining);
-
-	if (result.categories.length === 0) return null;
-
-	return {
-		category: result.bestCategory,
-		expectedValue: result.bestEV,
-	};
-}
-
-// =============================================================================
 // Convenience Functions
 // =============================================================================
 
@@ -239,11 +166,45 @@ export function preloadEngine(): void {
 	});
 }
 
+// =============================================================================
+// M1-M4 Solver API
+// =============================================================================
+
 /**
- * Check if a specific category can be scored
+ * Analyze the current turn position using the M1-M4 solver.
+ *
+ * Returns optimal strategy recommendation:
+ * - "score": Immediately score the recommended category
+ * - "reroll": Keep specific dice and reroll others
+ *
+ * @param dice - Current dice values (5 dice, values 1-6)
+ * @param rollsRemaining - Number of rolls remaining (0-2)
+ * @param availableCategories - Categories not yet scored
+ * @returns TurnAnalysis with recommended action and expected value
+ *
+ * @example
+ * ```typescript
+ * const analysis = await analyzeTurnOptimal([5,5,5,5,5], 0, ['Yahtzee']);
+ * if (analysis.action === 'score') {
+ *   console.log(`Score ${analysis.categoryScore} in ${analysis.recommendedCategory}`);
+ * } else {
+ *   console.log(`Reroll: ${analysis.keepRecommendation?.explanation}`);
+ * }
+ * ```
  */
-export async function canScoreCategory(dice: DiceArray, category: Category): Promise<boolean> {
+export async function analyzeTurnOptimal(
+	dice: DiceArray,
+	rollsRemaining: number,
+	availableCategories: Category[],
+): Promise<TurnAnalysis> {
 	const engine = await ensureEngine();
-	const result = engine.scoreCategory(dice, category);
-	return result.valid;
+	return engine.analyzeTurn(dice, rollsRemaining, availableCategories);
+}
+
+/**
+ * Check if the new engine API is enabled.
+ * Always returns true in v0.3.0+ (legacy API removed).
+ */
+export function isNewEngineEnabled(): boolean {
+	return true;
 }

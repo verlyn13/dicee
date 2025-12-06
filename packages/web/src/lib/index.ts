@@ -4,17 +4,7 @@
  */
 
 // Engine
-export {
-	analyzePosition,
-	calculateProbabilities,
-	getScore,
-	initEngine,
-	isEngineReady,
-	type ProbabilityResult,
-	type ScoringResult,
-	scoreAllCategories,
-	scoreCategory,
-} from './engine.js';
+export { analyzeTurn, initEngine, isEngineReady } from './engine.js';
 
 // Stores
 export {

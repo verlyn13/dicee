@@ -5,14 +5,12 @@
  */
 
 export {
-	calculateCategoryScore,
-	calculateProbabilities,
-	calculateScores,
+	analyzeTurnOptimal,
 	EngineInitError,
-	getBestCategory,
 	getEngineState,
 	initializeEngine,
 	isEngineReady,
+	isNewEngineEnabled,
 	preloadEngine,
 	resetEngine,
 } from './engine';

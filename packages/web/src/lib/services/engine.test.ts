@@ -1,20 +1,18 @@
 /**
  * WASM Engine Service Tests
  *
- * Tests lazy loading, error handling, and API correctness.
+ * Tests lazy loading, error handling, and M1-M4 solver API.
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { DiceArray, KeptMask } from '$lib/types';
+import type { Category, DiceArray, TurnAnalysis } from '$lib/types';
 import {
-	calculateCategoryScore,
-	calculateProbabilities,
-	calculateScores,
+	analyzeTurnOptimal,
 	EngineInitError,
-	getBestCategory,
 	getEngineState,
 	initializeEngine,
 	isEngineReady,
+	isNewEngineEnabled,
 	preloadEngine,
 	resetEngine,
 } from './engine';
@@ -23,41 +21,60 @@ import {
 // Mocks
 // =============================================================================
 
-// Mock the entire $lib/engine module
+// Mock the entire $lib/engine module with new API only
 vi.mock('$lib/engine', () => ({
 	initEngine: vi.fn(async () => Promise.resolve()),
 	isEngineReady: vi.fn(() => true),
-	scoreCategory: vi.fn((_dice: DiceArray, category: string) => ({
-		category,
-		score: 10,
-		valid: true,
-	})),
-	scoreAllCategories: vi.fn((_dice: DiceArray) => [
-		{ category: 'Ones', score: 2, valid: true },
-		{ category: 'Twos', score: 0, valid: true },
-		{ category: 'Threes', score: 3, valid: true },
-	]),
-	getScore: vi.fn((_dice: DiceArray, _category: string) => 10),
-	calculateProbabilities: vi.fn((_dice: DiceArray, _kept: KeptMask, _rollsRemaining: number) => ({
-		categories: [
-			{
-				category: 'Ones',
-				probability: 0.5,
-				expectedValue: 2.5,
-				currentScore: 2,
-				isOptimal: false,
+	analyzeTurn: vi.fn((dice: DiceArray, rollsRemaining: number, categories: Category[]) => {
+		// Check for Yahtzee
+		const isYahtzee = dice.every((d) => d === dice[0]);
+
+		if (isYahtzee && categories.includes('Yahtzee')) {
+			return {
+				action: 'score',
+				recommendedCategory: 'Yahtzee',
+				categoryScore: 50,
+				expectedValue: 50,
+				categories: categories.map((cat) => ({
+					category: cat,
+					immediateScore: cat === 'Yahtzee' ? 50 : 0,
+					isValid: true,
+					expectedValue: cat === 'Yahtzee' ? 50 : 10,
+				})),
+			} satisfies TurnAnalysis;
+		}
+
+		if (rollsRemaining === 0) {
+			return {
+				action: 'score',
+				recommendedCategory: categories[0],
+				categoryScore: 10,
+				expectedValue: 10,
+				categories: categories.map((cat) => ({
+					category: cat,
+					immediateScore: 10,
+					isValid: true,
+					expectedValue: 10,
+				})),
+			} satisfies TurnAnalysis;
+		}
+
+		return {
+			action: 'reroll',
+			keepRecommendation: {
+				keepPattern: [0, 0, 0, 0, 0, 0],
+				explanation: 'Mock: Reroll all',
+				expectedValue: 15,
 			},
-			{
-				category: 'Sixes',
-				probability: 0.3,
-				expectedValue: 4.8,
-				currentScore: 0,
-				isOptimal: true,
-			},
-		],
-		bestCategory: 'Sixes',
-		bestEV: 4.8,
-	})),
+			expectedValue: 15,
+			categories: categories.map((cat) => ({
+				category: cat,
+				immediateScore: 5,
+				isValid: true,
+				expectedValue: 15,
+			})),
+		} satisfies TurnAnalysis;
+	}),
 }));
 
 // Get typed mock references
@@ -159,107 +176,69 @@ describe('engine service', () => {
 		});
 	});
 
-	describe('calculateScores', () => {
-		it('returns scores for all categories', async () => {
-			const dice: DiceArray = [1, 1, 3, 4, 6];
+	describe('analyzeTurnOptimal', () => {
+		it('recommends scoring Yahtzee when applicable', async () => {
+			const dice: DiceArray = [5, 5, 5, 5, 5];
+			const categories: Category[] = ['Yahtzee', 'Fives', 'Chance'];
 
-			const scores = await calculateScores(dice);
+			const analysis = await analyzeTurnOptimal(dice, 2, categories);
 
-			expect(scores).toEqual([
-				{ category: 'Ones', score: 2, valid: true },
-				{ category: 'Twos', score: 0, valid: true },
-				{ category: 'Threes', score: 3, valid: true },
-			]);
+			expect(analysis.action).toBe('score');
+			expect(analysis.recommendedCategory).toBe('Yahtzee');
+			expect(analysis.categoryScore).toBe(50);
+			expect(analysis.expectedValue).toBe(50);
+		});
 
-			expect(mockEngine.scoreAllCategories).toHaveBeenCalledOnce();
+		it('recommends reroll when rolls remain', async () => {
+			const dice: DiceArray = [1, 2, 3, 4, 6];
+			const categories: Category[] = ['Ones', 'Twos', 'LargeStraight'];
+
+			const analysis = await analyzeTurnOptimal(dice, 2, categories);
+
+			expect(analysis.action).toBe('reroll');
+			expect(analysis.keepRecommendation).toBeDefined();
+			expect(analysis.keepRecommendation?.keepPattern).toHaveLength(6);
+		});
+
+		it('recommends score when no rolls remaining', async () => {
+			const dice: DiceArray = [1, 2, 3, 4, 6];
+			const categories: Category[] = ['Ones', 'Twos', 'Chance'];
+
+			const analysis = await analyzeTurnOptimal(dice, 0, categories);
+
+			expect(analysis.action).toBe('score');
+			expect(analysis.recommendedCategory).toBeDefined();
+		});
+
+		it('returns category analysis for all available categories', async () => {
+			const dice: DiceArray = [3, 3, 3, 4, 5];
+			const categories: Category[] = ['Threes', 'ThreeOfAKind', 'Chance'];
+
+			const analysis = await analyzeTurnOptimal(dice, 1, categories);
+
+			expect(analysis.categories).toHaveLength(3);
+			for (const cat of analysis.categories) {
+				expect(cat.category).toBeDefined();
+				expect(typeof cat.immediateScore).toBe('number');
+				expect(typeof cat.expectedValue).toBe('number');
+				expect(typeof cat.isValid).toBe('boolean');
+			}
 		});
 
 		it('initializes engine if not ready', async () => {
 			expect(getEngineState()).toBe('uninitialized');
 
 			const dice: DiceArray = [1, 2, 3, 4, 5];
-			await calculateScores(dice);
+			await analyzeTurnOptimal(dice, 1, ['Ones']);
 
 			expect(getEngineState()).toBe('ready');
 			expect(mockEngine.initEngine).toHaveBeenCalledOnce();
 		});
 	});
 
-	describe('calculateProbabilities', () => {
-		it('returns probability data for available categories', async () => {
-			const dice: DiceArray = [6, 6, 3, 2, 1];
-			const kept: KeptMask = [true, true, false, false, false];
-
-			const probs = await calculateProbabilities(dice, kept, 2);
-
-			expect(probs).toEqual([
-				{
-					category: 'Ones',
-					probability: 0.5,
-					expectedValue: 2.5,
-					currentScore: 2,
-					isOptimal: false,
-				},
-				{
-					category: 'Sixes',
-					probability: 0.3,
-					expectedValue: 4.8,
-					currentScore: 0,
-					isOptimal: true,
-				},
-			]);
-
-			expect(mockEngine.calculateProbabilities).toHaveBeenCalledOnce();
-		});
-
-		it('initializes engine if not ready', async () => {
-			expect(getEngineState()).toBe('uninitialized');
-
-			const dice: DiceArray = [1, 2, 3, 4, 5];
-			const kept: KeptMask = [false, false, false, false, false];
-			await calculateProbabilities(dice, kept);
-
-			expect(getEngineState()).toBe('ready');
-		});
-	});
-
-	describe('calculateCategoryScore', () => {
-		it('returns score for specific category', async () => {
-			const dice: DiceArray = [1, 1, 3, 4, 6];
-
-			const score = await calculateCategoryScore(dice, 'Ones');
-
-			expect(score).toBe(10);
-		});
-	});
-
-	describe('getBestCategory', () => {
-		it('returns category with highest expected value', async () => {
-			const dice: DiceArray = [6, 6, 3, 2, 1];
-			const kept: KeptMask = [true, true, false, false, false];
-
-			const best = await getBestCategory(dice, kept);
-
-			expect(best).toEqual({
-				category: 'Sixes',
-				expectedValue: 4.8,
-			});
-		});
-
-		it('returns null if no categories available', async () => {
-			// Mock empty response
-			mockEngine.calculateProbabilities.mockReturnValueOnce({
-				categories: [],
-				bestCategory: 'Ones' as const,
-				bestEV: 0,
-			});
-
-			const dice: DiceArray = [1, 2, 3, 4, 5];
-			const kept: KeptMask = [false, false, false, false, false];
-
-			const best = await getBestCategory(dice, kept);
-
-			expect(best).toBeNull();
+	describe('isNewEngineEnabled', () => {
+		it('always returns true in v0.3.0+', () => {
+			expect(isNewEngineEnabled()).toBe(true);
 		});
 	});
 
