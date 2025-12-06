@@ -12,7 +12,13 @@ export type DiceArray = [DieValue, DieValue, DieValue, DieValue, DieValue];
 export type KeptMask = [boolean, boolean, boolean, boolean, boolean];
 
 // =============================================================================
-// Category Types
+// Category Types (Internal - PascalCase)
+//
+// These are the canonical category types for internal TypeScript use.
+// For JSON/WebSocket wire format (camelCase), see $lib/types/multiplayer.ts
+// Use $lib/types/category-convert.ts when crossing the boundary.
+//
+// @invariant category_type_consistency
 // =============================================================================
 
 export const UPPER_CATEGORIES = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes'] as const;

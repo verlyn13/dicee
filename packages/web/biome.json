@@ -181,6 +181,21 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": ["**/tools/**/*.ts"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noExcessiveCognitiveComplexity": {
+							"level": "warn",
+							"options": {
+								"maxAllowedComplexity": 20
+							}
+						}
+					}
+				}
+			}
 		}
 	]
 }

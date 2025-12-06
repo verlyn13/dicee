@@ -1,8 +1,23 @@
 /**
- * Multiplayer Types
+ * Multiplayer Types (Wire Format)
  *
  * TypeScript interfaces for the multiplayer room system.
  * These are the canonical types used by both web client and PartyKit server.
+ *
+ * IMPORTANT: These types represent the JSON wire format for WebSocket messages.
+ * Category uses camelCase ('ones', 'yahtzee') for JSON serialization compatibility.
+ *
+ * For internal TypeScript use, import from '$lib/types.ts' which uses PascalCase.
+ * Use category-convert.ts utilities when crossing the boundary:
+ *
+ * @example
+ * import { toWireCategory, toCoreCategory } from '$lib/types/category-convert';
+ * const wire = toWireCategory('Yahtzee');  // 'yahtzee'
+ * const core = toCoreCategory('yahtzee');  // 'Yahtzee'
+ *
+ * @see $lib/types.ts - Internal TypeScript types (PascalCase)
+ * @see $lib/types/category-convert.ts - Conversion utilities
+ * @invariant category_type_consistency
  */
 
 // =============================================================================
@@ -27,7 +42,14 @@ export type KeptMask = [boolean, boolean, boolean, boolean, boolean];
 /** Connection status */
 export type ConnectionStatus = 'online' | 'away' | 'disconnected';
 
-/** Scoring category */
+/**
+ * Scoring category (Wire Format - camelCase)
+ *
+ * This is the wire format used in JSON messages. For internal TypeScript
+ * use, prefer importing Category from '$lib/types.ts' (PascalCase).
+ *
+ * @see $lib/types/category-convert.ts for conversion utilities
+ */
 export type Category =
 	| 'ones'
 	| 'twos'

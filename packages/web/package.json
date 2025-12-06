@@ -27,6 +27,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.8",
+		"ts-morph": "^24.0.0",
 		"@playwright/test": "^1.49.0",
 		"@sveltejs/adapter-auto": "^7.0.0",
 		"@sveltejs/kit": "^2.48.5",
