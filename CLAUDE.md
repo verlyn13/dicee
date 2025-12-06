@@ -242,6 +242,13 @@ pnpm web:sync         # Regenerate SvelteKit types in @dicee/web
 # Linting
 pnpm lint             # Lint all packages
 pnpm format           # Format with Biome
+
+# Architectural Knowledge Graph (AKG)
+pnpm akg:discover     # Discover graph from source (136 nodes, 227 edges)
+pnpm akg:check        # Run invariant checks (4 built-in)
+pnpm akg:check --list # List available invariants
+pnpm akg:check -v     # Verbose output
+pnpm akg:check --json # JSON output for CI
 ```
 
 > Frontend unit tests must run through `pnpm web:vitest -- <args>` so SvelteKit injects its Vite plugin stack and agent logs capture the scoped test run.
@@ -538,6 +545,33 @@ Checks: TypeScript, Biome lint, tests, secrets scan, build
 | **Windsurf/Cascade** | UI components, Svelte/CSS, visual polish |
 | **Gemini CLI** | Research, long context, high-volume ops |
 | **Codex CLI** | Boilerplate, pattern replication, simple CRUD |
+
+### Architectural Knowledge Graph (AKG)
+
+Static analysis tool for enforcing architectural invariants.
+
+**Key Files:**
+```
+packages/web/src/tools/akg/
+├── schema/           # Zod schemas (graph, invariant, config)
+├── config/           # Config loader
+├── discovery/        # ts-morph + Svelte compiler integration
+├── query/            # Query engine, traversal, cycle detection
+├── invariants/       # Registry, runner, 4 built-in invariants
+└── cli/              # discover.ts, check.ts
+```
+
+**Built-in Invariants:**
+| ID | Severity | Description |
+|----|----------|-------------|
+| `wasm_single_entry` | Error | Only engine.ts imports WASM modules |
+| `store_no_circular_deps` | Error | Stores must not have circular dependencies |
+| `layer_component_isolation` | Warning | Dumb components shouldn't import stores |
+| `service_layer_boundaries` | Error | Services shouldn't import UI layers |
+
+**Output:**
+- Graph: `docs/architecture/akg/graph/current.json`
+- History: `docs/architecture/akg/graph/history/`
 
 ### Extended Thinking
 

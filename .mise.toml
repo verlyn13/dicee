@@ -1,0 +1,37 @@
+# Dicee Project - Runtime versions and tasks
+# Managed by mise (https://mise.jdx.dev)
+
+[tools]
+node = "24"
+rust = "stable"
+# Python available if needed for scripting
+# python = "3.12"
+
+[tasks]
+# Core development tasks
+dev = "pnpm dev"
+build = "pnpm build"
+test = "pnpm test"
+check = "pnpm check"
+
+# Linting and formatting (Biome)
+lint = "pnpm lint"
+format = "pnpm format"
+
+# Web-specific
+"web:dev" = "pnpm --filter @dicee/web dev"
+"web:build" = "pnpm --filter @dicee/web build"
+"web:test" = "pnpm web:vitest"
+"web:sync" = "pnpm web:sync"
+
+# Engine (Rust/WASM)
+"engine:build" = "pnpm build:engine"
+"engine:test" = "cargo test --manifest-path packages/engine/Cargo.toml"
+"engine:check" = "pnpm check:rust"
+
+# PartyKit
+"party:dev" = "pnpm dev:party"
+"party:deploy" = "pnpm party:deploy"
+
+# Quality gate
+quality = "./scripts/quality-gate.sh"

@@ -24,8 +24,8 @@
     "web:vitest": "pnpm --filter @dicee/web exec vitest",
     "party:deploy": "pnpm --filter @dicee/partykit deploy",
     "party:tail": "pnpm --filter @dicee/partykit tail",
-    "akg:discover": "echo 'AKG discovery not yet implemented'",
-    "akg:check": "echo 'AKG check not yet implemented'",
+    "akg:discover": "bun run packages/web/src/tools/akg/cli/discover.ts",
+    "akg:check": "bun run packages/web/src/tools/akg/cli/check.ts",
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {

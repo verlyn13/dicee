@@ -1,4 +1,21 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
+      "Bash(biome:*)",
+      "Bash(git:*)",
+      "Bash(cargo:*)",
+      "Bash(wasm-pack:*)",
+      "Bash(mise:*)",
+      "Bash(supabase:*)",
+      "Bash(vercel:*)",
+      "Bash(partykit:*)",
+      "Bash(wrangler:*)",
+      "Bash(infisical:*)",
+      "Bash(gopass:*)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {

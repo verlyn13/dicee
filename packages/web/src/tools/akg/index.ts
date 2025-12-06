@@ -12,6 +12,10 @@
 export * from './config/index.js';
 // Re-export discovery utilities
 export * from './discovery/index.js';
+// Re-export invariant system
+export * from './invariants/index.js';
+// Re-export query engine
+export * from './query/index.js';
 // Re-export all schemas
 export * from './schema/index.js';
 

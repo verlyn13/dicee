@@ -197,7 +197,7 @@ export type EdgeType = z.infer<typeof EdgeType>;
 export const EdgeEvidence = z.object({
 	filePath: z.string(),
 	line: z.number().int().positive(),
-	column: z.number().int().positive().optional(),
+	column: z.number().int().nonnegative().optional(), // 0-based (ts-morph convention)
 	snippet: z.string().optional(),
 	importSpecifier: z.string().optional(),
 });
