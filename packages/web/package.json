@@ -48,6 +48,8 @@
 		"@dicebear/collection": "^9.2.4",
 		"@dicebear/core": "^9.2.4",
 		"@supabase/ssr": "^0.8.0",
-		"@supabase/supabase-js": "^2.86.0"
+		"@supabase/supabase-js": "^2.86.0",
+		"partysocket": "^1.1.6",
+		"zod": "^4.1.13"
 	}
 }

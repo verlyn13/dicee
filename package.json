@@ -4,12 +4,14 @@
   "type": "module",
  "scripts": {
     "dev": "pnpm --filter @dicee/web dev",
+    "dev:party": "pnpm --filter @dicee/partykit dev",
     "build": "pnpm run build:engine && pnpm --filter @dicee/web build",
     "build:engine": "cd packages/engine && wasm-pack build --target web --out-dir ../web/src/lib/wasm",
     "preview": "pnpm --filter @dicee/web preview",
-    "check": "pnpm run check:rust && pnpm run check:web",
+    "check": "pnpm run check:rust && pnpm run check:web && pnpm run check:party",
     "check:rust": "cd packages/engine && cargo fmt --check && cargo clippy -- -D warnings",
     "check:web": "pnpm --filter @dicee/web check && pnpm --filter @dicee/web biome:check",
+    "check:party": "pnpm --filter @dicee/partykit typecheck",
     "test": "cargo test --manifest-path packages/engine/Cargo.toml",
     "test:all": "pnpm test",
     "lint": "pnpm run lint:rust && pnpm run lint:web",
@@ -20,6 +22,8 @@
     "format:web": "pnpm --filter @dicee/web format",
     "web:sync": "pnpm --filter @dicee/web exec svelte-kit sync",
     "web:vitest": "pnpm --filter @dicee/web exec vitest",
+    "party:deploy": "pnpm --filter @dicee/partykit deploy",
+    "party:tail": "pnpm --filter @dicee/partykit tail",
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {

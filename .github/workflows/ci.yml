@@ -42,8 +42,17 @@ jobs:
       - name: Clippy
         run: cargo clippy -- -D warnings
 
-      - name: Run tests
-        run: cargo test
+      - name: Run unit tests
+        run: cargo test --lib
+
+      - name: Run known position tests
+        run: cargo test --test known_positions
+
+      - name: Run property-based tests (ADR-005)
+        run: cargo test --test property_tests
+
+      - name: Run doc tests
+        run: cargo test --doc
 
   wasm:
     name: WASM Build
@@ -64,6 +73,16 @@ jobs:
         working-directory: packages/engine
         run: wasm-pack build --target web --out-dir ../web/src/lib/wasm
 
+      - name: Check WASM size (150KB limit)
+        run: |
+          SIZE=$(wc -c < packages/web/src/lib/wasm/dicee_engine_bg.wasm)
+          echo "WASM size: ${SIZE} bytes"
+          if [ $SIZE -gt 153600 ]; then
+            echo "::error::WASM binary too large: ${SIZE} bytes (limit: 150KB = 153600 bytes)"
+            exit 1
+          fi
+          echo "✅ WASM size within limit"
+
       - name: Upload WASM artifact
         uses: actions/upload-artifact@v4
         with:
@@ -72,7 +91,7 @@ jobs:
           retention-days: 1
 
   web:
-    name: Web Build & Check
+    name: Web Build & Test
     runs-on: ubuntu-latest
     needs: wasm
     steps:
@@ -103,6 +122,14 @@ jobs:
 
       - name: Type check
         run: pnpm --filter @dicee/web check
+
+      - name: Run tests (legacy API mode)
+        run: pnpm --filter @dicee/web test -- run
+
+      - name: Run tests (new engine mode)
+        env:
+          VITE_ENABLE_NEW_ENGINE: 'true'
+        run: pnpm --filter @dicee/web test -- run
 
       - name: Build
         run: pnpm --filter @dicee/web build

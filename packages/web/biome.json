@@ -41,7 +41,8 @@
 				"noUnusedVariables": "error",
 				"noUnusedPrivateClassMembers": "error",
 				"useExhaustiveDependencies": "warn",
-				"noUndeclaredVariables": "error"
+				"noUndeclaredVariables": "error",
+				"noUndeclaredDependencies": "warn"
 			},
 			"style": {
 				"useConst": "error",
@@ -50,7 +51,15 @@
 				"useTemplate": "warn",
 				"useExponentiationOperator": "warn",
 				"noUselessElse": "warn",
-				"useDefaultParameterLast": "error"
+				"useDefaultParameterLast": "error",
+				"useFilenamingConvention": {
+					"level": "warn",
+					"options": {
+						"requireAscii": true,
+						"filenameCases": ["camelCase", "PascalCase", "kebab-case"]
+					}
+				},
+				"useFragmentSyntax": "warn"
 			},
 			"suspicious": {
 				"noExplicitAny": "error",
@@ -59,7 +68,15 @@
 				"noDoubleEquals": "error",
 				"noImplicitAnyLet": "error",
 				"noConfusingVoidType": "warn",
-				"noEmptyBlockStatements": "warn"
+				"noEmptyBlockStatements": "warn",
+				"noConsole": {
+					"level": "warn",
+					"options": {
+						"allow": ["warn", "error", "info", "debug"]
+					}
+				},
+				"noFocusedTests": "error",
+				"noSkippedTests": "warn"
 			},
 			"complexity": {
 				"noExcessiveCognitiveComplexity": {
@@ -69,11 +86,23 @@
 					}
 				},
 				"noForEach": "off",
-				"useLiteralKeys": "warn"
+				"useLiteralKeys": "warn",
+				"noUselessStringConcat": "warn",
+				"noUselessUndefinedInitialization": "warn"
 			},
 			"performance": {
 				"noAccumulatingSpread": "warn",
-				"noDelete": "warn"
+				"noDelete": "warn",
+				"noBarrelFile": "off",
+				"noReExportAll": "warn"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "error"
+			},
+			"a11y": {
+				"noAriaUnsupportedElements": "error",
+				"useAltText": "error",
+				"useValidAriaRole": "error"
 			}
 		}
 	},
@@ -91,7 +120,10 @@
 			"linter": {
 				"rules": {
 					"suspicious": {
-						"noExplicitAny": "warn"
+						"noExplicitAny": "warn",
+						"noConsole": "off",
+						"noFocusedTests": "error",
+						"noSkippedTests": "warn"
 					},
 					"style": {
 						"noNonNullAssertion": "off"
@@ -110,10 +142,42 @@
 			"linter": {
 				"rules": {
 					"style": {
-						"useNamingConvention": "off"
+						"useNamingConvention": "off",
+						"useFilenamingConvention": "off"
 					},
 					"correctness": {
 						"noUnusedVariables": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/index.ts"],
+			"linter": {
+				"rules": {
+					"performance": {
+						"noBarrelFile": "off",
+						"noReExportAll": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/stores/**/*.ts", "**/services/**/*.ts"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noConsole": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["scripts/**/*.mjs", "scripts/**/*.js"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noConsole": "off"
 					}
 				}
 			}

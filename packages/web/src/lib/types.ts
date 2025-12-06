@@ -182,3 +182,66 @@ export interface DecisionFeedback {
 	optimalPoints: number;
 	evDifference: number;
 }
+
+// =============================================================================
+// Turn Analysis Types (M1-M4 Solver API)
+// =============================================================================
+
+/**
+ * Solver's recommended action for the current turn.
+ * - "score": Score a category now (optimal to stop rolling)
+ * - "reroll": Keep some dice and reroll others (optimal to continue)
+ */
+export type TurnAction = 'score' | 'reroll';
+
+/**
+ * Keep pattern as counts per face value.
+ * Index 0 = count of 1s, index 1 = count of 2s, etc.
+ * Example: [0, 0, 3, 0, 2, 0] = keep three 3s and two 5s
+ */
+export type KeepPattern = [number, number, number, number, number, number];
+
+/**
+ * Recommendation for which dice to keep when rerolling.
+ */
+export interface KeepRecommendation {
+	/** Keep pattern as face value counts [count_1s, ..., count_6s] */
+	keepPattern: KeepPattern;
+	/** Human-readable explanation (e.g., "Keep three 5s") */
+	explanation: string;
+	/** Expected value if following this recommendation */
+	expectedValue: number;
+}
+
+/**
+ * Analysis for a single category from the solver.
+ */
+export interface CategoryAnalysis {
+	/** Category identifier */
+	category: Category;
+	/** Score if scored immediately */
+	immediateScore: number;
+	/** Whether the category is valid (meets requirements) */
+	isValid: boolean;
+	/** Expected value with optimal play */
+	expectedValue: number;
+}
+
+/**
+ * Complete turn analysis from the M1-M4 solver.
+ * Provides optimal strategy recommendation.
+ */
+export interface TurnAnalysis {
+	/** Recommended action: score or reroll */
+	action: TurnAction;
+	/** Category to score (only if action === "score") */
+	recommendedCategory?: Category;
+	/** Score value (only if action === "score") */
+	categoryScore?: number;
+	/** Keep recommendation (only if action === "reroll") */
+	keepRecommendation?: KeepRecommendation;
+	/** Expected value of optimal play from this position */
+	expectedValue: number;
+	/** Analysis for all available categories */
+	categories: CategoryAnalysis[];
+}
