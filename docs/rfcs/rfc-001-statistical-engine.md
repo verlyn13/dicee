@@ -31,6 +31,63 @@ This RFC specifies the architecture, algorithms, and implementation plan for the
 
 ---
 
+## M1-M4 Implementation Scope
+
+> **IMPORTANT**: This RFC describes the full v2.0 target architecture. The current M1-M4 implementation focuses exclusively on the **client-side WASM probability engine** with local solver capabilities. Backend services are planned for later phases.
+
+### What M1-M4 Implements (Current Scope)
+
+| Layer | Component | M1-M4 Status | Description |
+|-------|-----------|--------------|-------------|
+| Layer 0 | `DiceConfig` | ✅ Implemented | 252 canonical configurations (ADR-001) |
+| Layer 1 | `TransitionTable` | ✅ Implemented | Precomputed transition probabilities (ADR-002) |
+| Layer 2 | `TurnSolver` | ✅ Implemented | Memoized backward induction solver (ADR-003) |
+| Layer 3 | WASM API | ✅ Phase 5a Complete | `analyze_turn()` export with solver integration (ADR-004) |
+| - | Frontend | ⏳ Phase 5b Pending | Feature-flagged migration to new API |
+
+### What M1-M4 Does NOT Implement (Deferred)
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| API Gateway (Bun) | 🚫 Deferred | v2.0 - Backend orchestration |
+| Decision Analyzer Service | 🚫 Deferred | Replaced by local WASM solver |
+| Monte Carlo Simulator | 🚫 Deferred | v2.0 - Validation service |
+| Learning Tracker | 🚫 Deferred | v2.0 - Skill assessment |
+| PostgreSQL Event Store | 🚫 Deferred | v2.0 - Analytics storage |
+| Redis Caching | 🚫 Deferred | v2.0 - Server-side cache |
+
+### Architectural Rationale
+
+**Why WASM-Only for M1-M4:**
+
+1. **Zero-latency calculations**: All probability and solver computations run client-side (<20ms P95)
+2. **No infrastructure complexity**: No servers to deploy, monitor, or scale
+3. **Offline capable**: Engine works without network connectivity
+4. **Reduced costs**: No server costs during MVP validation phase
+5. **Iteration speed**: Faster development without backend coordination
+
+**Future Architecture (v2.0+):**
+
+The full architecture described in Section 2 (hybrid microservices) becomes relevant when:
+- Multi-player synchronization requires server authority
+- Learning analytics need persistent storage
+- Monte Carlo validation needs GPU acceleration
+- Cross-player skill comparisons are introduced
+
+### Related ADRs
+
+- **ADR-001**: Canonical Configuration Model (252 configs) — Accepted
+- **ADR-002**: Transition Probability Strategy (lazy precomputation) — Accepted
+- **ADR-003**: Solver Algorithm Selection (backward induction) — Accepted
+- **ADR-004**: WASM API Versioning Policy (additive migration) — Accepted
+- **ADR-005**: Property-Based Testing Requirements — Planned (Phase 6)
+
+### Workflow Reference
+
+Implementation tasks are tracked in `.claude/workflows/dicee-m1-m4.yaml` with 28 machine-readable task specifications (DICEE-001 through DICEE-028).
+
+---
+
 ## Table of Contents
 
 1. [Motivation & Design Goals](#1-motivation--design-goals)

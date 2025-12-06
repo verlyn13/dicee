@@ -1,126 +1,176 @@
-# Svelte 5 Component Patterns
+# Svelte Component Conventions
 
-**Activation**: Glob - `**/*.svelte`
-**Purpose**: Svelte 5 runes syntax and component best practices
+**Scope**: `*.svelte` files
+**Trigger**: Glob pattern
 
-## Svelte 5 Runes (Critical)
+## Svelte 5 Runes Syntax
 
-```svelte
-<script lang="ts">
-// State - use $state rune, NOT writable stores
-let count = $state(0);
-let user = $state<User | null>(null);
-
-// Derived - use $derived rune, NOT derived stores
-let doubled = $derived(count * 2);
-let displayName = $derived(user?.display_name ?? 'Guest');
-
-// Effects - use $effect rune
-$effect(() => {
-  console.log('Count changed:', count);
-});
-
-// Props - destructure with defaults
-interface Props {
-  title: string;
-  optional?: number;
-}
-
-let { title, optional = 0 }: Props = $props();
-</script>
-```
-
-## Component Structure
+### State Declaration
 
 ```svelte
 <script lang="ts">
-// 1. Imports
-import { ComponentName } from '$lib/components';
-import type { TypeName } from '$lib/types';
-
-// 2. Props interface
-interface Props {
-  required: string;
-  optional?: boolean;
-}
-
-// 3. Props destructuring
-let { required, optional = false }: Props = $props();
-
-// 4. Local state
+// ✅ Correct - Svelte 5 runes
 let loading = $state(false);
 let error = $state<string | null>(null);
+let scores = $state<number[]>([]);
 
-// 5. Derived values
-let isDisabled = $derived(loading || !required);
+// ✅ Derived values
+const canRoll = $derived(rollsRemaining > 0 && !isGameOver);
 
-// 6. Functions
-async function handleAction() {
-  loading = true;
-  try {
-    // action logic
-  } catch (e) {
-    error = e.message;
-  } finally {
-    loading = false;
-  }
-}
-
-// 7. Effects (if needed)
+// ✅ Effects
 $effect(() => {
-  // side effects
+    if (isGameOver) saveScore(totalScore);
 });
 </script>
-
-<div class="component-name">
-  <!-- Template -->
-</div>
-
-<style>
-/* Scoped styles */
-</style>
 ```
 
-## Database Types
+### Props Interface
 
-Import from generated types:
-```typescript
-import type { Tables } from '$lib/types/database';
+```svelte
+<script lang="ts">
+interface Props {
+    // Data props: nouns
+    dice: number[];
+    kept: boolean[];
+    
+    // Boolean props: is/has/can prefix
+    canRoll: boolean;
+    isLoading?: boolean;
+    
+    // Callback props: onVerb (camelCase!)
+    onRoll: () => void;
+    onToggleKeep: (index: number) => void;
+    onClose?: () => void;  // ✅ Not "onclose"
+}
 
-type Profile = Tables<'profiles'>;
-type PlayerStats = Tables<'player_stats'>;
+let { dice, kept, onRoll, onToggleKeep }: Props = $props();
+</script>
 ```
 
-## Supabase Client
+## Event Handler Pattern
 
-```typescript
-import { createSupabaseBrowserClient } from '$lib/supabase';
+### The Core Rule
 
-const supabase = createSupabaseBrowserClient();
+| Context | Convention | Example |
+|---------|------------|---------|
+| **Native DOM events** | lowercase | `onclick`, `onkeydown` |
+| **Component callback props** | camelCase | `onRoll`, `onClose` |
+| **Internal handlers** | handleVerb | `handleRoll` |
+
+### Example Component
+
+```svelte
+<script lang="ts">
+interface Props {
+    onSubmit: (value: string) => void;  // ✅ camelCase
+    onCancel?: () => void;
+}
+
+let { onSubmit, onCancel }: Props = $props();
+
+// Internal handlers use "handle" prefix
+function handleClick() {
+    onSubmit(value);
+}
+
+function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') onSubmit(value);
+    if (event.key === 'Escape') onCancel?.();
+}
+</script>
+
+<!-- Native events: lowercase -->
+<button onclick={handleClick} onkeydown={handleKeyDown}>
+    Submit
+</button>
 ```
 
-## Testing
+## Import Ordering (Biome-enforced)
 
-Co-locate tests: `ComponentName.svelte` → `__tests__/ComponentName.test.ts`
+```svelte
+<script lang="ts">
+// 1. Svelte core
+import { onMount } from 'svelte';
 
-```typescript
-import { render, fireEvent } from '@testing-library/svelte';
-import ComponentName from '../ComponentName.svelte';
+// 2. External packages
+import { z } from 'zod';
 
-describe('ComponentName', () => {
-  it('renders correctly', () => {
-    const { getByText } = render(ComponentName, {
-      props: { title: 'Test' }
-    });
-    expect(getByText('Test')).toBeInTheDocument();
-  });
-});
+// 3. SvelteKit app modules
+import { goto } from '$app/navigation';
+
+// 4. Internal lib imports
+import { game } from '$lib/stores/game.svelte';
+import DiceTray from '$lib/components/dice/DiceTray.svelte';
+
+// 5. Relative imports
+import { formatScore } from './utils';
+
+// 6. Type-only imports
+import type { Category } from '$lib/types';
+</script>
 ```
 
-## Design Reference
+## CSS Conventions
 
-See `docs/UI-UX-DESIGN-REPORT.md` for:
-- Color palette
-- Typography
-- Spacing
-- Component specs
+### Use Design Tokens
+
+```css
+/* ✅ Correct - use tokens */
+.card {
+    border: var(--border-thick);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-brutal);
+    padding: var(--space-3);
+}
+
+/* ❌ Wrong - hardcoded values */
+.card {
+    border: 3px solid black;
+    padding: 12px;
+}
+```
+
+### Neo-Brutalist Interactions
+
+```css
+.button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-brutal-lg);
+}
+
+.button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--color-text);
+}
+```
+
+## Component Documentation
+
+```svelte
+<script lang="ts">
+/**
+ * ComponentName - Brief description
+ *
+ * Detailed description of purpose and behavior.
+ *
+ * @example
+ * <ComponentName prop={value} onCallback={handler} />
+ */
+</script>
+```
+
+## Verification
+
+After creating/modifying components:
+
+```bash
+pnpm check        # TypeScript + Svelte check
+pnpm biome:check  # Lint and format check
+pnpm web:vitest   # Run tests
+```
+
+## References
+
+- Full conventions: `.claude/CONVENTIONS.md`
+- Design tokens: `packages/web/src/lib/styles/tokens.css`
+- UI/UX guide: `docs/UI-UX-DESIGN-REPORT.md`

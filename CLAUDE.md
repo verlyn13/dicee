@@ -14,6 +14,19 @@
 2. **Verify after change** - Run tests/typecheck after every edit
 3. **Update state** - Update `.claude/state/current-phase.json` after completing tasks
 4. **Ask when stuck** - When in doubt, ask the human
+5. **Follow conventions** - Read `.claude/CONVENTIONS.md` for naming patterns
+
+### Naming Conventions (Quick Reference)
+```
+Component files: PascalCase.svelte
+Callback props:  onVerb (onRoll, onScore, onClose) ← camelCase!
+DOM events:      lowercase (onclick, onkeydown)   ← Svelte 5
+Handlers:        handleVerb (handleRoll)
+Booleans:        is/has/can prefix (isLoading)
+CSS classes:     kebab-case (.game-container)
+```
+
+See `.claude/CONVENTIONS.md` for full documentation.
 
 ### Slash Commands
 - `/status` - Show current phase and tasks
@@ -45,6 +58,8 @@ packages/
 docs/
   m1/         # Milestone 1 planning docs
 .claude/
+  AGENT-GUARDRAILS.md       # CRITICAL: Mandatory rules for all agents
+  CONVENTIONS.md            # Naming conventions and code patterns
   cli-reference.yaml          # CLI tool reference (Supabase/Vercel/PartyKit/Infisical)
   environment-strategy.yaml   # Environment, secrets, and agent guardrails
   gopass-structure.yaml       # Local credential storage architecture
@@ -58,7 +73,6 @@ docs/
     handoff.md              # /handoff - Generate handoff notes
     quality.md              # /quality - Run quality gate
     phase.md                # /phase - Update phase status
-  AGENT-GUARDRAILS.md       # CRITICAL: Mandatory rules for all agents
   state/                    # Session state (git-ignored)
     current-phase.json      # Active phase and tasks
     session-handoff.md      # Handoff notes
