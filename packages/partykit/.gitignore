@@ -1,0 +1,8 @@
+# PartyKit local state
+.partykit/
+
+# Build output
+dist/
+
+# Dependencies
+node_modules/
