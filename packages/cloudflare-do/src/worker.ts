@@ -14,6 +14,25 @@ export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const url = new URL(request.url);
 
+		// Root - helpful info
+		if (url.pathname === '/' || url.pathname === '') {
+			return new Response(
+				JSON.stringify({
+					service: 'Dicee Game Lobby',
+					status: 'running',
+					endpoints: {
+						health: '/health',
+						room: '/room/:roomCode (WebSocket)',
+					},
+					frontend: 'https://dicee.jefahnierocks.com',
+				}),
+				{
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				},
+			);
+		}
+
 		// Health check endpoint
 		if (url.pathname === '/health') {
 			return new Response('OK', { status: 200 });
