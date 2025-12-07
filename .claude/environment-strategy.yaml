@@ -1,6 +1,7 @@
 # Dicee Project: Environment & Secrets Strategy
 # Comprehensive architecture for agentic development
-# Last updated: 2024-12-02
+# Last updated: 2025-12-07
+# Production URL: https://dicee.jefahnierocks.com
 
 # =============================================================================
 # ENVIRONMENT TAXONOMY
@@ -139,6 +140,12 @@ services:
   vercel:
     description: "Frontend deployment platform"
 
+    project:
+      name: "dicee"
+      team: "jeffrey-johnsons-projects-4efd9acb"
+      production_url: "https://dicee.jefahnierocks.com"
+      dashboard: "https://vercel.com/jeffrey-johnsons-projects-4efd9acb/dicee"
+
     secrets_in_infisical:
       - VERCEL_TOKEN  # For CI deployments
 
@@ -150,6 +157,12 @@ services:
       dev: "Preview (feature branches)"
       staging: "Preview (staging branch)"
       prod: "Production (main branch)"
+
+    configuration:
+      adapter: "@sveltejs/adapter-vercel"
+      runtime: "nodejs22.x"
+      region: "sfo1"
+      build_command: "cd packages/web && pnpm build && cp -r .vercel/output ../../.vercel/"
 
   partykit:
     description: "Real-time multiplayer infrastructure"

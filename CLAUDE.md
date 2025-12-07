@@ -38,7 +38,11 @@ See `.claude/CONVENTIONS.md` for full documentation.
 ---
 
 ## Project Overview
-Dicee is a dice probability engine and web application. See `docs/` for architecture RFCs and milestone plans.
+Dicee is a dice probability engine and web application for learning probability through Yahtzee-style gameplay.
+
+**Production URL**: https://dicee.jefahnierocks.com
+
+See `docs/` for architecture RFCs and milestone plans.
 
 ## Tech Stack
 - **Frontend**: SvelteKit (Svelte 5 with runes)
@@ -122,11 +126,19 @@ scripts/
 - **Console**: https://console.cloud.google.com/welcome?project=dicee-480100
 - **Credentials**: https://console.cloud.google.com/apis/credentials?project=dicee-480100
 
+### Vercel Project Configuration
+- **Project**: dicee
+- **Team**: jeffrey-johnsons-projects-4efd9acb
+- **Production URL**: https://dicee.jefahnierocks.com
+- **Dashboard**: https://vercel.com/jeffrey-johnsons-projects-4efd9acb/dicee
+- **Adapter**: `@sveltejs/adapter-vercel` (Node 22.x runtime)
+- **Region**: sfo1
+
 ### Cloudflare Configuration
 - **Account ID**: 13eb584192d9cefb730fde0cfd271328
 - **Zone ID**: 8d5f44e67ab4b37e47b034ff48b03099
 - **Domain**: jefahnierocks.com
-- **Subdomain**: dicee.jefahnierocks.com
+- **Subdomain**: dicee.jefahnierocks.com (A record → Vercel 76.76.21.21)
 - **Services**: Workers, Pages, D1 (SQLite), KV, R2
 
 ### Quick Reference
@@ -244,7 +256,7 @@ pnpm lint             # Lint all packages
 pnpm format           # Format with Biome
 
 # Architectural Knowledge Graph (AKG)
-pnpm akg:discover              # Discover graph (138 nodes, 230 edges)
+pnpm akg:discover              # Discover graph (136 nodes, 227 edges)
 pnpm akg:discover --incremental # Only changed files (fast, for PRs)
 pnpm akg:check                 # Run invariant checks (6 built-in)
 pnpm akg:check --sarif         # SARIF output for GitHub Code Scanning
@@ -607,7 +619,7 @@ packages/web/src/tools/akg/
 | `callback_prop_naming` | Warning | Callback props use onVerb pattern |
 
 **Output:**
-- Graph: `docs/architecture/akg/graph/current.json` (138 nodes, 230 edges)
+- Graph: `docs/architecture/akg/graph/current.json` (136 nodes, 227 edges)
 - SARIF: `pnpm akg:check --sarif > results.sarif`
 - CI: Runs automatically on every PR via `.github/workflows/ci.yml`
 

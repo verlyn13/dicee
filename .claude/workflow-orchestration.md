@@ -1,8 +1,10 @@
 # Dicee Agentic Workflow Orchestration
 
-> **Version**: 2.0.0
-> **Last Updated**: 2025-12-03
+> **Version**: 2.2.0
+> **Last Updated**: 2025-12-07
 > **Context**: MCP-first agentic development with Opus 4.5, multi-agent orchestration
+> **Project Status**: All phases complete, production live at https://dicee.jefahnierocks.com
+> **Next Phase**: AKG MCP Server + Mermaid Visualization (see RFC)
 > **Guardrails**: See [AGENT-GUARDRAILS.md](./AGENT-GUARDRAILS.md) for mandatory rules
 
 ---
@@ -52,13 +54,13 @@ The Model Context Protocol provides the backbone for:
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    MCP Server Layer                                  │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │
-│  │   Memory    │ │  Supabase   │ │   GitHub    │ │  (Future)   │   │
-│  │  (KG State) │ │  (Official) │ │ (Built-in)  │ │  Infisical  │   │
+│  │   Memory    │ │  Supabase   │ │   GitHub    │ │     AKG     │   │
+│  │  (KG State) │ │  (Official) │ │ (Built-in)  │ │  (Planned)  │   │
 │  │             │ │             │ │             │ │             │   │
-│  │ • Tasks     │ │ • SQL       │ │ • PRs       │ │ • Secrets   │   │
-│  │ • Phases    │ │ • Types     │ │ • Issues    │ │ • Env sync  │   │
-│  │ • Blockers  │ │ • Migrations│ │ • Commits   │ │             │   │
-│  │ • Decisions │ │ • Branching │ │ • Reviews   │ │             │   │
+│  │ • Tasks     │ │ • SQL       │ │ • PRs       │ │ • Layers    │   │
+│  │ • Phases    │ │ • Types     │ │ • Issues    │ │ • Nodes     │   │
+│  │ • Blockers  │ │ • Migrations│ │ • Commits   │ │ • Imports   │   │
+│  │ • Decisions │ │ • Branching │ │ • Reviews   │ │ • Invariant │   │
 │  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘   │
 └────────────────────────────────┬────────────────────────────────────┘
                                  │
@@ -157,6 +159,38 @@ echo ".claude/state/" >> .gitignore
 
 **Note**: Using `npx` for the memory server will cause `ENOENT` errors because npx
 isolates environment variables. Always use the local node_modules installation.
+
+### AKG MCP Server (PLANNED - Week 1 Implementation)
+
+The AKG MCP server provides architecture-aware queries for agents:
+
+```json
+{
+  "mcpServers": {
+    "akg": {
+      "command": "bun",
+      "args": ["run", "./packages/web/src/tools/akg/mcp/server.ts"],
+      "env": {
+        "AKG_GRAPH_PATH": "./docs/architecture/akg/graph/current.json",
+        "AKG_DIAGRAMS_PATH": "./docs/architecture/akg/diagrams"
+      }
+    }
+  }
+}
+```
+
+**Available Tools**:
+
+| Tool | Purpose | Agent Use Case |
+|------|---------|----------------|
+| `akg_layer_rules` | Get allowed/forbidden imports | "Can I import X here?" |
+| `akg_node_info` | Get node type, layer, edges | "What is this file?" |
+| `akg_check_import` | Validate a proposed import | Pre-flight check before writing |
+| `akg_invariant_status` | Current pass/fail state | Quality gate awareness |
+| `akg_diagram` | Get diagram content | Architecture context |
+| `akg_path_find` | Find dependency path | Impact analysis |
+
+**See**: `docs/architecture/akg/RFC_MERMAID_VISUALIZATION.md` for full specification
 
 ---
 
@@ -289,9 +323,10 @@ isolates environment variables. Always use the local node_modules installation.
 interface ProjectState {
   // Current phase
   phase: {
-    id: 'planning' | 'foundation' | 'auth' | 'profiles' | 'lobby' | 'multiplayer' | 'telemetry';
+    id: 'planning' | 'foundation' | 'auth' | 'profiles' | 'lobby' | 'multiplayer' | 'telemetry' | 'deployment';
     status: 'not-started' | 'in-progress' | 'blocked' | 'review' | 'complete';
     startedAt: string;  // ISO timestamp
+    completedAt?: string;  // ISO timestamp
     blockedReason?: string;
   };
 
