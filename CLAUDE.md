@@ -310,6 +310,8 @@ Required variables:
 - `PUBLIC_SUPABASE_URL` - Supabase project URL
 - `PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
 - `PUBLIC_WORKER_HOST` - Cloudflare Worker URL (gamelobby.jefahnierocks.com)
+- `PUBLIC_USE_DURABLE_OBJECTS` - Feature flag: "true" to use Durable Objects, omit for PartyKit
+- `PUBLIC_PARTYKIT_HOST` - PartyKit host (legacy, default: localhost:1999)
 - `INFISICAL_CLIENT_ID` - For machine identity auth (CI/CD)
 - `INFISICAL_CLIENT_SECRET` - For machine identity auth (CI/CD)
 

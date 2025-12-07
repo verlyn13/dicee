@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Wrangler
+.wrangler/
+.dev.vars
+
+# Build output
+dist/
+
+# Local env files
+.env
+.env.local
+
+# Test artifacts
+coverage/

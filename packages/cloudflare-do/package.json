@@ -1,0 +1,29 @@
+{
+  "name": "@dicee/cloudflare-do",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "tail": "wrangler tail",
+    "types": "wrangler types",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:all": "vitest run && vitest run --config vitest.integration.config.ts"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241205.0",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.8",
+    "wrangler": "^4.51.0"
+  },
+  "dependencies": {
+    "jose": "^5.9.6",
+    "nanoid": "^5.1.6",
+    "zod": "^3.24.1"
+  }
+}

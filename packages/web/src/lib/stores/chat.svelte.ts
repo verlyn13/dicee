@@ -425,6 +425,25 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 		}
 	}
 
+	/** Starts typing indicator with auto-timeout */
+	function startTypingIndicator(): void {
+		roomService.sendTypingStart();
+		if (typingTimeout) clearTimeout(typingTimeout);
+		typingTimeout = setTimeout(() => {
+			isTyping = false;
+			roomService.sendTypingStop();
+		}, CHAT_RATE_LIMITS.TYPING_TIMEOUT_MS);
+	}
+
+	/** Stops typing indicator and clears timeout */
+	function stopTypingIndicator(): void {
+		if (typingTimeout) {
+			clearTimeout(typingTimeout);
+			typingTimeout = null;
+		}
+		roomService.sendTypingStop();
+	}
+
 	function setTyping(typing: boolean): void {
 		// Debounce rapid typing state changes
 		if (typingDebounce) {
@@ -433,25 +452,13 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 
 		typingDebounce = setTimeout(() => {
 			if (typing === isTyping) return;
-
 			isTyping = typing;
 
 			try {
 				if (typing) {
-					roomService.sendTypingStart();
-
-					// Auto-stop after timeout
-					if (typingTimeout) clearTimeout(typingTimeout);
-					typingTimeout = setTimeout(() => {
-						isTyping = false;
-						roomService.sendTypingStop();
-					}, CHAT_RATE_LIMITS.TYPING_TIMEOUT_MS);
+					startTypingIndicator();
 				} else {
-					if (typingTimeout) {
-						clearTimeout(typingTimeout);
-						typingTimeout = null;
-					}
-					roomService.sendTypingStop();
+					stopTypingIndicator();
 				}
 			} catch (_e) {
 				// Ignore typing errors

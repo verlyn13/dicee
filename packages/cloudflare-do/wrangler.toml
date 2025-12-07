@@ -1,0 +1,58 @@
+# Dicee Game Lobby - Durable Objects Worker
+# Handles multiplayer game rooms with hibernatable WebSockets
+
+name = "gamelobby"
+main = "src/worker.ts"
+compatibility_date = "2024-12-01"
+
+# Enable Node.js compatibility for jose JWT library
+compatibility_flags = ["nodejs_compat"]
+
+# Durable Object bindings
+[[durable_objects.bindings]]
+name = "GAME_ROOM"
+class_name = "GameRoom"
+
+# SQLite-backed storage (better than KV for game state)
+# This enables ctx.storage.sql for SQL queries
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["GameRoom"]
+
+# Non-sensitive environment variables
+[vars]
+ENVIRONMENT = "development"
+
+# ─────────────────────────────────────────────────────────────
+# Environment-specific configuration
+# ─────────────────────────────────────────────────────────────
+
+# Staging environment
+[env.staging]
+vars = { ENVIRONMENT = "staging" }
+
+# Production environment
+[env.production]
+vars = { ENVIRONMENT = "production" }
+routes = [
+  { pattern = "gamelobby.jefahnierocks.com/*", zone_name = "jefahnierocks.com" }
+]
+
+[[env.production.durable_objects.bindings]]
+name = "GAME_ROOM"
+class_name = "GameRoom"
+
+[[env.production.migrations]]
+tag = "v1"
+new_sqlite_classes = ["GameRoom"]
+
+# ─────────────────────────────────────────────────────────────
+# Secrets (set via: wrangler secret put SECRET_NAME)
+# ─────────────────────────────────────────────────────────────
+# Required secrets:
+# - SUPABASE_URL: https://xxx.supabase.co
+# - SUPABASE_ANON_KEY: Your Supabase anonymous key
+#
+# Commands:
+#   wrangler secret put SUPABASE_URL
+#   wrangler secret put SUPABASE_ANON_KEY
