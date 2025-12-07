@@ -1,0 +1,159 @@
+{
+	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
+	"version": "1.0.0",
+	"diagramType": "component_dependencies",
+	"generatedAt": "2025-12-07T04:02:49.787Z",
+	"graphHash": "sha256:ed69a8349a40367bbd053f3bd17db92422513fd0294fe6be47752d9c81f3ebf2",
+	"sourceCommit": "f093de09635950a93e17ab14de34f070372ed441",
+	"nodes": [
+		{
+			"id": "component::Avatar::nts_ui_Avatar_svelte",
+			"label": "Avatar",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::BottomSheet::i_BottomSheet_svelte",
+			"label": "BottomSheet",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::PlayerListItem::layerListItem_svelte",
+			"label": "PlayerListItem",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::Die::ents_dice_Die_svelte",
+			"label": "Die",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::DiceTray::dice_DiceTray_svelte",
+			"label": "DiceTray",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::OpponentPanel::OpponentPanel_svelte",
+			"label": "OpponentPanel",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::MultiplayerGameOverModal::GameOverModal_svelte",
+			"label": "MultiplayerGameOverModal",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::GameOverModal::GameOverModal_svelte",
+			"label": "GameOverModal",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::EndGameSummary::ndGameSummary_svelte",
+			"label": "EndGameSummary",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::MultiplayerScorecard::ayerScorecard_svelte",
+			"label": "MultiplayerScorecard",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::TurnIndicator::TurnIndicator_svelte",
+			"label": "TurnIndicator",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::GameHistory::e_GameHistory_svelte",
+			"label": "GameHistory",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::SetupModal::le_SetupModal_svelte",
+			"label": "SetupModal",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::StatsDashboard::tatsDashboard_svelte",
+			"label": "StatsDashboard",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::ProfileForm::e_ProfileForm_svelte",
+			"label": "ProfileForm",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::Scorecard::ard_Scorecard_svelte",
+			"label": "Scorecard",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::CategoryRow::d_CategoryRow_svelte",
+			"label": "CategoryRow",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::HeroGame::_hub_HeroGame_svelte",
+			"label": "HeroGame",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::NewsDev::s_hub_NewsDev_svelte",
+			"label": "NewsDev",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::Hub::nents_hub_Hub_svelte",
+			"label": "Hub",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::LobbyGate::hub_LobbyGate_svelte",
+			"label": "LobbyGate",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::StatsToggle::d_StatsToggle_svelte",
+			"label": "StatsToggle",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::GameStatus::ud_GameStatus_svelte",
+			"label": "GameStatus",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::KeyboardHelp::_KeyboardHelp_svelte",
+			"label": "KeyboardHelp",
+			"type": "Component",
+			"layer": "components"
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"totalNodes": 24,
+		"totalEdges": 0
+	}
+}

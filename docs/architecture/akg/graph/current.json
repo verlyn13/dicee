@@ -1,6 +1,6 @@
 {
 	"version": "1.0.0",
-	"generatedAt": "2025-12-07T00:01:56.082Z",
+	"generatedAt": "2025-12-07T04:02:48.664Z",
 	"projectRoot": "/Users/verlyn13/Development/personal/dicee",
 	"nodes": [
 		{
@@ -78,7 +78,7 @@
 				"endLine": 337
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.977Z",
+				"discoveredAt": "2025-12-07T04:02:49.713Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -248,7 +248,7 @@
 				"endLine": 38
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.979Z",
+				"discoveredAt": "2025-12-07T04:02:49.714Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -290,12 +290,12 @@
 					{
 						"name": "getExports",
 						"kind": "function",
-						"line": 265
+						"line": 266
 					},
 					{
 						"name": "usesRunes",
 						"kind": "function",
-						"line": 315
+						"line": 316
 					},
 					{
 						"name": "ProjectInitResult",
@@ -315,10 +315,10 @@
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 346
+				"endLine": 347
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.979Z",
+				"discoveredAt": "2025-12-07T04:02:49.715Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -383,7 +383,7 @@
 				"endLine": 477
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.979Z",
+				"discoveredAt": "2025-12-07T04:02:49.715Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -443,7 +443,7 @@
 				"endLine": 357
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.979Z",
+				"discoveredAt": "2025-12-07T04:02:49.715Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -475,27 +475,27 @@
 					{
 						"name": "addSvelteToProject",
 						"kind": "function",
-						"line": 243
+						"line": 244
 					},
 					{
 						"name": "removeSvelteFromProject",
 						"kind": "function",
-						"line": 278
+						"line": 279
 					},
 					{
 						"name": "getSvelteImports",
 						"kind": "function",
-						"line": 303
+						"line": 304
 					},
 					{
 						"name": "isSmartContainer",
 						"kind": "function",
-						"line": 437
+						"line": 438
 					},
 					{
 						"name": "usesRunes",
 						"kind": "function",
-						"line": 453
+						"line": 454
 					},
 					{
 						"name": "SvelteScripts",
@@ -515,10 +515,10 @@
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 466
+				"endLine": 467
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.979Z",
+				"discoveredAt": "2025-12-07T04:02:49.715Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -670,7 +670,7 @@
 					{
 						"name": "getExports",
 						"kind": "function",
-						"line": 265
+						"line": 266
 					},
 					{
 						"name": "getImports",
@@ -700,12 +700,12 @@
 					{
 						"name": "usesRunes",
 						"kind": "function",
-						"line": 315
+						"line": 316
 					},
 					{
 						"name": "addSvelteToProject",
 						"kind": "function",
-						"line": 243
+						"line": 244
 					},
 					{
 						"name": "analyzeSvelteComponent",
@@ -720,12 +720,12 @@
 					{
 						"name": "getSvelteImports",
 						"kind": "function",
-						"line": 303
+						"line": 304
 					},
 					{
 						"name": "isSmartContainer",
 						"kind": "function",
-						"line": 437
+						"line": 438
 					},
 					{
 						"name": "loadAndAnalyzeSvelteFile",
@@ -735,7 +735,7 @@
 					{
 						"name": "removeSvelteFromProject",
 						"kind": "function",
-						"line": 278
+						"line": 279
 					},
 					{
 						"name": "SvelteAnalysis",
@@ -755,7 +755,7 @@
 					{
 						"name": "svelteUsesRunes",
 						"kind": "function",
-						"line": 453
+						"line": 454
 					}
 				],
 				"usesRunes": false,
@@ -763,7 +763,7 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.980Z",
+				"discoveredAt": "2025-12-07T04:02:49.716Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -818,7 +818,7 @@
 				"endLine": 409
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.717Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -958,7 +958,107 @@
 				"endLine": 422
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.717Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::mermaid::kg_output_mermaid_ts",
+			"type": "Module",
+			"name": "mermaid",
+			"filePath": "packages/web/src/tools/akg/output/mermaid.ts",
+			"attributes": {
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "generateHash",
+						"kind": "function",
+						"line": 104
+					},
+					{
+						"name": "generateGraphHash",
+						"kind": "function",
+						"line": 111
+					},
+					{
+						"name": "generateLayerArchitecture",
+						"kind": "function",
+						"line": 126
+					},
+					{
+						"name": "generateStoreDependencies",
+						"kind": "function",
+						"line": 293
+					},
+					{
+						"name": "generateComponentDependencies",
+						"kind": "function",
+						"line": 413
+					},
+					{
+						"name": "generateAllDiagrams",
+						"kind": "function",
+						"line": 528
+					},
+					{
+						"name": "verifyDiagramHash",
+						"kind": "function",
+						"line": 547
+					},
+					{
+						"name": "checkStaleness",
+						"kind": "function",
+						"line": 555
+					},
+					{
+						"name": "getDiagramFilename",
+						"kind": "function",
+						"line": 583
+					},
+					{
+						"name": "DiagramType",
+						"kind": "type",
+						"line": 22
+					},
+					{
+						"name": "DiagramResult",
+						"kind": "interface",
+						"line": 31
+					},
+					{
+						"name": "DiagramJson",
+						"kind": "interface",
+						"line": 41
+					},
+					{
+						"name": "DiagramNode",
+						"kind": "interface",
+						"line": 56
+					},
+					{
+						"name": "DiagramEdge",
+						"kind": "interface",
+						"line": 67
+					},
+					{
+						"name": "DiagramMetadata",
+						"kind": "interface",
+						"line": 76
+					},
+					{
+						"name": "MermaidOptions",
+						"kind": "interface",
+						"line": 86
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 592
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.717Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1006,14 +1106,79 @@
 						"name": "validateSarif",
 						"kind": "function",
 						"line": 408
+					},
+					{
+						"name": "DiagramJson",
+						"kind": "interface",
+						"line": 41
+					},
+					{
+						"name": "DiagramResult",
+						"kind": "interface",
+						"line": 31
+					},
+					{
+						"name": "DiagramType",
+						"kind": "type",
+						"line": 22
+					},
+					{
+						"name": "MermaidOptions",
+						"kind": "interface",
+						"line": 86
+					},
+					{
+						"name": "checkStaleness",
+						"kind": "function",
+						"line": 555
+					},
+					{
+						"name": "generateAllDiagrams",
+						"kind": "function",
+						"line": 528
+					},
+					{
+						"name": "generateComponentDependencies",
+						"kind": "function",
+						"line": 413
+					},
+					{
+						"name": "generateGraphHash",
+						"kind": "function",
+						"line": 111
+					},
+					{
+						"name": "generateHash",
+						"kind": "function",
+						"line": 104
+					},
+					{
+						"name": "generateLayerArchitecture",
+						"kind": "function",
+						"line": 126
+					},
+					{
+						"name": "generateStoreDependencies",
+						"kind": "function",
+						"line": 293
+					},
+					{
+						"name": "getDiagramFilename",
+						"kind": "function",
+						"line": 583
+					},
+					{
+						"name": "verifyDiagramHash",
+						"kind": "function",
+						"line": 547
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 16
+				"endLine": 32
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.717Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1058,7 +1223,7 @@
 				"endLine": 167
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.717Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1075,12 +1240,12 @@
 					{
 						"name": "BuiltinInvariantId",
 						"kind": "type",
-						"line": 22
+						"line": 28
 					},
 					{
 						"name": "BUILTIN_INVARIANTS",
 						"kind": "const",
-						"line": 15
+						"line": 19
 					},
 					{
 						"name": "RegisteredInvariant",
@@ -1115,12 +1280,12 @@
 					{
 						"name": "formatSummary",
 						"kind": "function",
-						"line": 239
+						"line": 243
 					},
 					{
 						"name": "runInvariant",
 						"kind": "function",
-						"line": 181
+						"line": 184
 					},
 					{
 						"name": "runInvariants",
@@ -1130,7 +1295,7 @@
 					{
 						"name": "validateGraph",
 						"kind": "function",
-						"line": 198
+						"line": 201
 					}
 				],
 				"usesRunes": false,
@@ -1138,7 +1303,26 @@
 				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::store-file-naming::store_file_naming_ts",
+			"type": "Module",
+			"name": "store-file-naming",
+			"filePath": "packages/web/src/tools/akg/invariants/definitions/store-file-naming.ts",
+			"attributes": {
+				"package": "@dicee/web",
+				"isExported": false,
+				"exports": [],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 85
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1154,10 +1338,10 @@
 				"exports": [],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 89
+				"endLine": 88
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1173,10 +1357,10 @@
 				"exports": [],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 114
+				"endLine": 115
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1193,20 +1377,39 @@
 					{
 						"name": "BUILTIN_INVARIANTS",
 						"kind": "const",
-						"line": 15
+						"line": 19
 					},
 					{
 						"name": "BuiltinInvariantId",
 						"kind": "type",
-						"line": 22
+						"line": 28
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 23
+				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::callback-prop-naming::lback_prop_naming_ts",
+			"type": "Module",
+			"name": "callback-prop-naming",
+			"filePath": "packages/web/src/tools/akg/invariants/definitions/callback-prop-naming.ts",
+			"attributes": {
+				"package": "@dicee/web",
+				"isExported": false,
+				"exports": [],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 137
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1222,10 +1425,10 @@
 				"exports": [],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 98
+				"endLine": 99
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1244,7 +1447,7 @@
 				"endLine": 98
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1266,17 +1469,17 @@
 					{
 						"name": "runInvariant",
 						"kind": "function",
-						"line": 181
+						"line": 184
 					},
 					{
 						"name": "validateGraph",
 						"kind": "function",
-						"line": 198
+						"line": 201
 					},
 					{
 						"name": "formatSummary",
 						"kind": "function",
-						"line": 239
+						"line": 243
 					},
 					{
 						"name": "RunnerOptions",
@@ -1286,10 +1489,48 @@
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 280
+				"endLine": 284
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.981Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::index::ols_akg_mcp_index_ts",
+			"type": "Module",
+			"name": "index",
+			"filePath": "packages/web/src/tools/akg/mcp/index.ts",
+			"attributes": {
+				"package": "@dicee/web",
+				"isExported": false,
+				"exports": [],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 13
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::server::ls_akg_mcp_server_ts",
+			"type": "Module",
+			"name": "server",
+			"filePath": "packages/web/src/tools/akg/mcp/server.ts",
+			"attributes": {
+				"package": "@dicee/web",
+				"isExported": false,
+				"exports": [],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 761
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1306,15 +1547,34 @@
 					{
 						"name": "discover",
 						"kind": "function",
-						"line": 219
+						"line": 241
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 482
+				"endLine": 776
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.982Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::mermaid::s_akg_cli_mermaid_ts",
+			"type": "Module",
+			"name": "mermaid",
+			"filePath": "packages/web/src/tools/akg/cli/mermaid.ts",
+			"attributes": {
+				"package": "@dicee/web",
+				"isExported": false,
+				"exports": [],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 330
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1331,7 +1591,7 @@
 					{
 						"name": "check",
 						"kind": "function",
-						"line": 61
+						"line": 60
 					}
 				],
 				"usesRunes": false,
@@ -1339,7 +1599,7 @@
 				"endLine": 306
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.982Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1454,7 +1714,7 @@
 				"endLine": 369
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.982Z",
+				"discoveredAt": "2025-12-07T04:02:49.718Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1594,7 +1854,7 @@
 				"endLine": 355
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.982Z",
+				"discoveredAt": "2025-12-07T04:02:49.719Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1819,7 +2079,7 @@
 				"endLine": 438
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.982Z",
+				"discoveredAt": "2025-12-07T04:02:49.719Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2259,7 +2519,7 @@
 				"endLine": 80
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.983Z",
+				"discoveredAt": "2025-12-07T04:02:49.720Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2566,7 +2826,7 @@
 					{
 						"name": "getExports",
 						"kind": "function",
-						"line": 265
+						"line": 266
 					},
 					{
 						"name": "getImports",
@@ -2596,12 +2856,12 @@
 					{
 						"name": "usesRunes",
 						"kind": "function",
-						"line": 315
+						"line": 316
 					},
 					{
 						"name": "addSvelteToProject",
 						"kind": "function",
-						"line": 243
+						"line": 244
 					},
 					{
 						"name": "analyzeSvelteComponent",
@@ -2616,12 +2876,12 @@
 					{
 						"name": "getSvelteImports",
 						"kind": "function",
-						"line": 303
+						"line": 304
 					},
 					{
 						"name": "isSmartContainer",
 						"kind": "function",
-						"line": 437
+						"line": 438
 					},
 					{
 						"name": "loadAndAnalyzeSvelteFile",
@@ -2631,7 +2891,7 @@
 					{
 						"name": "removeSvelteFromProject",
 						"kind": "function",
-						"line": 278
+						"line": 279
 					},
 					{
 						"name": "SvelteAnalysis",
@@ -2651,17 +2911,17 @@
 					{
 						"name": "svelteUsesRunes",
 						"kind": "function",
-						"line": 453
+						"line": 454
 					},
 					{
 						"name": "BuiltinInvariantId",
 						"kind": "type",
-						"line": 22
+						"line": 28
 					},
 					{
 						"name": "BUILTIN_INVARIANTS",
 						"kind": "const",
-						"line": 15
+						"line": 19
 					},
 					{
 						"name": "RegisteredInvariant",
@@ -2696,12 +2956,12 @@
 					{
 						"name": "formatSummary",
 						"kind": "function",
-						"line": 239
+						"line": 243
 					},
 					{
 						"name": "runInvariant",
 						"kind": "function",
-						"line": 181
+						"line": 184
 					},
 					{
 						"name": "runInvariants",
@@ -2711,12 +2971,12 @@
 					{
 						"name": "validateGraph",
 						"kind": "function",
-						"line": 198
+						"line": 201
 					},
 					{
 						"name": "CycleInfo",
 						"kind": "interface",
-						"line": 265
+						"line": 269
 					},
 					{
 						"name": "findAllCycles",
@@ -2726,7 +2986,7 @@
 					{
 						"name": "findSimpleCycles",
 						"kind": "function",
-						"line": 124
+						"line": 127
 					},
 					{
 						"name": "findStronglyConnectedComponents",
@@ -2736,12 +2996,12 @@
 					{
 						"name": "getCycleInfo",
 						"kind": "function",
-						"line": 270
+						"line": 274
 					},
 					{
 						"name": "hasCycles",
 						"kind": "function",
-						"line": 219
+						"line": 223
 					},
 					{
 						"name": "GraphStats",
@@ -2761,17 +3021,17 @@
 					{
 						"name": "bfsTraversal",
 						"kind": "function",
-						"line": 114
+						"line": 115
 					},
 					{
 						"name": "dfsTraversal",
 						"kind": "function",
-						"line": 154
+						"line": 156
 					},
 					{
 						"name": "findAllPaths",
 						"kind": "function",
-						"line": 69
+						"line": 70
 					},
 					{
 						"name": "findShortestPath",
@@ -2781,17 +3041,17 @@
 					{
 						"name": "getMaxDepth",
 						"kind": "function",
-						"line": 222
+						"line": 224
 					},
 					{
 						"name": "getReachableNodes",
 						"kind": "function",
-						"line": 192
+						"line": 194
 					},
 					{
 						"name": "topologicalSort",
 						"kind": "function",
-						"line": 248
+						"line": 250
 					},
 					{
 						"name": "DeepPartial",
@@ -3129,7 +3389,7 @@
 				"endLine": 24
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.985Z",
+				"discoveredAt": "2025-12-07T04:02:49.722Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3164,7 +3424,7 @@
 				"endLine": 316
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.985Z",
+				"discoveredAt": "2025-12-07T04:02:49.722Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3191,30 +3451,30 @@
 					{
 						"name": "findSimpleCycles",
 						"kind": "function",
-						"line": 124
+						"line": 127
 					},
 					{
 						"name": "hasCycles",
 						"kind": "function",
-						"line": 219
+						"line": 223
 					},
 					{
 						"name": "getCycleInfo",
 						"kind": "function",
-						"line": 270
+						"line": 274
 					},
 					{
 						"name": "CycleInfo",
 						"kind": "interface",
-						"line": 265
+						"line": 269
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 290
+				"endLine": 294
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.985Z",
+				"discoveredAt": "2025-12-07T04:02:49.722Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3236,40 +3496,40 @@
 					{
 						"name": "findAllPaths",
 						"kind": "function",
-						"line": 69
+						"line": 70
 					},
 					{
 						"name": "bfsTraversal",
 						"kind": "function",
-						"line": 114
+						"line": 115
 					},
 					{
 						"name": "dfsTraversal",
 						"kind": "function",
-						"line": 154
+						"line": 156
 					},
 					{
 						"name": "getReachableNodes",
 						"kind": "function",
-						"line": 192
+						"line": 194
 					},
 					{
 						"name": "getMaxDepth",
 						"kind": "function",
-						"line": 222
+						"line": 224
 					},
 					{
 						"name": "topologicalSort",
 						"kind": "function",
-						"line": 248
+						"line": 250
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 288
+				"endLine": 290
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.985Z",
+				"discoveredAt": "2025-12-07T04:02:49.722Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3286,7 +3546,7 @@
 					{
 						"name": "CycleInfo",
 						"kind": "interface",
-						"line": 265
+						"line": 269
 					},
 					{
 						"name": "findAllCycles",
@@ -3296,7 +3556,7 @@
 					{
 						"name": "findSimpleCycles",
 						"kind": "function",
-						"line": 124
+						"line": 127
 					},
 					{
 						"name": "findStronglyConnectedComponents",
@@ -3306,12 +3566,12 @@
 					{
 						"name": "getCycleInfo",
 						"kind": "function",
-						"line": 270
+						"line": 274
 					},
 					{
 						"name": "hasCycles",
 						"kind": "function",
-						"line": 219
+						"line": 223
 					},
 					{
 						"name": "GraphStats",
@@ -3331,17 +3591,17 @@
 					{
 						"name": "bfsTraversal",
 						"kind": "function",
-						"line": 114
+						"line": 115
 					},
 					{
 						"name": "dfsTraversal",
 						"kind": "function",
-						"line": 154
+						"line": 156
 					},
 					{
 						"name": "findAllPaths",
 						"kind": "function",
-						"line": 69
+						"line": 70
 					},
 					{
 						"name": "findShortestPath",
@@ -3351,17 +3611,17 @@
 					{
 						"name": "getMaxDepth",
 						"kind": "function",
-						"line": 222
+						"line": 224
 					},
 					{
 						"name": "getReachableNodes",
 						"kind": "function",
-						"line": 192
+						"line": 194
 					},
 					{
 						"name": "topologicalSort",
 						"kind": "function",
-						"line": 248
+						"line": 250
 					}
 				],
 				"usesRunes": false,
@@ -3369,7 +3629,7 @@
 				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.985Z",
+				"discoveredAt": "2025-12-07T04:02:49.722Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3388,7 +3648,7 @@
 				"endLine": 32
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.985Z",
+				"discoveredAt": "2025-12-07T04:02:49.722Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3408,7 +3668,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.985Z",
+				"discoveredAt": "2025-12-07T04:02:49.722Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3428,7 +3688,118 @@
 				"endLine": 31
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.986Z",
+				"discoveredAt": "2025-12-07T04:02:49.722Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "type::telemetry::b_types_telemetry_ts",
+			"type": "Type",
+			"name": "telemetry",
+			"filePath": "packages/web/src/lib/types/telemetry.ts",
+			"attributes": {
+				"layer": "types",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "TelemetryEventType",
+						"kind": "const",
+						"line": 17
+					},
+					{
+						"name": "TelemetryEventType",
+						"kind": "type",
+						"line": 41
+					},
+					{
+						"name": "SessionStartPayload",
+						"kind": "interface",
+						"line": 50
+					},
+					{
+						"name": "SessionEndPayload",
+						"kind": "interface",
+						"line": 58
+					},
+					{
+						"name": "PageViewPayload",
+						"kind": "interface",
+						"line": 66
+					},
+					{
+						"name": "GameStartPayload",
+						"kind": "interface",
+						"line": 74
+					},
+					{
+						"name": "GameCompletePayload",
+						"kind": "interface",
+						"line": 82
+					},
+					{
+						"name": "RollPayload",
+						"kind": "interface",
+						"line": 91
+					},
+					{
+						"name": "CategoryHoverPayload",
+						"kind": "interface",
+						"line": 100
+					},
+					{
+						"name": "CategoryScorePayload",
+						"kind": "interface",
+						"line": 108
+					},
+					{
+						"name": "HintRequestedPayload",
+						"kind": "interface",
+						"line": 118
+					},
+					{
+						"name": "DecisionQualityPayload",
+						"kind": "interface",
+						"line": 127
+					},
+					{
+						"name": "PredictionPayload",
+						"kind": "interface",
+						"line": 136
+					},
+					{
+						"name": "ErrorPayload",
+						"kind": "interface",
+						"line": 145
+					},
+					{
+						"name": "TelemetryPayloadMap",
+						"kind": "interface",
+						"line": 158
+					},
+					{
+						"name": "TelemetryEvent",
+						"kind": "interface",
+						"line": 176
+					},
+					{
+						"name": "TelemetryConfig",
+						"kind": "interface",
+						"line": 195
+					},
+					{
+						"name": "DEFAULT_TELEMETRY_CONFIG",
+						"kind": "const",
+						"line": 209
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 215
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.722Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3489,7 +3860,7 @@
 				"endLine": 138
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.986Z",
+				"discoveredAt": "2025-12-07T04:02:49.723Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3550,7 +3921,7 @@
 				"endLine": 575
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.986Z",
+				"discoveredAt": "2025-12-07T04:02:49.723Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3776,7 +4147,7 @@
 				"endLine": 418
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.987Z",
+				"discoveredAt": "2025-12-07T04:02:49.723Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4027,7 +4398,7 @@
 				"endLine": 448
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.987Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4088,7 +4459,7 @@
 				"endLine": 88
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.987Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4109,12 +4480,12 @@
 						"line": 3
 					},
 					{
-						"name": "get_categories",
+						"name": "analyze_turn",
 						"kind": "const",
 						"line": 4
 					},
 					{
-						"name": "analyze_turn",
+						"name": "get_categories",
 						"kind": "const",
 						"line": 5
 					},
@@ -4149,7 +4520,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.987Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4230,7 +4601,7 @@
 				"endLine": 171
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.987Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4261,7 +4632,7 @@
 				"endLine": 477
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.987Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4307,7 +4678,7 @@
 				"endLine": 219
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.987Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4353,7 +4724,7 @@
 				"endLine": 570
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4414,7 +4785,7 @@
 				"endLine": 164
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4475,7 +4846,7 @@
 				"endLine": 192
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4501,7 +4872,7 @@
 				"endLine": 240
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4552,7 +4923,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4597,7 +4968,7 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4677,7 +5048,7 @@
 				"endLine": 7
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4732,7 +5103,7 @@
 				"endLine": 126
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4788,7 +5159,7 @@
 				"endLine": 111
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.724Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4874,7 +5245,7 @@
 				"endLine": 235
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.725Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4900,7 +5271,7 @@
 				"endLine": 12
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.725Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4936,7 +5307,7 @@
 				"endLine": 7
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.725Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4962,7 +5333,7 @@
 				"endLine": 25
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.725Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5123,7 +5494,7 @@
 				"endLine": 254
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.988Z",
+				"discoveredAt": "2025-12-07T04:02:49.725Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5164,7 +5535,7 @@
 				"endLine": 6
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.989Z",
+				"discoveredAt": "2025-12-07T04:02:49.725Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5235,7 +5606,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.990Z",
+				"discoveredAt": "2025-12-07T04:02:49.726Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5296,7 +5667,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.990Z",
+				"discoveredAt": "2025-12-07T04:02:49.726Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5337,7 +5708,7 @@
 				"endLine": 3
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.990Z",
+				"discoveredAt": "2025-12-07T04:02:49.727Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5428,7 +5799,7 @@
 				"endLine": 13
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.991Z",
+				"discoveredAt": "2025-12-07T04:02:49.728Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5569,7 +5940,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.993Z",
+				"discoveredAt": "2025-12-07T04:02:49.730Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5610,7 +5981,7 @@
 				"endLine": 3
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.993Z",
+				"discoveredAt": "2025-12-07T04:02:49.730Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5681,7 +6052,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.994Z",
+				"discoveredAt": "2025-12-07T04:02:49.731Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5732,7 +6103,67 @@
 				"endLine": 4
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.994Z",
+				"discoveredAt": "2025-12-07T04:02:49.731Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::useTelemetryGameHooks::elemetryGameHooks_ts",
+			"type": "Module",
+			"name": "useTelemetryGameHooks",
+			"filePath": "packages/web/src/lib/hooks/useTelemetryGameHooks.ts",
+			"attributes": {
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "trackGameStart",
+						"kind": "function",
+						"line": 21
+					},
+					{
+						"name": "trackRoll",
+						"kind": "function",
+						"line": 35
+					},
+					{
+						"name": "trackCategoryHover",
+						"kind": "function",
+						"line": 50
+					},
+					{
+						"name": "trackCategoryScore",
+						"kind": "function",
+						"line": 63
+					},
+					{
+						"name": "trackDecisionQuality",
+						"kind": "function",
+						"line": 82
+					},
+					{
+						"name": "trackHintRequested",
+						"kind": "function",
+						"line": 93
+					},
+					{
+						"name": "trackGameComplete",
+						"kind": "function",
+						"line": 108
+					},
+					{
+						"name": "trackError",
+						"kind": "function",
+						"line": 126
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 133
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.732Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5772,7 +6203,7 @@
 				"endLine": 112
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.994Z",
+				"discoveredAt": "2025-12-07T04:02:49.732Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5805,14 +6236,54 @@
 						"name": "useKeyboardNavigation",
 						"kind": "function",
 						"line": 32
+					},
+					{
+						"name": "trackCategoryHover",
+						"kind": "function",
+						"line": 50
+					},
+					{
+						"name": "trackCategoryScore",
+						"kind": "function",
+						"line": 63
+					},
+					{
+						"name": "trackDecisionQuality",
+						"kind": "function",
+						"line": 82
+					},
+					{
+						"name": "trackError",
+						"kind": "function",
+						"line": 126
+					},
+					{
+						"name": "trackGameComplete",
+						"kind": "function",
+						"line": 108
+					},
+					{
+						"name": "trackGameStart",
+						"kind": "function",
+						"line": 21
+					},
+					{
+						"name": "trackHintRequested",
+						"kind": "function",
+						"line": 93
+					},
+					{
+						"name": "trackRoll",
+						"kind": "function",
+						"line": 35
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 12
+				"endLine": 23
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.994Z",
+				"discoveredAt": "2025-12-07T04:02:49.732Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6012,7 +6483,7 @@
 				"endLine": 20
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.994Z",
+				"discoveredAt": "2025-12-07T04:02:49.732Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6073,7 +6544,83 @@
 				"endLine": 211
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.732Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "service::telemetry::ervices_telemetry_ts",
+			"type": "Service",
+			"name": "telemetry",
+			"filePath": "packages/web/src/lib/services/telemetry.ts",
+			"attributes": {
+				"layer": "services",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "hasConsent",
+						"kind": "function",
+						"line": 106
+					},
+					{
+						"name": "setConsent",
+						"kind": "function",
+						"line": 118
+					},
+					{
+						"name": "initializeTelemetry",
+						"kind": "function",
+						"line": 141
+					},
+					{
+						"name": "shutdownTelemetry",
+						"kind": "function",
+						"line": 172
+					},
+					{
+						"name": "track",
+						"kind": "function",
+						"line": 195
+					},
+					{
+						"name": "trackPageView",
+						"kind": "function",
+						"line": 231
+					},
+					{
+						"name": "setUserId",
+						"kind": "function",
+						"line": 239
+					},
+					{
+						"name": "getTelemetryState",
+						"kind": "function",
+						"line": 336
+					},
+					{
+						"name": "resetTelemetry",
+						"kind": "function",
+						"line": 351
+					},
+					{
+						"name": "TelemetryEventType",
+						"kind": "const",
+						"line": 17
+					},
+					{
+						"name": "TelemetryEventType",
+						"kind": "type",
+						"line": 41
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 364
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.732Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6127,14 +6674,69 @@
 						"name": "resetEngine",
 						"kind": "function",
 						"line": 50
+					},
+					{
+						"name": "getTelemetryState",
+						"kind": "function",
+						"line": 336
+					},
+					{
+						"name": "hasConsent",
+						"kind": "function",
+						"line": 106
+					},
+					{
+						"name": "initializeTelemetry",
+						"kind": "function",
+						"line": 141
+					},
+					{
+						"name": "resetTelemetry",
+						"kind": "function",
+						"line": 351
+					},
+					{
+						"name": "setConsent",
+						"kind": "function",
+						"line": 118
+					},
+					{
+						"name": "setUserId",
+						"kind": "function",
+						"line": 239
+					},
+					{
+						"name": "shutdownTelemetry",
+						"kind": "function",
+						"line": 172
+					},
+					{
+						"name": "TelemetryEventType",
+						"kind": "const",
+						"line": 17
+					},
+					{
+						"name": "TelemetryEventType",
+						"kind": "type",
+						"line": 41
+					},
+					{
+						"name": "track",
+						"kind": "function",
+						"line": 195
+					},
+					{
+						"name": "trackPageView",
+						"kind": "function",
+						"line": 231
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 17
+				"endLine": 30
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.732Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6175,7 +6777,7 @@
 				"endLine": 412
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6200,7 +6802,7 @@
 				"endLine": 47
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6226,7 +6828,7 @@
 				"endLine": 38
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6252,7 +6854,7 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6278,7 +6880,7 @@
 				"endLine": 12
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6304,7 +6906,7 @@
 				"endLine": 23
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6330,7 +6932,33 @@
 				"endLine": 35
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::+server::telemetry__server_ts",
+			"type": "Module",
+			"name": "+server",
+			"filePath": "packages/web/src/routes/api/telemetry/+server.ts",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "POST",
+						"kind": "const",
+						"line": 53
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 111
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6420,7 +7048,7 @@
 				"endLine": 126
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6455,7 +7083,7 @@
 				"endLine": 681
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6620,7 +7248,7 @@
 				"endLine": 352
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6745,7 +7373,7 @@
 				"endLine": 307
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.995Z",
+				"discoveredAt": "2025-12-07T04:02:49.733Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6930,7 +7558,7 @@
 				"endLine": 374
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.996Z",
+				"discoveredAt": "2025-12-07T04:02:49.734Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7060,7 +7688,7 @@
 				"endLine": 513
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.996Z",
+				"discoveredAt": "2025-12-07T04:02:49.734Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7120,7 +7748,7 @@
 				"endLine": 267
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.996Z",
+				"discoveredAt": "2025-12-07T04:02:49.734Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7595,7 +8223,7 @@
 				"endLine": 124
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7650,7 +8278,7 @@
 				"endLine": 118
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7680,7 +8308,7 @@
 				"endLine": 674
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7720,7 +8348,7 @@
 				"endLine": 111
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7739,7 +8367,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7758,7 +8386,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7777,7 +8405,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7796,7 +8424,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7815,7 +8443,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7834,7 +8462,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7853,7 +8481,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7872,7 +8500,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7891,7 +8519,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7910,7 +8538,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7929,7 +8557,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7948,7 +8576,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7967,7 +8595,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7986,7 +8614,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8005,7 +8633,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8024,7 +8652,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8043,7 +8671,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8062,7 +8690,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8081,7 +8709,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8100,7 +8728,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8119,7 +8747,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8138,7 +8766,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8157,7 +8785,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8176,7 +8804,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8195,7 +8823,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8214,7 +8842,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8233,7 +8861,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8252,7 +8880,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8271,7 +8899,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8290,7 +8918,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8309,7 +8937,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8328,7 +8956,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8347,7 +8975,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.997Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8366,7 +8994,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8385,7 +9013,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8404,7 +9032,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8423,7 +9051,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8442,7 +9070,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.735Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8461,7 +9089,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8480,7 +9108,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8499,7 +9127,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8518,7 +9146,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8538,7 +9166,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8559,7 +9187,7 @@
 				"notes": "Smart containers may import stores (exception)"
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8580,7 +9208,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8602,7 +9230,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8617,7 +9245,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8638,7 +9266,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8654,7 +9282,7 @@
 				"notes": "Only engine.ts should be imported by other modules"
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8665,7 +9293,7 @@
 			"name": "@dicee/web",
 			"attributes": {},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8676,7 +9304,7 @@
 			"name": "@dicee/partykit",
 			"attributes": {},
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.998Z",
+				"discoveredAt": "2025-12-07T04:02:49.736Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8707,7 +9335,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8733,7 +9361,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8759,7 +9387,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8792,7 +9420,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8818,7 +9446,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8844,7 +9472,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8870,7 +9498,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8903,7 +9531,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8930,7 +9558,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8958,7 +9586,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:56.999Z",
+				"discoveredAt": "2025-12-07T04:02:49.737Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8984,7 +9612,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9010,7 +9638,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9038,7 +9666,113 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::mermaid->wasmbridge::engine",
+			"type": "imports",
+			"sourceNodeId": "module::mermaid::kg_output_mermaid_ts",
+			"targetNodeId": "wasmbridge::engine::_akg_query_engine_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"createQueryEngine",
+					"QueryEngine"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/output/mermaid.ts",
+					"line": 11,
+					"column": 0,
+					"importSpecifier": "../query/engine.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::mermaid->module::config.schema",
+			"type": "imports_type",
+			"sourceNodeId": "module::mermaid::kg_output_mermaid_ts",
+			"targetNodeId": "module::config.schema::ema_config_schema_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"AKGConfig",
+					"LayerDefinition"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/output/mermaid.ts",
+					"line": 12,
+					"column": 0,
+					"importSpecifier": "../schema/config.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::mermaid->module::graph.schema",
+			"type": "imports_type",
+			"sourceNodeId": "module::mermaid::kg_output_mermaid_ts",
+			"targetNodeId": "module::graph.schema::hema_graph_schema_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"AKGGraph",
+					"AKGNode"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/output/mermaid.ts",
+					"line": 13,
+					"column": 0,
+					"importSpecifier": "../schema/graph.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "calls_wasm::module::mermaid->wasmbridge::engine",
+			"type": "calls_wasm",
+			"sourceNodeId": "module::mermaid::kg_output_mermaid_ts",
+			"targetNodeId": "wasmbridge::engine::_akg_query_engine_ts",
+			"attributes": {
+				"importedNames": [
+					"createQueryEngine",
+					"QueryEngine"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/output/mermaid.ts",
+					"line": 11,
+					"column": 0,
+					"importSpecifier": "../query/engine.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9064,7 +9798,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9091,7 +9825,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9115,7 +9849,112 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.738Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::store-file-naming->module::graph.schema",
+			"type": "imports_type",
+			"sourceNodeId": "module::store-file-naming::store_file_naming_ts",
+			"targetNodeId": "module::graph.schema::hema_graph_schema_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"AKGGraph"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/store-file-naming.ts",
+					"line": 8,
+					"column": 0,
+					"importSpecifier": "../../schema/graph.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::store-file-naming->module::invariant.schema",
+			"type": "imports_type",
+			"sourceNodeId": "module::store-file-naming::store_file_naming_ts",
+			"targetNodeId": "module::invariant.schema::_invariant_schema_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"AKGQueryEngine",
+					"InvariantViolation"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/store-file-naming.ts",
+					"line": 9,
+					"column": 0,
+					"importSpecifier": "../../schema/invariant.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::store-file-naming->module::invariant.schema",
+			"type": "imports",
+			"sourceNodeId": "module::store-file-naming::store_file_naming_ts",
+			"targetNodeId": "module::invariant.schema::_invariant_schema_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"createViolation"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/store-file-naming.ts",
+					"line": 10,
+					"column": 0,
+					"importSpecifier": "../../schema/invariant.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::store-file-naming->module::registry",
+			"type": "imports",
+			"sourceNodeId": "module::store-file-naming::store_file_naming_ts",
+			"targetNodeId": "module::registry::variants_registry_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"defineInvariant"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/store-file-naming.ts",
+					"line": 11,
+					"column": 0,
+					"importSpecifier": "../registry.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9141,7 +9980,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9168,7 +10007,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9194,7 +10033,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9220,7 +10059,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9246,7 +10085,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9273,7 +10112,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9299,7 +10138,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9325,7 +10164,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9349,7 +10188,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9373,7 +10212,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9397,7 +10236,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9421,7 +10260,160 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::index->module::store-file-naming",
+			"type": "imports",
+			"sourceNodeId": "module::index::definitions_index_ts",
+			"targetNodeId": "module::store-file-naming::store_file_naming_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": []
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/index.ts",
+					"line": 15,
+					"column": 0,
+					"importSpecifier": "./store-file-naming.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::index->module::callback-prop-naming",
+			"type": "imports",
+			"sourceNodeId": "module::index::definitions_index_ts",
+			"targetNodeId": "module::callback-prop-naming::lback_prop_naming_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": []
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/index.ts",
+					"line": 16,
+					"column": 0,
+					"importSpecifier": "./callback-prop-naming.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::callback-prop-naming->module::graph.schema",
+			"type": "imports_type",
+			"sourceNodeId": "module::callback-prop-naming::lback_prop_naming_ts",
+			"targetNodeId": "module::graph.schema::hema_graph_schema_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"AKGGraph"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/callback-prop-naming.ts",
+					"line": 14,
+					"column": 0,
+					"importSpecifier": "../../schema/graph.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::callback-prop-naming->module::invariant.schema",
+			"type": "imports_type",
+			"sourceNodeId": "module::callback-prop-naming::lback_prop_naming_ts",
+			"targetNodeId": "module::invariant.schema::_invariant_schema_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"AKGQueryEngine",
+					"InvariantViolation"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/callback-prop-naming.ts",
+					"line": 15,
+					"column": 0,
+					"importSpecifier": "../../schema/invariant.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::callback-prop-naming->module::invariant.schema",
+			"type": "imports",
+			"sourceNodeId": "module::callback-prop-naming::lback_prop_naming_ts",
+			"targetNodeId": "module::invariant.schema::_invariant_schema_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"createViolation"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/callback-prop-naming.ts",
+					"line": 16,
+					"column": 0,
+					"importSpecifier": "../../schema/invariant.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::callback-prop-naming->module::registry",
+			"type": "imports",
+			"sourceNodeId": "module::callback-prop-naming::lback_prop_naming_ts",
+			"targetNodeId": "module::registry::variants_registry_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"defineInvariant"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/invariants/definitions/callback-prop-naming.ts",
+					"line": 17,
+					"column": 0,
+					"importSpecifier": "../registry.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9447,7 +10439,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9474,7 +10466,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9500,7 +10492,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9526,7 +10518,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.739Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9552,7 +10544,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9579,7 +10571,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9605,7 +10597,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9631,7 +10623,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.000Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9658,7 +10650,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9684,7 +10676,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9711,7 +10703,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9741,7 +10733,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9768,7 +10760,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9793,7 +10785,215 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::server->module::loader",
+			"type": "imports",
+			"sourceNodeId": "module::server::ls_akg_mcp_server_ts",
+			"targetNodeId": "module::loader::akg_config_loader_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"loadConfig"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/mcp/server.ts",
+					"line": 16,
+					"column": 0,
+					"importSpecifier": "../config/loader.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::server->module::registry",
+			"type": "imports",
+			"sourceNodeId": "module::server::ls_akg_mcp_server_ts",
+			"targetNodeId": "module::registry::variants_registry_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"registry"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/mcp/server.ts",
+					"line": 17,
+					"column": 0,
+					"importSpecifier": "../invariants/registry.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::server->module::runner",
+			"type": "imports",
+			"sourceNodeId": "module::server::ls_akg_mcp_server_ts",
+			"targetNodeId": "module::runner::invariants_runner_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"runInvariants"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/mcp/server.ts",
+					"line": 18,
+					"column": 0,
+					"importSpecifier": "../invariants/runner.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::server->wasmbridge::engine",
+			"type": "imports",
+			"sourceNodeId": "module::server::ls_akg_mcp_server_ts",
+			"targetNodeId": "wasmbridge::engine::_akg_query_engine_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"createQueryEngine",
+					"QueryEngine"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/mcp/server.ts",
+					"line": 19,
+					"column": 0,
+					"importSpecifier": "../query/engine.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::server->module::config.schema",
+			"type": "imports_type",
+			"sourceNodeId": "module::server::ls_akg_mcp_server_ts",
+			"targetNodeId": "module::config.schema::ema_config_schema_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"AKGConfig",
+					"LayerDefinition"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/mcp/server.ts",
+					"line": 20,
+					"column": 0,
+					"importSpecifier": "../schema/config.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::server->module::graph.schema",
+			"type": "imports_type",
+			"sourceNodeId": "module::server::ls_akg_mcp_server_ts",
+			"targetNodeId": "module::graph.schema::hema_graph_schema_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"AKGGraph",
+					"AKGNode"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/mcp/server.ts",
+					"line": 21,
+					"column": 0,
+					"importSpecifier": "../schema/graph.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::server->module::index",
+			"type": "imports",
+			"sourceNodeId": "module::server::ls_akg_mcp_server_ts",
+			"targetNodeId": "module::index::definitions_index_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": []
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/mcp/server.ts",
+					"line": 24,
+					"column": 0,
+					"importSpecifier": "../invariants/definitions/index.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "calls_wasm::module::server->wasmbridge::engine",
+			"type": "calls_wasm",
+			"sourceNodeId": "module::server::ls_akg_mcp_server_ts",
+			"targetNodeId": "wasmbridge::engine::_akg_query_engine_ts",
+			"attributes": {
+				"importedNames": [
+					"createQueryEngine",
+					"QueryEngine"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/mcp/server.ts",
+					"line": 19,
+					"column": 0,
+					"importSpecifier": "../query/engine.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.740Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9814,13 +11014,13 @@
 			"evidence": [
 				{
 					"filePath": "packages/web/src/tools/akg/cli/discover.ts",
-					"line": 26,
+					"line": 30,
 					"column": 0,
 					"importSpecifier": "../config/index.js"
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9852,13 +11052,41 @@
 			"evidence": [
 				{
 					"filePath": "packages/web/src/tools/akg/cli/discover.ts",
-					"line": 27,
+					"line": 31,
 					"column": 0,
 					"importSpecifier": "../discovery/index.js"
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::discover->module::mermaid",
+			"type": "imports",
+			"sourceNodeId": "module::discover::_akg_cli_discover_ts",
+			"targetNodeId": "module::mermaid::kg_output_mermaid_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"generateAllDiagrams",
+					"getDiagramFilename",
+					"generateGraphHash"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/cli/discover.ts",
+					"line": 46,
+					"column": 0,
+					"importSpecifier": "../output/mermaid.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9882,13 +11110,124 @@
 			"evidence": [
 				{
 					"filePath": "packages/web/src/tools/akg/cli/discover.ts",
-					"line": 42,
+					"line": 51,
 					"column": 0,
 					"importSpecifier": "../schema/graph.schema.js"
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "dynamic_imports::module::discover->module::runner",
+			"type": "dynamic_imports",
+			"sourceNodeId": "module::discover::_akg_cli_discover_ts",
+			"targetNodeId": "module::runner::invariants_runner_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": true,
+				"importedNames": []
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/cli/discover.ts",
+					"line": 597,
+					"column": 0,
+					"importSpecifier": "../invariants/runner.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::mermaid->module::index",
+			"type": "imports",
+			"sourceNodeId": "module::mermaid::s_akg_cli_mermaid_ts",
+			"targetNodeId": "module::index::_akg_config_index_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"loadConfig"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/cli/mermaid.ts",
+					"line": 24,
+					"column": 0,
+					"importSpecifier": "../config/index.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::mermaid->module::mermaid",
+			"type": "imports",
+			"sourceNodeId": "module::mermaid::s_akg_cli_mermaid_ts",
+			"targetNodeId": "module::mermaid::kg_output_mermaid_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"DiagramJson",
+					"DiagramResult",
+					"DiagramType",
+					"checkStaleness",
+					"generateAllDiagrams",
+					"generateComponentDependencies",
+					"generateGraphHash",
+					"generateLayerArchitecture",
+					"generateStoreDependencies",
+					"getDiagramFilename"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/cli/mermaid.ts",
+					"line": 25,
+					"column": 0,
+					"importSpecifier": "../output/mermaid.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::mermaid->module::graph.schema",
+			"type": "imports_type",
+			"sourceNodeId": "module::mermaid::s_akg_cli_mermaid_ts",
+			"targetNodeId": "module::graph.schema::hema_graph_schema_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"AKGGraph"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/tools/akg/cli/mermaid.ts",
+					"line": 37,
+					"column": 0,
+					"importSpecifier": "../schema/graph.schema.js"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9914,7 +11253,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9943,7 +11282,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9969,7 +11308,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9996,7 +11335,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10022,7 +11361,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10048,7 +11387,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10074,7 +11413,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10100,7 +11439,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10127,7 +11466,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.001Z",
+				"discoveredAt": "2025-12-07T04:02:49.741Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10158,7 +11497,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10185,7 +11524,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10211,7 +11550,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10237,7 +11576,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10263,7 +11602,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10290,7 +11629,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10316,7 +11655,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10342,7 +11681,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10368,7 +11707,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10394,7 +11733,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10426,7 +11765,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10453,7 +11792,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10479,7 +11818,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10513,7 +11852,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10539,7 +11878,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10565,7 +11904,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10589,7 +11928,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.742Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -10613,7 +11952,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -10637,7 +11976,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10661,7 +12000,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.002Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10689,7 +12028,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10717,7 +12056,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10743,7 +12082,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -10769,7 +12108,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10795,7 +12134,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10827,7 +12166,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10851,7 +12190,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -10875,7 +12214,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10902,7 +12241,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10929,7 +12268,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10957,7 +12296,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10983,7 +12322,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11011,7 +12350,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11039,7 +12378,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11065,7 +12404,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11091,7 +12430,57 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::module::useTelemetryGameHooks->service::telemetry",
+			"type": "imports",
+			"sourceNodeId": "module::useTelemetryGameHooks::elemetryGameHooks_ts",
+			"targetNodeId": "service::telemetry::ervices_telemetry_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"track"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/lib/hooks/useTelemetryGameHooks.ts",
+					"line": 10,
+					"column": 0,
+					"importSpecifier": "$lib/services/telemetry"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "calls_service::module::useTelemetryGameHooks->service::telemetry",
+			"type": "calls_service",
+			"sourceNodeId": "module::useTelemetryGameHooks::elemetryGameHooks_ts",
+			"targetNodeId": "service::telemetry::ervices_telemetry_ts",
+			"attributes": {
+				"importedNames": [
+					"track"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/lib/hooks/useTelemetryGameHooks.ts",
+					"line": 10,
+					"column": 0,
+					"importSpecifier": "$lib/services/telemetry"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11115,7 +12504,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11139,7 +12528,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11163,7 +12552,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11185,7 +12574,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11207,7 +12596,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11229,7 +12618,62 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.003Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::service::telemetry->type::telemetry",
+			"type": "imports_type",
+			"sourceNodeId": "service::telemetry::ervices_telemetry_ts",
+			"targetNodeId": "type::telemetry::b_types_telemetry_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"TelemetryConfig",
+					"TelemetryEvent",
+					"TelemetryEventType",
+					"TelemetryPayloadMap"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/lib/services/telemetry.ts",
+					"line": 11,
+					"column": 0,
+					"importSpecifier": "$lib/types/telemetry"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports::service::telemetry->type::telemetry",
+			"type": "imports",
+			"sourceNodeId": "service::telemetry::ervices_telemetry_ts",
+			"targetNodeId": "type::telemetry::b_types_telemetry_ts",
+			"attributes": {
+				"isTypeOnly": false,
+				"isDynamic": false,
+				"importedNames": [
+					"DEFAULT_TELEMETRY_CONFIG"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/lib/services/telemetry.ts",
+					"line": 17,
+					"column": 0,
+					"importSpecifier": "$lib/types/telemetry"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11258,7 +12702,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11284,7 +12728,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11308,7 +12752,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11334,7 +12778,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.743Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11360,7 +12804,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11386,7 +12830,59 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::+server->type::database",
+			"type": "imports_type",
+			"sourceNodeId": "module::+server::telemetry__server_ts",
+			"targetNodeId": "type::database::ib_types_database_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"Json"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/routes/api/telemetry/+server.ts",
+					"line": 12,
+					"column": 0,
+					"importSpecifier": "$lib/types/database"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "imports_type::module::+server->type::telemetry",
+			"type": "imports_type",
+			"sourceNodeId": "module::+server::telemetry__server_ts",
+			"targetNodeId": "type::telemetry::b_types_telemetry_ts",
+			"attributes": {
+				"isTypeOnly": true,
+				"isDynamic": false,
+				"importedNames": [
+					"TelemetryEvent"
+				]
+			},
+			"evidence": [
+				{
+					"filePath": "packages/web/src/routes/api/telemetry/+server.ts",
+					"line": 13,
+					"column": 0,
+					"importSpecifier": "$lib/types/telemetry"
+				}
+			],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11418,7 +12914,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11451,7 +12947,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11479,7 +12975,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11510,7 +13006,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11536,7 +13032,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11565,7 +13061,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11593,7 +13089,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11623,7 +13119,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11650,7 +13146,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11681,7 +13177,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11707,7 +13203,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11735,7 +13231,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11763,7 +13259,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.004Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11789,7 +13285,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11824,7 +13320,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11851,7 +13347,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11878,7 +13374,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11904,7 +13400,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11930,7 +13426,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11960,7 +13456,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.744Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11973,7 +13469,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -11986,7 +13482,20 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::type::telemetry->layer::types",
+			"type": "belongs_to",
+			"sourceNodeId": "type::telemetry::b_types_telemetry_ts",
+			"targetNodeId": "layer::types",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -11999,7 +13508,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12012,7 +13521,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12025,7 +13534,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12038,7 +13547,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12051,7 +13560,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12064,7 +13573,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12077,7 +13586,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12090,7 +13599,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12103,7 +13612,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12116,7 +13625,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12129,7 +13638,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12142,7 +13651,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12155,7 +13664,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12168,7 +13677,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12181,7 +13690,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12194,7 +13703,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12207,7 +13716,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12220,7 +13729,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12233,7 +13742,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12246,7 +13755,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12259,7 +13768,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12272,7 +13781,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12285,7 +13794,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12298,7 +13807,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12311,7 +13820,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12324,7 +13833,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12337,7 +13846,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12350,7 +13859,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12363,7 +13872,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12376,7 +13885,20 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::service::telemetry->layer::services",
+			"type": "belongs_to",
+			"sourceNodeId": "service::telemetry::ervices_telemetry_ts",
+			"targetNodeId": "layer::services",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12389,7 +13911,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12402,7 +13924,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12415,7 +13937,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12428,7 +13950,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12441,7 +13963,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12454,7 +13976,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12467,7 +13989,20 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::module::+server->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "module::+server::telemetry__server_ts",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12480,7 +14015,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12493,7 +14028,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12506,7 +14041,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12519,7 +14054,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12532,7 +14067,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12545,7 +14080,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12558,7 +14093,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12571,7 +14106,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12584,7 +14119,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12597,7 +14132,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12610,7 +14145,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12623,7 +14158,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12636,7 +14171,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12649,7 +14184,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12662,7 +14197,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12675,7 +14210,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12688,7 +14223,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12701,7 +14236,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12714,7 +14249,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12727,7 +14262,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12740,7 +14275,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12753,7 +14288,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12766,7 +14301,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12779,7 +14314,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12792,7 +14327,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12805,7 +14340,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12818,7 +14353,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12831,7 +14366,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12844,7 +14379,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12857,7 +14392,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12870,7 +14405,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12883,7 +14418,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12896,7 +14431,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12909,7 +14444,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12922,7 +14457,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12935,7 +14470,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12948,7 +14483,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12961,7 +14496,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12974,7 +14509,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12987,7 +14522,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13000,7 +14535,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13013,7 +14548,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13026,7 +14561,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13039,7 +14574,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13052,7 +14587,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13065,7 +14600,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13078,7 +14613,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13091,7 +14626,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13104,7 +14639,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13117,7 +14652,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13130,7 +14665,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13143,7 +14678,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13156,7 +14691,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13169,7 +14704,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13182,7 +14717,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13195,7 +14730,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13208,7 +14743,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13221,7 +14756,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13234,7 +14769,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13247,7 +14782,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13260,7 +14795,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13273,7 +14808,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13286,7 +14821,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13299,7 +14834,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13312,7 +14847,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13325,7 +14860,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13338,7 +14873,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13351,7 +14886,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13364,20 +14899,20 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-07T00:01:57.005Z",
+				"discoveredAt": "2025-12-07T04:02:49.745Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
 		}
 	],
 	"metadata": {
-		"totalFiles": 129,
-		"discoveryDurationMs": 930,
+		"totalFiles": 139,
+		"discoveryDurationMs": 1088,
 		"packages": [
 			"@dicee/web",
 			"@dicee/partykit"
 		],
-		"gitCommit": "910e22a79e13400198531d72cb42701c00d0b989",
+		"gitCommit": "f093de09635950a93e17ab14de34f070372ed441",
 		"gitBranch": "main"
 	}
 }

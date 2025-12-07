@@ -5,6 +5,21 @@
  */
 
 export {
+	checkStaleness,
+	type DiagramJson,
+	type DiagramResult,
+	type DiagramType,
+	generateAllDiagrams,
+	generateComponentDependencies,
+	generateGraphHash,
+	generateHash,
+	generateLayerArchitecture,
+	generateStoreDependencies,
+	getDiagramFilename,
+	type MermaidOptions,
+	verifyDiagramHash,
+} from './mermaid.js';
+export {
 	type SarifLevel,
 	type SarifLog,
 	type SarifOptions,

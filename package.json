@@ -26,6 +26,8 @@
     "party:tail": "pnpm --filter @dicee/partykit tail",
     "akg:discover": "bun run packages/web/src/tools/akg/cli/discover.ts",
     "akg:check": "bun run packages/web/src/tools/akg/cli/check.ts",
+    "akg:mermaid": "bun run packages/web/src/tools/akg/cli/mermaid.ts",
+    "akg:all": "pnpm akg:discover && pnpm akg:mermaid",
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {

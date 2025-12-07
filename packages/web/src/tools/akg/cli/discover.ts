@@ -43,6 +43,7 @@ import {
 	type ProjectInitResult,
 	type SvelteAnalysis,
 } from '../discovery/index.js';
+import { generateAllDiagrams, generateGraphHash, getDiagramFilename } from '../output/mermaid.js';
 import {
 	type AKGEdge,
 	type AKGGraph,
@@ -68,6 +69,10 @@ interface DiscoverOptions {
 	watch?: boolean;
 	/** Run checks after discovery in watch mode */
 	withChecks?: boolean;
+	/** Generate Mermaid diagrams atomically with discovery */
+	withDiagrams?: boolean;
+	/** Output directory for diagrams */
+	diagramsPath?: string;
 }
 
 interface DiscoveryStats {
@@ -342,6 +347,50 @@ export async function discover(options: DiscoverOptions = {}): Promise<{
 	// Write output (unless dry run)
 	if (!options.dryRun) {
 		await writeGraphOutput(graph, config, projectRoot, options.outputPath, verbose);
+
+		// Generate diagrams atomically if requested
+		if (options.withDiagrams) {
+			if (verbose) log('Generating Mermaid diagrams...');
+			const diagramsPath = options.diagramsPath ?? 'docs/architecture/akg/diagrams';
+			const diagramsDir = resolve(projectRoot, diagramsPath);
+
+			await mkdir(diagramsDir, { recursive: true });
+
+			const mermaidOptions = {
+				sourceCommit: getGitCommit(),
+				maxNodes: 30,
+				includeForbiddenImports: true,
+			};
+
+			const diagrams = generateAllDiagrams(graph, config, mermaidOptions);
+
+			for (const diagram of diagrams) {
+				const filename = getDiagramFilename(diagram.type);
+				const mdPath = join(diagramsDir, `${filename}.md`);
+				const jsonPath = join(diagramsDir, `${filename}.json`);
+
+				await writeFile(mdPath, diagram.markdown);
+				await writeFile(jsonPath, JSON.stringify(diagram.json, null, '\t'));
+
+				if (verbose) log(`  Wrote ${filename}.md + ${filename}.json`);
+			}
+
+			// Write README index
+			const readmeLines = [
+				'# AKG Architecture Diagrams',
+				'',
+				'> Auto-generated. Run `pnpm akg:all` to regenerate.',
+				'',
+				...diagrams.map(
+					(d) => `- [${d.type.replace(/_/g, ' ')}](./${getDiagramFilename(d.type)}.md)`,
+				),
+				'',
+				`Graph hash: \`${generateGraphHash(graph).slice(0, 20)}...\``,
+			];
+			await writeFile(join(diagramsDir, 'README.md'), readmeLines.join('\n'));
+
+			if (verbose) log(`  Generated ${diagrams.length} diagrams`);
+		}
 	}
 
 	const stats: DiscoveryStats = {
@@ -662,6 +711,13 @@ async function main() {
 			case '--check':
 				options.withChecks = true;
 				break;
+			case '--with-diagrams':
+			case '-d':
+				options.withDiagrams = true;
+				break;
+			case '--diagrams-path':
+				options.diagramsPath = args[++i];
+				break;
 			case '--help':
 			case '-h':
 				log(`
@@ -679,6 +735,8 @@ Options:
   --base <branch>   Base branch for incremental (default: origin/main)
   --watch, -w       Watch mode: re-run on file changes
   --check           Run invariant checks after discovery (watch mode)
+  --with-diagrams, -d  Generate Mermaid diagrams atomically
+  --diagrams-path <dir>  Output dir for diagrams (default: docs/architecture/akg/diagrams)
   --help, -h        Show this help
 `);
 				process.exit(0);

@@ -1,0 +1,119 @@
+{
+	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
+	"version": "1.0.0",
+	"diagramType": "store_dependencies",
+	"generatedAt": "2025-12-07T04:02:49.787Z",
+	"graphHash": "sha256:ed69a8349a40367bbd053f3bd17db92422513fd0294fe6be47752d9c81f3ebf2",
+	"sourceCommit": "f093de09635950a93e17ab14de34f070372ed441",
+	"nodes": [
+		{
+			"id": "store::game.svelte::tores_game_svelte_ts",
+			"label": "game.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::room.svelte::tores_room_svelte_ts",
+			"label": "room.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::multiplayerGame.svelte::playerGame_svelte_ts",
+			"label": "multiplayerGame.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::scorecard.svelte::_scorecard_svelte_ts",
+			"label": "scorecard.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::dice.svelte::tores_dice_svelte_ts",
+			"label": "dice.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::auth.svelte::tores_auth_svelte_ts",
+			"label": "auth.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::index::_lib_stores_index_ts",
+			"label": "index",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::useKeyboardNavigation.svelte::Navigation_svelte_ts",
+			"label": "useKeyboardNavigation.svelte",
+			"type": "Store"
+		},
+		{
+			"id": "store::roomService.svelte::oomService_svelte_ts",
+			"label": "roomService.svelte",
+			"type": "Store",
+			"layer": "services"
+		}
+	],
+	"edges": [
+		{
+			"from": "store::game.svelte::tores_game_svelte_ts",
+			"to": "store::dice.svelte::tores_dice_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::game.svelte::tores_game_svelte_ts",
+			"to": "store::scorecard.svelte::_scorecard_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::game.svelte::tores_game_svelte_ts",
+			"to": "store::dice.svelte::tores_dice_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::game.svelte::tores_game_svelte_ts",
+			"to": "store::scorecard.svelte::_scorecard_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::room.svelte::tores_room_svelte_ts",
+			"to": "store::roomService.svelte::oomService_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::room.svelte::tores_room_svelte_ts",
+			"to": "store::roomService.svelte::oomService_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::room.svelte::tores_room_svelte_ts",
+			"to": "store::roomService.svelte::oomService_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::multiplayerGame.svelte::playerGame_svelte_ts",
+			"to": "store::roomService.svelte::oomService_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::multiplayerGame.svelte::playerGame_svelte_ts",
+			"to": "store::roomService.svelte::oomService_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::multiplayerGame.svelte::playerGame_svelte_ts",
+			"to": "store::roomService.svelte::oomService_svelte_ts",
+			"type": "imports"
+		}
+	],
+	"metadata": {
+		"totalNodes": 9,
+		"totalEdges": 10
+	}
+}
