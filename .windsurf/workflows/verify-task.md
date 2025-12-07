@@ -1,53 +1,89 @@
 # Verify Task Workflow
 
 **Command**: `/verify-task`
-**Purpose**: Verify a task is complete and meets quality standards
+**Purpose**: Verify a completed task meets all quality requirements including AKG compliance
 
 ## Steps
 
-1. **Read task details**
-   ```bash
-   cat .claude/state/current-phase.json
-   ```
-   - Find the task by ID
-   - Check its `verification` requirements
+1. **Read task verification requirements**
+   - Check `.claude/state/current-phase.json` for task details
+   - Identify acceptance criteria
+   - Note any specific test requirements
 
-2. **Run verification checks**
-
-   For all tasks:
+2. **Run quality checks**
    ```bash
-   pnpm check          # TypeScript + Svelte check
-   pnpm biome:check    # Linting
-   ```
-
-   If task has `verification.tests`:
-   ```bash
-   pnpm test -- [test-pattern]
-   ```
-
-   If task has `verification.build`:
-   ```bash
-   pnpm build
+   # TypeScript + Svelte check
+   pnpm check
+   
+   # Lint check
+   pnpm biome:check
+   
+   # Run tests
+   pnpm web:vitest
+   
+   # AKG architectural invariants
+   pnpm akg:check
    ```
 
-3. **Manual verification** (if specified)
-   - Check `verification.visual` requirements
-   - Verify `verification.manual` steps
-   - Report what was manually checked
+3. **Verify AKG compliance**
+   - Use `akg_invariant_status` to check all invariants
+   - If any invariants fail, identify the violation and fix
+   - Common issues:
+     - Component importing store (layer violation)
+     - Circular dependencies
+     - Wrong file naming convention
 
-4. **Update task status**
-   - If all checks pass: mark task as complete
-   - If checks fail: increment retry count
-   - Update `.claude/state/current-phase.json`
+4. **Manual verification** (if applicable)
+   - Check UI renders correctly
+   - Test user interactions
+   - Verify responsive behavior
 
-5. **Report results**
-   - ✅ List passed checks
-   - ❌ List failed checks (if any)
-   - Summary of what was verified
+5. **Update task status**
+   - Mark task as `complete` in `.claude/state/current-phase.json`
+   - Update `lastUpdated` timestamp
+   - Clear any `retryCount` if present
 
-## Three Strikes Rule
+6. **Report results**
+   ```markdown
+   ## Task Verification: [task-id]
+   
+   **Status**: ✅ Complete / ❌ Failed
+   
+   **Checks**:
+   - [x] TypeScript: Pass
+   - [x] Biome lint: Pass
+   - [x] Tests: Pass (X passing)
+   - [x] AKG invariants: Pass (6/6)
+   
+   **Notes**: [any observations]
+   
+   **Next task**: [if dependencies clear]
+   ```
 
-If verification fails 3 times:
-- STOP retrying
-- Document the failures
-- Ask human for guidance
+## AKG Invariant Check Details
+
+When running `akg_invariant_status`, verify these pass:
+
+| Invariant | What it checks |
+|-----------|----------------|
+| `wasm_single_entry` | Only engine.ts imports WASM |
+| `store_no_circular_deps` | No circular store dependencies |
+| `layer_component_isolation` | Components don't import stores |
+| `service_layer_boundaries` | Services don't import UI |
+| `store_file_naming` | Stores use .svelte.ts extension |
+| `callback_prop_naming` | Callbacks use onVerb pattern |
+
+## If Verification Fails
+
+1. **Identify the specific failure**
+2. **Check if it's a real issue or false positive**
+3. **Fix the issue** (don't just suppress warnings)
+4. **Re-run verification**
+5. **If stuck after 3 attempts**: STOP and ask human
+
+## Quick Verification Command
+
+```bash
+# All-in-one verification
+pnpm check && pnpm biome:check && pnpm web:vitest && pnpm akg:check
+```

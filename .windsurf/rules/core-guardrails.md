@@ -19,14 +19,30 @@ DICEE NAMING QUICK REF:
 
 ## Critical Rules
 
-### 1. Read Before Edit
+### 1. Three Strikes Rule (MANDATORY)
+
+If you encounter the same error 3 times:
+1. **STOP immediately**
+2. List what you've tried
+3. Ask for guidance
+4. Do NOT try a 4th time
+
+### 2. Read Before Edit
 
 Before modifying any file:
 1. Read `.claude/CONVENTIONS.md` for naming patterns
 2. Check 2-3 similar components for existing patterns
 3. Match existing patterns exactly
 
-### 2. Event Handler Naming (CRITICAL)
+### 3. Use AKG Before Imports
+
+**ALWAYS** use `akg_check_import` before adding import statements:
+```
+Before: import { game } from '$lib/stores/game.svelte';
+Check:  akg_check_import(fromPath, toPath)
+```
+
+### 4. Event Handler Naming (CRITICAL)
 
 | Context | Convention | Example |
 |---------|------------|---------|
@@ -43,14 +59,7 @@ Before modifying any file:
 <DiceTray onroll={handleRoll} />  <!-- ❌ -->
 ```
 
-### 3. Three Strikes Rule
-
-If you encounter the same error 3 times:
-1. Stop and summarize the issue
-2. List what you've tried
-3. Ask for guidance
-
-### 4. Verify Before Completing
+### 5. Verify Before Completing
 
 Always run before marking work complete:
 ```bash
@@ -59,15 +68,40 @@ pnpm biome:check  # Lint
 pnpm web:vitest   # Tests
 ```
 
+## Layer Architecture (AKG Enforced)
+
+```
+routes      → components, stores, services, types, wasm
+components  → components, types (NOT stores, services)
+stores      → services, types, supabase (NOT components, routes)
+services    → types, supabase, wasm (NOT components, routes, stores)
+```
+
+Use `akg_layer_rules` to check allowed imports for any layer.
+
 ## Project Context
 
 - **Stack**: SvelteKit 2, Svelte 5 runes, TypeScript, Biome
 - **Design**: Neo-Brutalist (see `docs/UI-UX-DESIGN-REPORT.md`)
 - **State**: Svelte 5 runes (`$state`, `$derived`, `$effect`)
 - **Testing**: Vitest with Testing Library
+- **Architecture**: AKG-enforced layer boundaries
+
+## MCP Tools Available
+
+| Tool | Purpose |
+|------|---------|
+| `akg_check_import` | Validate import before writing |
+| `akg_layer_rules` | Get layer import rules |
+| `akg_node_info` | Get file's architectural role |
+| `akg_invariant_status` | Check architecture health |
+| `mcp0_search_nodes` | Search memory knowledge graph |
+| `mcp1_execute_sql` | Query Supabase database |
+| `mcp1_list_tables` | List database tables |
 
 ## References
 
 - Full conventions: `.claude/CONVENTIONS.md`
 - Agent guardrails: `.claude/AGENT-GUARDRAILS.md`
-- Project docs: `CLAUDE.md`
+- Project docs: `WINDSURF.md` or `CLAUDE.md`
+- AKG docs: `docs/architecture/akg/`

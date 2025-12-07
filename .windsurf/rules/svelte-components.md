@@ -110,6 +110,18 @@ import type { Category } from '$lib/types';
 </script>
 ```
 
+## AKG Import Validation
+
+**Before adding imports**, use the AKG MCP tool:
+
+```
+akg_check_import:
+  fromPath: "packages/web/src/lib/components/MyComponent.svelte"
+  toPath: "packages/web/src/lib/stores/game.svelte"
+```
+
+Components in the `components` layer should NOT import from `stores` or `services` directly. If you need store data, it should be passed as props from a parent route or smart container.
+
 ## CSS Conventions
 
 ### Use Design Tokens
@@ -174,3 +186,4 @@ pnpm web:vitest   # Run tests
 - Full conventions: `.claude/CONVENTIONS.md`
 - Design tokens: `packages/web/src/lib/styles/tokens.css`
 - UI/UX guide: `docs/UI-UX-DESIGN-REPORT.md`
+- AKG layer rules: Use `akg_layer_rules` tool
