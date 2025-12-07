@@ -6,7 +6,9 @@
  * Subscribes to multiplayerGame store and orchestrates child components.
  */
 import { onDestroy, onMount } from 'svelte';
+import { ChatPanel } from '$lib/components/chat';
 import { DiceTray } from '$lib/components/dice';
+import { getChatStoreOptional } from '$lib/stores/chat.svelte';
 import type { MultiplayerGameStore } from '$lib/stores/multiplayerGame.svelte';
 import type { DiceArray, DieValue } from '$lib/types';
 import type { Category, KeptMask } from '$lib/types/multiplayer';
@@ -57,6 +59,14 @@ const turnNumber = $derived(store.turnNumber);
 const roundNumber = $derived(store.roundNumber);
 const afkWarning = $derived(store.afkWarning);
 const error = $derived(store.error);
+
+// Chat state
+const chatStore = getChatStoreOptional();
+let chatCollapsed = $state(true);
+
+function handleChatToggle(): void {
+	chatCollapsed = !chatCollapsed;
+}
 
 // Default dice for display before first roll
 const defaultDice: DiceArray = [1, 1, 1, 1, 1] as DiceArray;
@@ -121,6 +131,19 @@ function handleCloseGameOver(): void {
 		</button>
 		<div class="game-info">
 			<span class="room-code">{gameState?.roomCode ?? '----'}</span>
+			{#if chatStore}
+				<button
+					type="button"
+					class="chat-toggle"
+					onclick={handleChatToggle}
+					aria-label="Toggle chat"
+				>
+					💬
+					{#if chatStore.hasUnread}
+						<span class="unread-dot"></span>
+					{/if}
+				</button>
+			{/if}
 		</div>
 	</header>
 
@@ -196,6 +219,11 @@ function handleCloseGameOver(): void {
 		</aside>
 	</div>
 
+	<!-- Chat Panel -->
+	{#if chatStore}
+		<ChatPanel collapsed={chatCollapsed} onToggle={handleChatToggle} />
+	{/if}
+
 	<!-- Game Over Modal -->
 	{#if isGameOver && rankings}
 		<MultiplayerGameOverModal
@@ -264,6 +292,36 @@ function handleCloseGameOver(): void {
 		padding: var(--space-1) var(--space-2);
 		background: var(--color-background);
 		border: var(--border-thin);
+	}
+
+	.chat-toggle {
+		position: relative;
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 20px;
+		background: var(--color-background);
+		border: var(--border-medium);
+		cursor: pointer;
+		transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+	}
+
+	.chat-toggle:hover {
+		transform: translate(-1px, -1px);
+		box-shadow: 2px 2px 0 var(--color-border);
+	}
+
+	.unread-dot {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		width: 10px;
+		height: 10px;
+		background: var(--color-accent);
+		border-radius: 50%;
+		border: 2px solid var(--color-surface);
 	}
 
 	/* Game Layout */

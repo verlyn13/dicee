@@ -12,6 +12,7 @@ import { goto } from '$app/navigation';
 import { page } from '$app/stores';
 import RoomLobby from '$lib/components/lobby/RoomLobby.svelte';
 import { auth } from '$lib/stores/auth.svelte';
+import { createChatStore, setChatStore } from '$lib/stores/chat.svelte';
 import { createRoomStore, setRoomStore } from '$lib/stores/room.svelte';
 import { isValidRoomCode } from '$lib/types/multiplayer.schema';
 
@@ -28,6 +29,20 @@ const roomStore = $derived(auth.userId ? createRoomStore(auth.userId) : null);
 let connecting = $state(false);
 let error = $state<string | null>(null);
 let hasAttemptedJoin = $state(false);
+
+// Create chat store when we have a valid user
+const chatStore = $derived.by(() => {
+	if (!auth.userId) return null;
+	const displayName = auth.isAnonymous ? 'Guest' : (auth.email?.split('@')[0] ?? 'Player');
+	return createChatStore(auth.userId, displayName);
+});
+
+// Set chat store in context when available
+$effect(() => {
+	if (chatStore) {
+		setChatStore(chatStore);
+	}
+});
 
 // Set room store in context when available
 $effect(() => {

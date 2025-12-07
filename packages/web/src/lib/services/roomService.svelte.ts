@@ -7,7 +7,15 @@
 
 import PartySocket from 'partysocket';
 import { env } from '$env/dynamic/public';
-import type { Command, GameRoom, RoomCode, ServerEvent } from '$lib/types/multiplayer';
+import type {
+	ChatCommand_Union,
+	Command,
+	GameRoom,
+	QuickChatKey,
+	ReactionEmoji,
+	RoomCode,
+	ServerEvent,
+} from '$lib/types/multiplayer';
 import { parseServerEvent } from '$lib/types/multiplayer.schema';
 
 /** PartyKit host with fallback for local development */
@@ -245,6 +253,55 @@ class RoomService {
 	 */
 	sendRematch(): void {
 		this.send({ type: 'game.rematch' });
+	}
+
+	// =========================================================================
+	// Chat Commands
+	// =========================================================================
+
+	/**
+	 * Send a chat command (type-safe internal helper)
+	 */
+	private sendChat(command: ChatCommand_Union): void {
+		if (!this.socket || this._status !== 'connected') {
+			throw new Error('Not connected to room');
+		}
+		this.socket.send(JSON.stringify(command));
+	}
+
+	/**
+	 * Send a text chat message
+	 */
+	sendChatMessage(content: string): void {
+		this.sendChat({ type: 'CHAT', payload: { content } });
+	}
+
+	/**
+	 * Send a quick chat preset
+	 */
+	sendQuickChat(key: QuickChatKey): void {
+		this.sendChat({ type: 'QUICK_CHAT', payload: { key } });
+	}
+
+	/**
+	 * Send a reaction to a message
+	 */
+	sendReaction(messageId: string, emoji: ReactionEmoji, action: 'add' | 'remove'): void {
+		this.sendChat({ type: 'REACTION', payload: { messageId, emoji, action } });
+	}
+
+	/**
+	 * Send typing start indicator
+	 */
+	sendTypingStart(): void {
+		this.sendChat({ type: 'TYPING_START' });
+	}
+
+	/**
+	 * Send typing stop indicator
+	 */
+	sendTypingStop(): void {
+		this.sendChat({ type: 'TYPING_STOP' });
 	}
 
 	// =========================================================================

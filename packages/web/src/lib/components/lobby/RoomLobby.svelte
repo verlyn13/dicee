@@ -5,7 +5,9 @@
  * Shows room code, player list, and game controls.
  * Host can start the game when 2+ players are present.
  */
+import { ChatPanel } from '$lib/components/chat';
 import { auth } from '$lib/stores/auth.svelte';
+import { getChatStoreOptional } from '$lib/stores/chat.svelte';
 import { getRoomStore } from '$lib/stores/room.svelte';
 import PlayerListItem from './PlayerListItem.svelte';
 
@@ -21,8 +23,14 @@ interface Props {
 let { onleave, ongamestart, class: className = '' }: Props = $props();
 
 const room = getRoomStore();
+const chatStore = getChatStoreOptional();
 
 let countdown = $state<number | null>(null);
+let chatCollapsed = $state(true);
+
+function handleChatToggle(): void {
+	chatCollapsed = !chatCollapsed;
+}
 
 // Subscribe to game starting events
 $effect(() => {
@@ -78,9 +86,24 @@ const waitingMessage = $derived.by(() => {
 			</button>
 		</div>
 
-		<button type="button" class="leave-button" onclick={handleLeave}>
-			LEAVE
-		</button>
+		<div class="header-actions">
+			{#if chatStore}
+				<button
+					type="button"
+					class="chat-toggle"
+					onclick={handleChatToggle}
+					aria-label="Toggle chat"
+				>
+					💬
+					{#if chatStore.hasUnread}
+						<span class="unread-dot"></span>
+					{/if}
+				</button>
+			{/if}
+			<button type="button" class="leave-button" onclick={handleLeave}>
+				LEAVE
+			</button>
+		</div>
 	</header>
 
 	<!-- Player List -->
@@ -122,6 +145,11 @@ const waitingMessage = $derived.by(() => {
 			<p class="error-message" role="alert">{room.error}</p>
 		{/if}
 	</footer>
+
+	<!-- Chat Panel -->
+	{#if chatStore}
+		<ChatPanel collapsed={chatCollapsed} onToggle={handleChatToggle} />
+	{/if}
 </div>
 
 <style>
@@ -192,6 +220,42 @@ const waitingMessage = $derived.by(() => {
 	.leave-button:hover {
 		transform: translate(-1px, -1px);
 		box-shadow: 2px 2px 0 var(--color-border);
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--space-1);
+	}
+
+	.chat-toggle {
+		position: relative;
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 20px;
+		background: var(--color-background);
+		border: var(--border-medium);
+		cursor: pointer;
+		transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+	}
+
+	.chat-toggle:hover {
+		transform: translate(-1px, -1px);
+		box-shadow: 2px 2px 0 var(--color-border);
+	}
+
+	.unread-dot {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		width: 10px;
+		height: 10px;
+		background: var(--color-accent);
+		border-radius: 50%;
+		border: 2px solid var(--color-surface);
 	}
 
 	/* Player Section */

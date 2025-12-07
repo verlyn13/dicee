@@ -431,6 +431,195 @@ export type ServerEvent =
 	| ErrorEvent;
 
 // =============================================================================
+// Chat Types
+// =============================================================================
+
+/** Reaction emoji type */
+export type ReactionEmoji = '👍' | '🎲' | '😱' | '💀' | '🎉';
+
+/** All available reaction emojis */
+export const REACTION_EMOJIS: ReactionEmoji[] = ['👍', '🎲', '😱', '💀', '🎉'];
+
+/** Quick chat preset keys */
+export type QuickChatKey =
+	| 'nice_roll'
+	| 'good_game'
+	| 'your_turn'
+	| 'yahtzee'
+	| 'ouch'
+	| 'thinking';
+
+/** Quick chat presets with emoji and text */
+export const QUICK_CHAT_MESSAGES: Record<QuickChatKey, { emoji: string; text: string }> = {
+	nice_roll: { emoji: '🎲', text: 'Nice roll!' },
+	good_game: { emoji: '👏', text: 'Good game!' },
+	your_turn: { emoji: '⏰', text: 'Your turn!' },
+	yahtzee: { emoji: '🎉', text: 'YAHTZEE!' },
+	ouch: { emoji: '💀', text: 'Ouch...' },
+	thinking: { emoji: '🤔', text: 'Hmm, let me think...' },
+};
+
+/** All quick chat keys */
+export const QUICK_CHAT_KEYS = Object.keys(QUICK_CHAT_MESSAGES) as QuickChatKey[];
+
+/** Reactions on a message, keyed by emoji */
+export interface MessageReactions {
+	'👍': string[];
+	'🎲': string[];
+	'😱': string[];
+	'💀': string[];
+	'🎉': string[];
+}
+
+/** Create empty reactions object */
+export function createEmptyReactions(): MessageReactions {
+	return {
+		'👍': [],
+		'🎲': [],
+		'😱': [],
+		'💀': [],
+		'🎉': [],
+	};
+}
+
+/** Chat message from server */
+export interface ChatMessage {
+	/** Unique message ID */
+	id: string;
+	/** Message type: text, quick preset, or system announcement */
+	type: 'text' | 'quick' | 'system';
+	/** User ID who sent the message */
+	userId: string;
+	/** Display name at time of message */
+	displayName: string;
+	/** Message content (text or formatted quick chat) */
+	content: string;
+	/** Unix timestamp in milliseconds */
+	timestamp: number;
+	/** Aggregated reactions from all users */
+	reactions: MessageReactions;
+}
+
+/** Typing state for a user */
+export interface TypingState {
+	userId: string;
+	displayName: string;
+	startedAt: number;
+}
+
+/** Chat rate limits (for client-side UX hints) */
+export const CHAT_RATE_LIMITS = {
+	/** Minimum interval between messages (ms) */
+	MESSAGE_INTERVAL_MS: 1000,
+	/** Maximum message length */
+	MAX_MESSAGE_LENGTH: 500,
+	/** Auto-clear typing indicator after (ms) */
+	TYPING_TIMEOUT_MS: 3000,
+} as const;
+
+/** Chat error codes */
+export type ChatErrorCode =
+	| 'INVALID_MESSAGE'
+	| 'RATE_LIMITED'
+	| 'MESSAGE_TOO_LONG'
+	| 'REACTION_FAILED'
+	| 'MESSAGE_NOT_FOUND';
+
+// =============================================================================
+// Chat Commands (Client → Server)
+// =============================================================================
+
+/** Send a text chat message */
+export interface ChatCommand extends BaseCommand {
+	type: 'CHAT';
+	payload: { content: string };
+}
+
+/** Send a quick chat message */
+export interface QuickChatCommand extends BaseCommand {
+	type: 'QUICK_CHAT';
+	payload: { key: QuickChatKey };
+}
+
+/** Add or remove a reaction */
+export interface ReactionCommand extends BaseCommand {
+	type: 'REACTION';
+	payload: {
+		messageId: string;
+		emoji: ReactionEmoji;
+		action: 'add' | 'remove';
+	};
+}
+
+/** Start typing indicator */
+export interface TypingStartCommand extends BaseCommand {
+	type: 'TYPING_START';
+}
+
+/** Stop typing indicator */
+export interface TypingStopCommand extends BaseCommand {
+	type: 'TYPING_STOP';
+}
+
+/** All chat command types */
+export type ChatCommand_Union =
+	| ChatCommand
+	| QuickChatCommand
+	| ReactionCommand
+	| TypingStartCommand
+	| TypingStopCommand;
+
+// =============================================================================
+// Chat Server Events (Server → Client)
+// =============================================================================
+
+/** Chat message received */
+export interface ChatMessageEvent extends BaseServerEvent {
+	type: 'CHAT_MESSAGE';
+	payload: ChatMessage;
+}
+
+/** Chat history (sent on connect) */
+export interface ChatHistoryEvent extends BaseServerEvent {
+	type: 'CHAT_HISTORY';
+	payload: ChatMessage[];
+}
+
+/** Reaction updated on a message */
+export interface ReactionUpdateEvent extends BaseServerEvent {
+	type: 'REACTION_UPDATE';
+	payload: {
+		messageId: string;
+		reactions: MessageReactions;
+	};
+}
+
+/** Typing indicator update */
+export interface TypingUpdateEvent extends BaseServerEvent {
+	type: 'TYPING_UPDATE';
+	payload: {
+		typing: TypingState[];
+	};
+}
+
+/** Chat error */
+export interface ChatErrorEvent extends BaseServerEvent {
+	type: 'CHAT_ERROR';
+	payload: {
+		code: ChatErrorCode;
+		message: string;
+	};
+}
+
+/** All chat server event types */
+export type ChatServerEvent =
+	| ChatMessageEvent
+	| ChatHistoryEvent
+	| ReactionUpdateEvent
+	| TypingUpdateEvent
+	| ChatErrorEvent;
+
+// =============================================================================
 // Utility Types
 // =============================================================================
 
@@ -445,3 +634,17 @@ export type GetServerEvent<T extends ServerEventType> = Extract<ServerEvent, { t
 
 /** Get specific command by type */
 export type GetCommand<T extends CommandType> = Extract<Command, { type: T }>;
+
+/** Chat event type names */
+export type ChatEventType = ChatServerEvent['type'];
+
+/** Check if an event is a chat event */
+export function isChatEvent(event: { type: string }): event is ChatServerEvent {
+	return [
+		'CHAT_MESSAGE',
+		'CHAT_HISTORY',
+		'REACTION_UPDATE',
+		'TYPING_UPDATE',
+		'CHAT_ERROR',
+	].includes(event.type);
+}

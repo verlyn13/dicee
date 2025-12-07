@@ -12,6 +12,7 @@ import { page } from '$app/stores';
 import { MultiplayerGameView } from '$lib/components/game';
 import { roomService } from '$lib/services/roomService.svelte';
 import { auth } from '$lib/stores/auth.svelte';
+import { createChatStore, setChatStore } from '$lib/stores/chat.svelte';
 import {
 	createMultiplayerGameStore,
 	setMultiplayerGameStore,
@@ -22,6 +23,7 @@ const roomCode = $derived($page.params.code ?? '');
 
 // Create game store when we have a user ID
 let gameStore = $state<ReturnType<typeof createMultiplayerGameStore> | null>(null);
+let chatStore = $state<ReturnType<typeof createChatStore> | null>(null);
 
 // Connection state
 let isConnecting = $state(true);
@@ -37,6 +39,11 @@ onMount(async () => {
 	// Create game store
 	gameStore = createMultiplayerGameStore(auth.userId);
 	setMultiplayerGameStore(gameStore);
+
+	// Create chat store
+	const displayName = auth.isAnonymous ? 'Guest' : (auth.email?.split('@')[0] ?? 'Player');
+	chatStore = createChatStore(auth.userId, displayName);
+	setChatStore(chatStore);
 
 	// Connect to room
 	try {
@@ -59,6 +66,7 @@ onDestroy(() => {
 	// Disconnect from room when leaving
 	roomService.disconnect();
 	gameStore?.reset();
+	chatStore?.destroy();
 });
 
 function handleLeave(): void {
