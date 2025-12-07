@@ -1,8 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd packages/web && pnpm build",
+  "buildCommand": "cd packages/web && pnpm build && cp -r .vercel/output ../../.vercel/",
   "installCommand": "pnpm install",
-  "outputDirectory": "packages/web/.vercel/output",
   "framework": null,
   "regions": ["sfo1"],
   "headers": [
