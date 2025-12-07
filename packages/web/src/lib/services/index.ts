@@ -14,3 +14,16 @@ export {
 	preloadEngine,
 	resetEngine,
 } from './engine';
+
+export {
+	getTelemetryState,
+	hasConsent,
+	initializeTelemetry,
+	resetTelemetry,
+	setConsent,
+	setUserId,
+	shutdownTelemetry,
+	TelemetryEventType,
+	track,
+	trackPageView,
+} from './telemetry';
