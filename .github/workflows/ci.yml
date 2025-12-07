@@ -161,6 +161,13 @@ jobs:
       - name: Discover architecture graph
         run: pnpm akg:discover
 
+      - name: Verify diagram staleness
+        run: |
+          pnpm akg:mermaid --check || {
+            echo "::error::AKG diagrams are stale. Run 'pnpm akg:mermaid' locally and commit."
+            exit 1
+          }
+
       - name: Run architecture checks
         id: akg-check
         run: |

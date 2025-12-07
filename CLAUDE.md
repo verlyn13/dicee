@@ -258,9 +258,13 @@ pnpm format           # Format with Biome
 # Architectural Knowledge Graph (AKG)
 pnpm akg:discover              # Discover graph (136 nodes, 227 edges)
 pnpm akg:discover --incremental # Only changed files (fast, for PRs)
+pnpm akg:discover --with-diagrams # Atomic: discover + generate diagrams
 pnpm akg:check                 # Run invariant checks (6 built-in)
 pnpm akg:check --sarif         # SARIF output for GitHub Code Scanning
 pnpm akg:check --json          # JSON output for agents/CI
+pnpm akg:mermaid               # Generate Mermaid diagrams from graph
+pnpm akg:mermaid --check       # Verify diagrams are current (CI)
+pnpm akg:all                   # Run discover + mermaid atomically
 pnpm akg:discover --watch      # Watch mode (developer use, not agents)
 ```
 
@@ -569,7 +573,14 @@ Before phase transitions, run:
 ./scripts/quality-gate.sh
 ```
 
-Checks: TypeScript, Biome lint, tests, secrets scan, build
+Checks (7 total):
+1. TypeScript & Rust type checking
+2. AKG architectural invariants
+3. Biome lint
+4. Test suite
+5. Secrets scan (Infisical)
+6. Build verification
+7. AKG diagram staleness (verifies diagrams are current)
 
 ### Agent Roles
 
@@ -620,12 +631,33 @@ packages/web/src/tools/akg/
 
 **Output:**
 - Graph: `docs/architecture/akg/graph/current.json` (136 nodes, 227 edges)
+- Diagrams: `docs/architecture/akg/diagrams/` (auto-generated Mermaid)
 - SARIF: `pnpm akg:check --sarif > results.sarif`
 - CI: Runs automatically on every PR via `.github/workflows/ci.yml`
+
+**Mermaid Diagrams:**
+| File | Description |
+|------|-------------|
+| `LAYER_ARCHITECTURE.md` | Layer dependency structure with node counts |
+| `STORE_DEPENDENCIES.md` | Svelte store relationships |
+| `COMPONENT_DEPENDENCIES.md` | Component usage graph |
+
+Each diagram includes:
+- Mermaid flowchart visualization
+- JSON sidecar with SHA256 hash for staleness detection
+- Auto-generated timestamp and commit attribution
+
+**Diagram Workflow:**
+```bash
+pnpm akg:mermaid               # Generate all diagrams
+pnpm akg:mermaid --check       # Verify diagrams are current (fails if stale)
+pnpm akg:discover --with-diagrams # Atomic discovery + diagram generation
+```
 
 **Documentation:**
 - `docs/architecture/akg/AUTHORING_INVARIANTS.md` - Custom invariant guide
 - `docs/architecture/akg/WEEK_5_CI_INTEGRATION.md` - CI setup details
+- `docs/architecture/akg/diagrams/README.md` - Diagram index
 
 ### Extended Thinking
 

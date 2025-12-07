@@ -30,7 +30,7 @@ FAILED=0
 
 # 1. TypeScript Check (Rust + Web)
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 1/6 TypeScript & Rust Check                                 │"
+echo "│ 1/7 TypeScript & Rust Check                                 │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm check; then
     echo -e "${GREEN}✓ TypeScript and Rust checks passed${NC}"
@@ -42,7 +42,7 @@ echo ""
 
 # 2. AKG Invariant Check
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 2/6 AKG Architectural Invariants                            │"
+echo "│ 2/7 AKG Architectural Invariants                            │"
 echo "└──────────────────────────────────────────────────────────────┘"
 # Run AKG check and capture result (warnings OK, errors fail)
 # Filter out pnpm header lines (start with >) before JSON parsing
@@ -62,7 +62,7 @@ echo ""
 
 # 3. Lint Check (Biome - warnings only, no errors required)
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 3/6 Biome Lint                                              │"
+echo "│ 3/7 Biome Lint                                              │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if $FIX_MODE; then
     if pnpm --filter @dicee/web biome:fix; then
@@ -86,7 +86,7 @@ echo ""
 
 # 4. Tests
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 4/6 Test Suite                                              │"
+echo "│ 4/7 Test Suite                                              │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm test 2>/dev/null; then
     echo -e "${GREEN}✓ All tests passed${NC}"
@@ -98,7 +98,7 @@ echo ""
 
 # 5. Secrets Scan
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 5/6 Secrets Scan                                            │"
+echo "│ 5/7 Secrets Scan                                            │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if command -v infisical &> /dev/null; then
     if infisical scan --domain=https://infisical.jefahnierocks.com 2>/dev/null; then
@@ -113,13 +113,30 @@ echo ""
 
 # 6. Build Check
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 6/6 Build Check                                             │"
+echo "│ 6/7 Build Check                                             │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm build 2>/dev/null; then
     echo -e "${GREEN}✓ Build succeeded${NC}"
 else
     echo -e "${RED}✗ Build failed${NC}"
     FAILED=1
+fi
+echo ""
+
+# 7. AKG Diagram Staleness Check
+echo "┌──────────────────────────────────────────────────────────────┐"
+echo "│ 7/7 AKG Diagram Staleness                                   │"
+echo "└──────────────────────────────────────────────────────────────┘"
+DIAGRAM_OUTPUT=$(pnpm akg:mermaid --check 2>&1) || DIAGRAM_EXIT=$?
+if [ "${DIAGRAM_EXIT:-0}" -eq 0 ]; then
+    echo -e "${GREEN}✓ AKG diagrams are current${NC}"
+else
+    if echo "$DIAGRAM_OUTPUT" | grep -q "MISSING"; then
+        echo -e "${YELLOW}⚠ Some diagrams missing - run 'pnpm akg:mermaid' to generate${NC}"
+    else
+        echo -e "${RED}✗ AKG diagrams are stale - run 'pnpm akg:mermaid' to regenerate${NC}"
+        FAILED=1
+    fi
 fi
 echo ""
 
