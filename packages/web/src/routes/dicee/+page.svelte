@@ -11,7 +11,14 @@ import { DiceTray } from '$lib/components/dice/index.js';
 import { GameGateway, GameOverModal } from '$lib/components/game/index.js';
 import { GameStatus, KeyboardHelp, StatsToggle } from '$lib/components/hud/index.js';
 import { Scorecard } from '$lib/components/scorecard/index.js';
-import { useKeyboardNavigation } from '$lib/hooks/index.js';
+import {
+	trackCategoryScore,
+	trackDecisionQuality,
+	trackGameComplete,
+	trackGameStart,
+	trackRoll,
+	useKeyboardNavigation,
+} from '$lib/hooks/index.js';
 import { analyzeTurnOptimal, initializeEngine } from '$lib/services/engine.js';
 import { game } from '$lib/stores/game.svelte.js';
 import type {
@@ -91,6 +98,7 @@ onMount(async () => {
 function handleStartSolo() {
 	showGateway = false;
 	game.startGame();
+	trackGameStart('solo', 1);
 	doRoll();
 }
 
@@ -104,6 +112,7 @@ async function doRoll() {
 	await new Promise((r) => setTimeout(r, 100));
 
 	game.roll();
+	trackRoll(turnNumber, game.rollNumber);
 	await updateAnalysis();
 
 	rolling = false;
@@ -146,16 +155,30 @@ function scoreCategory(category: Category) {
 	if (!canScore) return;
 	if (!game.scorecard.isAvailable(category)) return;
 
-	game.score(category);
+	// Get optimal category from analysis before scoring
+	const wasOptimal = currentAnalysis?.recommendedCategory === category;
+	const score = game.getPotentialScore(category);
 
-	// Start next turn if game not over
-	if (!isGameOver) {
+	const feedback = game.score(category);
+
+	// Track telemetry
+	trackCategoryScore(category, score, wasOptimal, turnNumber);
+	if (feedback) {
+		trackDecisionQuality(feedback);
+	}
+
+	// Check for game completion
+	if (isGameOver) {
+		trackGameComplete(grandTotal);
+	} else {
+		// Start next turn
 		doRoll();
 	}
 }
 
 function newGame() {
 	game.startGame();
+	trackGameStart('solo', 1);
 	doRoll();
 }
 
