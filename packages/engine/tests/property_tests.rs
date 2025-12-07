@@ -329,7 +329,12 @@ fn prop_total_multiplicity() {
 /// Property: Config count is exactly 252.
 #[test]
 fn prop_config_count() {
-    assert_eq!(ALL_CONFIGS.len(), 252, "Config count {} != 252", ALL_CONFIGS.len());
+    assert_eq!(
+        ALL_CONFIGS.len(),
+        252,
+        "Config count {} != 252",
+        ALL_CONFIGS.len()
+    );
 }
 
 // =============================================================================

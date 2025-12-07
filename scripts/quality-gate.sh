@@ -30,7 +30,7 @@ FAILED=0
 
 # 1. TypeScript Check (Rust + Web)
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 1/5 TypeScript & Rust Check                                 │"
+echo "│ 1/6 TypeScript & Rust Check                                 │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm check; then
     echo -e "${GREEN}✓ TypeScript and Rust checks passed${NC}"
@@ -40,9 +40,29 @@ else
 fi
 echo ""
 
-# 2. Lint Check (Biome - warnings only, no errors required)
+# 2. AKG Invariant Check
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 2/5 Biome Lint                                              │"
+echo "│ 2/6 AKG Architectural Invariants                            │"
+echo "└──────────────────────────────────────────────────────────────┘"
+# Run AKG check and capture result (warnings OK, errors fail)
+# Filter out pnpm header lines (start with >) before JSON parsing
+AKG_OUTPUT=$(pnpm akg:check --json 2>&1 | grep -v "^>") || true
+AKG_EXIT_CODE=$(echo "$AKG_OUTPUT" | jq -r '.exitCode // "success"')
+if [ "$AKG_EXIT_CODE" = "errors" ]; then
+    echo -e "${RED}✗ AKG check found error-severity violations${NC}"
+    echo "$AKG_OUTPUT" | jq -r '.results[] | select(.passed == false) | .violations[] | "  - \(.message)"'
+    FAILED=1
+elif [ "$AKG_EXIT_CODE" = "warnings" ]; then
+    WARN_COUNT=$(echo "$AKG_OUTPUT" | jq -r '.summary.warnings')
+    echo -e "${GREEN}✓ AKG check passed${NC} (${WARN_COUNT} warnings)"
+else
+    echo -e "${GREEN}✓ AKG check passed - no violations${NC}"
+fi
+echo ""
+
+# 3. Lint Check (Biome - warnings only, no errors required)
+echo "┌──────────────────────────────────────────────────────────────┐"
+echo "│ 3/6 Biome Lint                                              │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if $FIX_MODE; then
     if pnpm --filter @dicee/web biome:fix; then
@@ -64,9 +84,9 @@ else
 fi
 echo ""
 
-# 3. Tests
+# 4. Tests
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 3/5 Test Suite                                              │"
+echo "│ 4/6 Test Suite                                              │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm test 2>/dev/null; then
     echo -e "${GREEN}✓ All tests passed${NC}"
@@ -76,9 +96,9 @@ else
 fi
 echo ""
 
-# 4. Secrets Scan
+# 5. Secrets Scan
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 4/5 Secrets Scan                                            │"
+echo "│ 5/6 Secrets Scan                                            │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if command -v infisical &> /dev/null; then
     if infisical scan --domain=https://infisical.jefahnierocks.com 2>/dev/null; then
@@ -91,9 +111,9 @@ else
 fi
 echo ""
 
-# 5. Build Check
+# 6. Build Check
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 5/5 Build Check                                             │"
+echo "│ 6/6 Build Check                                             │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm build 2>/dev/null; then
     echo -e "${GREEN}✓ Build succeeded${NC}"

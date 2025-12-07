@@ -28,13 +28,13 @@ export default {
 		{
 			name: 'routes',
 			paths: ['packages/web/src/routes/**'],
-			mayImport: ['components', 'stores', 'services', 'types', 'lib'],
+			mayImport: ['components', 'stores', 'services', 'types', 'wasm'],
 			description: 'SvelteKit page routes and layouts',
 		},
 		{
 			name: 'components',
 			paths: ['packages/web/src/lib/components/**'],
-			mayImport: ['components', 'types', 'utils'],
+			mayImport: ['components', 'types'],
 			mayNotImport: ['stores', 'services'],
 			notes: 'Smart containers may import stores (exception)',
 		},

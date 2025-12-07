@@ -16,6 +16,7 @@
  *   --verbose          Enable verbose logging
  *   --fail-on-warning  Exit with error code on warnings
  *   --json             Output results as JSON
+ *   --sarif            Output results as SARIF 2.1.0 (for GitHub Code Scanning)
  *   --list             List available invariants
  *
  * @see docs/architecture/akg/WEEK_1_2_SCHEMA_INFRASTRUCTURE.md
@@ -25,6 +26,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { loadConfig } from '../config/index.js';
 import { formatSummary, getRegistry, runInvariants, validateGraph } from '../invariants/index.js';
+import { toSarifString } from '../output/sarif.js';
 import { type AKGGraph, AKGGraph as AKGGraphSchema } from '../schema/graph.schema.js';
 import type { CheckSummary } from '../schema/invariant.schema.js';
 
@@ -40,12 +42,12 @@ interface CheckOptions {
 	verbose?: boolean;
 	failOnWarning?: boolean;
 	json?: boolean;
+	sarif?: boolean;
 	list?: boolean;
 }
 
 // biome-ignore lint/suspicious/noConsole: CLI tool requires console output
 const log = (msg: string) => console.log(msg);
-// biome-ignore lint/suspicious/noConsole: CLI tool requires console output
 const logError = (msg: string) => console.error(msg);
 
 // =============================================================================
@@ -186,6 +188,7 @@ function getExitCode(summary: CheckSummary, failOnWarning: boolean): number {
 // CLI Entry Point
 // =============================================================================
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: CLI argument parsing has inherent complexity
 async function main() {
 	const args = process.argv.slice(2);
 	const options: CheckOptions = {};
@@ -215,6 +218,9 @@ async function main() {
 			case '--json':
 				options.json = true;
 				break;
+			case '--sarif':
+				options.sarif = true;
+				break;
 			case '--list':
 			case '-l':
 				options.list = true;
@@ -235,6 +241,7 @@ Options:
   --verbose, -v      Enable verbose logging
   --fail-on-warning  Exit with error code on warnings
   --json             Output results as JSON
+  --sarif            Output results as SARIF 2.1.0 (for GitHub Code Scanning)
   --list, -l         List available invariants
   --help, -h         Show this help
 
@@ -262,13 +269,16 @@ Examples:
 	}
 
 	try {
-		if (!options.json) {
+		const quietMode = options.json || options.sarif;
+		if (!quietMode) {
 			log('AKG Check starting...\n');
 		}
 
 		const summary = await check(options);
 
-		if (options.json) {
+		if (options.sarif) {
+			log(toSarifString(summary, { toolVersion: '1.0.0' }));
+		} else if (options.json) {
 			log(JSON.stringify(summary, null, 2));
 		} else {
 			log(`\n${formatSummary(summary)}`);
@@ -277,7 +287,7 @@ Examples:
 		const exitCode = getExitCode(summary, options.failOnWarning ?? false);
 		process.exit(exitCode);
 	} catch (error) {
-		if (options.json) {
+		if (options.json || options.sarif) {
 			log(
 				JSON.stringify({
 					error: true,
