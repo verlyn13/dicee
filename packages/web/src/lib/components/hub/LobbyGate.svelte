@@ -11,11 +11,11 @@ import { goto } from '$app/navigation';
 let code = $state('');
 let isNavigating = $state(false);
 
-// TODO: Connect to PartyKit presence room for real-time count
-// For now, show "LIVE" indicator when PartyKit is configured
+// TODO: Connect to Durable Objects presence room for real-time count
+// For now, show "LIVE" indicator when game lobby is configured
 import { env } from '$env/dynamic/public';
 
-const isLive = $derived(!!env.PUBLIC_PARTYKIT_HOST);
+const isLive = $derived(!!env.PUBLIC_WORKER_HOST);
 
 function handleCodeChange(event: Event) {
 	const target = event.target as HTMLInputElement;

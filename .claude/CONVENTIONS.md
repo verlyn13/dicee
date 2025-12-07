@@ -1,7 +1,7 @@
 # Dicee Codebase Conventions
 
-**Version**: 1.0.0
-**Last Updated**: 2025-12-04
+**Version**: 1.1.0
+**Last Updated**: 2025-12-07
 **Scope**: All agents (Claude Code, Windsurf, Codex, Gemini)
 
 > **IMPORTANT**: Read this document before modifying any code.
@@ -121,6 +121,7 @@ function handleKeyDown(event: KeyboardEvent) {
 packages/web/src/lib/
 ├── components/
 │   ├── auth/           # Auth-related components
+│   ├── chat/           # Chat panel, messages, reactions (do-4b)
 │   ├── dice/           # Dice tray and die
 │   ├── game/           # Game session components
 │   ├── hub/            # Hub landing components

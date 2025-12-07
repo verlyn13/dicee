@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "dataflow",
-	"generatedAt": "2025-12-07T18:15:13.753Z",
-	"graphHash": "sha256:ed69a8349a40367bbd053f3bd17db92422513fd0294fe6be47752d9c81f3ebf2",
-	"sourceCommit": "6fa97fe",
+	"generatedAt": "2025-12-07T21:05:46.358Z",
+	"graphHash": "sha256:870511bbfbe6cb945b851f5019363499bd10b2bc020c0c1b951019787f8e31f5",
+	"sourceCommit": "c36807e",
 	"nodes": [
 		{
 			"id": "module::+layout::rc_routes__layout_ts",
@@ -191,6 +191,21 @@
 			"type": "imports"
 		},
 		{
+			"from": "store::game.svelte::tores_game_svelte_ts",
+			"to": "service::engine::b_services_engine_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::game.svelte::tores_game_svelte_ts",
+			"to": "service::engine::b_services_engine_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::room.svelte::tores_room_svelte_ts",
+			"to": "store::roomService.svelte::oomService_svelte_ts",
+			"type": "imports"
+		},
+		{
 			"from": "store::room.svelte::tores_room_svelte_ts",
 			"to": "store::roomService.svelte::oomService_svelte_ts",
 			"type": "imports"
@@ -199,10 +214,30 @@
 			"from": "store::multiplayerGame.svelte::playerGame_svelte_ts",
 			"to": "store::roomService.svelte::oomService_svelte_ts",
 			"type": "imports"
+		},
+		{
+			"from": "store::multiplayerGame.svelte::playerGame_svelte_ts",
+			"to": "store::roomService.svelte::oomService_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "service::engine::b_services_engine_ts",
+			"to": "wasmbridge::engine::eb_src_lib_engine_ts",
+			"type": "imports"
+		},
+		{
+			"from": "service::engine::b_services_engine_ts",
+			"to": "wasmbridge::engine::eb_src_lib_engine_ts",
+			"type": "imports"
+		},
+		{
+			"from": "service::engine::b_services_engine_ts",
+			"to": "wasmbridge::engine::eb_src_lib_engine_ts",
+			"type": "imports"
 		}
 	],
 	"metadata": {
 		"totalNodes": 27,
-		"totalEdges": 6
+		"totalEdges": 13
 	}
 }

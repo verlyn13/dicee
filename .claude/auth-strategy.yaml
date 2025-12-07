@@ -51,7 +51,7 @@ google_cloud:
     support_email: "[YOUR_EMAIL]"
     authorized_domains:
       - "supabase.co"
-      - "jefahnierocks.com"         # Production domain
+      - "jefahnierocks.com"         # Production domain (dicee.*, gamelobby.*)
     scopes:
       - "email"
       - "profile"
@@ -61,8 +61,9 @@ google_cloud:
     name: "Dicee Web"
     type: "Web application"
     authorized_origins:
-      - "http://localhost:5173"             # Local dev
-      - "https://dicee.jefahnierocks.com"   # Production
+      - "http://localhost:5173"               # Local dev
+      - "https://dicee.jefahnierocks.com"     # Production frontend
+      - "https://gamelobby.jefahnierocks.com" # Game lobby (Durable Objects)
     authorized_redirect_uris:
       - "https://duhsbuyxyppgbkwbbtqg.supabase.co/auth/v1/callback"
 
@@ -253,6 +254,19 @@ urls:
     site_url: "https://dicee.jefahnierocks.com"
     redirect_urls:
       - "https://dicee.jefahnierocks.com/auth/callback"
+    notes: |
+      Auth flow: Users auth on dicee.jefahnierocks.com → redirected to lobby
+      Game lobby at gamelobby.jefahnierocks.com uses JWT tokens from Supabase
+      Durable Objects validate JWTs via JWKS endpoint
+
+  game_lobby:
+    domain: "gamelobby.jefahnierocks.com"
+    auth_method: "JWT validation (not OAuth redirect)"
+    jwt_source: "Supabase session from dicee.jefahnierocks.com"
+    notes: |
+      The game lobby (Durable Objects) does NOT handle OAuth redirects.
+      It validates JWTs passed via WebSocket connection params.
+      Users must authenticate on dicee.jefahnierocks.com first.
 
   supabase_callback: "https://duhsbuyxyppgbkwbbtqg.supabase.co/auth/v1/callback"
 

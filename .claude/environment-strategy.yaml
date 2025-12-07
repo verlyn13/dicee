@@ -14,7 +14,7 @@ environments:
     infisical_env: "dev"
     vercel_target: "development"
     supabase_branch: null  # Uses local Supabase
-    partykit_preview: null  # Uses local PartyKit
+    cloudflare_env: null    # Uses local wrangler dev
     purpose:
       - Local development
       - Feature branch testing
@@ -29,7 +29,7 @@ environments:
     infisical_env: "staging"
     vercel_target: "preview"
     supabase_branch: "staging"
-    partykit_preview: "staging"
+    cloudflare_env: "staging"  # wrangler deploy --env staging
     purpose:
       - Integration testing
       - QA verification
@@ -44,7 +44,7 @@ environments:
     infisical_env: "prod"
     vercel_target: "production"
     supabase_branch: "main"
-    partykit_preview: null  # Main deployment
+    cloudflare_env: "production"  # wrangler deploy (production)
     purpose:
       - Live user traffic
       - Production workloads
@@ -82,7 +82,7 @@ secret_categories:
     examples:
       - PUBLIC_SUPABASE_URL
       - PUBLIC_SUPABASE_ANON_KEY
-      - PUBLIC_PARTYKIT_HOST
+      - PUBLIC_WORKER_HOST
     injection_method: "Build-time injection"
 
 # =============================================================================
@@ -164,19 +164,25 @@ services:
       region: "sfo1"
       build_command: "cd packages/web && pnpm build && cp -r .vercel/output ../../.vercel/"
 
-  partykit:
-    description: "Real-time multiplayer infrastructure"
+  # PartyKit deprecated - migrating to Cloudflare Durable Objects
+  # See docs/dicee-do-migration-guide.md
+  durable_objects:
+    description: "Real-time multiplayer infrastructure (Game Lobby)"
+    worker_name: "gamelobby"
+    domain: "gamelobby.jefahnierocks.com"
+    package: "packages/cloudflare-do"
 
     secrets_in_infisical:
-      - PARTYKIT_TOKEN
+      - SUPABASE_URL       # For JWT validation
+      - SUPABASE_ANON_KEY  # For JWKS fetching
 
     local_development:
-      command: "partykit dev"
-      port: 1999
+      command: "wrangler dev"
+      port: 8787
 
     deployment:
-      command: "partykit deploy"
-      preview: "partykit deploy --preview $ENV"
+      command: "wrangler deploy"
+      staging: "wrangler deploy --env staging"
 
   cloudflare:
     description: "Edge compute, storage, and CDN (Workers, Pages, D1, KV, R2)"
@@ -267,8 +273,7 @@ secret_flows:
       3_start_services:
         commands:
           - "supabase start"
-          - "partykit dev"
-          - "wrangler dev                             # If using Workers"
+          - "cd packages/cloudflare-do && wrangler dev  # Game lobby DO"
           - "pnpm dev"
 
   ci_cd_pipeline:
@@ -285,9 +290,7 @@ secret_flows:
         commands:
           - "vercel deploy --target=$VERCEL_TARGET"
           - "supabase db push"
-          - "partykit deploy"
-          - "wrangler deploy --env=$ENV              # If using Workers"
-          - "wrangler pages deploy ./dist            # If using Pages"
+          - "cd packages/cloudflare-do && wrangler deploy  # Game lobby DO"
 
   secret_rotation:
     description: "When secrets need to be rotated"

@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 6fa97fe
-> Generated: 2025-12-07T18:15:13.753Z
+> Commit: c36807e
+> Generated: 2025-12-07T21:05:46.358Z
 
 ## Data Flow Diagram
 
@@ -66,8 +66,15 @@ flowchart TB
     store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
     store__game_svelte__tores_game_svelte_ts --> store__dice_svelte__tores_dice_svelte_ts
     store__game_svelte__tores_game_svelte_ts --> store__scorecard_svelte___scorecard_svel
+    store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
+    store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
+    store__room_svelte__tores_room_svelte_ts --> store__roomService_svelte__oomService_sv
     store__room_svelte__tores_room_svelte_ts --> store__roomService_svelte__oomService_sv
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
+    store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
+    service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts
+    service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts
+    service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts
 
     %% Layer styling
     style routes fill:#e1f5fe,stroke:#0288d1

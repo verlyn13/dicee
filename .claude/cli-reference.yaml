@@ -7,12 +7,12 @@
 # training data, as CLIs evolve rapidly.
 
 meta:
-  generated: "2024-12-02"
+  generated: "2025-12-07"
   supabase_version: "2.62.10"
   vercel_version: "48.12.1"
-  partykit_version: "0.0.115"
-  infisical_version: "0.43.35"
   wrangler_version: "4.51.0"
+  infisical_version: "0.43.35"
+  note: "PartyKit deprecated - migrating to Cloudflare Durable Objects"
 
 # Project-specific Cloudflare configuration
 cloudflare_project:
@@ -20,6 +20,17 @@ cloudflare_project:
   zone_id: "8d5f44e67ab4b37e47b034ff48b03099"
   domain: "jefahnierocks.com"
   subdomain: "dicee.jefahnierocks.com"
+
+  # Durable Objects game lobby infrastructure (replacing PartyKit)
+  durable_objects:
+    worker_name: "gamelobby"
+    package: "packages/cloudflare-do"
+    class: "GameRoom"
+    lobby_domain: "gamelobby.jefahnierocks.com"
+    migration_guide: "docs/dicee-do-migration-guide.md"
+    storage: "SQLite (via new_sqlite_classes)"
+    hibernation: true
+    auth_flow: "Auth → Lobby → Game selection (dicee available within lobby)"
 
 # Project-specific Infisical configuration
 infisical_project:
@@ -732,12 +743,18 @@ vercel:
       usage: "vercel blob [cmd]"
 
 # ============================================================================
-# PARTYKIT CLI
+# PARTYKIT CLI (DEPRECATED - MIGRATING TO CLOUDFLARE DURABLE OBJECTS)
 # ============================================================================
+# NOTE: PartyKit is being replaced with Cloudflare Durable Objects.
+# See docs/dicee-do-migration-guide.md for migration details.
+# This section retained for reference during migration only.
 
 partykit:
   version: "0.0.115"
-  description: "Real-time multiplayer infrastructure for the web"
+  deprecated: true
+  replacement: "Cloudflare Durable Objects via wrangler CLI"
+  migration_guide: "docs/dicee-do-migration-guide.md"
+  description: "Real-time multiplayer infrastructure for the web (DEPRECATED)"
 
   global_flags:
     - flag: "-v, --version"
@@ -1991,60 +2008,54 @@ workflows:
         - "vercel domains add <domain> <project>  # Add domain"
         - "vercel alias set <deployment> <domain> # Alias deployment"
 
+  # PartyKit workflows deprecated - using Durable Objects instead
+  # See durable_objects workflow below
   partykit:
-    initial_setup:
-      description: "Initialize PartyKit in a project"
-      steps:
-        - "partykit login               # Authenticate"
-        - "partykit init                # Add PartyKit to project"
-        - "# Edit partykit.json config as needed"
+    deprecated: true
+    note: "Migrating to Cloudflare Durable Objects - see wrangler.durable_objects workflow"
+
+  durable_objects:
+    description: "Cloudflare Durable Objects for multiplayer infrastructure"
+    migration_guide: "docs/dicee-do-migration-guide.md"
 
     local_development:
-      description: "Run PartyKit locally"
+      description: "Develop Durable Objects locally"
       steps:
-        - "partykit dev                 # Start dev server"
-        - "partykit dev --port 1999     # Custom port"
-        - "partykit dev --live          # With live reload"
-        - "partykit dev --verbose       # Debug output"
+        - "cd packages/cloudflare-do     # Navigate to DO package"
+        - "wrangler dev                  # Start local dev server"
+        - "wrangler dev --remote         # Use remote DO bindings"
+        - "# Test with wscat: wscat -c ws://localhost:8787/room/test-room"
 
     deployment:
-      description: "Deploy to PartyKit platform"
+      description: "Deploy Durable Objects to Cloudflare"
       steps:
-        - "partykit deploy              # Deploy to production"
-        - "partykit deploy --preview staging  # Deploy to preview"
-        - "partykit info                # Verify deployment"
-        - "partykit tail                # Monitor logs"
+        - "wrangler deploy               # Deploy to production"
+        - "wrangler tail                 # Stream production logs"
+        - "wrangler tail --format json   # JSON log format for parsing"
 
-    environment_management:
-      description: "Manage PartyKit environment variables"
+    secrets_management:
+      description: "Manage DO Worker secrets"
       steps:
-        - "partykit env list            # List all env vars"
-        - "partykit env add SECRET_KEY  # Add variable (prompts for value)"
-        - "partykit env pull .env       # Pull to local file"
-        - "partykit env push            # Push from config"
+        - "wrangler secret put SUPABASE_URL        # Set Supabase URL"
+        - "wrangler secret put SUPABASE_ANON_KEY   # Set Supabase anon key"
+        - "wrangler secret list                     # Verify secrets"
 
-    project_management:
-      description: "Manage deployed PartyKit projects"
+    custom_domain:
+      description: "Configure custom domain for DO Worker"
       steps:
-        - "partykit list                # List all projects"
-        - "partykit info -n <name>      # Get project details"
-        - "partykit delete -n <name>    # Delete project"
+        - "# In wrangler.toml, add routes:"
+        - "# routes = [{ pattern = 'gamelobby.jefahnierocks.com', custom_domain = true }]"
+        - "wrangler deploy               # Deploy with custom domain"
 
-    realtime_debugging:
-      description: "Debug real-time issues"
+    testing:
+      description: "Test Durable Objects"
       steps:
-        - "partykit tail                         # Stream all logs"
-        - "partykit tail --debug                 # Include debug logs"
-        - "partykit tail --status error          # Filter errors only"
-        - "partykit tail --format json | jq '.'  # Parse JSON logs"
-
-    ai_and_vectors:
-      description: "Work with AI and vector features"
-      steps:
-        - "partykit ai models                              # List available AI models"
-        - "partykit vectorize create my-index --preset openai/text-embedding-ada-002"
-        - "partykit vectorize list                         # List indexes"
-        - "partykit vectorize insert my-index --file vectors.ndjson"
+        - "# Unit tests:"
+        - "pnpm test --filter @dicee/cloudflare-do"
+        - "# Integration tests with unstable_dev:"
+        - "pnpm test:integration --filter @dicee/cloudflare-do"
+        - "# Manual WebSocket test:"
+        - "wscat -c wss://gamelobby.jefahnierocks.com/room/test"
 
   wrangler:
     authentication:
@@ -2286,4 +2297,4 @@ gopass_structure:
   # Reserved for future services
   supabase: "dicee/supabase/"
   vercel: "dicee/vercel/"
-  partykit: "dicee/partykit/"
+  # partykit: deprecated - now using Cloudflare Workers/DOs (via cloudflare/ path)

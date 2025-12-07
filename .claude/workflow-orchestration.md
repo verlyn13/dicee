@@ -1,9 +1,10 @@
 # Dicee Agentic Workflow Orchestration
 
-> **Version**: 2.3.0
+> **Version**: 3.0.0
 > **Last Updated**: 2025-12-07
 > **Context**: MCP-first agentic development with Opus 4.5, multi-agent orchestration
-> **Project Status**: All phases complete, production live at https://dicee.jefahnierocks.com
+> **Project Status**: Phases 0-7 complete, production live at https://dicee.jefahnierocks.com
+> **Active Phase**: Durable Objects Migration (replacing PartyKit with Cloudflare DOs)
 > **Active**: AKG MCP Server with 7 tools for architecture-aware development
 > **Guardrails**: See [AGENT-GUARDRAILS.md](./AGENT-GUARDRAILS.md) for mandatory rules
 
@@ -342,7 +343,7 @@ pnpm akg:test       # Test MCP server
 interface ProjectState {
   // Current phase
   phase: {
-    id: 'planning' | 'foundation' | 'auth' | 'profiles' | 'lobby' | 'multiplayer' | 'telemetry' | 'deployment';
+    id: 'planning' | 'foundation' | 'auth' | 'profiles' | 'lobby' | 'multiplayer' | 'telemetry' | 'deployment' | 'do-migration';
     status: 'not-started' | 'in-progress' | 'blocked' | 'review' | 'complete';
     startedAt: string;  // ISO timestamp
     completedAt?: string;  // ISO timestamp
@@ -394,9 +395,11 @@ interface ProjectState {
       linked: boolean;
       domains: string[];
     };
-    partykit: {
+    cloudflare: {
       configured: boolean;
       deployed: boolean;
+      workerName: string;  // gamelobby
+      durableObjectClass: string;  // GameRoom
     };
     infisical: {
       configured: boolean;

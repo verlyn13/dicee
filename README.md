@@ -11,7 +11,7 @@ Dice probability engine and web application for learning probability through Yah
 | Frontend | SvelteKit (Svelte 5 runes), TypeScript |
 | Engine | Rust → WASM (~45KB), exact probability calculations |
 | Auth/DB | Supabase (Auth, PostgreSQL, Edge Functions) |
-| Realtime | PartyKit (WebSocket multiplayer) |
+| Realtime | Cloudflare Durable Objects (WebSocket multiplayer) |
 | Hosting | Vercel (frontend), Cloudflare (DNS, edge services) |
 | Secrets | Infisical (self-hosted) |
 
@@ -19,9 +19,9 @@ Dice probability engine and web application for learning probability through Yah
 
 ```
 packages/
-├── engine/     # Rust probability engine (wasm-pack)
-├── web/        # SvelteKit frontend
-└── partykit/   # Multiplayer server
+├── engine/        # Rust probability engine (wasm-pack)
+├── web/           # SvelteKit frontend
+└── cloudflare-do/ # Durable Objects multiplayer (replacing partykit/)
 docs/
 ├── rfcs/       # Design documents
 ├── m1/         # Milestone planning
@@ -107,16 +107,15 @@ pnpm akg:mermaid      # Generate diagrams
 # .env.local (git-ignored)
 PUBLIC_SUPABASE_URL=https://xxx.supabase.co
 PUBLIC_SUPABASE_ANON_KEY=xxx
-PUBLIC_PARTYKIT_HOST=dicee.verlyn13.partykit.dev
+PUBLIC_WORKER_HOST=gamelobby.jefahnierocks.com
 ```
 
 ### CLI Tools
 
 - Supabase CLI 2.62.10
 - Vercel CLI 48.12.1
-- PartyKit CLI 0.0.115
-- Infisical CLI 0.43.35
 - Wrangler CLI 4.51.0
+- Infisical CLI 0.43.35
 
 See `.claude/cli-reference.yaml` for command documentation.
 

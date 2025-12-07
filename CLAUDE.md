@@ -49,7 +49,7 @@ See `docs/` for architecture RFCs and milestone plans.
 - **Frontend**: SvelteKit (Svelte 5 with runes)
 - **Engine**: Rust/WASM probability calculations
 - **Backend**: Supabase (Auth, Database, Edge Functions)
-- **Realtime**: PartyKit (multiplayer/collaboration infrastructure)
+- **Realtime**: Cloudflare Durable Objects (multiplayer, hibernatable WebSockets)
 - **Edge Compute**: Cloudflare (Workers, Pages, D1, KV, R2)
 - **Secrets**: Infisical (self-hosted at infisical.jefahnierocks.com)
 - **Deployment**: Vercel (frontend), Cloudflare (edge services)
@@ -65,7 +65,7 @@ docs/
 .claude/
   AGENT-GUARDRAILS.md       # CRITICAL: Mandatory rules for all agents
   CONVENTIONS.md            # Naming conventions and code patterns
-  cli-reference.yaml          # CLI tool reference (Supabase/Vercel/PartyKit/Infisical)
+  cli-reference.yaml          # CLI tool reference (Supabase/Vercel/Wrangler/Infisical)
   environment-strategy.yaml   # Environment, secrets, and agent guardrails
   gopass-structure.yaml       # Local credential storage architecture
   typescript-biome-strategy.md # TypeScript patterns and Biome 2.3 config
@@ -98,14 +98,13 @@ scripts/
 
 ## CLI Tools Reference
 
-**CRITICAL**: For Supabase, Vercel, PartyKit, Infisical, and Wrangler CLI commands, always consult `.claude/cli-reference.yaml` first. This file contains accurate, version-specific command documentation generated from actual `--help` output. Do NOT rely on training data for these CLIs as they evolve rapidly.
+**CRITICAL**: For Supabase, Vercel, Wrangler, and Infisical CLI commands, always consult `.claude/cli-reference.yaml` first. This file contains accurate, version-specific command documentation generated from actual `--help` output. Do NOT rely on training data for these CLIs as they evolve rapidly.
 
 ### Current CLI Versions
 - Supabase CLI: 2.62.10
 - Vercel CLI: 48.12.1
-- PartyKit CLI: 0.0.115
-- Infisical CLI: 0.43.35
 - Wrangler CLI: 4.51.0
+- Infisical CLI: 0.43.35
 
 ### Infisical Project Configuration
 - **Instance**: https://infisical.jefahnierocks.com (self-hosted)
@@ -143,6 +142,16 @@ scripts/
 - **Subdomain**: dicee.jefahnierocks.com (A record → Vercel 76.76.21.21)
 - **Services**: Workers, Pages, D1 (SQLite), KV, R2
 
+### Durable Objects Configuration (Game Lobby)
+- **Worker Name**: gamelobby
+- **Durable Object Class**: GameRoom
+- **Package**: packages/cloudflare-do/
+- **Lobby URL**: gamelobby.jefahnierocks.com (primary entry point)
+- **SQLite Storage**: Built-in, enabled via `new_sqlite_classes`
+- **Hibernation**: Enabled (pay only when processing, not connection duration)
+- **Migration Guide**: docs/dicee-do-migration-guide.md
+- **Auth Flow**: Users authenticate → land in lobby → select/join games (dicee, etc.)
+
 ### Quick Reference
 
 #### Supabase - Local Development
@@ -171,25 +180,7 @@ vercel --prod        # Deploy to production
 vercel env list      # List environment variables
 ```
 
-#### PartyKit - Real-time Development
-```bash
-partykit dev                  # Start local dev server
-partykit dev --port 1999      # Custom port
-partykit dev --live           # With live reload
-partykit deploy               # Deploy to PartyKit platform
-partykit deploy --preview dev # Deploy to preview environment
-partykit tail                 # Stream live logs
-```
-
-#### PartyKit - Environment & Management
-```bash
-partykit env list             # List environment variables
-partykit env add SECRET_KEY   # Add env var (prompts for value)
-partykit list                 # List deployed projects
-partykit info                 # Get project info
-```
-
-#### Wrangler - Workers Development
+#### Wrangler - Durable Objects Development
 ```bash
 wrangler login                # Browser-based OAuth login
 wrangler whoami               # Verify authentication
@@ -312,13 +303,13 @@ Environment variables are managed through:
 1. **Infisical**: Primary secret store (all environments) via `infisical secrets`
 2. **Vercel**: Deployment env vars synced from Infisical via `vercel env`
 3. **Supabase**: Edge function secrets via `supabase secrets`
-4. **PartyKit**: Real-time service secrets via `partykit env`
+4. **Cloudflare**: Worker secrets via `wrangler secret`
 5. **Local**: `.env.local` file (git-ignored) - export from Infisical
 
 Required variables:
 - `PUBLIC_SUPABASE_URL` - Supabase project URL
 - `PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
-- `PUBLIC_PARTYKIT_HOST` - PartyKit server URL (when deployed)
+- `PUBLIC_WORKER_HOST` - Cloudflare Worker URL (gamelobby.jefahnierocks.com)
 - `INFISICAL_CLIENT_ID` - For machine identity auth (CI/CD)
 - `INFISICAL_CLIENT_SECRET` - For machine identity auth (CI/CD)
 
