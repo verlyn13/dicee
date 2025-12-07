@@ -14,6 +14,8 @@
  *   --output <path>   Output path (default: from config)
  *   --verbose         Enable verbose logging
  *   --dry-run         Analyze but don't write output
+  --incremental, -i Only discover changed files (git diff)
+  --base <branch>   Base branch for incremental (default: origin/main)
  *
  * @see docs/architecture/akg/WEEK_1_2_SCHEMA_INFRASTRUCTURE.md
  */
@@ -56,6 +58,10 @@ interface DiscoverOptions {
 	outputPath?: string;
 	verbose?: boolean;
 	dryRun?: boolean;
+	/** Enable incremental discovery (only changed files) */
+	incremental?: boolean;
+	/** Base branch for incremental discovery */
+	baseBranch?: string;
 }
 
 interface DiscoveryStats {
@@ -216,12 +222,15 @@ async function writeGraphOutput(
 /**
  * Run discovery and generate the AKG graph
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Discovery orchestration requires coordinated steps
 export async function discover(options: DiscoverOptions = {}): Promise<{
 	graph: AKGGraph;
 	stats: DiscoveryStats;
 }> {
 	const startTime = performance.now();
 	const verbose = options.verbose ?? false;
+	const incremental = options.incremental ?? false;
+	const baseBranch = options.baseBranch ?? 'origin/main';
 
 	// Find project root
 	const projectRoot = findProjectRoot();
@@ -230,6 +239,30 @@ export async function discover(options: DiscoverOptions = {}): Promise<{
 	// Load configuration
 	const config = await loadConfig(options.configPath, projectRoot);
 	if (verbose) log(`Loaded config for project: ${config.project}`);
+
+	// Get changed files for incremental mode
+	let changedFilesSet: Set<string> | null = null;
+	if (incremental) {
+		const changedFiles = getChangedFiles(baseBranch, projectRoot);
+		if (changedFiles.length === 0) {
+			if (verbose) log('No changed files detected, skipping discovery');
+			// Return empty stats - no work needed
+			const graph = createEmptyGraph(projectRoot);
+			return {
+				graph,
+				stats: {
+					tsFiles: 0,
+					svelteFiles: 0,
+					totalNodes: 0,
+					totalEdges: 0,
+					durationMs: Math.round(performance.now() - startTime),
+					packages: [],
+				},
+			};
+		}
+		changedFilesSet = new Set(changedFiles);
+		if (verbose) log(`Incremental mode: ${changedFiles.length} changed files`);
+	}
 
 	// Initialize empty graph
 	const graph = createEmptyGraph(projectRoot);
@@ -243,14 +276,27 @@ export async function discover(options: DiscoverOptions = {}): Promise<{
 		process.exit(1);
 	}
 
-	const { sourceFiles: tsSourceFiles, stats: projectStats } = projectResult as ProjectInitResult;
-	if (verbose)
+	let { sourceFiles: tsSourceFiles, stats: projectStats } = projectResult as ProjectInitResult;
+
+	// Filter to changed files in incremental mode
+	if (changedFilesSet) {
+		tsSourceFiles = filterToChangedFiles(tsSourceFiles, changedFilesSet);
+		if (verbose) log(`  Filtered to ${tsSourceFiles.length} changed TypeScript files`);
+	} else if (verbose) {
 		log(`  Loaded ${projectStats.tsFiles} TypeScript files in ${projectStats.loadTimeMs}ms`);
+	}
 
 	// Discover and analyze Svelte files
 	if (verbose) log('Discovering Svelte files...');
-	const svelteFiles = await discoverSvelteFiles(config, projectRoot);
-	if (verbose) log(`  Found ${svelteFiles.length} Svelte files`);
+	let svelteFiles = await discoverSvelteFiles(config, projectRoot);
+
+	// Filter Svelte files in incremental mode
+	if (changedFilesSet) {
+		svelteFiles = svelteFiles.filter((f) => changedFilesSet.has(f));
+		if (verbose) log(`  Filtered to ${svelteFiles.length} changed Svelte files`);
+	} else if (verbose) {
+		log(`  Found ${svelteFiles.length} Svelte files`);
+	}
 
 	if (verbose) log('Analyzing Svelte components...');
 	const svelteAnalyses = await analyzeSvelteComponents(svelteFiles, projectRoot, verbose);
@@ -416,6 +462,38 @@ function getGitBranch(): string | undefined {
 	}
 }
 
+/**
+ * Get changed files between current HEAD and base branch
+ */
+function getChangedFiles(baseBranch: string, projectRoot: string): string[] {
+	try {
+		// Get files changed relative to base branch
+		const output = execSync(`git diff --name-only ${baseBranch}...HEAD -- '*.ts' '*.svelte'`, {
+			encoding: 'utf-8',
+			cwd: projectRoot,
+		}).trim();
+
+		if (!output) return [];
+
+		return output
+			.split('\n')
+			.filter((f) => f.length > 0)
+			.map((f) => resolve(projectRoot, f));
+	} catch {
+		return [];
+	}
+}
+
+/**
+ * Filter source files to only include changed files
+ */
+function filterToChangedFiles<T extends { getFilePath(): string }>(
+	sourceFiles: T[],
+	changedFiles: Set<string>,
+): T[] {
+	return sourceFiles.filter((sf) => changedFiles.has(sf.getFilePath()));
+}
+
 // =============================================================================
 // CLI Entry Point
 // =============================================================================
@@ -440,6 +518,13 @@ async function main() {
 			case '--dry-run':
 				options.dryRun = true;
 				break;
+			case '--incremental':
+			case '-i':
+				options.incremental = true;
+				break;
+			case '--base':
+				options.baseBranch = args[++i];
+				break;
 			case '--help':
 			case '-h':
 				log(`
@@ -453,6 +538,8 @@ Options:
   --output <path>   Output path (default: from config)
   --verbose, -v     Enable verbose logging
   --dry-run         Analyze but don't write output
+  --incremental, -i Only discover changed files (git diff)
+  --base <branch>   Base branch for incremental (default: origin/main)
   --help, -h        Show this help
 `);
 				process.exit(0);
