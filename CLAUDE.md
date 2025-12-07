@@ -244,11 +244,12 @@ pnpm lint             # Lint all packages
 pnpm format           # Format with Biome
 
 # Architectural Knowledge Graph (AKG)
-pnpm akg:discover     # Discover graph from source (136 nodes, 227 edges)
-pnpm akg:check        # Run invariant checks (4 built-in)
-pnpm akg:check --list # List available invariants
-pnpm akg:check -v     # Verbose output
-pnpm akg:check --json # JSON output for CI
+pnpm akg:discover              # Discover graph (138 nodes, 230 edges)
+pnpm akg:discover --incremental # Only changed files (fast, for PRs)
+pnpm akg:check                 # Run invariant checks (6 built-in)
+pnpm akg:check --sarif         # SARIF output for GitHub Code Scanning
+pnpm akg:check --json          # JSON output for agents/CI
+pnpm akg:discover --watch      # Watch mode (developer use, not agents)
 ```
 
 > Frontend unit tests must run through `pnpm web:vitest -- <args>` so SvelteKit injects its Vite plugin stack and agent logs capture the scoped test run.
@@ -569,7 +570,19 @@ Checks: TypeScript, Biome lint, tests, secrets scan, build
 
 ### Architectural Knowledge Graph (AKG)
 
-Static analysis tool for enforcing architectural invariants.
+Static analysis tool for enforcing architectural invariants. Integrated into CI via GitHub Actions with SARIF output for Code Scanning.
+
+**Agent Usage:**
+```bash
+# Discrete commands (agent-appropriate)
+pnpm akg:discover              # Full discovery
+pnpm akg:discover --incremental # Fast: only changed files
+pnpm akg:check --json          # Structured output for parsing
+pnpm akg:check --sarif         # SARIF for GitHub integration
+
+# Developer tools (not for agents)
+pnpm akg:discover --watch      # Live feedback during development
+```
 
 **Key Files:**
 ```
@@ -578,21 +591,29 @@ packages/web/src/tools/akg/
 ├── config/           # Config loader
 ├── discovery/        # ts-morph + Svelte compiler integration
 ├── query/            # Query engine, traversal, cycle detection
-├── invariants/       # Registry, runner, 4 built-in invariants
+├── invariants/       # Registry, runner, 6 built-in invariants
+├── output/           # SARIF 2.1.0 output generator
 └── cli/              # discover.ts, check.ts
 ```
 
-**Built-in Invariants:**
+**Built-in Invariants (6):**
 | ID | Severity | Description |
 |----|----------|-------------|
 | `wasm_single_entry` | Error | Only engine.ts imports WASM modules |
 | `store_no_circular_deps` | Error | Stores must not have circular dependencies |
 | `layer_component_isolation` | Warning | Dumb components shouldn't import stores |
 | `service_layer_boundaries` | Error | Services shouldn't import UI layers |
+| `store_file_naming` | Error | Store files must use .svelte.ts extension |
+| `callback_prop_naming` | Warning | Callback props use onVerb pattern |
 
 **Output:**
-- Graph: `docs/architecture/akg/graph/current.json`
-- History: `docs/architecture/akg/graph/history/`
+- Graph: `docs/architecture/akg/graph/current.json` (138 nodes, 230 edges)
+- SARIF: `pnpm akg:check --sarif > results.sarif`
+- CI: Runs automatically on every PR via `.github/workflows/ci.yml`
+
+**Documentation:**
+- `docs/architecture/akg/AUTHORING_INVARIANTS.md` - Custom invariant guide
+- `docs/architecture/akg/WEEK_5_CI_INTEGRATION.md` - CI setup details
 
 ### Extended Thinking
 
