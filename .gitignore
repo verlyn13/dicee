@@ -7,6 +7,7 @@ dist/
 build/
 target/
 *.wasm
+!packages/web/src/lib/wasm/dicee_engine_bg.wasm
 pkg/
 
 # Environment

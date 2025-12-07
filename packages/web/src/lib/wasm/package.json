@@ -1,0 +1,27 @@
+{
+  "name": "dicee-engine",
+  "type": "module",
+  "description": "Probability engine for Dicee - Educational Yahtzee Platform",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/verlyn13/dicee"
+  },
+  "files": [
+    "dicee_engine_bg.wasm",
+    "dicee_engine.js",
+    "dicee_engine.d.ts"
+  ],
+  "main": "dicee_engine.js",
+  "types": "dicee_engine.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ],
+  "keywords": [
+    "yahtzee",
+    "probability",
+    "wasm",
+    "game-theory"
+  ]
+}

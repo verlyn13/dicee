@@ -1,8 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm build",
+  "buildCommand": "pnpm --filter @dicee/web build",
   "installCommand": "pnpm install",
-  "outputDirectory": "packages/web/.svelte-kit",
   "framework": "sveltekit",
   "regions": ["sfo1"],
   "headers": [
