@@ -66,3 +66,4 @@ test-results/
 
 # Windsurf temp files
 temp-windsurf-config.md
+.vercel
