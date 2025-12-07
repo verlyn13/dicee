@@ -44,6 +44,7 @@ export async function runInvariants(
 ): Promise<CheckSummary> {
 	const startTime = performance.now();
 	const engine = createQueryEngine(graph);
+	// biome-ignore lint/suspicious/noConsole: CLI tool - console.log is the default logger
 	const log = options.logger ?? console.log;
 
 	// Determine which invariants to run
@@ -125,17 +126,19 @@ async function runSingleInvariant(
 		// Apply severity override from config
 		const configOverride = config?.invariants?.overrides?.find((o) => o.id === def.id);
 		if (configOverride?.severity) {
+			const overrideSeverity = configOverride.severity;
 			violations = violations.map((v) => ({
 				...v,
-				severity: configOverride.severity!,
+				severity: overrideSeverity,
 			}));
 		}
 
 		// Apply global severity override
 		if (options.severityOverride) {
+			const globalSeverity = options.severityOverride;
 			violations = violations.map((v) => ({
 				...v,
-				severity: options.severityOverride!,
+				severity: globalSeverity,
 			}));
 		}
 
@@ -236,6 +239,7 @@ export function validateGraph(graph: AKGGraph): string[] {
 /**
  * Format check summary for console output
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Summary formatting requires branching for different result states
 export function formatSummary(summary: CheckSummary): string {
 	const lines: string[] = [];
 

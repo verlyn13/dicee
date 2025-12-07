@@ -29,6 +29,7 @@ export function findShortestPath(
 	visited.add(from);
 
 	while (queue.length > 0) {
+		// biome-ignore lint/style/noNonNullAssertion: Loop condition guarantees queue is non-empty
 		const current = queue.shift()!;
 		const entry = adjacencyList.get(current.nodeId);
 
@@ -123,6 +124,7 @@ export function bfsTraversal(
 	visited.add(startId);
 
 	while (queue.length > 0) {
+		// biome-ignore lint/style/noNonNullAssertion: Loop condition guarantees queue is non-empty
 		const { nodeId, depth } = queue.shift()!;
 
 		const shouldContinue = visitor(nodeId, depth);

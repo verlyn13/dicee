@@ -29,6 +29,7 @@ defineInvariant(
 			'Services are reusable business logic that should not depend on UI implementation details.',
 		enabledByDefault: true,
 	},
+	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Invariant logic requires nested iteration over services and edges
 	(_graph: AKGGraph, engine: AKGQueryEngine): InvariantViolation[] => {
 		const violations: InvariantViolation[] = [];
 

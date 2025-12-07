@@ -262,6 +262,7 @@ export function getImports(sourceFile: SourceFile) {
  * @param sourceFile - ts-morph SourceFile
  * @returns Array of export information
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: AST traversal requires handling many declaration types
 export function getExports(sourceFile: SourceFile) {
 	const exports: Array<{
 		name: string;

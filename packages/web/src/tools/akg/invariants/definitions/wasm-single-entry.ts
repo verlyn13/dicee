@@ -39,8 +39,7 @@ defineInvariant(
 
 			// Check if target is in wasm/ directory or is a WASMModule type
 			const isWasmTarget =
-				targetNode.type === 'WASMModule' ||
-				(targetNode.filePath !== undefined && targetNode.filePath.includes('/wasm/'));
+				targetNode.type === 'WASMModule' || (targetNode.filePath?.includes('/wasm/') ?? false);
 
 			return isWasmTarget;
 		});

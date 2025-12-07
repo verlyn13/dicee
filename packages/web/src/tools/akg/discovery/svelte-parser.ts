@@ -176,6 +176,7 @@ function analyzeTemplate(ast: AST.Root, code: string): SvelteTemplateInfo {
 	let hasSnippets = false;
 
 	// Walk the fragment to find component usages
+	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: AST walking requires nested conditionals for node types
 	function walk(node: AST.SvelteNode | AST.Fragment) {
 		if (!node || typeof node !== 'object') return;
 

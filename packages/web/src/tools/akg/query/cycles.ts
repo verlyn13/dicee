@@ -77,9 +77,11 @@ export function findStronglyConnectedComponents(
 				if (!indices.has(targetId)) {
 					// Successor not yet visited; recurse
 					strongConnect(targetId);
+					// biome-ignore lint/style/noNonNullAssertion: Tarjan's algorithm invariant - values set at function start
 					lowLinks.set(nodeId, Math.min(lowLinks.get(nodeId)!, lowLinks.get(targetId)!));
 				} else if (onStack.has(targetId)) {
 					// Successor is on stack, so it's in the current SCC
+					// biome-ignore lint/style/noNonNullAssertion: Tarjan's algorithm invariant - indices set before recursion
 					lowLinks.set(nodeId, Math.min(lowLinks.get(nodeId)!, indices.get(targetId)!));
 				}
 			}
@@ -90,6 +92,7 @@ export function findStronglyConnectedComponents(
 			const scc: string[] = [];
 			let w: string;
 			do {
+				// biome-ignore lint/style/noNonNullAssertion: Stack always has elements when in SCC root
 				w = stack.pop()!;
 				onStack.delete(w);
 				scc.push(w);
@@ -144,6 +147,7 @@ export function findSimpleCycles(
 		}
 	}
 
+	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Johnson's algorithm inherently complex
 	function circuit(nodeId: string, startId: string, subgraph: Set<string>): boolean {
 		if (cycles.length >= maxCycles) return false;
 

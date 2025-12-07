@@ -25,6 +25,7 @@ defineInvariant(
 			'Maintain separation of concerns: dumb components receive data via props, smart containers handle state.',
 		enabledByDefault: true,
 	},
+	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Invariant logic requires nested iteration over components and edges
 	(_graph: AKGGraph, engine: AKGQueryEngine): InvariantViolation[] => {
 		const violations: InvariantViolation[] = [];
 
