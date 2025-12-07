@@ -281,9 +281,45 @@ interface AKGQueryEngine {
 - [x] Update state files
 - [x] Commit and push
 
+### Bonus: Watch Mode (Day 5)
+
+- [x] Add `--watch, -w` flag to discover CLI
+- [x] Implement file watcher with 300ms debounce
+- [x] Add `--check` flag for running invariants after discovery
+- [x] Support SIGINT graceful shutdown
+
 ---
 
-## 6. Success Criteria
+## 6. Watch Mode
+
+### 6.1 Usage
+
+```bash
+# Basic watch mode
+pnpm akg:discover --watch
+
+# Watch with verbose output
+pnpm akg:discover --watch --verbose
+
+# Watch with invariant checks
+pnpm akg:discover --watch --check
+
+# Combined with other options
+pnpm akg:discover --watch --check --verbose
+```
+
+### 6.2 Features
+
+- **Debounced re-runs**: 300ms debounce to avoid rapid re-runs
+- **Selective watching**: Only watches directories from config include patterns
+- **File filtering**: Only triggers on `.ts` and `.svelte` files
+- **Test exclusion**: Ignores `__tests__` directories and `node_modules`
+- **Graceful shutdown**: Ctrl+C properly cleans up watchers
+- **Optional checks**: `--check` flag runs invariants after each discovery
+
+---
+
+## 7. Success Criteria
 
 ### Week 5 Exit Criteria
 

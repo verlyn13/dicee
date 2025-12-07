@@ -16,12 +16,14 @@
  *   --dry-run         Analyze but don't write output
   --incremental, -i Only discover changed files (git diff)
   --base <branch>   Base branch for incremental (default: origin/main)
+  --watch, -w       Watch mode: re-run on file changes
+  --check           Run invariant checks after discovery (watch mode)
  *
  * @see docs/architecture/akg/WEEK_1_2_SCHEMA_INFRASTRUCTURE.md
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, watch } from 'node:fs';
 import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import type { SourceFile } from 'ts-morph';
@@ -62,6 +64,10 @@ interface DiscoverOptions {
 	incremental?: boolean;
 	/** Base branch for incremental discovery */
 	baseBranch?: string;
+	/** Enable watch mode for continuous discovery */
+	watch?: boolean;
+	/** Run checks after discovery in watch mode */
+	withChecks?: boolean;
 }
 
 interface DiscoveryStats {
@@ -495,6 +501,130 @@ function filterToChangedFiles<T extends { getFilePath(): string }>(
 }
 
 // =============================================================================
+// Watch Mode
+// =============================================================================
+
+/**
+ * Create a debounced function that delays invoking func until after wait ms
+ */
+function debounce<T extends (...args: unknown[]) => void>(
+	func: T,
+	wait: number,
+): (...args: Parameters<T>) => void {
+	let timeoutId: ReturnType<typeof setTimeout> | null = null;
+	return (...args: Parameters<T>) => {
+		if (timeoutId) clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => func(...args), wait);
+	};
+}
+
+/**
+ * Start watch mode - re-run discovery on file changes
+ */
+async function startWatchMode(
+	options: DiscoverOptions,
+	config: AKGConfig,
+	projectRoot: string,
+): Promise<void> {
+	const verbose = options.verbose ?? false;
+
+	log('\nWatch mode started. Press Ctrl+C to stop.');
+	log('Watching for changes in TypeScript and Svelte files...\n');
+
+	// Debounce discovery to avoid rapid re-runs
+	const debouncedDiscover = debounce(async () => {
+		log('\n--- File change detected ---');
+		try {
+			const { stats } = await discover({ ...options, watch: false });
+			log(
+				`Discovery: ${stats.totalNodes} nodes, ${stats.totalEdges} edges (${stats.durationMs}ms)`,
+			);
+
+			// Run checks if requested
+			if (options.withChecks) {
+				log('Running invariant checks...');
+				const { runInvariants, formatSummary } = await import('../invariants/runner.js');
+				const { readFile } = await import('node:fs/promises');
+
+				const graphPath =
+					options.outputPath ??
+					config.output?.graphPath ??
+					'docs/architecture/akg/graph/current.json';
+				const graphData = await readFile(resolve(projectRoot, graphPath), 'utf-8');
+				const graph = JSON.parse(graphData);
+
+				const checkResult = await runInvariants(graph, config);
+				const { errors, warnings } = checkResult.summary;
+
+				if (errors > 0) {
+					logError(`  ${errors} errors`);
+				}
+				if (warnings > 0) {
+					logWarn(`  ${warnings} warnings`);
+				}
+				if (errors === 0 && warnings === 0) {
+					log('  All checks passed!');
+				}
+				if (verbose) {
+					log(formatSummary(checkResult));
+				}
+			}
+		} catch (error) {
+			logError(`Discovery failed: ${error}`);
+		}
+		log('\nWatching for changes...');
+	}, 300);
+
+	// Get directories to watch from config
+	const includePatterns = config.discovery?.include ?? [];
+	const watchDirs = new Set<string>();
+
+	for (const pattern of includePatterns) {
+		const baseDir = pattern.split('**')[0].replace(/\/$/, '');
+		const absoluteDir = resolve(projectRoot, baseDir);
+		if (existsSync(absoluteDir)) {
+			watchDirs.add(absoluteDir);
+		}
+	}
+
+	// Set up watchers
+	const watchers: ReturnType<typeof watch>[] = [];
+
+	for (const dir of watchDirs) {
+		if (verbose) log(`  Watching: ${relative(projectRoot, dir)}`);
+		try {
+			const watcher = watch(dir, { recursive: true }, (_eventType, filename) => {
+				if (filename && (filename.endsWith('.ts') || filename.endsWith('.svelte'))) {
+					// Skip test files and node_modules
+					if (filename.includes('__tests__') || filename.includes('node_modules')) {
+						return;
+					}
+					if (verbose) log(`  Changed: ${filename}`);
+					debouncedDiscover();
+				}
+			});
+			watchers.push(watcher);
+		} catch (error) {
+			logWarn(`  Warning: Could not watch ${dir}: ${error}`);
+		}
+	}
+
+	// Handle graceful shutdown
+	process.on('SIGINT', () => {
+		log('\nStopping watch mode...');
+		for (const watcher of watchers) {
+			watcher.close();
+		}
+		process.exit(0);
+	});
+
+	// Keep process alive - intentionally never resolves
+	await new Promise(() => {
+		// This promise never resolves, keeping the process alive for watch mode
+	});
+}
+
+// =============================================================================
 // CLI Entry Point
 // =============================================================================
 
@@ -525,6 +655,13 @@ async function main() {
 			case '--base':
 				options.baseBranch = args[++i];
 				break;
+			case '--watch':
+			case '-w':
+				options.watch = true;
+				break;
+			case '--check':
+				options.withChecks = true;
+				break;
 			case '--help':
 			case '-h':
 				log(`
@@ -540,6 +677,8 @@ Options:
   --dry-run         Analyze but don't write output
   --incremental, -i Only discover changed files (git diff)
   --base <branch>   Base branch for incremental (default: origin/main)
+  --watch, -w       Watch mode: re-run on file changes
+  --check           Run invariant checks after discovery (watch mode)
   --help, -h        Show this help
 `);
 				process.exit(0);
@@ -549,6 +688,7 @@ Options:
 	log('AKG Discovery starting...');
 
 	try {
+		// Run initial discovery
 		const { stats } = await discover(options);
 
 		log('\nDiscovery complete!');
@@ -558,6 +698,13 @@ Options:
 		log(`  Total edges: ${stats.totalEdges}`);
 		log(`  Packages: ${stats.packages.join(', ')}`);
 		log(`  Duration: ${stats.durationMs}ms`);
+
+		// Start watch mode if requested
+		if (options.watch) {
+			const projectRoot = findProjectRoot();
+			const config = await loadConfig(options.configPath, projectRoot);
+			await startWatchMode(options, config, projectRoot);
+		}
 	} catch (error) {
 		logError(`Discovery failed: ${error}`);
 		process.exit(1);
