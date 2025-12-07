@@ -28,4 +28,22 @@ if [ -f .claude/state/blockers.json ]; then
     fi
 fi
 
+# Check AKG graph freshness (silent if OK, warn if stale)
+AKG_GRAPH="docs/architecture/akg/graph/current.json"
+if [ -f "$AKG_GRAPH" ]; then
+    # Get graph age in hours
+    GRAPH_MTIME=$(stat -f %m "$AKG_GRAPH" 2>/dev/null || stat -c %Y "$AKG_GRAPH" 2>/dev/null || echo "0")
+    NOW=$(date +%s)
+    AGE_HOURS=$(( (NOW - GRAPH_MTIME) / 3600 ))
+
+    if [ "$AGE_HOURS" -gt 24 ]; then
+        echo "AKG: Graph is ${AGE_HOURS}h old - consider running 'pnpm akg:discover'" >&2
+    fi
+
+    # Check node count from graph
+    NODE_COUNT=$(jq '.nodes | length' "$AKG_GRAPH" 2>/dev/null || echo "0")
+    EDGE_COUNT=$(jq '.edges | length' "$AKG_GRAPH" 2>/dev/null || echo "0")
+    echo "AKG: ${NODE_COUNT} nodes, ${EDGE_COUNT} edges" >&2
+fi
+
 exit 0

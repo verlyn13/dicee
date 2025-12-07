@@ -33,7 +33,8 @@ See `.claude/CONVENTIONS.md` for full documentation.
 - `/task [id]` - Pick up and work on a task
 - `/verify [id]` - Verify task completion
 - `/handoff` - Generate session handoff notes
-- `/quality` - Run quality gate
+- `/quality` - Run quality gate (includes AKG invariant checks)
+- `/akg [subcommand]` - Architecture queries (layer, node, import, diagram, check)
 
 ---
 
@@ -77,6 +78,7 @@ docs/
     handoff.md              # /handoff - Generate handoff notes
     quality.md              # /quality - Run quality gate
     phase.md                # /phase - Update phase status
+    akg.md                  # /akg - Architecture queries
   state/                    # Session state (git-ignored)
     current-phase.json      # Active phase and tasks
     session-handoff.md      # Handoff notes

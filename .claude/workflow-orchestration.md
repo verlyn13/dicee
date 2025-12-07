@@ -1,10 +1,10 @@
 # Dicee Agentic Workflow Orchestration
 
-> **Version**: 2.2.0
+> **Version**: 2.3.0
 > **Last Updated**: 2025-12-07
 > **Context**: MCP-first agentic development with Opus 4.5, multi-agent orchestration
 > **Project Status**: All phases complete, production live at https://dicee.jefahnierocks.com
-> **Next Phase**: AKG MCP Server + Mermaid Visualization (see RFC)
+> **Active**: AKG MCP Server with 7 tools for architecture-aware development
 > **Guardrails**: See [AGENT-GUARDRAILS.md](./AGENT-GUARDRAILS.md) for mandatory rules
 
 ---
@@ -55,7 +55,7 @@ The Model Context Protocol provides the backbone for:
 │                    MCP Server Layer                                  │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │
 │  │   Memory    │ │  Supabase   │ │   GitHub    │ │     AKG     │   │
-│  │  (KG State) │ │  (Official) │ │ (Built-in)  │ │  (Planned)  │   │
+│  │  (KG State) │ │  (Official) │ │ (Built-in)  │ │  (Active)   │   │
 │  │             │ │             │ │             │ │             │   │
 │  │ • Tasks     │ │ • SQL       │ │ • PRs       │ │ • Layers    │   │
 │  │ • Phases    │ │ • Types     │ │ • Issues    │ │ • Nodes     │   │
@@ -160,10 +160,12 @@ echo ".claude/state/" >> .gitignore
 **Note**: Using `npx` for the memory server will cause `ENOENT` errors because npx
 isolates environment variables. Always use the local node_modules installation.
 
-### AKG MCP Server (PLANNED - Week 1 Implementation)
+### AKG MCP Server (ACTIVE)
 
-The AKG MCP server provides architecture-aware queries for agents:
+The AKG MCP server provides architecture-aware queries for agents. It's configured
+in `.mcp.json` and enabled in `.claude/settings.local.json`.
 
+**Configuration** (`.mcp.json`):
 ```json
 {
   "mcpServers": {
@@ -179,18 +181,35 @@ The AKG MCP server provides architecture-aware queries for agents:
 }
 ```
 
-**Available Tools**:
+**Available Tools** (7 total):
 
 | Tool | Purpose | Agent Use Case |
 |------|---------|----------------|
 | `akg_layer_rules` | Get allowed/forbidden imports | "Can I import X here?" |
 | `akg_node_info` | Get node type, layer, edges | "What is this file?" |
 | `akg_check_import` | Validate a proposed import | Pre-flight check before writing |
-| `akg_invariant_status` | Current pass/fail state | Quality gate awareness |
-| `akg_diagram` | Get diagram content | Architecture context |
-| `akg_path_find` | Find dependency path | Impact analysis |
+| `akg_invariants` | Run architectural invariant checks | Quality gate awareness |
+| `akg_diagram` | Generate Mermaid diagrams | Architecture visualization |
+| `akg_path_exists` | Find dependency path | Impact analysis |
+| `akg_cache_status` | Cache management | Reload graph after discovery |
 
-**See**: `docs/architecture/akg/RFC_MERMAID_VISUALIZATION.md` for full specification
+**Slash Command**: Use `/akg` for quick architecture queries.
+
+**CLI Commands**:
+```bash
+pnpm akg:discover   # Regenerate graph from source
+pnpm akg:check      # Run invariant checks
+pnpm akg:mermaid    # Generate all diagrams
+pnpm akg:test       # Test MCP server
+```
+
+**Diagram Types**:
+- `layer-overview` - Layer architecture
+- `component-dependencies` - Component import graph
+- `store-relationships` - Store dependency graph
+- `dataflow` - Data flow through layers
+
+**See**: `docs/architecture/akg/` for full documentation
 
 ---
 

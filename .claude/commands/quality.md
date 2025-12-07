@@ -10,12 +10,14 @@ Run the quality gate script:
 ./scripts/quality-gate.sh
 ```
 
-This checks:
-1. TypeScript - `pnpm typecheck`
-2. Lint - `pnpm lint` (Biome)
-3. Tests - `pnpm test`
-4. Secrets - `infisical scan` (if available)
-5. Build - `pnpm build`
+This checks (7 steps):
+1. TypeScript & Rust - `pnpm check`
+2. AKG Invariants - `pnpm akg:check` (architectural rules)
+3. Biome Lint - `pnpm biome:check`
+4. Tests - `pnpm test`
+5. Secrets - `infisical scan` (if available)
+6. Build - `pnpm build`
+7. AKG Diagrams - Check if diagrams are current
 
 If any check fails:
 1. Report which check failed
