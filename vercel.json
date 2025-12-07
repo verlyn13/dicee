@@ -1,8 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm --filter @dicee/web build",
+  "buildCommand": "cd packages/web && pnpm build",
   "installCommand": "pnpm install",
-  "framework": "sveltekit",
+  "outputDirectory": "packages/web/.vercel/output",
+  "framework": null,
   "regions": ["sfo1"],
   "headers": [
     {
