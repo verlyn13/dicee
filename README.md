@@ -1,65 +1,130 @@
 # Dicee
 
-Educational Probability Platform for Yahtzee
+Dice probability engine and web application for learning probability through Yahtzee-style gameplay.
 
-## Overview
+**Production:** https://dicee.jefahnierocks.com
 
-Dicee transforms Yahtzee from a casual dice game into an educational instrument for teaching probability, expected value, and optimal decision-making.
+## Tech Stack
 
-## Status
+| Layer | Technology |
+|-------|------------|
+| Frontend | SvelteKit (Svelte 5 runes), TypeScript |
+| Engine | Rust → WASM (~45KB), exact probability calculations |
+| Auth/DB | Supabase (Auth, PostgreSQL, Edge Functions) |
+| Realtime | PartyKit (WebSocket multiplayer) |
+| Hosting | Vercel (frontend), Cloudflare (DNS, edge services) |
+| Secrets | Infisical (self-hosted) |
 
-**Phase:** MVP Development
-**Engine:** Rust/WASM probability core (complete)
-**UI:** Svelte 5 with neo-brutalist design (in progress)
+## Project Structure
 
-## Quick Start
-
-```bash
-# Prerequisites: Node 24+, Rust, pnpm
-mise install  # or install manually
-
-# Install dependencies
-pnpm install
-
-# Build WASM engine
-pnpm run build:engine
-
-# Start dev server
-pnpm dev
+```
+packages/
+├── engine/     # Rust probability engine (wasm-pack)
+├── web/        # SvelteKit frontend
+└── partykit/   # Multiplayer server
+docs/
+├── rfcs/       # Design documents
+├── m1/         # Milestone planning
+└── architecture/akg/  # Architectural Knowledge Graph
+.claude/
+├── commands/   # Slash commands (/status, /akg, /quality)
+├── state/      # Session state (git-ignored)
+└── AGENT-GUARDRAILS.md
 ```
 
 ## Development
 
 ```bash
-pnpm dev          # Start dev server (http://localhost:5173)
-pnpm build        # Build WASM + web app
-pnpm check        # Run all checks (rust + web)
-pnpm test         # Run Rust tests
-pnpm format       # Format all code
-pnpm lint         # Lint all code
+# Prerequisites: Node 24+ (via mise), Rust, pnpm
+pnpm install
+pnpm dev              # Start dev server (localhost:5173)
+pnpm build            # Build all packages
+pnpm test             # Run all tests
+pnpm lint             # Biome lint
+pnpm format           # Biome format
 ```
 
-## Architecture
+### Engine (Rust/WASM)
 
+```bash
+cd packages/engine
+cargo test            # 120 tests
+cargo build --release --target wasm32-unknown-unknown
+wasm-pack build --target web
 ```
-packages/
-├── engine/       # Rust → WASM probability engine
-└── web/          # Svelte 5 frontend
+
+### Quality Gate
+
+```bash
+./scripts/quality-gate.sh   # 7 checks before phase transitions
+pnpm akg:check              # Architectural invariants (5 rules)
 ```
 
-- **Engine:** Rust compiled to WASM (~33KB), exact probability calculations
-- **Frontend:** Svelte 5, neo-brutalist design, responsive
-- **Build:** pnpm workspaces, wasm-pack, Vite
+## Agentic Development Infrastructure
 
-## RFCs
+This project uses MCP-first workflow orchestration for AI-assisted development.
 
-| RFC | Title | Status |
-|-----|-------|--------|
-| [001](docs/rfcs/rfc-001-statistical-engine.md) | Statistical Engine Architecture | Draft |
-| [002](docs/rfcs/rfc-002-ui-ux-canvas.md) | UI/UX Canvas & Design System | Draft |
-| [003](docs/rfcs/rfc-003-data-contracts.md) | Data Contracts & Event Schema | Draft |
+### MCP Servers
 
-See [ROADMAP.md](ROADMAP.md) for planned RFCs and implementation phases.
+| Server | Purpose |
+|--------|---------|
+| memory | Knowledge graph for persistent project state |
+| supabase | Database, migrations, types, edge functions |
+| akg | Architectural Knowledge Graph (layer rules, invariants) |
+
+### AKG (Architectural Knowledge Graph)
+
+Static analysis tool enforcing architectural invariants:
+
+```bash
+pnpm akg:discover     # Build graph (150 nodes, 267 edges)
+pnpm akg:check        # Run 5 invariants
+pnpm akg:mermaid      # Generate diagrams
+```
+
+**Invariants:** `wasm_single_entry`, `store_no_circular_deps`, `layer_component_isolation`, `service_layer_boundaries`, `store_file_naming`
+
+### Slash Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/status` | Current phase and tasks |
+| `/akg check` | Run architectural invariants |
+| `/quality` | Full quality gate |
+| `/handoff` | Generate session notes |
+
+### Workflow State
+
+- `.claude/state/current-phase.json` - Phase tracking
+- `.claude/state/session-handoff.md` - Agent handoff notes
+- `.claude/AGENT-GUARDRAILS.md` - Mandatory agent rules
+
+## Configuration
+
+### Environment Variables
+
+```bash
+# .env.local (git-ignored)
+PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=xxx
+PUBLIC_PARTYKIT_HOST=dicee.verlyn13.partykit.dev
+```
+
+### CLI Tools
+
+- Supabase CLI 2.62.10
+- Vercel CLI 48.12.1
+- PartyKit CLI 0.0.115
+- Infisical CLI 0.43.35
+- Wrangler CLI 4.51.0
+
+See `.claude/cli-reference.yaml` for command documentation.
+
+## Tests
+
+- **Rust:** 120 tests (unit, integration, property-based, doc tests)
+- **Frontend:** 1099 tests (Vitest, component mocks)
+- **E2E:** Playwright (critical flows)
 
 ## License
 
