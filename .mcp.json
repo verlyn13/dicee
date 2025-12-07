@@ -15,6 +15,17 @@
       "headers": {
         "Authorization": "Bearer ${SUPABASE_MCP_TOKEN}"
       }
+    },
+    "akg": {
+      "command": "bun",
+      "args": [
+        "run",
+        "./packages/web/src/tools/akg/mcp/server.ts"
+      ],
+      "env": {
+        "AKG_GRAPH_PATH": "./docs/architecture/akg/graph/current.json",
+        "AKG_DIAGRAMS_PATH": "./docs/architecture/akg/diagrams"
+      }
     }
   }
 }
