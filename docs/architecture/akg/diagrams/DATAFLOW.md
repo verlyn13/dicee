@@ -1,0 +1,96 @@
+<!-- Auto-generated from AKG Graph. Edit source, not this file. -->
+# Dataflow Architecture
+
+> Auto-generated from AKG Graph
+> Source: docs/architecture/akg/graph/current.json
+> Commit: 6fa97fe
+> Generated: 2025-12-07T18:15:13.753Z
+
+## Data Flow Diagram
+
+Shows how data flows through the application layers:
+- **Routes** → Entry points (pages)
+- **Components** → UI elements
+- **Stores** → Reactive state
+- **Services** → Business logic
+- **External** → WASM engine, Supabase
+
+```mermaid
+flowchart TB
+    subgraph routes["🛣️ ROUTES"]
+        module___layout__rc_routes__layout_ts["layout"]
+        module___server___callback__server_ts["+server"]
+        module___layout_server__es__layout_serve["+layout.server"]
+        module___layout_server__d___layout_serve["+layout.server"]
+        module___page_server__file__page_server_["+page.server"]
+    end
+
+    subgraph components["🧩 COMPONENTS"]
+        module__index__mponents_ui_index_ts["index"]
+        module__index__onents_auth_index_ts["index"]
+        module__index__nents_lobby_index_ts["index"]
+        module__index__onents_dice_index_ts["index"]
+        module__index__onents_game_index_ts["index"]
+    end
+
+    subgraph stores["🗄️ STORES"]
+        store__game_svelte__tores_game_svelte_ts[("game")]
+        store__room_svelte__tores_room_svelte_ts[("room")]
+        store__multiplayerGame_svelte__playerGam[("multiplayerGame")]
+        store__scorecard_svelte___scorecard_svel[("scorecard")]
+        store__dice_svelte__tores_dice_svelte_ts[("dice")]
+    end
+
+    subgraph services["⚙️ SERVICES"]
+        service__engine__b_services_engine_ts{{"engine"}}
+        service__telemetry__ervices_telemetry_ts{{"telemetry"}}
+        service__index__ib_services_index_ts{{"index"}}
+        store__roomService_svelte__oomService_sv{{"roomService"}}
+    end
+
+    subgraph supabase["🔌 SUPABASE"]
+        supabasemodule__profiles__supabase_profi[("profiles")]
+        supabasemodule__stats__ib_supabase_stats[("stats")]
+        supabasemodule__client__b_supabase_clien[("client")]
+        supabasemodule__index__ib_supabase_index[("index")]
+        supabasemodule__server__b_supabase_serve[("server")]
+    end
+
+    subgraph wasm["🦀 WASM"]
+        wasmbridge__dicee_engine_d__sm_dicee_eng(["dicee_engine.d"])
+        wasmbridge__dicee_engine_bg_wasm_d___eng(["dicee_engine_bg.wasm.d"])
+        wasmbridge__engine__eb_src_lib_engine_ts(["engine"])
+    end
+
+    module___page_server__file__page_server_ --> supabasemodule__profiles__supabase_profi
+    store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
+    store__game_svelte__tores_game_svelte_ts --> store__dice_svelte__tores_dice_svelte_ts
+    store__game_svelte__tores_game_svelte_ts --> store__scorecard_svelte___scorecard_svel
+    store__room_svelte__tores_room_svelte_ts --> store__roomService_svelte__oomService_sv
+    store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
+
+    %% Layer styling
+    style routes fill:#e1f5fe,stroke:#0288d1
+    style components fill:#f3e5f5,stroke:#7b1fa2
+    style stores fill:#fff3e0,stroke:#f57c00
+    style services fill:#e8f5e9,stroke:#388e3c
+    style supabase fill:#fce4ec,stroke:#c2185b
+    style wasm fill:#ffebee,stroke:#d32f2f
+```
+
+## Layer Summary
+
+| Layer | Nodes | Description |
+|-------|-------|-------------|
+| routes | 5 | SvelteKit page routes |
+| components | 5 | Reusable UI components |
+| stores | 5 | Svelte reactive stores |
+| services | 4 | Business logic services |
+| supabase | 5 | Database & auth integration |
+| wasm | 3 | Rust/WASM probability engine |
+
+## Key Data Paths
+
+1. **Game State Flow**: Routes → Game Components → Game Store → Engine Service → WASM
+2. **Auth Flow**: Routes → Auth Components → Auth Store → Supabase
+3. **Multiplayer Flow**: Components → Room Store → PartyKit Service

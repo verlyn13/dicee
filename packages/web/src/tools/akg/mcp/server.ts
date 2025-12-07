@@ -8,7 +8,7 @@
  * @see docs/architecture/akg/RFC_MERMAID_VISUALIZATION.md
  */
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
@@ -30,6 +30,9 @@ import '../invariants/definitions/index.js';
 const GRAPH_PATH = process.env.AKG_GRAPH_PATH || 'docs/architecture/akg/graph/current.json';
 const _DIAGRAMS_PATH = process.env.AKG_DIAGRAMS_PATH || 'docs/architecture/akg/diagrams';
 
+/** Cache TTL in milliseconds (5 minutes) */
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
 // =============================================================================
 // State Management
 // =============================================================================
@@ -39,6 +42,9 @@ interface ServerState {
 	config: AKGConfig | null;
 	engine: QueryEngine | null;
 	lastLoaded: Date | null;
+	graphFileMtime: number | null;
+	loadCount: number;
+	cacheHits: number;
 }
 
 const state: ServerState = {
@@ -46,7 +52,37 @@ const state: ServerState = {
 	config: null,
 	engine: null,
 	lastLoaded: null,
+	graphFileMtime: null,
+	loadCount: 0,
+	cacheHits: 0,
 };
+
+/**
+ * Check if cache is stale based on file modification time
+ */
+function isCacheStale(): boolean {
+	if (!state.lastLoaded || !state.graphFileMtime) {
+		return true;
+	}
+
+	// Check if cache TTL has expired
+	const age = Date.now() - state.lastLoaded.getTime();
+	if (age > CACHE_TTL_MS) {
+		return true;
+	}
+
+	// Check if file has been modified
+	try {
+		const currentMtime = statSync(GRAPH_PATH).mtimeMs;
+		if (currentMtime !== state.graphFileMtime) {
+			return true;
+		}
+	} catch {
+		return true;
+	}
+
+	return false;
+}
 
 /**
  * Load or reload the graph from disk
@@ -58,16 +94,19 @@ async function loadGraph(): Promise<boolean> {
 			return false;
 		}
 
+		const fileStat = statSync(GRAPH_PATH);
 		const content = readFileSync(GRAPH_PATH, 'utf-8');
 		state.graph = JSON.parse(content) as AKGGraph;
 		state.engine = createQueryEngine(state.graph);
 		state.lastLoaded = new Date();
+		state.graphFileMtime = fileStat.mtimeMs;
+		state.loadCount++;
 
 		// Load config (async)
 		state.config = await loadConfig();
 
 		console.error(
-			`[AKG MCP] Loaded graph: ${state.graph.nodes.length} nodes, ${state.graph.edges.length} edges`,
+			`[AKG MCP] Loaded graph: ${state.graph.nodes.length} nodes, ${state.graph.edges.length} edges (load #${state.loadCount})`,
 		);
 		return true;
 	} catch (error) {
@@ -77,17 +116,20 @@ async function loadGraph(): Promise<boolean> {
 }
 
 /**
- * Ensure graph is loaded
+ * Ensure graph is loaded with cache validation
  */
 async function ensureLoaded(): Promise<{
 	graph: AKGGraph;
 	engine: QueryEngine;
 	config: AKGConfig | null;
 }> {
-	if (!state.graph || !state.engine) {
+	// Check if we need to reload
+	if (!state.graph || !state.engine || isCacheStale()) {
 		if (!(await loadGraph())) {
 			throw new Error('Graph not available. Run "pnpm akg:discover" first.');
 		}
+	} else {
+		state.cacheHits++;
 	}
 
 	// Capture in local variables for TypeScript narrowing
@@ -97,6 +139,26 @@ async function ensureLoaded(): Promise<{
 	}
 
 	return { graph, engine, config };
+}
+
+/**
+ * Get cache statistics
+ */
+function getCacheStats(): {
+	loadCount: number;
+	cacheHits: number;
+	hitRate: number;
+	lastLoaded: string | null;
+	cacheAge: number | null;
+} {
+	const totalRequests = state.loadCount + state.cacheHits;
+	return {
+		loadCount: state.loadCount,
+		cacheHits: state.cacheHits,
+		hitRate: totalRequests > 0 ? state.cacheHits / totalRequests : 0,
+		lastLoaded: state.lastLoaded?.toISOString() ?? null,
+		cacheAge: state.lastLoaded ? Date.now() - state.lastLoaded.getTime() : null,
+	};
 }
 
 // =============================================================================
@@ -504,7 +566,7 @@ server.registerTool(
 	{
 		description: `Get a Mermaid diagram of the architecture.
 
-Available diagrams: layer-overview, component-dependencies, store-relationships.
+Available diagrams: layer-overview, component-dependencies, store-relationships, dataflow.
 
 Returns Mermaid markdown that can be rendered as a diagram.`,
 		inputSchema: {
@@ -512,7 +574,9 @@ Returns Mermaid markdown that can be rendered as a diagram.`,
 				.string()
 				.optional()
 				.default('layer-overview')
-				.describe('Diagram name (layer-overview, component-dependencies, store-relationships)'),
+				.describe(
+					'Diagram name (layer-overview, component-dependencies, store-relationships, dataflow)',
+				),
 		},
 	},
 	async (args) => {
@@ -535,12 +599,16 @@ Returns Mermaid markdown that can be rendered as a diagram.`,
 				mermaid = generateStoreRelationships(engine);
 				break;
 			}
+			case 'dataflow': {
+				mermaid = generateDataflowDiagram(engine, config);
+				break;
+			}
 			default: {
 				return {
 					content: [
 						{
 							type: 'text',
-							text: `Unknown diagram: ${diagramName}. Available: layer-overview, component-dependencies, store-relationships`,
+							text: `Unknown diagram: ${diagramName}. Available: layer-overview, component-dependencies, store-relationships, dataflow`,
 						},
 					],
 				};
@@ -651,6 +719,50 @@ Use this for impact analysis when modifying a file.`,
 );
 
 // =============================================================================
+// Tool: akg_cache_status
+// =============================================================================
+
+server.registerTool(
+	'akg_cache_status',
+	{
+		description: `Get cache status and optionally reload the graph.
+
+Returns cache statistics: load count, cache hits, hit rate, and cache age.
+
+Use reload=true to force a fresh load from disk.`,
+		inputSchema: {
+			reload: z.boolean().optional().describe('Set to true to force reload the graph'),
+		},
+	},
+	async (args) => {
+		if (args.reload) {
+			console.error('[AKG MCP] Forcing graph reload...');
+			await loadGraph();
+		}
+
+		const stats = getCacheStats();
+
+		return {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify(
+						{
+							...stats,
+							graphPath: GRAPH_PATH,
+							cacheTtlMs: CACHE_TTL_MS,
+							reloaded: args.reload ?? false,
+						},
+						null,
+						2,
+					),
+				},
+			],
+		};
+	},
+);
+
+// =============================================================================
 // Diagram Generation Helpers
 // =============================================================================
 
@@ -737,6 +849,74 @@ function generateStoreRelationships(engine: QueryEngine): string {
 
 function sanitizeId(id: string): string {
 	return id.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40);
+}
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Diagram generation requires nested iteration
+function generateDataflowDiagram(engine: QueryEngine, _config: AKGConfig | null): string {
+	const lines: string[] = ['flowchart TB'];
+
+	const layerOrder = ['routes', 'components', 'stores', 'services', 'supabase', 'wasm'];
+	const layerIcons: Record<string, string> = {
+		routes: '🛣️',
+		components: '🧩',
+		stores: '🗄️',
+		services: '⚙️',
+		supabase: '🔌',
+		wasm: '🦀',
+	};
+
+	// Group nodes by layer
+	const layerGroups: Map<string, AKGNode[]> = new Map();
+	for (const layerName of layerOrder) {
+		const nodesInLayer = engine.getNodesInLayer(layerName).slice(0, 5);
+		if (nodesInLayer.length > 0) {
+			layerGroups.set(layerName, nodesInLayer);
+		}
+	}
+
+	// Create subgraphs
+	for (const layerName of layerOrder) {
+		const nodes = layerGroups.get(layerName);
+		if (nodes && nodes.length > 0) {
+			const icon = layerIcons[layerName] ?? '📦';
+			lines.push(`    subgraph ${layerName}["${icon} ${layerName.toUpperCase()}"]`);
+
+			for (const node of nodes) {
+				const nodeId = sanitizeId(node.id);
+				const shortName = node.name
+					.replace(/\.svelte\.ts$/, '')
+					.replace(/\.svelte$/, '')
+					.replace(/\.ts$/, '');
+				lines.push(`        ${nodeId}["${shortName}"]`);
+			}
+
+			lines.push('    end');
+			lines.push('');
+		}
+	}
+
+	// Add cross-layer edges
+	const allNodeIds = new Set<string>();
+	for (const nodes of layerGroups.values()) {
+		for (const node of nodes) {
+			allNodeIds.add(node.id);
+		}
+	}
+
+	for (const nodes of layerGroups.values()) {
+		for (const node of nodes) {
+			const outgoing = engine.getOutgoing(node.id);
+			for (const edge of outgoing) {
+				if (allNodeIds.has(edge.targetNodeId)) {
+					if (edge.type === 'imports' || edge.type === 'uses_component') {
+						lines.push(`    ${sanitizeId(node.id)} --> ${sanitizeId(edge.targetNodeId)}`);
+					}
+				}
+			}
+		}
+	}
+
+	return lines.join('\n');
 }
 
 // =============================================================================

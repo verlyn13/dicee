@@ -523,6 +523,241 @@ function generateComponentMermaid(components: AKGNode[], edges: DiagramEdge[]): 
 }
 
 /**
+ * Generate dataflow diagram
+ *
+ * Shows how data flows through the application layers:
+ * Routes → Components → Stores → Services → External (WASM/Supabase)
+ */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Diagram generation requires nested iteration
+export function generateDataflow(
+	graph: AKGGraph,
+	_config: AKGConfig | null,
+	options: MermaidOptions = {},
+): DiagramResult {
+	const engine = createQueryEngine(graph);
+	const timestamp = new Date().toISOString();
+	const graphHash = generateGraphHash(graph);
+	const maxNodes = options.maxNodes ?? 30;
+
+	const diagramNodes: DiagramNode[] = [];
+	const edges: DiagramEdge[] = [];
+
+	// Group nodes by layer for subgraph organization
+	const layerOrder = ['routes', 'components', 'stores', 'services', 'supabase', 'wasm'];
+
+	// Build layer subgroups with representative nodes
+	const layerGroups: Map<string, AKGNode[]> = new Map();
+	for (const layerName of layerOrder) {
+		const nodesInLayer = engine.getNodesInLayer(layerName).slice(0, Math.floor(maxNodes / 6));
+		if (nodesInLayer.length > 0) {
+			layerGroups.set(layerName, nodesInLayer);
+
+			// Add nodes to diagram
+			for (const node of nodesInLayer) {
+				diagramNodes.push({
+					id: node.id,
+					label: getShortName(node),
+					type: node.type,
+					layer: layerName,
+				});
+			}
+		}
+	}
+
+	// Find cross-layer edges (data flow)
+	const allDiagramNodeIds = new Set(diagramNodes.map((n) => n.id));
+	for (const [_layerName, nodes] of layerGroups) {
+		for (const node of nodes) {
+			const outgoing = engine.getOutgoing(node.id);
+			for (const edge of outgoing) {
+				// Only include edges to nodes in our diagram
+				if (allDiagramNodeIds.has(edge.targetNodeId)) {
+					// Only include import/use edges, not type imports
+					if (
+						edge.type === 'imports' ||
+						edge.type === 'uses_component' ||
+						edge.type === 'calls_service' ||
+						edge.type === 'calls_wasm'
+					) {
+						edges.push({
+							from: node.id,
+							to: edge.targetNodeId,
+							type: 'imports',
+						});
+					}
+				}
+			}
+		}
+	}
+
+	// Generate Mermaid with subgraphs for each layer
+	const mermaid = generateDataflowMermaid(layerGroups, edges);
+
+	const markdown = `<!-- Auto-generated from AKG Graph. Edit source, not this file. -->
+# Dataflow Architecture
+
+> Auto-generated from AKG Graph
+> Source: docs/architecture/akg/graph/current.json
+> Commit: ${options.sourceCommit ?? 'unknown'}
+> Generated: ${timestamp}
+
+## Data Flow Diagram
+
+Shows how data flows through the application layers:
+- **Routes** → Entry points (pages)
+- **Components** → UI elements
+- **Stores** → Reactive state
+- **Services** → Business logic
+- **External** → WASM engine, Supabase
+
+\`\`\`mermaid
+${mermaid}
+\`\`\`
+
+## Layer Summary
+
+| Layer | Nodes | Description |
+|-------|-------|-------------|
+${layerOrder.map((l) => `| ${l} | ${layerGroups.get(l)?.length ?? 0} | ${getLayerDescription(l)} |`).join('\n')}
+
+## Key Data Paths
+
+1. **Game State Flow**: Routes → Game Components → Game Store → Engine Service → WASM
+2. **Auth Flow**: Routes → Auth Components → Auth Store → Supabase
+3. **Multiplayer Flow**: Components → Room Store → PartyKit Service
+`;
+
+	const json: DiagramJson = {
+		$schema: 'https://dicee.jefahnierocks.com/schemas/akg-diagram.json',
+		version: '1.0.0',
+		diagramType: 'dataflow',
+		generatedAt: timestamp,
+		graphHash,
+		sourceCommit: options.sourceCommit,
+		nodes: diagramNodes,
+		edges,
+		metadata: {
+			totalNodes: diagramNodes.length,
+			totalEdges: edges.length,
+		},
+	};
+
+	return {
+		type: 'dataflow',
+		markdown,
+		json,
+		hash: generateHash(markdown),
+	};
+}
+
+/**
+ * Generate Mermaid for dataflow diagram with layer subgraphs
+ */
+function generateDataflowMermaid(
+	layerGroups: Map<string, AKGNode[]>,
+	edges: DiagramEdge[],
+): string {
+	const lines: string[] = ['flowchart TB'];
+
+	// Layer styling
+	const layerIcons: Record<string, string> = {
+		routes: '🛣️',
+		components: '🧩',
+		stores: '🗄️',
+		services: '⚙️',
+		supabase: '🔌',
+		wasm: '🦀',
+	};
+
+	// Create subgraphs for each layer
+	const layerOrder = ['routes', 'components', 'stores', 'services', 'supabase', 'wasm'];
+
+	for (const layerName of layerOrder) {
+		const nodes = layerGroups.get(layerName);
+		if (nodes && nodes.length > 0) {
+			const icon = layerIcons[layerName] ?? '📦';
+			lines.push(`    subgraph ${layerName}["${icon} ${layerName.toUpperCase()}"]`);
+
+			for (const node of nodes) {
+				const nodeId = sanitizeId(node.id);
+				const shortName = getShortName(node);
+				const shape = getNodeShape(node.type, layerName);
+				lines.push(`        ${nodeId}${shape.open}"${shortName}"${shape.close}`);
+			}
+
+			lines.push('    end');
+			lines.push('');
+		}
+	}
+
+	// Add edges with styling based on layer transition
+	for (const edge of edges) {
+		const fromId = sanitizeId(edge.from);
+		const toId = sanitizeId(edge.to);
+		lines.push(`    ${fromId} --> ${toId}`);
+	}
+
+	// Add styling for layer boxes
+	lines.push('');
+	lines.push('    %% Layer styling');
+	lines.push('    style routes fill:#e1f5fe,stroke:#0288d1');
+	lines.push('    style components fill:#f3e5f5,stroke:#7b1fa2');
+	lines.push('    style stores fill:#fff3e0,stroke:#f57c00');
+	lines.push('    style services fill:#e8f5e9,stroke:#388e3c');
+	lines.push('    style supabase fill:#fce4ec,stroke:#c2185b');
+	lines.push('    style wasm fill:#ffebee,stroke:#d32f2f');
+
+	return lines.join('\n');
+}
+
+/**
+ * Get short display name for a node
+ */
+function getShortName(node: AKGNode): string {
+	const name = node.name;
+	// Remove extensions
+	return name
+		.replace(/\.svelte\.ts$/, '')
+		.replace(/\.svelte$/, '')
+		.replace(/\.ts$/, '')
+		.replace(/\+page$/, 'page')
+		.replace(/\+layout$/, 'layout');
+}
+
+/**
+ * Get Mermaid shape delimiters for node type
+ */
+function getNodeShape(_type: string, layer: string): { open: string; close: string } {
+	switch (layer) {
+		case 'stores':
+			return { open: '[(', close: ')]' }; // Cylinder for stores
+		case 'services':
+			return { open: '{{', close: '}}' }; // Hexagon for services
+		case 'wasm':
+			return { open: '([', close: '])' }; // Stadium for wasm
+		case 'supabase':
+			return { open: '[(', close: ')]' }; // Cylinder for DB
+		default:
+			return { open: '[', close: ']' }; // Rectangle default
+	}
+}
+
+/**
+ * Get layer description
+ */
+function getLayerDescription(layer: string): string {
+	const descriptions: Record<string, string> = {
+		routes: 'SvelteKit page routes',
+		components: 'Reusable UI components',
+		stores: 'Svelte reactive stores',
+		services: 'Business logic services',
+		supabase: 'Database & auth integration',
+		wasm: 'Rust/WASM probability engine',
+	};
+	return descriptions[layer] ?? 'Application layer';
+}
+
+/**
  * Generate all standard diagrams
  */
 export function generateAllDiagrams(
@@ -534,6 +769,7 @@ export function generateAllDiagrams(
 		generateLayerArchitecture(graph, config, options),
 		generateStoreDependencies(graph, config, options),
 		generateComponentDependencies(graph, config, options),
+		generateDataflow(graph, config, options),
 	];
 }
 

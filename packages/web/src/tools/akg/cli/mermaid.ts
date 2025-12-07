@@ -29,6 +29,7 @@ import {
 	type DiagramType,
 	generateAllDiagrams,
 	generateComponentDependencies,
+	generateDataflow,
 	generateGraphHash,
 	generateLayerArchitecture,
 	generateStoreDependencies,
@@ -42,7 +43,7 @@ import type { AKGGraph } from '../schema/graph.schema.js';
 
 interface MermaidCliOptions {
 	outputDir?: string;
-	type?: 'layer' | 'store' | 'component' | 'all';
+	type?: 'layer' | 'store' | 'component' | 'dataflow' | 'all';
 	check?: boolean;
 	verbose?: boolean;
 }
@@ -178,6 +179,7 @@ async function checkDiagramStaleness(
 		'layer_architecture',
 		'store_dependencies',
 		'component_dependencies',
+		'dataflow',
 	];
 
 	for (const type of diagramTypes) {
@@ -245,7 +247,7 @@ Usage:
 
 Options:
   --output, -o <dir>   Output directory (default: docs/architecture/akg/diagrams)
-  --type, -t <type>    Diagram type: layer, store, component, all (default: all)
+  --type, -t <type>    Diagram type: layer, store, component, dataflow, all (default: all)
   --check              Verify diagrams are current (for CI)
   --verbose, -v        Enable verbose logging
   --help, -h           Show this help
@@ -308,6 +310,9 @@ Options:
 			break;
 		case 'component':
 			results = [generateComponentDependencies(graph, config, mermaidOptions)];
+			break;
+		case 'dataflow':
+			results = [generateDataflow(graph, config, mermaidOptions)];
 			break;
 		default:
 			results = generateAllDiagrams(graph, config, mermaidOptions);

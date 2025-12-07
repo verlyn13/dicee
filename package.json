@@ -28,6 +28,7 @@
     "akg:check": "bun run packages/web/src/tools/akg/cli/check.ts",
     "akg:mermaid": "bun run packages/web/src/tools/akg/cli/mermaid.ts",
     "akg:all": "pnpm akg:discover && pnpm akg:mermaid",
+    "akg:test": "bun run packages/web/src/tools/akg/mcp/test-server.ts",
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {

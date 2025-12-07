@@ -11,6 +11,7 @@ export {
 	type DiagramType,
 	generateAllDiagrams,
 	generateComponentDependencies,
+	generateDataflow,
 	generateGraphHash,
 	generateHash,
 	generateLayerArchitecture,
