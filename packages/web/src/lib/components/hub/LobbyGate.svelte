@@ -11,8 +11,11 @@ import { goto } from '$app/navigation';
 let code = $state('');
 let isNavigating = $state(false);
 
-// Placeholder for real-time player count - will be connected to PartyKit
-let playersOnline = $state(0);
+// TODO: Connect to PartyKit presence room for real-time count
+// For now, show "LIVE" indicator when PartyKit is configured
+import { env } from '$env/dynamic/public';
+
+const isLive = $derived(!!env.PUBLIC_PARTYKIT_HOST);
 
 function handleCodeChange(event: Event) {
 	const target = event.target as HTMLInputElement;
@@ -59,7 +62,7 @@ function handleKeydown(event: KeyboardEvent) {
 	<div class="lobby-header">
 		<div class="online-indicator">
 			<div class="pulse-dot"></div>
-			<span class="online-count">{playersOnline} Online</span>
+			<span class="online-count">{isLive ? 'LIVE' : 'OFFLINE'}</span>
 		</div>
 		<button class="create-button" onclick={handleCreateNew} aria-label="Create new lobby">
 			<svg
