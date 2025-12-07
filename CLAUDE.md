@@ -464,18 +464,39 @@ See `.claude/workflow-orchestration.md` for complete specification.
 
 #### Supabase MCP Authentication
 
-The hosted Supabase MCP at `mcp.supabase.com` requires browser-based OAuth:
+The Supabase MCP uses token-based authentication loaded from gopass. **Start Claude Code with the `dicee-claude` function** to ensure the token is available:
 
-1. Check status: `claude mcp list`
-2. If showing "⚠ Needs authentication":
-   - Access any Supabase MCP tool to trigger auth
-   - Browser will open for OAuth flow
-   - Complete authentication in browser
-   - Return to CLI - connection will be active
+```bash
+# Start Claude Code with Supabase MCP token pre-loaded
+dicee-claude
 
-Configuration URL:
+# The function loads SUPABASE_MCP_TOKEN from gopass before starting
+# Token stored at: dicee/supabase/mcp-token
 ```
-https://mcp.supabase.com/mcp?project_ref=duhsbuyxyppgbkwbbtqg&read_only=false&features=database,docs,edge-functions
+
+**Setup (one-time)**:
+```bash
+# Store your Supabase PAT in gopass
+gopass insert dicee/supabase/mcp-token
+
+# Fish function is at ~/.config/fish/functions/dicee-claude.fish
+```
+
+**Check status**: `claude mcp list`
+- `✓ Connected` = Token loaded successfully
+- `⚠ Needs authentication` = Started without `dicee-claude`, restart with it
+
+Configuration in `.mcp.json`:
+```json
+{
+  "supabase": {
+    "type": "http",
+    "url": "https://mcp.supabase.com/mcp?project_ref=duhsbuyxyppgbkwbbtqg&read_only=false&features=database,docs,functions",
+    "headers": {
+      "Authorization": "Bearer ${SUPABASE_MCP_TOKEN}"
+    }
+  }
+}
 ```
 
 ### Slash Commands
