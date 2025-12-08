@@ -1,0 +1,62 @@
+# Dicee Web - Cloudflare Pages Configuration
+# SvelteKit frontend with Service Binding to gamelobby Worker
+
+name = "gamelobby-pages"
+compatibility_date = "2024-12-01"
+
+# Enable Node.js compatibility for SSR
+compatibility_flags = ["nodejs_compat"]
+
+# Service Binding to the gamelobby Worker (Durable Objects)
+# This enables zero-latency RPC between Pages and Workers
+[[services]]
+binding = "GAME_WORKER"
+service = "gamelobby"
+
+# Non-sensitive environment variables
+[vars]
+PUBLIC_SUPABASE_URL = "https://duhsbuyxyppgbkwbbtqg.supabase.co"
+
+# ─────────────────────────────────────────────────────────────
+# Environment-specific configuration
+# ─────────────────────────────────────────────────────────────
+
+# Preview deployments (PR branches)
+[env.preview]
+vars = { ENVIRONMENT = "preview" }
+
+[[env.preview.services]]
+binding = "GAME_WORKER"
+service = "gamelobby"
+
+# Production
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[[env.production.services]]
+binding = "GAME_WORKER"
+service = "gamelobby"
+environment = "production"
+
+# ─────────────────────────────────────────────────────────────
+# Build Configuration (for wrangler pages deploy)
+# ─────────────────────────────────────────────────────────────
+# Note: Build is typically handled by CI, not wrangler directly
+# These settings are for local testing with `wrangler pages dev`
+
+[build]
+command = "pnpm build"
+
+[build.upload]
+format = "modules"
+
+# ─────────────────────────────────────────────────────────────
+# Local Development
+# ─────────────────────────────────────────────────────────────
+# Run with: wrangler pages dev .svelte-kit/cloudflare
+#
+# For full local stack:
+# Terminal 1: cd packages/cloudflare-do && wrangler dev (port 8787)
+# Terminal 2: cd packages/web && pnpm dev (port 5173)
+#
+# Service Binding is simulated locally via HTTP to localhost:8787

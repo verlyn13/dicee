@@ -4,6 +4,18 @@
 import type { Session, User, SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database';
 
+/**
+ * Cloudflare Service Binding to the gamelobby Worker
+ * Provides zero-latency RPC access to Durable Objects
+ */
+interface GameWorkerBinding {
+	/**
+	 * Fetch from the gamelobby worker
+	 * Routes: /lobby, /lobby/*, /room/:code, /health
+	 */
+	fetch(request: Request): Promise<Response>;
+}
+
 declare global {
 	namespace App {
 		// interface Error {}
@@ -26,6 +38,31 @@ declare global {
 			// through SvelteKit's generated types
 		}
 		// interface PageState {}
-		// interface Platform {}
+
+		/**
+		 * Cloudflare Pages Platform environment
+		 * Available in server routes via `platform.env`
+		 *
+		 * @example
+		 * export const GET: RequestHandler = async ({ platform }) => {
+		 *   const response = await platform?.env.GAME_WORKER.fetch(
+		 *     new Request('https://internal/lobby/rooms')
+		 *   );
+		 *   return response;
+		 * };
+		 */
+		interface Platform {
+			env: {
+				/** Service Binding to gamelobby Worker (Durable Objects) */
+				GAME_WORKER: GameWorkerBinding;
+			};
+			/** Cloudflare context for waitUntil, passThroughOnException */
+			context: {
+				waitUntil(promise: Promise<unknown>): void;
+				passThroughOnException(): void;
+			};
+			/** Cloudflare caches API */
+			caches: CacheStorage & { default: Cache };
+		}
 	}
 }
