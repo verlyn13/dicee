@@ -94,6 +94,11 @@ jobs:
     name: Web Build & Test
     runs-on: ubuntu-latest
     needs: wasm
+    env:
+      # Public Supabase config (required for svelte-check to pass)
+      # These are public values - anon key is safe to expose (it's in browser anyway)
+      PUBLIC_SUPABASE_URL: https://duhsbuyxyppgbkwbbtqg.supabase.co
+      PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1aHNidXl4eXBwZ2Jrd2JidHFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI4NjQ0OTAsImV4cCI6MjA0ODQ0MDQ5MH0.placeholder
     steps:
       - uses: actions/checkout@v4
 
