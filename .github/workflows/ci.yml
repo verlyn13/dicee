@@ -181,7 +181,8 @@ jobs:
       - name: Run architecture checks
         id: akg-check
         run: |
-          pnpm akg:check --sarif > akg-results.sarif
+          # Run directly with bun to avoid pnpm output prefix in SARIF
+          bun run packages/web/src/tools/akg/cli/check.ts --sarif > akg-results.sarif
           echo "exit_code=$?" >> $GITHUB_OUTPUT
         continue-on-error: true
 
