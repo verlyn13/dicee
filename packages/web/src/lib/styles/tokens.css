@@ -33,6 +33,18 @@
 	--color-danger: #ef4444;
 	--color-disabled: #9ca3af;
 
+	/* Signal Colors (Lobby UI) */
+	--color-signal-live: #00ff94; /* Online, Open, Success */
+	--color-signal-busy: #ff4d00; /* Full, Error, Warning */
+	--color-signal-sys: #d946ef; /* System messages */
+	--color-signal-muted: #6b7280; /* Timestamps, secondary */
+
+	/* Lobby-specific surfaces */
+	--lobby-ticker-bg: var(--color-text);
+	--lobby-ticker-fg: var(--color-accent);
+	--lobby-card-shadow: 4px 4px 0px 0px var(--color-border);
+	--lobby-card-shadow-hover: 6px 6px 0px 0px var(--color-border);
+
 	/* Decision Quality */
 	--color-optimal: var(--color-success);
 	--color-good: #22c55e;

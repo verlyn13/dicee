@@ -1,14 +1,14 @@
 <script lang="ts">
 /**
- * / - Hub Landing Page
+ * / - Lobby Landing Page
  *
- * The main entry point for Dicee. Shows the Hub grid layout with:
- * - HeroGame: Animated dice, starts solo play immediately
- * - AuthStatusCard: Guest/profile status with auth options
- * - LobbyGate: Quick code entry for multiplayer
- * - NewsDev: System status and updates
+ * The main entry point for Dicee. Shows the global lobby with:
+ * - Live room browser
+ * - Global chat
+ * - Online presence indicator
+ * - Quick actions: Create room, Solo play
  */
-import { Hub } from '$lib/components/hub/index.js';
+import { LobbyLanding } from '$lib/components/lobby/index.js';
 </script>
 
 <svelte:head>
@@ -16,4 +16,4 @@ import { Hub } from '$lib/components/hub/index.js';
 	<meta name="description" content="Learn probability through the classic dice game Yahtzee" />
 </svelte:head>
 
-<Hub />
+<LobbyLanding />

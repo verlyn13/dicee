@@ -44,11 +44,9 @@ environment = "production"
 # Note: Build is typically handled by CI, not wrangler directly
 # These settings are for local testing with `wrangler pages dev`
 
-[build]
-command = "pnpm build"
-
-[build.upload]
-format = "modules"
+# Build command is handled by SvelteKit adapter-cloudflare
+# Local development: pnpm dev
+# Production: pnpm build (outputs to .svelte-kit/cloudflare)
 
 # ─────────────────────────────────────────────────────────────
 # Local Development

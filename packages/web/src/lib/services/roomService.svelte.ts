@@ -2,11 +2,12 @@
  * Room Service
  *
  * Manages WebSocket connection to multiplayer server (Cloudflare Durable Objects).
+ * Uses same-origin WebSocket proxy (/ws/room/[code]) for zero-CORS connections.
  * Handles room creation, joining, game commands, and chat.
  */
 
 import ReconnectingWebSocket from 'reconnecting-websocket';
-import { env } from '$env/dynamic/public';
+import { browser } from '$app/environment';
 import type {
 	ChatCommand_Union,
 	Command,
@@ -17,13 +18,6 @@ import type {
 	ServerEvent,
 } from '$lib/types/multiplayer';
 import { parseServerEvent } from '$lib/types/multiplayer.schema';
-
-// =============================================================================
-// Configuration
-// =============================================================================
-
-/** Durable Objects worker host */
-const WORKER_HOST = env.PUBLIC_WORKER_HOST ?? 'localhost:8787';
 
 // =============================================================================
 // Types
@@ -130,15 +124,19 @@ class RoomService {
 	}
 
 	/**
-	 * Connect to Durable Objects multiplayer server
+	 * Connect to Durable Objects multiplayer server via same-origin WebSocket proxy
+	 *
+	 * Uses /ws/room/[code] endpoint which proxies to the GameRoom DO via Service Binding.
+	 * Authentication is handled via session cookie (Authorization header set by proxy).
 	 */
-	private connectToServer(roomCode: RoomCode, accessToken: string): void {
+	private connectToServer(roomCode: RoomCode, _accessToken: string): void {
+		if (!browser) return;
+
 		console.log(`[RoomService] Connecting to room: ${roomCode}`);
 
-		// Determine protocol based on host
-		const isLocalhost = WORKER_HOST.includes('localhost') || WORKER_HOST.includes('127.0.0.1');
-		const protocol = isLocalhost ? 'ws' : 'wss';
-		const wsUrl = `${protocol}://${WORKER_HOST}/room/${roomCode}?token=${encodeURIComponent(accessToken)}`;
+		// Use same-origin WebSocket proxy for zero-CORS connection
+		const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+		const wsUrl = `${protocol}//${location.host}/ws/room/${roomCode.toUpperCase()}`;
 
 		const socket = new ReconnectingWebSocket(wsUrl, [], {
 			maxRetries: 10,
