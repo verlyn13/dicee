@@ -451,6 +451,11 @@ function handlePlaySolo() {
 			display: none;
 		}
 
+		/* Hide FAB when keyboard is open (set by keyboard.ts) */
+		:global(html.keyboard-open) .create-fab {
+			display: none;
+		}
+
 		.fab-text {
 			display: none;
 		}

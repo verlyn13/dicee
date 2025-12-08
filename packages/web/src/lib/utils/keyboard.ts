@@ -62,10 +62,14 @@ export function initKeyboardHandler(): () => void {
 	// RAF throttling state
 	let rafPending = false;
 
+	// Baseline height - captured on init and updated on orientation change
+	// This is the "full" viewport height when keyboard is closed
+	let baselineHeight = viewport.height;
+
 	/**
-	 * Calculate keyboard height from viewport difference.
-	 * Accounts for visualViewport.offsetTop which represents how much
-	 * the visual viewport has scrolled relative to the layout viewport.
+	 * Calculate keyboard height using multiple detection methods:
+	 * 1. Baseline comparison (works with interactive-widget=resizes-content)
+	 * 2. innerHeight vs viewport (works on iOS Safari)
 	 */
 	const updateKeyboardHeight = (): void => {
 		// RAF throttle to prevent layout thrashing
@@ -75,9 +79,19 @@ export function initKeyboardHandler(): () => void {
 		requestAnimationFrame(() => {
 			rafPending = false;
 
-			// Calculate keyboard height accounting for viewport offset
-			// offsetTop is critical for iOS where the viewport scrolls
-			const keyboardHeight = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+			// Method 1: Compare current viewport to baseline (Android with resizes-content)
+			const baselineDiff = baselineHeight - viewport.height;
+
+			// Method 2: Compare innerHeight to viewport (iOS Safari)
+			const innerDiff = window.innerHeight - viewport.height - viewport.offsetTop;
+
+			// Use the larger of the two methods
+			const keyboardHeight = Math.max(0, baselineDiff, innerDiff);
+
+			// Update baseline if viewport grew (orientation change, keyboard closed)
+			if (viewport.height > baselineHeight) {
+				baselineHeight = viewport.height;
+			}
 
 			// Update CSS custom property
 			document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`);
