@@ -14,8 +14,11 @@
  * Defined in wrangler.toml, populated at runtime.
  */
 export interface Env {
-	/** GameRoom Durable Object namespace binding */
+	/** GameRoom Durable Object namespace binding (per-room instances) */
 	GAME_ROOM: DurableObjectNamespace;
+
+	/** GlobalLobby Durable Object namespace binding (singleton) */
+	GLOBAL_LOBBY: DurableObjectNamespace;
 
 	/** Supabase project URL for JWT verification */
 	SUPABASE_URL: string;

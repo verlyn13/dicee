@@ -1,58 +1,64 @@
 /**
  * Cloudflare Worker Entry Point
  *
- * Routes requests to the GameRoom Durable Object based on room code.
+ * Routes requests to Durable Objects:
+ * - /lobby/* → GlobalLobby (singleton for global chat, presence, room browser)
+ * - /room/:code → GameRoom (per-room for game state)
  */
 
 import { GameRoom } from './GameRoom';
+import { GlobalLobby } from './GlobalLobby';
 import type { Env } from './types';
 
-// Export the Durable Object class for Cloudflare
-export { GameRoom };
+// Export Durable Object classes for Cloudflare
+export { GameRoom, GlobalLobby };
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const url = new URL(request.url);
 
-		// Root - helpful info
+		// Root - API info
 		if (url.pathname === '/' || url.pathname === '') {
-			return new Response(
-				JSON.stringify({
-					service: 'Dicee Game Lobby',
-					status: 'running',
-					endpoints: {
-						health: '/health',
-						room: '/room/:roomCode (WebSocket)',
-					},
-					frontend: 'https://dicee.jefahnierocks.com',
-				}),
-				{
-					status: 200,
-					headers: { 'Content-Type': 'application/json' },
+			return Response.json({
+				service: 'Game Lobby API',
+				version: '2.0.0',
+				status: 'running',
+				endpoints: {
+					health: '/health',
+					lobby: '/lobby (WebSocket) - Global chat & presence',
+					lobbyRooms: '/lobby/rooms (REST) - Public rooms list',
+					lobbyOnline: '/lobby/online (REST) - Online count',
+					room: '/room/:roomCode (WebSocket) - Game room',
 				},
-			);
+				frontend: 'https://gamelobby.jefahnierocks.com',
+			});
 		}
 
 		// Health check endpoint
 		if (url.pathname === '/health') {
-			return new Response('OK', { status: 200 });
+			return Response.json({
+				status: 'healthy',
+				timestamp: new Date().toISOString(),
+			});
+		}
+
+		// Global Lobby (singleton) - all /lobby paths
+		if (url.pathname === '/lobby' || url.pathname.startsWith('/lobby/')) {
+			const id = env.GLOBAL_LOBBY.idFromName('singleton');
+			const stub = env.GLOBAL_LOBBY.get(id);
+			return stub.fetch(request);
 		}
 
 		// Room routing: /room/:roomCode
 		// Room codes are 6 uppercase alphanumeric characters
 		const roomMatch = url.pathname.match(/^\/room\/([A-Z0-9]{6})$/i);
-		if (!roomMatch) {
-			return new Response('Not Found', { status: 404 });
+		if (roomMatch) {
+			const roomCode = roomMatch[1].toUpperCase();
+			const id = env.GAME_ROOM.idFromName(roomCode);
+			const stub = env.GAME_ROOM.get(id);
+			return stub.fetch(request);
 		}
 
-		const roomCode = roomMatch[1].toUpperCase();
-
-		// Get or create Durable Object instance by room code
-		// idFromName creates a deterministic ID - same code = same instance
-		const id = env.GAME_ROOM.idFromName(roomCode);
-		const stub = env.GAME_ROOM.get(id);
-
-		// Forward request to Durable Object
-		return stub.fetch(request);
+		return new Response('Not Found', { status: 404 });
 	},
 };

@@ -13,11 +13,19 @@ compatibility_flags = ["nodejs_compat"]
 name = "GAME_ROOM"
 class_name = "GameRoom"
 
+[[durable_objects.bindings]]
+name = "GLOBAL_LOBBY"
+class_name = "GlobalLobby"
+
 # SQLite-backed storage (better than KV for game state)
 # This enables ctx.storage.sql for SQL queries
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["GameRoom"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["GlobalLobby"]
 
 # Non-sensitive environment variables
 [vars]
@@ -42,9 +50,17 @@ routes = [
 name = "GAME_ROOM"
 class_name = "GameRoom"
 
+[[env.production.durable_objects.bindings]]
+name = "GLOBAL_LOBBY"
+class_name = "GlobalLobby"
+
 [[env.production.migrations]]
 tag = "v1"
 new_sqlite_classes = ["GameRoom"]
+
+[[env.production.migrations]]
+tag = "v2"
+new_sqlite_classes = ["GlobalLobby"]
 
 # ─────────────────────────────────────────────────────────────
 # Secrets (set via: wrangler secret put SECRET_NAME)
