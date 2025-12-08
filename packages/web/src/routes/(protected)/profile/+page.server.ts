@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { getProfile } from '$lib/supabase/profiles';
+import { createProfile, getProfile } from '$lib/supabase/profiles';
 import type { PageServerLoad } from './$types';
 
 /**
@@ -16,8 +16,24 @@ export const load = (async ({ locals }) => {
 		throw error(401, 'Unauthorized');
 	}
 
-	// Get or create profile
-	const { data: profile, error: profileError } = await getProfile(locals.supabase, user.id);
+	// Try to get existing profile
+	let { data: profile, error: profileError } = await getProfile(locals.supabase, user.id);
+
+	// If profile doesn't exist, create it (handles cases where trigger didn't run)
+	if (!profile && !profileError) {
+		const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || null;
+		const { data: newProfile, error: createError } = await createProfile(locals.supabase, user.id, {
+			display_name: displayName,
+			is_anonymous: user.is_anonymous ?? false,
+		});
+
+		if (createError) {
+			console.error('Failed to create profile:', createError);
+			throw error(500, 'Failed to create profile');
+		}
+
+		profile = newProfile;
+	}
 
 	if (profileError) {
 		console.error('Failed to load profile:', profileError);

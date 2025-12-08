@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "dataflow",
-	"generatedAt": "2025-12-08T01:28:01.830Z",
-	"graphHash": "sha256:3ef5b46ccc7b86756cde8f04dece52bb0e8cfab16808997168c6590f2d2ac58a",
-	"sourceCommit": "53ac429",
+	"generatedAt": "2025-12-08T05:06:51.195Z",
+	"graphHash": "sha256:552958e266b99661b8cc741c1461553a4874a2bfa2db53ef8433923a67f112dd",
+	"sourceCommit": "10eb108e719d215041576d9d54d8f7e44a2e864a",
 	"nodes": [
 		{
 			"id": "module::+layout::rc_routes__layout_ts",
@@ -19,19 +19,19 @@
 			"layer": "routes"
 		},
 		{
-			"id": "module::+layout.server::es__layout_server_ts",
-			"label": "+layout.server",
+			"id": "module::+page.server::obby__page_server_ts",
+			"label": "+page.server",
 			"type": "Module",
 			"layer": "routes"
 		},
 		{
-			"id": "module::+layout.server::d___layout_server_ts",
-			"label": "+layout.server",
+			"id": "module::+page.server::_id___page_server_ts",
+			"label": "+page.server",
 			"type": "Module",
 			"layer": "routes"
 		},
 		{
-			"id": "module::+page.server::file__page_server_ts",
+			"id": "module::+page.server::ode___page_server_ts",
 			"label": "+page.server",
 			"type": "Module",
 			"layer": "routes"
@@ -73,6 +73,12 @@
 			"layer": "stores"
 		},
 		{
+			"id": "store::lobby.svelte::ores_lobby_svelte_ts",
+			"label": "lobby",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
 			"id": "store::room.svelte::tores_room_svelte_ts",
 			"label": "room",
 			"type": "Store",
@@ -87,12 +93,6 @@
 		{
 			"id": "store::scorecard.svelte::_scorecard_svelte_ts",
 			"label": "scorecard",
-			"type": "Store",
-			"layer": "stores"
-		},
-		{
-			"id": "store::dice.svelte::tores_dice_svelte_ts",
-			"label": "dice",
 			"type": "Store",
 			"layer": "stores"
 		},
@@ -171,18 +171,8 @@
 	],
 	"edges": [
 		{
-			"from": "module::+page.server::file__page_server_ts",
-			"to": "supabasemodule::profiles::supabase_profiles_ts",
-			"type": "imports"
-		},
-		{
 			"from": "store::game.svelte::tores_game_svelte_ts",
 			"to": "service::engine::b_services_engine_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::game.svelte::tores_game_svelte_ts",
-			"to": "store::dice.svelte::tores_dice_svelte_ts",
 			"type": "imports"
 		},
 		{
@@ -238,6 +228,6 @@
 	],
 	"metadata": {
 		"totalNodes": 27,
-		"totalEdges": 13
+		"totalEdges": 11
 	}
 }

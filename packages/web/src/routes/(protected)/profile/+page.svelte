@@ -26,6 +26,13 @@ function handleProfileUpdate(updatedProfile: Profile) {
 
 <div class="profile-page">
 	<div class="container">
+		<nav class="page-nav">
+			<a href="/lobby" class="back-link">
+				<span class="back-arrow">←</span>
+				Back to Lobby
+			</a>
+		</nav>
+
 		<header class="page-header">
 			<h1 class="page-title">Your Profile</h1>
 			<p class="page-description">
@@ -49,6 +56,35 @@ function handleProfileUpdate(updatedProfile: Profile) {
 	.container {
 		max-width: 800px;
 		margin: 0 auto;
+	}
+
+	/* Navigation */
+	.page-nav {
+		margin-bottom: var(--space-3);
+	}
+
+	.back-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-1);
+		font-family: var(--font-mono);
+		font-size: var(--text-small);
+		font-weight: var(--weight-medium);
+		color: var(--color-text);
+		text-decoration: none;
+		padding: var(--space-1) var(--space-2);
+		border: var(--border-thin);
+		background: var(--color-surface);
+		transition: background var(--transition-fast), transform var(--transition-fast);
+	}
+
+	.back-link:hover {
+		background: var(--color-accent);
+		transform: translateX(-2px);
+	}
+
+	.back-arrow {
+		font-size: var(--text-body);
 	}
 
 	/* Page Header */

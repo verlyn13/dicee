@@ -12,10 +12,15 @@
 
 import { onDestroy, onMount } from 'svelte';
 import { goto } from '$app/navigation';
+import GoogleButton from '$lib/components/auth/GoogleButton.svelte';
+import MagicLinkForm from '$lib/components/auth/MagicLinkForm.svelte';
+import { BottomSheet } from '$lib/components/ui';
 import { auth } from '$lib/stores/auth.svelte';
 import { lobby } from '$lib/stores/lobby.svelte';
-
 import ConnectionOverlay from './ConnectionOverlay.svelte';
+
+// Auth sheet state
+let authSheetOpen = $state(false);
 
 // Derive display name from user object
 const displayName = $derived(() => {
@@ -92,14 +97,15 @@ function handlePlaySolo() {
 		<div class="header-left">
 			<h1 class="logo">DICEE</h1>
 			<span class="online-indicator" class:connected={lobby.connectionState === 'connected'}>
+				<span class="status-dot"></span>
 				{lobby.onlineDisplay}
 			</span>
 		</div>
 		<div class="header-right">
 			{#if auth.isAuthenticated}
-				<span class="user-name">{displayName()}</span>
+				<a href="/profile" class="user-link">{displayName()}</a>
 			{:else}
-				<a href="/auth/login" class="auth-link">Sign In</a>
+				<button class="auth-link" onclick={() => (authSheetOpen = true)}>Sign In</button>
 			{/if}
 		</div>
 	</header>
@@ -154,9 +160,35 @@ function handlePlaySolo() {
 
 	<!-- FAB for Create Room -->
 	<button class="create-fab" onclick={handleCreateRoom} aria-label="Create new room">
-		<span class="fab-plus">+</span>
+		<span class="fab-icon">+</span>
+		<span class="fab-text">NEW GAME</span>
 	</button>
 </div>
+
+<!-- Auth Options Bottom Sheet -->
+<BottomSheet open={authSheetOpen} onClose={() => (authSheetOpen = false)} title="Sign In">
+	{#snippet children()}
+		<div class="auth-options">
+			<p class="auth-description">
+				Sign in to save your stats and appear on leaderboards.
+			</p>
+
+			<div class="auth-buttons">
+				<GoogleButton />
+
+				<div class="divider">
+					<span>or</span>
+				</div>
+
+				<MagicLinkForm />
+			</div>
+
+			<p class="auth-note">
+				Already playing as guest? Your progress will be saved.
+			</p>
+		</div>
+	{/snippet}
+</BottomSheet>
 
 <style>
 	.lobby-landing {
@@ -190,6 +222,9 @@ function handlePlaySolo() {
 	}
 
 	.online-indicator {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
 		font-family: var(--font-mono);
 		font-size: var(--text-tiny);
 		color: var(--color-signal-muted);
@@ -202,16 +237,48 @@ function handlePlaySolo() {
 		border-color: var(--color-signal-live);
 	}
 
+	.status-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: currentColor;
+	}
+
+	.online-indicator.connected .status-dot {
+		animation: pulse-dot 2s ease-in-out infinite;
+	}
+
+	@keyframes pulse-dot {
+		0%,
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 0.5;
+			transform: scale(1.2);
+		}
+	}
+
 	.header-right {
 		display: flex;
 		align-items: center;
 		gap: var(--space-2);
 	}
 
-	.user-name {
+	.user-link {
 		font-family: var(--font-mono);
 		font-size: var(--text-small);
 		font-weight: var(--weight-semibold);
+		color: var(--color-text);
+		text-decoration: none;
+		padding: var(--space-1) var(--space-2);
+		border: var(--border-thin);
+		transition: background var(--transition-fast);
+	}
+
+	.user-link:hover {
+		background: var(--color-accent);
 	}
 
 	.auth-link {
@@ -220,9 +287,10 @@ function handlePlaySolo() {
 		font-weight: var(--weight-bold);
 		text-transform: uppercase;
 		color: var(--color-text);
-		text-decoration: none;
+		background: var(--color-surface);
 		padding: var(--space-1) var(--space-2);
 		border: var(--border-medium);
+		cursor: pointer;
 		transition: background var(--transition-fast);
 	}
 
@@ -325,19 +393,20 @@ function handlePlaySolo() {
 		position: fixed;
 		bottom: var(--space-3);
 		right: var(--space-3);
-		width: 56px;
+		min-width: 56px;
 		height: 56px;
-		border-radius: 50%;
+		border-radius: 28px;
 		background: var(--color-text);
 		color: var(--color-surface);
 		border: none;
-		font-size: 2rem;
 		font-weight: var(--weight-black);
 		cursor: pointer;
 		box-shadow: var(--shadow-brutal-lg);
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		gap: var(--space-1);
+		padding: 0 var(--space-3);
 		transition:
 			background var(--transition-fast),
 			transform var(--transition-fast);
@@ -347,16 +416,39 @@ function handlePlaySolo() {
 	.create-fab:hover {
 		background: var(--color-accent);
 		color: var(--color-text);
-		transform: scale(1.1);
+		transform: scale(1.05);
 	}
 
 	.create-fab:active {
 		transform: scale(0.95);
 	}
 
-	.fab-plus {
+	.fab-icon {
+		font-size: 1.5rem;
 		line-height: 1;
-		margin-top: -2px;
+	}
+
+	.fab-text {
+		font-family: var(--font-mono);
+		font-size: var(--text-small);
+		letter-spacing: var(--tracking-wide);
+	}
+
+	/* Mobile: Icon only */
+	@media (max-width: 767px) {
+		.create-fab {
+			width: 56px;
+			padding: 0;
+			border-radius: 50%;
+		}
+
+		.fab-text {
+			display: none;
+		}
+
+		.fab-icon {
+			font-size: 2rem;
+		}
 	}
 
 	/* Desktop adjustments */
@@ -385,5 +477,54 @@ function handlePlaySolo() {
 		.lobby-content {
 			grid-template-columns: 2fr 1fr;
 		}
+	}
+
+	/* Auth Options in Bottom Sheet */
+	.auth-options {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+	}
+
+	.auth-description {
+		font-size: var(--text-body);
+		color: var(--color-text-muted);
+		text-align: center;
+		margin: 0;
+	}
+
+	.auth-buttons {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.divider {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		color: var(--color-text-muted);
+	}
+
+	.divider::before,
+	.divider::after {
+		content: '';
+		flex: 1;
+		height: 1px;
+		background: var(--color-border);
+		opacity: 0.3;
+	}
+
+	.divider span {
+		font-family: var(--font-mono);
+		font-size: var(--text-tiny);
+		text-transform: uppercase;
+	}
+
+	.auth-note {
+		font-size: var(--text-small);
+		color: var(--color-text-muted);
+		text-align: center;
+		margin: 0;
 	}
 </style>

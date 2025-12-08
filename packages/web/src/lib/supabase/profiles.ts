@@ -6,6 +6,7 @@ export type ProfileUpdate = TablesUpdate<'profiles'>;
 
 /**
  * Get a user's profile by ID
+ * Returns null data (not an error) if profile doesn't exist
  */
 export async function getProfile(
 	supabase: SupabaseClient<Database>,
@@ -14,6 +15,10 @@ export async function getProfile(
 	const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
 
 	if (error) {
+		// PGRST116 = "No rows returned" - this is not a real error, just means profile doesn't exist
+		if (error.code === 'PGRST116') {
+			return { data: null, error: null };
+		}
 		return { data: null, error: new Error(error.message) };
 	}
 

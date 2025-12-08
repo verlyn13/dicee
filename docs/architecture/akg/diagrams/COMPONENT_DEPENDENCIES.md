@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 53ac429
-> Generated: 2025-12-08T01:28:01.830Z
+> Commit: 10eb108e719d215041576d9d54d8f7e44a2e864a
+> Generated: 2025-12-08T05:06:51.195Z
 
 ## Component Dependency Diagram
 
@@ -15,6 +15,7 @@ flowchart LR
     component__Avatar__nts_ui_Avatar_svelte["Avatar"]
     component__BottomSheet__i_BottomSheet_sv["BottomSheet"]
     component__PlayerListItem__layerListItem["PlayerListItem"]
+    component__EmptyRooms__by_EmptyRooms_sve["EmptyRooms"]
     component__Die__ents_dice_Die_svelte["Die"]
     component__DiceTray__dice_DiceTray_svelt["DiceTray"]
     component__OpponentPanel__OpponentPanel_["OpponentPanel"]
@@ -39,11 +40,12 @@ flowchart LR
 
 ```
 
-## Component List (showing 24 of 24)
+## Component List (showing 25 of 25)
 
 - **Avatar**: `packages/web/src/lib/components/ui/Avatar.svelte`
 - **BottomSheet**: `packages/web/src/lib/components/ui/BottomSheet.svelte`
 - **PlayerListItem**: `packages/web/src/lib/components/lobby/PlayerListItem.svelte`
+- **EmptyRooms**: `packages/web/src/lib/components/lobby/EmptyRooms.svelte`
 - **Die**: `packages/web/src/lib/components/dice/Die.svelte`
 - **DiceTray**: `packages/web/src/lib/components/dice/DiceTray.svelte`
 - **OpponentPanel**: `packages/web/src/lib/components/game/OpponentPanel.svelte`

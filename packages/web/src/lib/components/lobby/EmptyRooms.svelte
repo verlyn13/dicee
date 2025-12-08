@@ -4,14 +4,24 @@
  *
  * Encourages users to create the first game.
  */
-import { lobby } from '$lib/stores/lobby.svelte';
+import { goto } from '$app/navigation';
+
+function handleCreateRoom() {
+	// Generate room code and navigate
+	const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+	let code = '';
+	for (let i = 0; i < 6; i++) {
+		code += chars[Math.floor(Math.random() * chars.length)];
+	}
+	goto(`/games/dicee/room/${code}`);
+}
 </script>
 
 <div class="empty-state">
 	<div class="icon">[~]</div>
 	<h3>No Open Rooms</h3>
 	<p>Be the first to create a game.</p>
-	<button class="create-cta" onclick={() => (lobby.isCreateDrawerOpen = true)}>
+	<button class="create-cta" onclick={handleCreateRoom}>
 		Create Room +
 	</button>
 </div>

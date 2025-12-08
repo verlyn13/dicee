@@ -1,6 +1,6 @@
 {
 	"version": "1.0.0",
-	"generatedAt": "2025-12-08T01:28:00.650Z",
+	"generatedAt": "2025-12-08T05:06:50.131Z",
 	"projectRoot": "/Users/verlyn13/Development/personal/dicee",
 	"nodes": [
 		{
@@ -78,7 +78,7 @@
 				"endLine": 337
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.580Z",
+				"discoveredAt": "2025-12-08T05:06:51.117Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -248,7 +248,7 @@
 				"endLine": 38
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.581Z",
+				"discoveredAt": "2025-12-08T05:06:51.118Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -318,7 +318,7 @@
 				"endLine": 347
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.581Z",
+				"discoveredAt": "2025-12-08T05:06:51.119Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -383,7 +383,7 @@
 				"endLine": 477
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.582Z",
+				"discoveredAt": "2025-12-08T05:06:51.119Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -443,7 +443,7 @@
 				"endLine": 357
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.582Z",
+				"discoveredAt": "2025-12-08T05:06:51.119Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -518,7 +518,7 @@
 				"endLine": 467
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.582Z",
+				"discoveredAt": "2025-12-08T05:06:51.119Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -763,7 +763,7 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.583Z",
+				"discoveredAt": "2025-12-08T05:06:51.120Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -818,7 +818,7 @@
 				"endLine": 409
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.583Z",
+				"discoveredAt": "2025-12-08T05:06:51.120Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -958,7 +958,7 @@
 				"endLine": 422
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.584Z",
+				"discoveredAt": "2025-12-08T05:06:51.121Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1063,7 +1063,7 @@
 				"endLine": 828
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.584Z",
+				"discoveredAt": "2025-12-08T05:06:51.121Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1188,7 +1188,7 @@
 				"endLine": 32
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1233,7 +1233,7 @@
 				"endLine": 167
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1313,7 +1313,7 @@
 				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1332,7 +1332,7 @@
 				"endLine": 85
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1351,7 +1351,7 @@
 				"endLine": 88
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1370,7 +1370,7 @@
 				"endLine": 115
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1400,7 +1400,7 @@
 				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1419,7 +1419,7 @@
 				"endLine": 137
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1438,7 +1438,7 @@
 				"endLine": 99
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1457,7 +1457,7 @@
 				"endLine": 98
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1502,7 +1502,7 @@
 				"endLine": 284
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.585Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1521,7 +1521,7 @@
 				"endLine": 696
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.586Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1540,7 +1540,7 @@
 				"endLine": 13
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.586Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1559,7 +1559,7 @@
 				"endLine": 941
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.586Z",
+				"discoveredAt": "2025-12-08T05:06:51.122Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1584,7 +1584,7 @@
 				"endLine": 774
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.586Z",
+				"discoveredAt": "2025-12-08T05:06:51.123Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1603,7 +1603,7 @@
 				"endLine": 341
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.586Z",
+				"discoveredAt": "2025-12-08T05:06:51.123Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1628,7 +1628,7 @@
 				"endLine": 306
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.586Z",
+				"discoveredAt": "2025-12-08T05:06:51.123Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1743,7 +1743,7 @@
 				"endLine": 369
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.586Z",
+				"discoveredAt": "2025-12-08T05:06:51.123Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1883,7 +1883,7 @@
 				"endLine": 355
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.586Z",
+				"discoveredAt": "2025-12-08T05:06:51.123Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2108,7 +2108,7 @@
 				"endLine": 438
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.587Z",
+				"discoveredAt": "2025-12-08T05:06:51.124Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2548,7 +2548,7 @@
 				"endLine": 80
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.588Z",
+				"discoveredAt": "2025-12-08T05:06:51.125Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3418,7 +3418,7 @@
 				"endLine": 24
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.591Z",
+				"discoveredAt": "2025-12-08T05:06:51.127Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3453,7 +3453,7 @@
 				"endLine": 316
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.591Z",
+				"discoveredAt": "2025-12-08T05:06:51.127Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3503,7 +3503,7 @@
 				"endLine": 294
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.591Z",
+				"discoveredAt": "2025-12-08T05:06:51.128Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3558,7 +3558,7 @@
 				"endLine": 290
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.591Z",
+				"discoveredAt": "2025-12-08T05:06:51.128Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3658,7 +3658,7 @@
 				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.591Z",
+				"discoveredAt": "2025-12-08T05:06:51.128Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3670,14 +3670,20 @@
 			"filePath": "packages/web/src/app.d.ts",
 			"attributes": {
 				"package": "@dicee/web",
-				"isExported": false,
-				"exports": [],
+				"isExported": true,
+				"exports": [
+					{
+						"name": "GameWorkerBinding",
+						"kind": "interface",
+						"line": 11
+					}
+				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 32
+				"endLine": 69
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.591Z",
+				"discoveredAt": "2025-12-08T05:06:51.128Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3697,7 +3703,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.591Z",
+				"discoveredAt": "2025-12-08T05:06:51.128Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3717,7 +3723,7 @@
 				"endLine": 31
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.591Z",
+				"discoveredAt": "2025-12-08T05:06:51.128Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3828,7 +3834,7 @@
 				"endLine": 215
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.592Z",
+				"discoveredAt": "2025-12-08T05:06:51.128Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3889,7 +3895,7 @@
 				"endLine": 138
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.592Z",
+				"discoveredAt": "2025-12-08T05:06:51.129Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3950,7 +3956,7 @@
 				"endLine": 575
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.592Z",
+				"discoveredAt": "2025-12-08T05:06:51.129Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4176,7 +4182,7 @@
 				"endLine": 418
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.593Z",
+				"discoveredAt": "2025-12-08T05:06:51.130Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4552,7 +4558,7 @@
 				"endLine": 651
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.593Z",
+				"discoveredAt": "2025-12-08T05:06:51.131Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4613,7 +4619,7 @@
 				"endLine": 88
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.593Z",
+				"discoveredAt": "2025-12-08T05:06:51.131Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4674,7 +4680,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.593Z",
+				"discoveredAt": "2025-12-08T05:06:51.131Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4755,7 +4761,7 @@
 				"endLine": 171
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.594Z",
+				"discoveredAt": "2025-12-08T05:06:51.131Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4786,7 +4792,53 @@
 				"endLine": 477
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.594Z",
+				"discoveredAt": "2025-12-08T05:06:51.131Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "store::lobby.svelte::ores_lobby_svelte_ts",
+			"type": "Store",
+			"name": "lobby.svelte",
+			"filePath": "packages/web/src/lib/stores/lobby.svelte.ts",
+			"attributes": {
+				"layer": "stores",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "ChatMessage",
+						"kind": "interface",
+						"line": 14
+					},
+					{
+						"name": "RoomInfo",
+						"kind": "interface",
+						"line": 23
+					},
+					{
+						"name": "TickerEvent",
+						"kind": "interface",
+						"line": 35
+					},
+					{
+						"name": "ConnectionState",
+						"kind": "type",
+						"line": 42
+					},
+					{
+						"name": "lobby",
+						"kind": "const",
+						"line": 291
+					}
+				],
+				"usesRunes": true,
+				"startLine": 1,
+				"endLine": 292
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.131Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4832,7 +4884,7 @@
 				"endLine": 219
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.594Z",
+				"discoveredAt": "2025-12-08T05:06:51.131Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4878,7 +4930,7 @@
 				"endLine": 570
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.594Z",
+				"discoveredAt": "2025-12-08T05:06:51.131Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4939,7 +4991,7 @@
 				"endLine": 164
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.594Z",
+				"discoveredAt": "2025-12-08T05:06:51.132Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5000,7 +5052,7 @@
 				"endLine": 192
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.594Z",
+				"discoveredAt": "2025-12-08T05:06:51.132Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5026,7 +5078,7 @@
 				"endLine": 240
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.594Z",
+				"discoveredAt": "2025-12-08T05:06:51.132Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5077,7 +5129,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.594Z",
+				"discoveredAt": "2025-12-08T05:06:51.132Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5173,7 +5225,7 @@
 				"endLine": 747
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.594Z",
+				"discoveredAt": "2025-12-08T05:06:51.132Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5218,7 +5270,7 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.132Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5298,7 +5350,7 @@
 				"endLine": 7
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.132Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5353,7 +5405,7 @@
 				"endLine": 126
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.132Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5371,27 +5423,27 @@
 					{
 						"name": "getProfile",
 						"kind": "function",
-						"line": 10
+						"line": 11
 					},
 					{
 						"name": "updateProfile",
 						"kind": "function",
-						"line": 27
+						"line": 32
 					},
 					{
 						"name": "createProfile",
 						"kind": "function",
-						"line": 51
+						"line": 56
 					},
 					{
 						"name": "getProfiles",
 						"kind": "function",
-						"line": 79
+						"line": 84
 					},
 					{
 						"name": "updateLastSeen",
 						"kind": "function",
-						"line": 96
+						"line": 101
 					},
 					{
 						"name": "Profile",
@@ -5406,10 +5458,10 @@
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 111
+				"endLine": 116
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.132Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5495,7 +5547,7 @@
 				"endLine": 235
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.133Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5521,7 +5573,7 @@
 				"endLine": 12
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.133Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5557,7 +5609,7 @@
 				"endLine": 7
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.133Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5583,7 +5635,7 @@
 				"endLine": 25
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.133Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5744,7 +5796,7 @@
 				"endLine": 254
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.133Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5785,7 +5837,7 @@
 				"endLine": 6
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.595Z",
+				"discoveredAt": "2025-12-08T05:06:51.134Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5866,7 +5918,7 @@
 				"endLine": 13
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.596Z",
+				"discoveredAt": "2025-12-08T05:06:51.136Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5937,7 +5989,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.597Z",
+				"discoveredAt": "2025-12-08T05:06:51.137Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5953,12 +6005,42 @@
 				"isExported": true,
 				"exports": [
 					{
+						"name": "ChatPanel",
+						"kind": "const",
+						"line": 3156
+					},
+					{
+						"name": "ChatPanel",
+						"kind": "type",
+						"line": 3157
+					},
+					{
+						"name": "ConnectionOverlay",
+						"kind": "const",
+						"line": 3156
+					},
+					{
+						"name": "ConnectionOverlay",
+						"kind": "type",
+						"line": 3157
+					},
+					{
 						"name": "CreateRoomButton",
 						"kind": "const",
 						"line": 3156
 					},
 					{
 						"name": "CreateRoomButton",
+						"kind": "type",
+						"line": 3157
+					},
+					{
+						"name": "EmptyRooms",
+						"kind": "const",
+						"line": 3156
+					},
+					{
+						"name": "EmptyRooms",
 						"kind": "type",
 						"line": 3157
 					},
@@ -5973,6 +6055,26 @@
 						"line": 3157
 					},
 					{
+						"name": "LobbyLanding",
+						"kind": "const",
+						"line": 3156
+					},
+					{
+						"name": "LobbyLanding",
+						"kind": "type",
+						"line": 3157
+					},
+					{
+						"name": "MobileTabToggle",
+						"kind": "const",
+						"line": 3156
+					},
+					{
+						"name": "MobileTabToggle",
+						"kind": "type",
+						"line": 3157
+					},
+					{
 						"name": "PlayerListItem",
 						"kind": "const",
 						"line": 3156
@@ -5983,22 +6085,42 @@
 						"line": 3157
 					},
 					{
+						"name": "RoomCard",
+						"kind": "const",
+						"line": 3156
+					},
+					{
+						"name": "RoomCard",
+						"kind": "type",
+						"line": 3157
+					},
+					{
 						"name": "RoomLobby",
 						"kind": "const",
 						"line": 3156
 					},
 					{
 						"name": "RoomLobby",
+						"kind": "type",
+						"line": 3157
+					},
+					{
+						"name": "Ticker",
+						"kind": "const",
+						"line": 3156
+					},
+					{
+						"name": "Ticker",
 						"kind": "type",
 						"line": 3157
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 11
+				"endLine": 20
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.598Z",
+				"discoveredAt": "2025-12-08T05:06:51.138Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6039,7 +6161,7 @@
 				"endLine": 3
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.598Z",
+				"discoveredAt": "2025-12-08T05:06:51.138Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6130,7 +6252,7 @@
 				"endLine": 13
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.599Z",
+				"discoveredAt": "2025-12-08T05:06:51.139Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6271,7 +6393,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.601Z",
+				"discoveredAt": "2025-12-08T05:06:51.141Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6312,7 +6434,7 @@
 				"endLine": 3
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.601Z",
+				"discoveredAt": "2025-12-08T05:06:51.141Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6383,7 +6505,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.601Z",
+				"discoveredAt": "2025-12-08T05:06:51.142Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6434,7 +6556,7 @@
 				"endLine": 4
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.602Z",
+				"discoveredAt": "2025-12-08T05:06:51.142Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6494,7 +6616,7 @@
 				"endLine": 133
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.602Z",
+				"discoveredAt": "2025-12-08T05:06:51.142Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6534,7 +6656,7 @@
 				"endLine": 112
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.602Z",
+				"discoveredAt": "2025-12-08T05:06:51.142Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6614,7 +6736,7 @@
 				"endLine": 23
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.602Z",
+				"discoveredAt": "2025-12-08T05:06:51.143Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6814,7 +6936,7 @@
 				"endLine": 20
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.602Z",
+				"discoveredAt": "2025-12-08T05:06:51.143Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6875,7 +6997,7 @@
 				"endLine": 211
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.143Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6951,7 +7073,7 @@
 				"endLine": 364
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.143Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7067,7 +7189,7 @@
 				"endLine": 30
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.143Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7085,30 +7207,30 @@
 					{
 						"name": "ConnectionStatus",
 						"kind": "type",
-						"line": 40
+						"line": 26
 					},
 					{
 						"name": "RoomServiceState",
 						"kind": "interface",
-						"line": 42
+						"line": 28
 					},
 					{
 						"name": "ServerEventHandler",
 						"kind": "type",
-						"line": 53
+						"line": 39
 					},
 					{
 						"name": "roomService",
 						"kind": "const",
-						"line": 665
+						"line": 614
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 666
+				"endLine": 615
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.143Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7133,7 +7255,7 @@
 				"endLine": 47
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.143Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7159,7 +7281,7 @@
 				"endLine": 38
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.143Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7185,7 +7307,85 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::+page.server::obby__page_server_ts",
+			"type": "Module",
+			"name": "+page.server",
+			"filePath": "packages/web/src/routes/lobby/+page.server.ts",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "load",
+						"kind": "const",
+						"line": 7
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 10
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::+page.server::_id___page_server_ts",
+			"type": "Module",
+			"name": "+page.server",
+			"filePath": "packages/web/src/routes/lobby/[id]/+page.server.ts",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "load",
+						"kind": "const",
+						"line": 7
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 10
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::+page.server::ode___page_server_ts",
+			"type": "Module",
+			"name": "+page.server",
+			"filePath": "packages/web/src/routes/game/[code]/+page.server.ts",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "load",
+						"kind": "const",
+						"line": 7
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 10
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7211,7 +7411,7 @@
 				"endLine": 12
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7237,7 +7437,7 @@
 				"endLine": 23
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7260,10 +7460,62 @@
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 35
+				"endLine": 55
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::+server::bby_rooms__server_ts",
+			"type": "Module",
+			"name": "+server",
+			"filePath": "packages/web/src/routes/api/lobby/rooms/+server.ts",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "GET",
+						"kind": "const",
+						"line": 9
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 32
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::+server::by_online__server_ts",
+			"type": "Module",
+			"name": "+server",
+			"filePath": "packages/web/src/routes/api/lobby/online/+server.ts",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "GET",
+						"kind": "const",
+						"line": 9
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 32
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7289,7 +7541,85 @@
 				"endLine": 111
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::+server::om__code___server_ts",
+			"type": "Module",
+			"name": "+server",
+			"filePath": "packages/web/src/routes/ws/room/[code]/+server.ts",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "GET",
+						"kind": "const",
+						"line": 18
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 75
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::+server::_ws_lobby__server_ts",
+			"type": "Module",
+			"name": "+server",
+			"filePath": "packages/web/src/routes/ws/lobby/+server.ts",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "GET",
+						"kind": "const",
+						"line": 14
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 56
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "module::+page.server::icee__page_server_ts",
+			"type": "Module",
+			"name": "+page.server",
+			"filePath": "packages/web/src/routes/dicee/+page.server.ts",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"isExported": true,
+				"exports": [
+					{
+						"name": "load",
+						"kind": "const",
+						"line": 7
+					}
+				],
+				"usesRunes": false,
+				"startLine": 1,
+				"endLine": 10
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7308,7 +7638,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7327,7 +7657,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7346,7 +7676,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7365,7 +7695,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7384,7 +7714,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7403,7 +7733,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7422,7 +7752,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7441,7 +7771,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7460,7 +7790,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7479,7 +7809,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7498,7 +7828,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7517,7 +7847,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7536,7 +7866,45 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "smartcontainer::ChatPanel::bby_ChatPanel_svelte",
+			"type": "SmartContainer",
+			"name": "ChatPanel",
+			"filePath": "packages/web/src/lib/components/lobby/ChatPanel.svelte",
+			"attributes": {
+				"layer": "components",
+				"package": "@dicee/web",
+				"classification": "smart",
+				"hasSlots": false,
+				"usesRunes": true,
+				"startLine": 1
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "smartcontainer::RoomCard::obby_RoomCard_svelte",
+			"type": "SmartContainer",
+			"name": "RoomCard",
+			"filePath": "packages/web/src/lib/components/lobby/RoomCard.svelte",
+			"attributes": {
+				"layer": "components",
+				"package": "@dicee/web",
+				"classification": "smart",
+				"hasSlots": false,
+				"usesRunes": true,
+				"startLine": 1
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7555,7 +7923,26 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "smartcontainer::LobbyLanding::_LobbyLanding_svelte",
+			"type": "SmartContainer",
+			"name": "LobbyLanding",
+			"filePath": "packages/web/src/lib/components/lobby/LobbyLanding.svelte",
+			"attributes": {
+				"layer": "components",
+				"package": "@dicee/web",
+				"classification": "smart",
+				"hasSlots": false,
+				"usesRunes": true,
+				"startLine": 1
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7574,7 +7961,64 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "smartcontainer::MobileTabToggle::bileTabToggle_svelte",
+			"type": "SmartContainer",
+			"name": "MobileTabToggle",
+			"filePath": "packages/web/src/lib/components/lobby/MobileTabToggle.svelte",
+			"attributes": {
+				"layer": "components",
+				"package": "@dicee/web",
+				"classification": "smart",
+				"hasSlots": false,
+				"usesRunes": true,
+				"startLine": 1
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "component::EmptyRooms::by_EmptyRooms_svelte",
+			"type": "Component",
+			"name": "EmptyRooms",
+			"filePath": "packages/web/src/lib/components/lobby/EmptyRooms.svelte",
+			"attributes": {
+				"layer": "components",
+				"package": "@dicee/web",
+				"classification": "dumb",
+				"hasSlots": false,
+				"usesRunes": false,
+				"startLine": 1
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "smartcontainer::Ticker::_lobby_Ticker_svelte",
+			"type": "SmartContainer",
+			"name": "Ticker",
+			"filePath": "packages/web/src/lib/components/lobby/Ticker.svelte",
+			"attributes": {
+				"layer": "components",
+				"package": "@dicee/web",
+				"classification": "smart",
+				"hasSlots": false,
+				"usesRunes": true,
+				"startLine": 1
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7593,7 +8037,26 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "smartcontainer::ConnectionOverlay::ectionOverlay_svelte",
+			"type": "SmartContainer",
+			"name": "ConnectionOverlay",
+			"filePath": "packages/web/src/lib/components/lobby/ConnectionOverlay.svelte",
+			"attributes": {
+				"layer": "components",
+				"package": "@dicee/web",
+				"classification": "smart",
+				"hasSlots": false,
+				"usesRunes": true,
+				"startLine": 1
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7612,7 +8075,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7631,7 +8094,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7650,7 +8113,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7669,7 +8132,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7688,7 +8151,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7707,7 +8170,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7726,7 +8189,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7745,7 +8208,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7764,7 +8227,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.603Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7783,7 +8246,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7802,7 +8265,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7821,7 +8284,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7840,7 +8303,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7859,7 +8322,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7878,7 +8341,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7897,7 +8360,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7916,7 +8379,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7935,7 +8398,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7954,7 +8417,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7973,7 +8436,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7992,7 +8455,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8011,7 +8474,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8030,7 +8493,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8049,7 +8512,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8068,7 +8531,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8087,7 +8550,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8106,7 +8569,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8125,7 +8588,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8144,7 +8607,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8163,7 +8626,45 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "route::+page::__code___page_svelte",
+			"type": "Route",
+			"name": "+page",
+			"filePath": "packages/web/src/routes/games/dicee/room/[code]/+page.svelte",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"classification": "smart",
+				"hasSlots": false,
+				"usesRunes": true,
+				"startLine": 1
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
+				"confidence": "high",
+				"discoveryMethod": "static_analysis"
+			}
+		},
+		{
+			"id": "route::+page::s_dicee__page_svelte",
+			"type": "Route",
+			"name": "+page",
+			"filePath": "packages/web/src/routes/games/dicee/+page.svelte",
+			"attributes": {
+				"layer": "routes",
+				"package": "@dicee/web",
+				"classification": "smart",
+				"hasSlots": false,
+				"usesRunes": true,
+				"startLine": 1
+			},
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8182,7 +8683,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8201,7 +8702,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8220,7 +8721,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8240,7 +8741,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8261,7 +8762,7 @@
 				"notes": "Smart containers may import stores (exception)"
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8282,7 +8783,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8304,7 +8805,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8319,7 +8820,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8340,7 +8841,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8356,7 +8857,7 @@
 				"notes": "Only engine.ts should be imported by other modules"
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.144Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -8367,7 +8868,7 @@
 			"name": "@dicee/web",
 			"attributes": {},
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.604Z",
+				"discoveredAt": "2025-12-08T05:06:51.145Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8398,7 +8899,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.605Z",
+				"discoveredAt": "2025-12-08T05:06:51.145Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8424,7 +8925,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.605Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8450,7 +8951,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.605Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8483,7 +8984,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.605Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8509,7 +9010,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.605Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8535,7 +9036,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.605Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8561,7 +9062,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.605Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8594,7 +9095,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.605Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8621,7 +9122,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.605Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8649,7 +9150,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8675,7 +9176,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8701,7 +9202,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8729,7 +9230,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.146Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8756,7 +9257,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8783,7 +9284,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8810,7 +9311,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8835,7 +9336,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8861,7 +9362,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8888,7 +9389,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8912,7 +9413,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8938,7 +9439,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8965,7 +9466,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8991,7 +9492,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9017,7 +9518,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9043,7 +9544,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9070,7 +9571,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9096,7 +9597,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9122,7 +9623,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.606Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9148,7 +9649,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9175,7 +9676,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9201,7 +9702,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9227,7 +9728,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9251,7 +9752,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9275,7 +9776,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9299,7 +9800,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9323,7 +9824,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9347,7 +9848,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9371,7 +9872,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9397,7 +9898,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9424,7 +9925,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9450,7 +9951,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9476,7 +9977,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.147Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9502,7 +10003,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9529,7 +10030,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9555,7 +10056,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9581,7 +10082,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9607,7 +10108,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9634,7 +10135,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9660,7 +10161,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9686,7 +10187,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9713,7 +10214,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9739,7 +10240,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9766,7 +10267,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9796,7 +10297,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9823,7 +10324,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9848,7 +10349,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.607Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9874,7 +10375,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.608Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9900,7 +10401,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.608Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9926,7 +10427,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.608Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9953,7 +10454,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.608Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9980,7 +10481,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.608Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10007,7 +10508,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.608Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10031,7 +10532,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.608Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10056,7 +10557,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.608Z",
+				"discoveredAt": "2025-12-08T05:06:51.148Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10083,7 +10584,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.609Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10121,7 +10622,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.609Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10149,7 +10650,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.609Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10179,7 +10680,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.609Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10203,7 +10704,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.609Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10229,7 +10730,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.609Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10265,7 +10766,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.609Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10291,7 +10792,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.609Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10317,7 +10818,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10346,7 +10847,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10372,7 +10873,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10399,7 +10900,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10425,7 +10926,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10451,7 +10952,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10477,7 +10978,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10503,7 +11004,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10530,7 +11031,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.149Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10561,7 +11062,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10588,7 +11089,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10614,7 +11115,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10640,7 +11141,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10666,7 +11167,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10693,7 +11194,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10719,7 +11220,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10745,7 +11246,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10771,7 +11272,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10797,7 +11298,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.610Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10829,7 +11330,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10856,7 +11357,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10882,7 +11383,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10916,7 +11417,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10942,7 +11443,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10968,7 +11469,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10992,7 +11493,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -11016,7 +11517,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -11040,7 +11541,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11064,7 +11565,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11092,7 +11593,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11120,7 +11621,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11146,7 +11647,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -11172,7 +11673,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11198,7 +11699,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11230,7 +11731,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11254,7 +11755,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -11278,7 +11779,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11305,7 +11806,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11332,7 +11833,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11360,7 +11861,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11386,7 +11887,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.150Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11413,7 +11914,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11450,7 +11951,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11475,7 +11976,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -11500,7 +12001,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11528,7 +12029,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11556,7 +12057,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11582,7 +12083,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11608,7 +12109,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.611Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11634,7 +12135,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11658,7 +12159,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11682,7 +12183,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11706,7 +12207,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11730,7 +12231,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11752,7 +12253,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11774,7 +12275,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11796,7 +12297,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11825,7 +12326,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11851,7 +12352,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11877,13 +12378,13 @@
 			"evidence": [
 				{
 					"filePath": "packages/web/src/lib/services/roomService.svelte.ts",
-					"line": 12,
+					"line": 11,
 					"column": 0,
 					"importSpecifier": "$lib/types/multiplayer"
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11903,13 +12404,13 @@
 			"evidence": [
 				{
 					"filePath": "packages/web/src/lib/services/roomService.svelte.ts",
-					"line": 21,
+					"line": 20,
 					"column": 0,
 					"importSpecifier": "$lib/types/multiplayer.schema"
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11927,13 +12428,13 @@
 			"evidence": [
 				{
 					"filePath": "packages/web/src/lib/services/roomService.svelte.ts",
-					"line": 230,
+					"line": 184,
 					"column": 0,
 					"importSpecifier": "$lib/types/multiplayer.schema"
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11951,13 +12452,13 @@
 			"evidence": [
 				{
 					"filePath": "packages/web/src/lib/services/roomService.svelte.ts",
-					"line": 543,
+					"line": 492,
 					"column": 0,
 					"importSpecifier": "$lib/types/multiplayer"
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11975,13 +12476,13 @@
 			"evidence": [
 				{
 					"filePath": "packages/web/src/lib/services/roomService.svelte.ts",
-					"line": 563,
+					"line": 512,
 					"column": 0,
 					"importSpecifier": "$lib/types/multiplayer"
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12007,7 +12508,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12033,7 +12534,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.151Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12047,7 +12548,8 @@
 				"isTypeOnly": false,
 				"isDynamic": false,
 				"importedNames": [
-					"getProfile"
+					"getProfile",
+					"createProfile"
 				]
 			},
 			"evidence": [
@@ -12059,7 +12561,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12085,7 +12587,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12111,7 +12613,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12124,7 +12626,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12137,7 +12639,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12150,7 +12652,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12163,7 +12665,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12176,7 +12678,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12189,7 +12691,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12202,7 +12704,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12215,7 +12717,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12228,7 +12730,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12241,7 +12743,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12254,7 +12756,20 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::store::lobby.svelte->layer::stores",
+			"type": "belongs_to",
+			"sourceNodeId": "store::lobby.svelte::ores_lobby_svelte_ts",
+			"targetNodeId": "layer::stores",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12267,7 +12782,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12280,7 +12795,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12293,7 +12808,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12306,7 +12821,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12319,7 +12834,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12332,7 +12847,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12345,7 +12860,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12358,7 +12873,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12371,7 +12886,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12384,7 +12899,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12397,7 +12912,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12410,7 +12925,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12423,7 +12938,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12436,7 +12951,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12449,7 +12964,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12462,7 +12977,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12475,7 +12990,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12488,7 +13003,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12501,7 +13016,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12514,7 +13029,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12527,7 +13042,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12540,7 +13055,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12553,7 +13068,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12566,7 +13081,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12579,7 +13094,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12592,7 +13107,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12605,7 +13120,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12618,7 +13133,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12631,7 +13146,46 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::module::+page.server->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "module::+page.server::obby__page_server_ts",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::module::+page.server->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "module::+page.server::_id___page_server_ts",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::module::+page.server->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "module::+page.server::ode___page_server_ts",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12644,7 +13198,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12657,7 +13211,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12670,7 +13224,33 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::module::+server->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "module::+server::bby_rooms__server_ts",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::module::+server->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "module::+server::by_online__server_ts",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12683,7 +13263,46 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::module::+server->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "module::+server::om__code___server_ts",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::module::+server->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "module::+server::_ws_lobby__server_ts",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::module::+page.server->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "module::+page.server::icee__page_server_ts",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12696,7 +13315,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12709,7 +13328,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12722,7 +13341,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12735,7 +13354,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12748,7 +13367,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12761,7 +13380,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12774,7 +13393,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12787,7 +13406,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12800,7 +13419,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12813,7 +13432,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12826,7 +13445,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12839,7 +13458,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12852,7 +13471,33 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::smartcontainer::ChatPanel->layer::components",
+			"type": "belongs_to",
+			"sourceNodeId": "smartcontainer::ChatPanel::bby_ChatPanel_svelte",
+			"targetNodeId": "layer::components",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::smartcontainer::RoomCard->layer::components",
+			"type": "belongs_to",
+			"sourceNodeId": "smartcontainer::RoomCard::obby_RoomCard_svelte",
+			"targetNodeId": "layer::components",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12865,7 +13510,20 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::smartcontainer::LobbyLanding->layer::components",
+			"type": "belongs_to",
+			"sourceNodeId": "smartcontainer::LobbyLanding::_LobbyLanding_svelte",
+			"targetNodeId": "layer::components",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12878,7 +13536,46 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::smartcontainer::MobileTabToggle->layer::components",
+			"type": "belongs_to",
+			"sourceNodeId": "smartcontainer::MobileTabToggle::bileTabToggle_svelte",
+			"targetNodeId": "layer::components",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::component::EmptyRooms->layer::components",
+			"type": "belongs_to",
+			"sourceNodeId": "component::EmptyRooms::by_EmptyRooms_svelte",
+			"targetNodeId": "layer::components",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::smartcontainer::Ticker->layer::components",
+			"type": "belongs_to",
+			"sourceNodeId": "smartcontainer::Ticker::_lobby_Ticker_svelte",
+			"targetNodeId": "layer::components",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12891,7 +13588,20 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::smartcontainer::ConnectionOverlay->layer::components",
+			"type": "belongs_to",
+			"sourceNodeId": "smartcontainer::ConnectionOverlay::ectionOverlay_svelte",
+			"targetNodeId": "layer::components",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12904,7 +13614,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12917,7 +13627,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12930,7 +13640,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12943,7 +13653,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12956,7 +13666,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12969,7 +13679,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12982,7 +13692,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -12995,7 +13705,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13008,7 +13718,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13021,7 +13731,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13034,7 +13744,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13047,7 +13757,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13060,7 +13770,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13073,7 +13783,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13086,7 +13796,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13099,7 +13809,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13112,7 +13822,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13125,7 +13835,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13138,7 +13848,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13151,7 +13861,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13164,7 +13874,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13177,7 +13887,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13190,7 +13900,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13203,7 +13913,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13216,7 +13926,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13229,7 +13939,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13242,7 +13952,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13255,7 +13965,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13268,7 +13978,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13281,20 +13991,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
-				"confidence": "high",
-				"discoveryMethod": "inference"
-			}
-		},
-		{
-			"id": "belongs_to::layout::+layout->layer::routes",
-			"type": "belongs_to",
-			"sourceNodeId": "layout::+layout::outes__layout_svelte",
-			"targetNodeId": "layer::routes",
-			"attributes": {},
-			"evidence": [],
-			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13302,12 +13999,12 @@
 		{
 			"id": "belongs_to::route::+page->layer::routes",
 			"type": "belongs_to",
-			"sourceNodeId": "route::+page::ry__id___page_svelte",
+			"sourceNodeId": "route::+page::__code___page_svelte",
 			"targetNodeId": "layer::routes",
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13320,7 +14017,46 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::layout::+layout->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "layout::+layout::outes__layout_svelte",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::route::+page->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "route::+page::ry__id___page_svelte",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
+				"confidence": "high",
+				"discoveryMethod": "inference"
+			}
+		},
+		{
+			"id": "belongs_to::route::+page->layer::routes",
+			"type": "belongs_to",
+			"sourceNodeId": "route::+page::s_dicee__page_svelte",
+			"targetNodeId": "layer::routes",
+			"attributes": {},
+			"evidence": [],
+			"metadata": {
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -13333,7 +14069,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13346,7 +14082,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13359,7 +14095,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13372,7 +14108,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13385,7 +14121,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.612Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13398,7 +14134,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13411,7 +14147,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13424,7 +14160,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13437,7 +14173,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13450,7 +14186,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13463,7 +14199,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13476,7 +14212,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13489,7 +14225,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13502,7 +14238,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13515,7 +14251,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13528,7 +14264,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13541,7 +14277,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13554,7 +14290,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13567,7 +14303,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13580,7 +14316,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13593,7 +14329,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13606,7 +14342,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13619,7 +14355,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13632,7 +14368,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13645,7 +14381,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13658,7 +14394,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -13671,19 +14407,19 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-08T01:28:01.613Z",
+				"discoveredAt": "2025-12-08T05:06:51.152Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
 		}
 	],
 	"metadata": {
-		"totalFiles": 138,
-		"discoveryDurationMs": 973,
+		"totalFiles": 156,
+		"discoveryDurationMs": 1029,
 		"packages": [
 			"@dicee/web"
 		],
-		"gitCommit": "53ac429439843bdae9e8e6b190738c61cb9b44f2",
+		"gitCommit": "10eb108e719d215041576d9d54d8f7e44a2e864a",
 		"gitBranch": "main"
 	}
 }

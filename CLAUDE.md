@@ -527,6 +527,104 @@ export CLOUDFLARE_API_TOKEN=$(gopass show -o dicee/cloudflare/api-token)
 # UNSAFE: Never interpolate secrets into logged strings
 ```
 
+### Platform-Specific Patterns (Learned)
+
+These patterns were discovered during production debugging and are documented in MCP Memory for future agent reference.
+
+#### CloudflareWebSocketAuthPattern
+**Problem**: Cloudflare Pages doesn't reliably pass cookies with WebSocket upgrade requests.
+
+**Solution**: Pass access token via query parameter, validate server-side.
+```typescript
+// Client: roomService.svelte.ts
+const wsUrl = `${protocol}//${location.host}/ws/room/${code}?token=${encodeURIComponent(accessToken)}`;
+
+// Server: +server.ts
+const token = url.searchParams.get('token');
+const { data: { user }, error } = await supabase.auth.getUser(token);
+if (error || !user) return new Response('Invalid token', { status: 401 });
+```
+
+#### ProfileAutoCreationPattern
+**Problem**: New users get 500 errors when profiles don't exist.
+
+**Solution**: Handle PGRST116 (no rows) as null, auto-create in +page.server.ts.
+```typescript
+// profiles.ts - Return null instead of error for no rows
+if (error?.code === 'PGRST116') return { data: null, error: null };
+
+// +page.server.ts - Auto-create if missing
+let { data: profile, error } = await getProfile(supabase, user.id);
+if (!profile && !error) {
+  const { data: newProfile } = await createProfile(supabase, user.id, {
+    display_name: user.user_metadata?.full_name || user.email?.split('@')[0],
+    is_anonymous: user.is_anonymous ?? false
+  });
+  profile = newProfile;
+}
+```
+**RLS Note**: Requires INSERT policy: `WITH CHECK (id = auth.uid())`
+
+#### OnlineIndicatorPattern
+**Problem**: Users need visual feedback for connection state.
+
+**Solution**: Derived display with pulsing CSS animation.
+```typescript
+// Svelte 5 derived state
+onlineDisplay = $derived(
+  this.onlineCount === 0 ? 'Connecting...'
+    : this.onlineCount === 1 ? '1 online (you)'
+    : `${this.onlineCount} online`
+);
+```
+```svelte
+<span class="online-indicator" class:connected={lobby.connectionState === 'connected'}>
+  <span class="status-dot"></span>
+  {lobby.onlineDisplay}
+</span>
+
+<style>
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.online-indicator.connected .status-dot { animation: pulse-dot 2s ease-in-out infinite; }
+@keyframes pulse-dot { 50% { opacity: 0.5; transform: scale(1.2); } }
+</style>
+```
+
+#### Svelte 5 Auth Timing Pattern
+**Problem**: `onMount` runs before stores are initialized, causing premature redirects.
+
+**Solution**: Use `$effect` with initialization guard.
+```typescript
+$effect(() => {
+  if (!auth.initialized) return; // Wait for auth to load
+  if (!auth.isAuthenticated) {
+    goto('/lobby');
+    return;
+  }
+  // Safe to use auth data here
+});
+```
+
+#### Server-Authoritative Chat Pattern
+**Problem**: Optimistic updates + server broadcast = duplicate messages.
+
+**Solution**: Remove optimistic updates, let server be authoritative.
+```typescript
+// DON'T do this (causes duplicates)
+sendChat(content: string) {
+  const msg = { id: crypto.randomUUID(), ... };
+  this.messages = [...this.messages, msg]; // Optimistic
+  this.ws.send(...);
+}
+
+// DO this (server authoritative)
+sendChat(content: string) {
+  if (!content.trim() || this.ws?.readyState !== WebSocket.OPEN) return;
+  this.ws.send(JSON.stringify({ type: 'chat', content: content.trim() }));
+  // Server broadcasts to ALL clients including sender
+}
+```
+
 ## MCP-First Workflow
 
 This project uses Model Context Protocol for persistent state and tool access.

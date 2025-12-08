@@ -1,10 +1,12 @@
 # Cloudflare Pages Redirects
 # https://developers.cloudflare.com/pages/configuration/redirects/
+#
+# NOTE: These redirects only work for STATIC assets.
+# SvelteKit dynamic routes bypass this file entirely.
+# For host-based redirects (dicee.jefahnierocks.com → gamelobby),
+# use Cloudflare Single Redirects in the dashboard:
+#   Rules → Overview → Create rule → Redirect Rule
 
-# Redirect dicee.jefahnierocks.com → gamelobby.jefahnierocks.com/games/dicee
-# (Requires dicee.jefahnierocks.com added as custom domain to this Pages project)
-https://dicee.jefahnierocks.com/* https://gamelobby.jefahnierocks.com/games/dicee/:splat 301
-
-# Legacy route redirects (handled by SvelteKit but good to have at edge too)
-/dicee https://gamelobby.jefahnierocks.com/games/dicee 301
-/dicee/* https://gamelobby.jefahnierocks.com/games/dicee/:splat 301
+# Legacy route redirects for static assets only
+/dicee /games/dicee 301
+/dicee/* /games/dicee/:splat 301

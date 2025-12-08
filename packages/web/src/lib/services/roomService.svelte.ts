@@ -127,16 +127,17 @@ class RoomService {
 	 * Connect to Durable Objects multiplayer server via same-origin WebSocket proxy
 	 *
 	 * Uses /ws/room/[code] endpoint which proxies to the GameRoom DO via Service Binding.
-	 * Authentication is handled via session cookie (Authorization header set by proxy).
+	 * Authentication is handled via token query parameter (cookies unreliable in CF WebSocket).
 	 */
-	private connectToServer(roomCode: RoomCode, _accessToken: string): void {
+	private connectToServer(roomCode: RoomCode, accessToken: string): void {
 		if (!browser) return;
 
 		console.log(`[RoomService] Connecting to room: ${roomCode}`);
 
 		// Use same-origin WebSocket proxy for zero-CORS connection
+		// Pass token as query param since cookies don't work reliably with CF WebSocket
 		const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-		const wsUrl = `${protocol}//${location.host}/ws/room/${roomCode.toUpperCase()}`;
+		const wsUrl = `${protocol}//${location.host}/ws/room/${roomCode.toUpperCase()}?token=${encodeURIComponent(accessToken)}`;
 
 		const socket = new ReconnectingWebSocket(wsUrl, [], {
 			maxRetries: 10,

@@ -62,8 +62,14 @@ class LobbyState {
 	openRooms = $derived(this.rooms.filter((r) => r.status === 'open'));
 	playingRooms = $derived(this.rooms.filter((r) => r.status === 'playing'));
 
-	// Show online count only if meaningful
-	onlineDisplay = $derived(this.onlineCount >= 5 ? `${this.onlineCount} online` : 'Lobby Open');
+	// Show online count with appropriate label
+	onlineDisplay = $derived(
+		this.onlineCount === 0
+			? 'Connecting...'
+			: this.onlineCount === 1
+				? '1 online (you)'
+				: `${this.onlineCount} online`,
+	);
 
 	private ws: WebSocket | null = null;
 	private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -118,26 +124,67 @@ class LobbyState {
 		this.connectionState = 'disconnected';
 	}
 
+	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: WebSocket message router - switch is clearer than extraction
 	private handleMessage(data: { type: string; payload: unknown; timestamp?: number }) {
 		switch (data.type) {
 			case 'chat': {
-				const msg = data.payload as ChatMessage;
-				this.messages = [...this.messages.slice(-(this.MAX_MESSAGES - 1)), msg];
-				if (this.activeTab !== 'chat') {
-					this.unreadCount++;
+				// Handle both history and single message formats from DO
+				const chatPayload = data.payload as {
+					action: 'history' | 'message';
+					messages?: Array<{
+						id: string;
+						userId: string;
+						displayName: string;
+						content: string;
+						timestamp: number;
+					}>;
+					message?: {
+						id: string;
+						userId: string;
+						displayName: string;
+						content: string;
+						timestamp: number;
+					};
+				};
+
+				if (chatPayload.action === 'history' && chatPayload.messages) {
+					// Initial history load - map displayName to username
+					const mapped = chatPayload.messages.map((m) => ({
+						id: m.id,
+						userId: m.userId,
+						username: m.displayName,
+						content: m.content,
+						timestamp: m.timestamp,
+						type: 'user' as const,
+					}));
+					this.messages = mapped.slice(-this.MAX_MESSAGES);
+				} else if (chatPayload.action === 'message' && chatPayload.message) {
+					// New message - map displayName to username
+					const msg: ChatMessage = {
+						id: chatPayload.message.id,
+						userId: chatPayload.message.userId,
+						username: chatPayload.message.displayName,
+						content: chatPayload.message.content,
+						timestamp: chatPayload.message.timestamp,
+						type: 'user',
+					};
+					this.messages = [...this.messages.slice(-(this.MAX_MESSAGES - 1)), msg];
+					if (this.activeTab !== 'chat') {
+						this.unreadCount++;
+					}
 				}
 				break;
 			}
 
 			case 'presence': {
-				const p = data.payload as { action: string; onlineCount: number; username?: string };
+				const p = data.payload as { action: string; onlineCount: number; displayName?: string };
 				this.onlineCount = p.onlineCount;
 
 				// Add to ticker
-				if (p.action === 'join' && p.username) {
+				if (p.action === 'join' && p.displayName) {
 					this.addTickerEvent({
 						type: 'join',
-						message: `${p.username} joined`,
+						message: `${p.displayName} joined`,
 					});
 				}
 				break;
@@ -231,17 +278,8 @@ class LobbyState {
 	sendChat(content: string) {
 		if (!content.trim() || this.ws?.readyState !== WebSocket.OPEN) return;
 
-		// Optimistic update
-		const optimisticMsg: ChatMessage = {
-			id: `pending-${Date.now()}`,
-			userId: 'self',
-			username: 'you',
-			content: content.trim(),
-			timestamp: Date.now(),
-			type: 'user',
-		};
-		this.messages = [...this.messages.slice(-(this.MAX_MESSAGES - 1)), optimisticMsg];
-
+		// Send to server - no optimistic update to avoid duplicate messages
+		// Server will broadcast back to all users including sender
 		this.ws.send(JSON.stringify({ type: 'chat', content: content.trim() }));
 	}
 

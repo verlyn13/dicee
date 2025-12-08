@@ -6,7 +6,7 @@
  * Connects via same-origin WebSocket proxy.
  */
 
-import { onDestroy, onMount } from 'svelte';
+import { onDestroy } from 'svelte';
 import { goto } from '$app/navigation';
 import { page } from '$app/stores';
 import { MultiplayerGameView } from '$lib/components/game';
@@ -29,12 +29,18 @@ let chatStore = $state<ReturnType<typeof createChatStore> | null>(null);
 let isConnecting = $state(true);
 let connectionError = $state<string | null>(null);
 
-onMount(async () => {
+// Wait for auth to initialize, then connect
+$effect(() => {
+	if (!auth.initialized) return; // Wait for auth to load
+
 	// Redirect if not authenticated
 	if (!auth.isAuthenticated || !auth.userId) {
-		goto('/');
+		goto('/lobby');
 		return;
 	}
+
+	// Already connected or connecting
+	if (gameStore || connectionError) return;
 
 	// Create game store
 	gameStore = createMultiplayerGameStore(auth.userId);
@@ -46,20 +52,22 @@ onMount(async () => {
 	setChatStore(chatStore);
 
 	// Connect to room
-	try {
-		const session = auth.session;
-		if (!session?.access_token) {
-			connectionError = 'No valid session';
-			isConnecting = false;
-			return;
-		}
+	(async () => {
+		try {
+			const session = auth.session;
+			if (!session?.access_token) {
+				connectionError = 'No valid session';
+				isConnecting = false;
+				return;
+			}
 
-		await roomService.connect(roomCode as string, session.access_token);
-		isConnecting = false;
-	} catch (error) {
-		connectionError = error instanceof Error ? error.message : 'Failed to connect';
-		isConnecting = false;
-	}
+			await roomService.connect(roomCode as string, session.access_token);
+			isConnecting = false;
+		} catch (error) {
+			connectionError = error instanceof Error ? error.message : 'Failed to connect';
+			isConnecting = false;
+		}
+	})();
 });
 
 onDestroy(() => {
@@ -71,15 +79,8 @@ onDestroy(() => {
 
 function handleLeave(): void {
 	roomService.disconnect();
-	goto('/');
+	goto('/lobby');
 }
-
-// Redirect if not authenticated
-$effect(() => {
-	if (auth.initialized && !auth.isAuthenticated) {
-		goto('/');
-	}
-});
 </script>
 
 <svelte:head>
@@ -98,7 +99,7 @@ $effect(() => {
 		<div class="error-content">
 			<h2 class="error-title">Connection Failed</h2>
 			<p class="error-message">{connectionError}</p>
-			<button class="back-btn" onclick={() => goto('/')}>
+			<button class="back-btn" onclick={() => goto('/lobby')}>
 				Back to Lobby
 			</button>
 		</div>
@@ -110,7 +111,7 @@ $effect(() => {
 		<div class="error-content">
 			<h2 class="error-title">Error</h2>
 			<p class="error-message">Unable to initialize game</p>
-			<button class="back-btn" onclick={() => goto('/')}>
+			<button class="back-btn" onclick={() => goto('/lobby')}>
 				Back to Lobby
 			</button>
 		</div>

@@ -2,13 +2,19 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "store_dependencies",
-	"generatedAt": "2025-12-08T01:28:01.830Z",
-	"graphHash": "sha256:3ef5b46ccc7b86756cde8f04dece52bb0e8cfab16808997168c6590f2d2ac58a",
-	"sourceCommit": "53ac429",
+	"generatedAt": "2025-12-08T05:06:51.194Z",
+	"graphHash": "sha256:552958e266b99661b8cc741c1461553a4874a2bfa2db53ef8433923a67f112dd",
+	"sourceCommit": "10eb108e719d215041576d9d54d8f7e44a2e864a",
 	"nodes": [
 		{
 			"id": "store::game.svelte::tores_game_svelte_ts",
 			"label": "game.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::lobby.svelte::ores_lobby_svelte_ts",
+			"label": "lobby.svelte",
 			"type": "Store",
 			"layer": "stores"
 		},
@@ -134,7 +140,7 @@
 		}
 	],
 	"metadata": {
-		"totalNodes": 10,
+		"totalNodes": 11,
 		"totalEdges": 13
 	}
 }
