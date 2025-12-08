@@ -119,7 +119,9 @@ describe('getProfile', () => {
 		expect(mockSupabase.__mocks.eq).toHaveBeenCalledWith('id', 'test-user-id');
 	});
 
-	it('handles profile not found', async () => {
+	it('handles profile not found (PGRST116) - returns null without error', async () => {
+		// PGRST116 = "No rows returned" - treated as "profile doesn't exist yet"
+		// This supports the ProfileAutoCreationPattern where missing profiles are created on-demand
 		const mockError = { message: 'Profile not found', code: 'PGRST116' };
 		mockSupabase.__mocks.select.mockReturnValue({
 			eq: mockSupabase.__mocks.eq.mockReturnValue({
@@ -132,9 +134,9 @@ describe('getProfile', () => {
 
 		const result = await getProfile(mockSupabase, 'nonexistent-id');
 
+		// PGRST116 is not treated as an error - just means profile doesn't exist
 		expect(result.data).toBeNull();
-		expect(result.error).toBeInstanceOf(Error);
-		expect(result.error?.message).toBe('Profile not found');
+		expect(result.error).toBeNull();
 	});
 
 	it('handles database errors', async () => {
