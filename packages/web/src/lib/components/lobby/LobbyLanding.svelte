@@ -158,8 +158,13 @@ function handlePlaySolo() {
 		</div>
 	</main>
 
-	<!-- FAB for Create Room -->
-	<button class="create-fab" onclick={handleCreateRoom} aria-label="Create new room">
+	<!-- FAB for Create Room (hidden when chat is active on mobile) -->
+	<button
+		class="create-fab"
+		class:hidden={isMobile && lobby.activeTab === 'chat'}
+		onclick={handleCreateRoom}
+		aria-label="Create new room"
+	>
 		<span class="fab-icon">+</span>
 		<span class="fab-text">NEW GAME</span>
 	</button>
@@ -440,6 +445,10 @@ function handlePlaySolo() {
 			width: 56px;
 			padding: 0;
 			border-radius: 50%;
+		}
+
+		.create-fab.hidden {
+			display: none;
 		}
 
 		.fab-text {
