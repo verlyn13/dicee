@@ -34,8 +34,8 @@
 	--color-disabled: #9ca3af;
 
 	/* Signal Colors (Lobby UI) */
-	--color-signal-live: #00ff94; /* Online, Open, Success */
-	--color-signal-busy: #ff4d00; /* Full, Error, Warning */
+	--color-signal-live: #059669; /* Online, Open, Success - darker green for contrast */
+	--color-signal-busy: #dc2626; /* Full, Error, Warning - darker red for contrast */
 	--color-signal-sys: #d946ef; /* System messages */
 	--color-signal-muted: #6b7280; /* Timestamps, secondary */
 

@@ -40,8 +40,14 @@ onMount(async () => {
 	gameStore = createMultiplayerGameStore(auth.userId);
 	setMultiplayerGameStore(gameStore);
 
-	// Create chat store
-	const displayName = auth.isAnonymous ? 'Guest' : (auth.email?.split('@')[0] ?? 'Player');
+	// Create chat store with proper display name from user metadata
+	const user = auth.user;
+	const displayName = auth.isAnonymous
+		? 'Guest'
+		: (user?.user_metadata?.display_name as string) ||
+			(user?.user_metadata?.full_name as string) ||
+			auth.email?.split('@')[0] ||
+			'Player';
 	chatStore = createChatStore(auth.userId, displayName);
 	setChatStore(chatStore);
 

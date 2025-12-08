@@ -216,7 +216,7 @@ function handlePlaySolo() {
 	.header-left {
 		display: flex;
 		align-items: center;
-		gap: var(--space-2);
+		gap: var(--space-3);
 	}
 
 	.logo {
@@ -233,8 +233,10 @@ function handlePlaySolo() {
 		font-family: var(--font-mono);
 		font-size: var(--text-tiny);
 		color: var(--color-signal-muted);
-		padding: 0.25rem 0.5rem;
+		padding: 0.25rem 0.625rem;
 		border: var(--border-thin);
+		border-radius: var(--radius-sm);
+		background: var(--color-background);
 	}
 
 	.online-indicator.connected {

@@ -30,10 +30,22 @@ let connecting = $state(false);
 let error = $state<string | null>(null);
 let hasAttemptedJoin = $state(false);
 
+// Derive display name from user metadata (same logic as LobbyLanding)
+const displayName = $derived.by(() => {
+	const user = auth.user;
+	if (!user) return 'Guest';
+	if (auth.isAnonymous) return 'Guest';
+	return (
+		(user.user_metadata?.display_name as string) ||
+		(user.user_metadata?.full_name as string) ||
+		user.email?.split('@')[0] ||
+		'Player'
+	);
+});
+
 // Create chat store when we have a valid user
 const chatStore = $derived.by(() => {
 	if (!auth.userId) return null;
-	const displayName = auth.isAnonymous ? 'Guest' : (auth.email?.split('@')[0] ?? 'Player');
 	return createChatStore(auth.userId, displayName);
 });
 
