@@ -40,11 +40,10 @@ ENVIRONMENT = "development"
 vars = { ENVIRONMENT = "staging" }
 
 # Production environment
+# Note: No routes defined - Pages handles all HTTP traffic via Service Bindings
+# The Worker is accessed internally, not directly from the internet
 [env.production]
 vars = { ENVIRONMENT = "production" }
-routes = [
-  { pattern = "gamelobby.jefahnierocks.com/*", zone_name = "jefahnierocks.com" }
-]
 
 [[env.production.durable_objects.bindings]]
 name = "GAME_ROOM"
