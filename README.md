@@ -37,12 +37,16 @@ docs/
 ```bash
 # Prerequisites: Node 24+ (via mise), Rust, pnpm
 pnpm install
-pnpm dev              # Start dev server (localhost:5173)
+pnpm dev              # SvelteKit dev server (localhost:5173)
+pnpm dev:do           # Durable Objects dev server (localhost:8787)
+pnpm dev:full         # Both servers concurrently (recommended)
 pnpm build            # Build all packages
 pnpm test             # Run all tests
 pnpm lint             # Biome lint
 pnpm format           # Biome format
 ```
+
+**Local development** uses Vite proxy to route `/ws/*` requests to the DO server.
 
 ### Engine (Rust/WASM)
 
@@ -77,12 +81,12 @@ This project uses MCP-first workflow orchestration for AI-assisted development.
 Static analysis tool enforcing architectural invariants:
 
 ```bash
-pnpm akg:discover     # Build graph (150 nodes, 267 edges)
-pnpm akg:check        # Run 5 invariants
+pnpm akg:discover     # Build graph (136 nodes, 227 edges)
+pnpm akg:check        # Run 6 invariants
 pnpm akg:mermaid      # Generate diagrams
 ```
 
-**Invariants:** `wasm_single_entry`, `store_no_circular_deps`, `layer_component_isolation`, `service_layer_boundaries`, `store_file_naming`
+**Invariants:** `wasm_single_entry`, `store_no_circular_deps`, `layer_component_isolation`, `service_layer_boundaries`, `store_file_naming`, `callback_prop_naming`
 
 ### Slash Commands
 
@@ -118,10 +122,31 @@ PUBLIC_WORKER_HOST=gamelobby.jefahnierocks.com
 
 See `.claude/cli-reference.yaml` for command documentation.
 
+## Deployment
+
+```bash
+pnpm do:deploy        # Deploy Durable Objects Worker
+pnpm pages:deploy     # Deploy SvelteKit to CF Pages
+pnpm deploy           # Deploy both (DO + Pages)
+```
+
+**Production URLs:**
+- https://gamelobby.jefahnierocks.com - Main lobby (CF Pages)
+- https://dicee.jefahnierocks.com - Redirects to `/games/dicee`
+
+**Route Structure:**
+| Route | Description |
+|-------|-------------|
+| `/` | Lobby landing (rooms, chat, presence) |
+| `/games/dicee` | Solo Dicee game |
+| `/games/dicee/room/[code]` | Multiplayer room |
+| `/profile` | Player profile & stats |
+
 ## Tests
 
-- **Rust:** 120 tests (unit, integration, property-based, doc tests)
+- **Rust Engine:** 120 tests (unit, integration, property-based, doc tests)
 - **Frontend:** 1099 tests (Vitest, component mocks)
+- **Durable Objects:** 275 tests (ChatManager, GameState, Auth)
 - **E2E:** Playwright (critical flows)
 
 ## License
