@@ -117,9 +117,9 @@ function handleBackToHub() {
 		</button>
 	</div>
 
-	<!-- Quick Rules -->
+	<!-- Quick Rules - applies to all game modes -->
 	<section class="rules-section">
-		<h3 class="rules-title">QUICK RULES</h3>
+		<h3 class="rules-title">HOW TO PLAY</h3>
 		<div class="rules-grid">
 			<div class="rule">
 				<span class="rule-number">1</span>
@@ -211,14 +211,11 @@ function handleBackToHub() {
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: var(--space-3);
-		flex: 1;
-		max-height: 400px;
 	}
 
 	@media (min-width: 640px) {
 		.mode-cards {
 			grid-template-columns: repeat(2, 1fr);
-			max-height: 300px;
 		}
 	}
 
@@ -228,13 +225,14 @@ function handleBackToHub() {
 		align-items: center;
 		justify-content: center;
 		gap: var(--space-2);
-		padding: var(--space-4);
+		padding: var(--space-3) var(--space-4);
 		background: var(--color-surface);
 		border: var(--border-thick);
 		cursor: pointer;
 		transition:
 			transform var(--transition-fast),
 			box-shadow var(--transition-fast);
+		min-height: 180px;
 	}
 
 	.mode-card:hover {
@@ -403,10 +401,6 @@ function handleBackToHub() {
 			max-width: 48rem;
 			margin: 0 auto;
 			padding: var(--space-5);
-		}
-
-		.mode-cards {
-			max-height: 280px;
 		}
 
 		.preview-die {
