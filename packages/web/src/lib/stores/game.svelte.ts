@@ -12,12 +12,85 @@ import type {
 	DecisionQuality,
 	DiceArray,
 	GameStatus,
+	KeptMask,
 	StatsProfile,
 	TurnAnalysis,
 	TurnPhase,
 } from '../types.js';
 import { DiceState } from './dice.svelte.js';
 import { ScorecardState } from './scorecard.svelte.js';
+
+// =============================================================================
+// Decision History Types
+// =============================================================================
+
+export interface RollRecord {
+	/** Roll number (1-3) */
+	rollNumber: number;
+	/** Dice values after roll */
+	dice: DiceArray;
+	/** Which dice were kept for the next roll */
+	kept: KeptMask;
+	/** Was this the optimal hold? */
+	wasOptimalHold: boolean;
+	/** Optimal keep pattern (if different) */
+	optimalKeepPattern?: [number, number, number, number, number, number];
+	/** EV of the chosen hold */
+	chosenEV: number;
+	/** EV of the optimal hold */
+	optimalEV: number;
+}
+
+export interface TurnDecision {
+	/** Category scored */
+	category: Category;
+	/** Points earned */
+	score: number;
+	/** Optimal category */
+	optimalCategory: Category;
+	/** Optimal score */
+	optimalScore: number;
+	/** EV difference (loss) */
+	evDifference: number;
+	/** Was this the optimal choice? */
+	wasOptimal: boolean;
+}
+
+export interface TurnRecord {
+	/** Turn number (1-13) */
+	turnNumber: number;
+	/** Roll history for this turn */
+	rolls: RollRecord[];
+	/** Final scoring decision */
+	decision: TurnDecision;
+	/** Turn duration in ms */
+	durationMs: number;
+}
+
+export interface GameSummary {
+	/** Total turns played */
+	totalTurns: number;
+	/** Final score */
+	finalScore: number;
+	/** Optimal decisions count */
+	optimalDecisions: number;
+	/** Total decisions */
+	totalDecisions: number;
+	/** Decision efficiency (0-1) */
+	efficiency: number;
+	/** Total EV lost from suboptimal plays */
+	totalEVLoss: number;
+	/** Average EV loss per turn */
+	avgEVLoss: number;
+	/** Optimal holds count */
+	optimalHolds: number;
+	/** Total holds */
+	totalHolds: number;
+	/** Hold efficiency (0-1) */
+	holdEfficiency: number;
+	/** Game duration in ms */
+	gameDurationMs: number;
+}
 
 // =============================================================================
 // Constants
@@ -73,6 +146,10 @@ export class GameState {
 
 	// Last decision feedback
 	#lastDecision = $state<DecisionFeedback | null>(null);
+
+	// Decision history tracking
+	#turnHistory = $state<TurnRecord[]>([]);
+	#currentTurnRolls = $state<RollRecord[]>([]);
 
 	// Derived values
 	readonly isGameActive = $derived(
@@ -143,6 +220,56 @@ export class GameState {
 		return this.#cachedScores;
 	}
 
+	get turnHistory(): TurnRecord[] {
+		return this.#turnHistory;
+	}
+
+	get currentTurnRolls(): RollRecord[] {
+		return this.#currentTurnRolls;
+	}
+
+	/**
+	 * Get game summary statistics
+	 */
+	get gameSummary(): GameSummary | null {
+		if (this.#turnHistory.length === 0) return null;
+
+		let optimalDecisions = 0;
+		let totalEVLoss = 0;
+		let optimalHolds = 0;
+		let totalHolds = 0;
+
+		for (const turn of this.#turnHistory) {
+			if (turn.decision.wasOptimal) optimalDecisions++;
+			totalEVLoss += turn.decision.evDifference;
+
+			for (const roll of turn.rolls) {
+				totalHolds++;
+				if (roll.wasOptimalHold) optimalHolds++;
+			}
+		}
+
+		const totalTurns = this.#turnHistory.length;
+		const gameDurationMs =
+			this.#gameCompletedAt && this.#gameStartedAt
+				? this.#gameCompletedAt - this.#gameStartedAt
+				: 0;
+
+		return {
+			totalTurns,
+			finalScore: this.scorecard.grandTotal,
+			optimalDecisions,
+			totalDecisions: totalTurns,
+			efficiency: totalTurns > 0 ? optimalDecisions / totalTurns : 0,
+			totalEVLoss,
+			avgEVLoss: totalTurns > 0 ? totalEVLoss / totalTurns : 0,
+			optimalHolds,
+			totalHolds,
+			holdEfficiency: totalHolds > 0 ? optimalHolds / totalHolds : 0,
+			gameDurationMs,
+		};
+	}
+
 	/**
 	 * Get the potential score for a category from cache or fallback
 	 */
@@ -181,6 +308,10 @@ export class GameState {
 		this.#lastDecision = null;
 		this.#cachedScores = new Map();
 		this.#scoresLoading = false;
+
+		// Reset history
+		this.#turnHistory = [];
+		this.#currentTurnRolls = [];
 	}
 
 	roll(): DiceArray | null {
@@ -189,9 +320,15 @@ export class GameState {
 			return null;
 		}
 
+		// Record previous roll's keep decision (if not first roll)
+		if (this.#rollNumber > 0 && this.#currentAnalysis) {
+			this.#recordRollHistory();
+		}
+
 		// First roll of turn: release all dice
 		if (this.#rollNumber === 0) {
 			this.dice.releaseAll();
+			this.#currentTurnRolls = [];
 		}
 
 		const result = this.dice.roll();
@@ -255,8 +392,14 @@ export class GameState {
 			return null;
 		}
 
+		// Record previous roll's keep decision (if not first roll)
+		if (this.#rollNumber > 0 && this.#currentAnalysis) {
+			this.#recordRollHistory();
+		}
+
 		if (this.#rollNumber === 0) {
 			this.dice.releaseAll();
+			this.#currentTurnRolls = [];
 		}
 
 		this.#status = 'rolling';
@@ -286,11 +429,19 @@ export class GameState {
 			return null;
 		}
 
+		// Record final roll history before scoring
+		if (this.#currentAnalysis) {
+			this.#recordRollHistory();
+		}
+
 		// Get score from WASM cache or fallback
 		const potentialScore = this.getPotentialScore(category);
 
 		// Calculate decision quality
 		const feedback = this.#evaluateDecision(category, potentialScore);
+
+		// Record turn in history
+		this.#recordTurnHistory(category, potentialScore, feedback);
 
 		// Apply score
 		this.scorecard.setScore(category, potentialScore);
@@ -355,6 +506,90 @@ export class GameState {
 		this.#status = 'completed';
 		this.#phase = 'scored';
 		this.#gameCompletedAt = Date.now();
+	}
+
+	/**
+	 * Record the current roll's keep decision to history
+	 */
+	#recordRollHistory(): void {
+		const keepRec = this.#currentAnalysis?.keepRecommendation;
+		const keptMask = this.dice.kept;
+
+		// Determine if the current hold matches the optimal
+		let wasOptimalHold = true;
+		let optimalKeepPattern: [number, number, number, number, number, number] | undefined;
+
+		if (keepRec) {
+			// Convert current kept dice to pattern for comparison
+			const currentPattern = this.#keptMaskToPattern(this.dice.values, keptMask);
+			wasOptimalHold = this.#patternsMatch(currentPattern, keepRec.keepPattern);
+			if (!wasOptimalHold) {
+				optimalKeepPattern = keepRec.keepPattern;
+			}
+		}
+
+		const rollRecord: RollRecord = {
+			rollNumber: this.#rollNumber,
+			dice: [...this.dice.values] as DiceArray,
+			kept: [...keptMask] as KeptMask,
+			wasOptimalHold,
+			optimalKeepPattern,
+			chosenEV: this.#currentAnalysis?.expectedValue ?? 0,
+			optimalEV: keepRec?.expectedValue ?? this.#currentAnalysis?.expectedValue ?? 0,
+		};
+
+		this.#currentTurnRolls = [...this.#currentTurnRolls, rollRecord];
+	}
+
+	/**
+	 * Record the completed turn to history
+	 */
+	#recordTurnHistory(category: Category, score: number, feedback: DecisionFeedback): void {
+		const turnRecord: TurnRecord = {
+			turnNumber: this.#turnNumber,
+			rolls: [...this.#currentTurnRolls],
+			decision: {
+				category,
+				score,
+				optimalCategory: feedback.optimalCategory,
+				optimalScore: feedback.optimalPoints,
+				evDifference: feedback.evDifference,
+				wasOptimal: feedback.quality === 'optimal',
+			},
+			durationMs: this.#turnStartedAt ? Date.now() - this.#turnStartedAt : 0,
+		};
+
+		this.#turnHistory = [...this.#turnHistory, turnRecord];
+		this.#currentTurnRolls = [];
+	}
+
+	/**
+	 * Convert kept mask and dice values to a keep pattern [count_1s, ..., count_6s]
+	 */
+	#keptMaskToPattern(
+		dice: DiceArray,
+		kept: KeptMask,
+	): [number, number, number, number, number, number] {
+		const pattern: [number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0];
+		for (let i = 0; i < 5; i++) {
+			if (kept[i]) {
+				pattern[dice[i] - 1]++;
+			}
+		}
+		return pattern;
+	}
+
+	/**
+	 * Check if two keep patterns match
+	 */
+	#patternsMatch(
+		a: [number, number, number, number, number, number],
+		b: [number, number, number, number, number, number],
+	): boolean {
+		for (let i = 0; i < 6; i++) {
+			if (a[i] !== b[i]) return false;
+		}
+		return true;
 	}
 
 	/** Count occurrences of each die value (1-6) */
@@ -466,6 +701,8 @@ export class GameState {
 		this.#lastDecision = null;
 		this.#cachedScores = new Map();
 		this.#scoresLoading = false;
+		this.#turnHistory = [];
+		this.#currentTurnRolls = [];
 	}
 }
 
