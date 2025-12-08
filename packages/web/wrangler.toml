@@ -1,5 +1,12 @@
-# Dicee Web - Cloudflare Pages Configuration
+# Game Lobby - Cloudflare Pages Configuration
 # SvelteKit frontend with Service Binding to gamelobby Worker
+#
+# Domain Structure:
+#   gamelobby.jefahnierocks.com → Main lobby (this Pages site)
+#   dicee.jefahnierocks.com     → Redirects to /games/dicee
+#
+# Custom domain setup in Cloudflare Dashboard:
+#   Pages → dicee → Custom domains → Add gamelobby.jefahnierocks.com
 
 name = "dicee"
 pages_build_output_dir = ".svelte-kit/cloudflare"
@@ -14,25 +21,29 @@ compatibility_flags = ["nodejs_compat"]
 binding = "GAME_WORKER"
 service = "gamelobby"
 
-# Non-sensitive environment variables
+# Non-sensitive environment variables (via wrangler.toml)
+# Secrets (SUPABASE_ANON_KEY) should be set via dashboard or wrangler secret
 [vars]
 PUBLIC_SUPABASE_URL = "https://duhsbuyxyppgbkwbbtqg.supabase.co"
+ENVIRONMENT = "development"
 
 # ─────────────────────────────────────────────────────────────
 # Environment-specific configuration
 # ─────────────────────────────────────────────────────────────
 
 # Preview deployments (PR branches)
-[env.preview]
-vars = { ENVIRONMENT = "preview" }
+[env.preview.vars]
+ENVIRONMENT = "preview"
+PUBLIC_SUPABASE_URL = "https://duhsbuyxyppgbkwbbtqg.supabase.co"
 
 [[env.preview.services]]
 binding = "GAME_WORKER"
 service = "gamelobby"
 
-# Production
-[env.production]
-vars = { ENVIRONMENT = "production" }
+# Production (gamelobby.jefahnierocks.com)
+[env.production.vars]
+ENVIRONMENT = "production"
+PUBLIC_SUPABASE_URL = "https://duhsbuyxyppgbkwbbtqg.supabase.co"
 
 [[env.production.services]]
 binding = "GAME_WORKER"
