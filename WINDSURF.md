@@ -234,20 +234,22 @@ Full quality gate:
 - **Local API**: http://127.0.0.1:54321
 - **Local Studio**: http://127.0.0.1:54323
 
-## Vercel Project Configuration (DEPRECATED)
-> Being migrated to Cloudflare Pages. See `docs/unified-cloudflare-stack.md`.
-
-- **Project**: dicee (legacy)
-- **Status**: Deprecated - migrating to CF Pages
-
 ## Cloudflare Configuration (PRIMARY)
 - **Account ID**: 13eb584192d9cefb730fde0cfd271328
 - **Production URL**: gamelobby.jefahnierocks.com
 
 ### Cloudflare Pages (SvelteKit Frontend)
-- **Project Name**: gamelobby-pages
+- **Project Name**: dicee
 - **Adapter**: `@sveltejs/adapter-cloudflare`
 - **Service Binding**: `GAME_WORKER` → `gamelobby` worker
+- **Auto-deploy**: CI deploys on push to `main` after tests pass
+
+### GitHub Secrets Required
+| Secret | Description |
+|--------|-------------|
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with Pages edit permissions |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID |
+| `PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key for build |
 
 ### Durable Objects
 | Class | Type | Purpose |
