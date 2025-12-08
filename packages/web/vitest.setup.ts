@@ -1,8 +1,12 @@
 import '@testing-library/svelte/vitest';
-import '@testing-library/jest-dom/vitest';
+import * as jestDomMatchers from '@testing-library/jest-dom/matchers';
 import { expect, vi } from 'vitest';
 import * as matchers from 'vitest-axe/matchers';
 
+// Extend with jest-dom matchers
+expect.extend(jestDomMatchers);
+
+// Extend with vitest-axe matchers
 expect.extend(matchers);
 
 /**

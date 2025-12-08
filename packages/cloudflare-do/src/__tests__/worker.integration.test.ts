@@ -51,7 +51,9 @@ describe('Worker Integration Tests', () => {
 			const response = await worker.fetch('/health');
 
 			expect(response.status).toBe(200);
-			expect(await response.text()).toBe('OK');
+			const body = await response.json();
+			expect(body.status).toBe('healthy');
+			expect(body.timestamp).toBeDefined();
 		});
 	});
 
