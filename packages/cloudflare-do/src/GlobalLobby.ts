@@ -9,6 +9,13 @@
  *
  * Uses WebSocket hibernation for cost efficiency - only charged when
  * actively processing messages, not for idle connections.
+ *
+ * HIBERNATION-SAFE ARCHITECTURE (2025 best practices):
+ * - Tags on acceptWebSocket for user grouping (survives hibernation)
+ * - Attachments for per-connection metadata (survives hibernation)
+ * - Constructor rebuilds in-memory state from getWebSockets()
+ * - Auto ping/pong via setWebSocketAutoResponse (no wake needed)
+ * - No manual WebSocket collections that won't survive hibernation
  */
 
 import { DurableObject } from 'cloudflare:workers';
@@ -82,16 +89,27 @@ export class GlobalLobby extends DurableObject<Env> {
 	/** Recent chat messages (in-memory cache) */
 	private chatHistory: ChatMessage[] = [];
 
-	/** Rate limiting: userId -> message timestamps */
+	/** Rate limiting: userId -> message timestamps (ephemeral, resets on hibernation) */
 	private rateLimits: Map<string, number[]> = new Map();
 
-	/**
-	 * User presence tracking: userId -> connection count
-	 * Tracks how many connections each unique user has.
-	 * A user is "online" if they have >= 1 connection.
-	 * This ensures multiple tabs from same user = 1 online user.
-	 */
-	private userConnections: Map<string, number> = new Map();
+	// =========================================================================
+	// Constructor - Hibernation Recovery
+	// =========================================================================
+
+	constructor(ctx: DurableObjectState, env: Env) {
+		super(ctx, env);
+
+		// Set up auto ping/pong without waking the DO
+		// This handles keepalive efficiently - no compute charge for pings
+		this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
+
+		// Note: In-memory state (activeRooms, chatHistory, rateLimits) is lost on hibernation.
+		// - activeRooms: Rebuilt from room notifications (acceptable for lobby)
+		// - chatHistory: Could persist to storage if needed (TODO)
+		// - rateLimits: Ephemeral by design - resets on wake (acceptable)
+		//
+		// User presence is derived from getWebSockets() + tags, which survive hibernation.
+	}
 
 	// =========================================================================
 	// Main Entry Point
@@ -133,8 +151,9 @@ export class GlobalLobby extends DurableObject<Env> {
 		const displayName = url.searchParams.get('displayName') || request.headers.get('X-Display-Name') || `Guest-${userId.slice(0, 4)}`;
 		const avatarSeed = url.searchParams.get('avatarSeed') || request.headers.get('X-Avatar-Seed') || userId;
 
-		// Accept with hibernation support
-		this.ctx.acceptWebSocket(server);
+		// Accept with hibernation support and tags for efficient querying
+		// Tags survive hibernation and allow: getWebSockets('user:xyz')
+		this.ctx.acceptWebSocket(server, [`user:${userId}`]);
 
 		// Store session info as WebSocket attachment (survives hibernation)
 		const presence: UserPresence = {
@@ -146,10 +165,11 @@ export class GlobalLobby extends DurableObject<Env> {
 		};
 		server.serializeAttachment(presence);
 
-		// Track user connection (for unique user counting)
-		const previousCount = this.userConnections.get(userId) || 0;
-		const isNewUser = previousCount === 0;
-		this.userConnections.set(userId, previousCount + 1);
+		// Check if this is the user's first connection (for join broadcast)
+		// Use tags to query existing connections for this user
+		const existingConnections = this.ctx.getWebSockets(`user:${userId}`);
+		// Note: The new connection is already accepted, so it's included in the count
+		const isNewUser = existingConnections.length === 1;
 
 		// Send initial state to new connection
 		this.sendInitialState(server);
@@ -178,6 +198,7 @@ export class GlobalLobby extends DurableObject<Env> {
 
 	private sendInitialState(ws: WebSocket): void {
 		// Send current online count (unique users, not connections)
+		// Derived from WebSocket tags - hibernation safe
 		ws.send(
 			JSON.stringify({
 				type: 'presence',
@@ -234,9 +255,8 @@ export class GlobalLobby extends DurableObject<Env> {
 				case 'chat':
 					await this.handleChat(ws, attachment, data.content || '');
 					break;
-				case 'ping':
-					ws.send(JSON.stringify({ type: 'pong', payload: null, timestamp: Date.now() }));
-					break;
+				// Note: 'ping' is handled automatically by setWebSocketAutoResponse
+				// No need for manual ping handler - saves compute costs
 				case 'get_rooms':
 					this.sendRoomsList(ws);
 					break;
@@ -291,14 +311,14 @@ export class GlobalLobby extends DurableObject<Env> {
 		if (attachment) {
 			const { userId, displayName } = attachment;
 
-			// Decrement user connection count
-			const currentCount = this.userConnections.get(userId) || 1;
-			const newCount = currentCount - 1;
-			const isLastConnection = newCount <= 0;
+			// Check if user has other connections still open
+			// Use tags for hibernation-safe querying
+			// Note: The closing connection is still in the list until this handler completes
+			const remainingConnections = this.ctx.getWebSockets(`user:${userId}`);
+			const isLastConnection = remainingConnections.length <= 1;
 
 			if (isLastConnection) {
-				// User fully disconnected - clean up
-				this.userConnections.delete(userId);
+				// User fully disconnected - clean up ephemeral state
 				this.rateLimits.delete(userId);
 
 				// Broadcast leave only when user's last connection closes
@@ -309,16 +329,15 @@ export class GlobalLobby extends DurableObject<Env> {
 							action: 'leave',
 							userId,
 							displayName,
-							onlineCount: this.getUniqueUserCount(),
+							// Subtract 1 because closing connection is still counted
+							onlineCount: this.getUniqueUserCount() - 1,
 						},
 						timestamp: Date.now(),
 					},
 					ws,
 				);
-			} else {
-				// User still has other connections open
-				this.userConnections.set(userId, newCount);
 			}
+			// If user has other tabs open, no presence change - silent close
 		}
 
 		console.log(`[GlobalLobby] WebSocket closed: ${code} - ${reason}`);
@@ -453,15 +472,40 @@ export class GlobalLobby extends DurableObject<Env> {
 	}
 
 	// =========================================================================
-	// User Presence Helpers
+	// User Presence Helpers (Hibernation-Safe)
 	// =========================================================================
 
 	/**
 	 * Get count of unique online users (not connections).
 	 * A user with 3 tabs open counts as 1 user.
+	 *
+	 * HIBERNATION-SAFE: Derives count from WebSocket attachments,
+	 * not from in-memory Maps that would be lost on wake.
 	 */
 	private getUniqueUserCount(): number {
-		return this.userConnections.size;
+		const seenUsers = new Set<string>();
+		for (const ws of this.ctx.getWebSockets()) {
+			const attachment = ws.deserializeAttachment() as UserPresence | null;
+			if (attachment?.userId) {
+				seenUsers.add(attachment.userId);
+			}
+		}
+		return seenUsers.size;
+	}
+
+	/**
+	 * Get list of unique online users with their presence info.
+	 * Deduplicates across multiple tabs/connections per user.
+	 */
+	private getOnlineUsers(): UserPresence[] {
+		const seenUsers = new Map<string, UserPresence>();
+		for (const ws of this.ctx.getWebSockets()) {
+			const attachment = ws.deserializeAttachment() as UserPresence | null;
+			if (attachment?.userId && !seenUsers.has(attachment.userId)) {
+				seenUsers.set(attachment.userId, attachment);
+			}
+		}
+		return Array.from(seenUsers.values());
 	}
 
 	// =========================================================================
