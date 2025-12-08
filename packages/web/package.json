@@ -29,8 +29,7 @@
 		"@biomejs/biome": "^2.3.8",
 		"@modelcontextprotocol/sdk": "^1.24.3",
 		"@playwright/test": "^1.49.0",
-		"@sveltejs/adapter-auto": "^7.0.0",
-		"@sveltejs/adapter-vercel": "^6.2.0",
+		"@sveltejs/adapter-cloudflare": "^7.2.4",
 		"@sveltejs/kit": "^2.48.5",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"@testing-library/jest-dom": "^6.9.1",
@@ -52,7 +51,6 @@
 		"@dicebear/core": "^9.2.4",
 		"@supabase/ssr": "^0.8.0",
 		"@supabase/supabase-js": "^2.86.0",
-		"partysocket": "^1.1.6",
 		"reconnecting-websocket": "^4.4.0",
 		"zod": "^4.1.13"
 	}

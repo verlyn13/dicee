@@ -1,12 +1,10 @@
 /**
  * Room Service
  *
- * Manages WebSocket connection to multiplayer server.
- * Supports both PartyKit (legacy) and Durable Objects (new) backends
- * via feature flag for gradual rollout.
+ * Manages WebSocket connection to multiplayer server (Cloudflare Durable Objects).
+ * Handles room creation, joining, game commands, and chat.
  */
 
-import PartySocket from 'partysocket';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { env } from '$env/dynamic/public';
 import type {
@@ -24,13 +22,7 @@ import { parseServerEvent } from '$lib/types/multiplayer.schema';
 // Configuration
 // =============================================================================
 
-/** Feature flag: use Durable Objects instead of PartyKit */
-const USE_DURABLE_OBJECTS = env.PUBLIC_USE_DURABLE_OBJECTS === 'true';
-
-/** PartyKit host (legacy) */
-const PARTYKIT_HOST = env.PUBLIC_PARTYKIT_HOST ?? 'localhost:1999';
-
-/** Durable Objects worker host (new) */
+/** Durable Objects worker host */
 const WORKER_HOST = env.PUBLIC_WORKER_HOST ?? 'localhost:8787';
 
 // =============================================================================
@@ -52,22 +44,16 @@ export interface RoomServiceState {
 
 export type ServerEventHandler = (event: ServerEvent) => void;
 
-/** Union type for both socket types */
-type Socket = PartySocket | ReconnectingWebSocket;
-
 // =============================================================================
 // Room Service Class
 // =============================================================================
 
 /**
- * Room Service - manages connection to multiplayer server
- *
- * Supports both PartyKit (legacy) and Durable Objects (new) backends.
- * The backend is selected via PUBLIC_USE_DURABLE_OBJECTS env var.
+ * Room Service - manages connection to Cloudflare Durable Objects multiplayer server
  */
 class RoomService {
-	/** WebSocket instance (either PartySocket or ReconnectingWebSocket) */
-	private socket: Socket | null = null;
+	/** WebSocket instance */
+	private socket: ReconnectingWebSocket | null = null;
 
 	/** Event handlers */
 	private eventHandlers: Set<ServerEventHandler> = new Set();
@@ -80,9 +66,6 @@ class RoomService {
 	private _room: GameRoom | null = null;
 	private _error: string | null = null;
 	private _roomCode: RoomCode | null = null;
-
-	/** Backend type for logging */
-	private readonly backendType = USE_DURABLE_OBJECTS ? 'DO' : 'PartyKit';
 
 	// =========================================================================
 	// Public Getters
@@ -117,11 +100,6 @@ class RoomService {
 		return this._status === 'connected';
 	}
 
-	/** Check which backend is being used */
-	get usingDurableObjects(): boolean {
-		return USE_DURABLE_OBJECTS;
-	}
-
 	// =========================================================================
 	// Connection Management
 	// =========================================================================
@@ -143,11 +121,7 @@ class RoomService {
 		this._error = null;
 
 		try {
-			if (USE_DURABLE_OBJECTS) {
-				this.connectDurableObjects(roomCode, accessToken);
-			} else {
-				this.connectPartyKit(roomCode, accessToken);
-			}
+			this.connectToServer(roomCode, accessToken);
 		} catch (error) {
 			this._error = error instanceof Error ? error.message : 'Connection failed';
 			this.setStatus('error');
@@ -156,28 +130,10 @@ class RoomService {
 	}
 
 	/**
-	 * Connect using PartyKit (legacy)
+	 * Connect to Durable Objects multiplayer server
 	 */
-	private connectPartyKit(roomCode: RoomCode, accessToken: string): void {
-		console.log(`[RoomService] Connecting via PartyKit to room: ${roomCode}`);
-
-		const socket = new PartySocket({
-			host: PARTYKIT_HOST,
-			room: roomCode,
-			query: {
-				token: accessToken,
-			},
-		});
-
-		this.socket = socket;
-		this.setupEventHandlers(socket);
-	}
-
-	/**
-	 * Connect using Durable Objects (new)
-	 */
-	private connectDurableObjects(roomCode: RoomCode, accessToken: string): void {
-		console.log(`[RoomService] Connecting via Durable Objects to room: ${roomCode}`);
+	private connectToServer(roomCode: RoomCode, accessToken: string): void {
+		console.log(`[RoomService] Connecting to room: ${roomCode}`);
 
 		// Determine protocol based on host
 		const isLocalhost = WORKER_HOST.includes('localhost') || WORKER_HOST.includes('127.0.0.1');
@@ -196,10 +152,9 @@ class RoomService {
 	}
 
 	/**
-	 * Set up event handlers for either socket type
+	 * Set up event handlers for WebSocket
 	 */
-	private setupEventHandlers(socket: Socket): void {
-		// Use generic event listener approach to handle both socket types
+	private setupEventHandlers(socket: ReconnectingWebSocket): void {
 		socket.addEventListener('open', () => this.handleOpen());
 		socket.addEventListener('message', (e) => this.handleMessage(e as MessageEvent));
 		socket.addEventListener('close', (e) => this.handleClose(e as CloseEvent));
@@ -297,12 +252,7 @@ class RoomService {
 	 * Send start game command (host only)
 	 */
 	sendStartGame(): void {
-		// Send in format that works for both backends
-		if (USE_DURABLE_OBJECTS) {
-			this.send({ type: 'START_GAME' } as unknown as Command);
-		} else {
-			this.send({ type: 'game.start' });
-		}
+		this.send({ type: 'START_GAME' } as unknown as Command);
 	}
 
 	/**
@@ -419,7 +369,7 @@ class RoomService {
 	// =========================================================================
 
 	private handleOpen(): void {
-		console.log(`[RoomService] Connected to room via ${this.backendType}:`, this._roomCode);
+		console.log('[RoomService] Connected to room:', this._roomCode);
 		this.setStatus('connected');
 		this._error = null;
 	}
@@ -572,16 +522,16 @@ class RoomService {
 	}
 
 	private handleClose(event: CloseEvent): void {
-		console.log(`[RoomService] Disconnected from ${this.backendType}:`, event.code, event.reason);
+		console.log('[RoomService] Disconnected:', event.code, event.reason);
 
-		// Both PartySocket and ReconnectingWebSocket auto-reconnect
+		// ReconnectingWebSocket auto-reconnects
 		if (this._status === 'connected') {
 			this.setStatus('connecting'); // Reconnecting
 		}
 	}
 
 	private handleError(): void {
-		console.error(`[RoomService] ${this.backendType} connection error`);
+		console.error('[RoomService] Connection error');
 		this._error = 'Connection error';
 		this.setStatus('error');
 	}

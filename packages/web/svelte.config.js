@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-vercel';
+import adapter from '@sveltejs/adapter-cloudflare';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -8,10 +8,16 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		// Using Vercel adapter for deployment
-		// See https://svelte.dev/docs/kit/adapter-vercel
+		// Using Cloudflare Pages adapter for deployment
+		// See https://svelte.dev/docs/kit/adapter-cloudflare
 		adapter: adapter({
-			runtime: 'nodejs22.x',
+			// Routes are generated automatically based on +server.ts files
+			routes: {
+				// Include API routes and auth callback
+				include: ['/*'],
+				// Exclude static assets
+				exclude: ['<all>'],
+			},
 		}),
 	},
 };
