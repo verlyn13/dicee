@@ -1,8 +1,1 @@
-# wasm-pack generates files that should be tracked for deployment
-# Only ignore build artifacts not needed for runtime
-
-# TypeScript source maps (optional)
-*.map
-
-# Build metadata
-.pkg/
+*

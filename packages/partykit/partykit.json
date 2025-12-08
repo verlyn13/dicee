@@ -1,7 +1,0 @@
-{
-  "name": "dicee",
-  "main": "src/server.ts",
-  "port": 1999,
-  "compatibilityDate": "2024-12-01",
-  "persist": ".partykit/state"
-}

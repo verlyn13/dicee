@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: c36807e
-> Generated: 2025-12-07T21:05:46.358Z
+> Commit: 53ac429
+> Generated: 2025-12-08T01:28:01.830Z
 
 ## Data Flow Diagram
 
@@ -27,10 +27,10 @@ flowchart TB
 
     subgraph components["🧩 COMPONENTS"]
         module__index__mponents_ui_index_ts["index"]
+        module__index__onents_chat_index_ts["index"]
         module__index__onents_auth_index_ts["index"]
         module__index__nents_lobby_index_ts["index"]
         module__index__onents_dice_index_ts["index"]
-        module__index__onents_game_index_ts["index"]
     end
 
     subgraph stores["🗄️ STORES"]

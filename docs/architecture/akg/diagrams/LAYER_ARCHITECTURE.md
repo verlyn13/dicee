@@ -3,13 +3,13 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: c36807e
-> Generated: 2025-12-07T21:05:46.357Z
+> Commit: 53ac429
+> Generated: 2025-12-08T01:28:01.829Z
 
 ## Overview
 
 The Dicee architecture enforces a strict layered dependency model with 7 layers
-and 141 code nodes.
+and 138 code nodes.
 
 ## Layer Dependency Diagram
 
@@ -17,8 +17,8 @@ and 141 code nodes.
 flowchart TB
     subgraph "Dicee Architecture"
         routes["🛣️ routes (14)"]
-        components["🧩 components (44)"]
-        stores["🗄️ stores (7)"]
+        components["🧩 components (51)"]
+        stores["🗄️ stores (8)"]
         services["⚙️ services (4)"]
         types["📝 types (8)"]
         supabase["🔌 supabase (5)"]

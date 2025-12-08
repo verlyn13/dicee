@@ -1,18 +1,18 @@
 # Dicee
 
-Dice probability engine and web application for learning probability through Yahtzee-style gameplay.
+Dice probability engine and web application for learning probability through Yahtzee-style gameplay. Part of the Game Lobby platform.
 
-**Production:** https://dicee.jefahnierocks.com
+**Production:** https://gamelobby.jefahnierocks.com
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | SvelteKit (Svelte 5 runes), TypeScript |
+| Frontend | SvelteKit (Svelte 5 runes) on Cloudflare Pages |
 | Engine | Rust → WASM (~45KB), exact probability calculations |
 | Auth/DB | Supabase (Auth, PostgreSQL, Edge Functions) |
-| Realtime | Cloudflare Durable Objects (WebSocket multiplayer) |
-| Hosting | Vercel (frontend), Cloudflare (DNS, edge services) |
+| Realtime | Cloudflare Durable Objects (GlobalLobby + GameRoom) |
+| Hosting | Cloudflare (Pages + Workers via Service Bindings) |
 | Secrets | Infisical (self-hosted) |
 
 ## Project Structure
@@ -20,8 +20,8 @@ Dice probability engine and web application for learning probability through Yah
 ```
 packages/
 ├── engine/        # Rust probability engine (wasm-pack)
-├── web/           # SvelteKit frontend
-└── cloudflare-do/ # Durable Objects multiplayer (replacing partykit/)
+├── web/           # SvelteKit frontend (Cloudflare Pages)
+└── cloudflare-do/ # Durable Objects (GlobalLobby, GameRoom)
 docs/
 ├── rfcs/       # Design documents
 ├── m1/         # Milestone planning
@@ -112,9 +112,8 @@ PUBLIC_WORKER_HOST=gamelobby.jefahnierocks.com
 
 ### CLI Tools
 
+- Wrangler CLI 4.51.0 (Pages + Workers deployment)
 - Supabase CLI 2.62.10
-- Vercel CLI 48.12.1
-- Wrangler CLI 4.51.0
 - Infisical CLI 0.43.35
 
 See `.claude/cli-reference.yaml` for command documentation.

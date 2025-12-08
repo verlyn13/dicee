@@ -1,8 +1,9 @@
 # Dicee Agent Guardrails
 
-> **Version**: 1.0.0
-> **Date**: 2025-12-03
+> **Version**: 1.1.0
+> **Date**: 2025-12-07
 > **Purpose**: Mandatory rules for ALL agents working on this project
+> **Architecture**: Unified Cloudflare stack (Pages + Workers via Service Bindings)
 
 ---
 
@@ -227,6 +228,80 @@ Always ask before:
 
 ---
 
+## Cloudflare Deployment Safety
+
+### Production URL: gamelobby.jefahnierocks.com
+
+The project uses a unified Cloudflare stack:
+- **CF Pages**: SvelteKit frontend
+- **CF Workers**: Durable Objects (GlobalLobby, GameRoom)
+- **Service Bindings**: Zero-latency RPC between Pages and Workers
+
+### Deployment Commands - Safety Matrix
+
+| Command | Environment | Risk | Requires |
+|---------|-------------|------|----------|
+| `wrangler pages dev` | Local | Safe | — |
+| `wrangler dev` | Local | Safe | — |
+| `wrangler pages deploy` (PR) | Preview | Safe | — |
+| `wrangler pages deploy --branch main` | **Production** | **High** | Human approval |
+| `wrangler deploy` | **Production** | **High** | Human approval |
+| `wrangler deploy --env staging` | Staging | Medium | Caution |
+
+### Before Any Production Deployment
+
+1. **Verify tests pass**: `pnpm test && pnpm test:e2e`
+2. **Verify build succeeds**: `pnpm build`
+3. **Run quality gate**: `./scripts/quality-gate.sh`
+4. **Get human approval**
+
+### Wrangler Safety Rules
+
+```bash
+# ✅ SAFE: Local development
+wrangler pages dev .svelte-kit/cloudflare --compatibility-flags=nodejs_compat
+wrangler dev                               # Local DO development
+
+# ✅ SAFE: Preview deployments (PR branches)
+wrangler pages deploy .svelte-kit/cloudflare --project-name gamelobby-pages
+
+# ⚠️ CAUTION: Staging
+wrangler deploy --env staging
+
+# ❌ REQUIRES APPROVAL: Production
+# Do NOT run these without human approval:
+wrangler pages deploy .svelte-kit/cloudflare --project-name gamelobby-pages --branch main
+wrangler deploy                            # Production workers
+```
+
+### Service Binding Safety
+
+When modifying service binding code in SvelteKit:
+
+1. **Test locally first** with `wrangler pages dev`
+2. **Verify binding access** works in `platform.env.GAME_WORKER`
+3. **Handle missing binding gracefully** (required for Vite dev mode)
+
+```typescript
+// Always check for binding availability
+const stub = platform?.env.GAME_WORKER;
+if (!stub) {
+    // Return mock data or error - don't crash
+    return new Response('Service unavailable', { status: 503 });
+}
+```
+
+### Durable Object Migration Safety
+
+When adding new Durable Object classes:
+
+1. **Never rename existing DO classes** in production (data loss)
+2. **Always add migrations** in wrangler.toml before deploy
+3. **Test migration locally** first with `wrangler dev --remote`
+4. **Verify DO has correct [[durable_objects.bindings]]** entry
+
+---
+
 ## State Management
 
 ### After Completing a Task
@@ -290,6 +365,10 @@ Always ask before:
 | Conflicting requirements | Ask human for clarification |
 | Missing prerequisites | Report blocker, wait for human |
 | Test suite timing out | Report issue, don't retry infinitely |
+| **Production deployment** | **Always get human approval** |
+| Wrangler deploy failure | Check wrangler.toml config, ask if unclear |
+| Service binding errors | Test locally first, escalate if persistent |
+| DO migration changes | Always get human approval |
 
 ---
 
@@ -407,5 +486,16 @@ pnpm check && pnpm biome:check && pnpm test
 6. **Write clear handoff notes**
 7. **Never use `any` - use `unknown` instead**
 8. **Run type checks after every edit**
+9. **Never deploy to production without human approval**
+10. **Test service bindings locally before deploying**
 
 The human prefers to be interrupted early rather than have an agent spin in circles or make things worse.
+
+---
+
+## References
+
+- [Unified Cloudflare Stack](../docs/unified-cloudflare-stack.md) - Architecture migration guide
+- [Lobby UX/UI Refactor](../docs/lobby-ux-ui-refactor.md) - UI implementation
+- [TypeScript/Biome Strategy](./typescript-biome-strategy.md) - Code patterns
+- [CLI Reference](./cli-reference.yaml) - Wrangler commands

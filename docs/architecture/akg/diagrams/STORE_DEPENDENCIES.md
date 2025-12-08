@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: c36807e
-> Generated: 2025-12-07T21:05:46.358Z
+> Commit: 53ac429
+> Generated: 2025-12-08T01:28:01.830Z
 
 ## Store Dependency Diagram
 
@@ -19,6 +19,7 @@ flowchart LR
     store__dice_svelte__tores_dice_svelte_ts[("dice.svelte")]
     store__auth_svelte__tores_auth_svelte_ts[("auth.svelte")]
     store__index___lib_stores_index_ts[("index")]
+    store__chat_svelte__tores_chat_svelte_ts[("chat.svelte")]
     store__useKeyboardNavigation_svelte__Nav[("useKeyboardNavigation.svelte")]
     store__roomService_svelte__oomService_sv[("roomService.svelte")]
 
@@ -32,6 +33,9 @@ flowchart LR
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
+    store__chat_svelte__tores_chat_svelte_ts --> store__roomService_svelte__oomService_sv
+    store__chat_svelte__tores_chat_svelte_ts --> store__roomService_svelte__oomService_sv
+    store__chat_svelte__tores_chat_svelte_ts --> store__roomService_svelte__oomService_sv
 ```
 
 ## Store List
@@ -43,5 +47,6 @@ flowchart LR
 - **dice.svelte**: `packages/web/src/lib/stores/dice.svelte.ts`
 - **auth.svelte**: `packages/web/src/lib/stores/auth.svelte.ts`
 - **index**: `packages/web/src/lib/stores/index.ts`
+- **chat.svelte**: `packages/web/src/lib/stores/chat.svelte.ts`
 - **useKeyboardNavigation.svelte**: `packages/web/src/lib/hooks/useKeyboardNavigation.svelte.ts`
 - **roomService.svelte**: `packages/web/src/lib/services/roomService.svelte.ts`

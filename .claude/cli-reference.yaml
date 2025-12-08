@@ -19,18 +19,37 @@ cloudflare_project:
   account_id: "13eb584192d9cefb730fde0cfd271328"
   zone_id: "8d5f44e67ab4b37e47b034ff48b03099"
   domain: "jefahnierocks.com"
-  subdomain: "dicee.jefahnierocks.com"
+  production_url: "gamelobby.jefahnierocks.com"
+  legacy_url: "dicee.jefahnierocks.com"  # Redirects to gamelobby
 
-  # Durable Objects game lobby infrastructure (replacing PartyKit)
+  # Cloudflare Pages (SvelteKit frontend)
+  pages:
+    project_name: "gamelobby-pages"
+    package: "packages/web"
+    adapter: "@sveltejs/adapter-cloudflare"
+    build_output: ".svelte-kit/cloudflare"
+    compatibility_flags: ["nodejs_compat"]
+    service_binding: "GAME_WORKER"  # Binds to gamelobby worker
+    plan_doc: "docs/unified-cloudflare-stack.md"
+    ui_doc: "docs/lobby-ux-ui-refactor.md"
+
+  # Durable Objects game lobby infrastructure
   durable_objects:
     worker_name: "gamelobby"
     package: "packages/cloudflare-do"
-    class: "GameRoom"
-    lobby_domain: "gamelobby.jefahnierocks.com"
-    migration_guide: "docs/dicee-do-migration-guide.md"
+    production_url: "gamelobby.jefahnierocks.com"
+    classes:
+      - name: "GlobalLobby"
+        type: "singleton"
+        purpose: "Global chat, presence, room browser"
+        routes: ["/lobby", "/lobby/*"]
+      - name: "GameRoom"
+        type: "per-room"
+        purpose: "Game state, multiplayer sync"
+        routes: ["/room/:code"]
     storage: "SQLite (via new_sqlite_classes)"
     hibernation: true
-    auth_flow: "Auth → Lobby → Game selection (dicee available within lobby)"
+    auth_flow: "Users land on gamelobby → lobby with chat + game list → select game (dicee) → create/join room → play"
 
 # Project-specific Infisical configuration
 infisical_project:
@@ -2092,12 +2111,28 @@ workflows:
         - "wrangler tail --format json                     # JSON log format"
 
     pages_deployment:
-      description: "Deploy static sites with Cloudflare Pages"
+      description: "Deploy SvelteKit to Cloudflare Pages (unified architecture)"
       steps:
-        - "wrangler pages project create dicee-web         # Create Pages project"
-        - "wrangler pages deploy ./dist                    # Deploy build output"
-        - "wrangler pages deploy ./dist --project-name dicee-web"
-        - "wrangler pages deployment list --project-name dicee-web"
+        - "# Build SvelteKit with CF adapter:"
+        - "pnpm build                                       # Build to .svelte-kit/cloudflare"
+        - "# Deploy:"
+        - "wrangler pages deploy .svelte-kit/cloudflare --project-name gamelobby-pages"
+        - "wrangler pages deployment list --project-name gamelobby-pages"
+        - "# Secrets:"
+        - "wrangler pages secret put SUPABASE_SERVICE_KEY --project-name gamelobby-pages"
+        - "wrangler pages secret list --project-name gamelobby-pages"
+        - "# Local dev with Service Bindings:"
+        - "wrangler pages dev .svelte-kit/cloudflare --compatibility-flags=nodejs_compat"
+
+    pages_with_service_bindings:
+      description: "Configure Pages to call Workers via Service Bindings"
+      steps:
+        - "# 1. Build and verify locally:"
+        - "pnpm build && wrangler pages dev .svelte-kit/cloudflare"
+        - "# 2. In CF Dashboard: Pages > Settings > Functions > Service Bindings"
+        - "# 3. Add binding: GAME_WORKER → gamelobby"
+        - "# 4. In SvelteKit server routes, use platform.env.GAME_WORKER"
+        - "# 5. Deploy: wrangler pages deploy .svelte-kit/cloudflare --project-name gamelobby-pages"
 
     d1_database:
       description: "Manage D1 SQLite databases"

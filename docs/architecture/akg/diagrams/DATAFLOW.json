@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "dataflow",
-	"generatedAt": "2025-12-07T21:05:46.358Z",
-	"graphHash": "sha256:870511bbfbe6cb945b851f5019363499bd10b2bc020c0c1b951019787f8e31f5",
-	"sourceCommit": "c36807e",
+	"generatedAt": "2025-12-08T01:28:01.830Z",
+	"graphHash": "sha256:3ef5b46ccc7b86756cde8f04dece52bb0e8cfab16808997168c6590f2d2ac58a",
+	"sourceCommit": "53ac429",
 	"nodes": [
 		{
 			"id": "module::+layout::rc_routes__layout_ts",
@@ -43,6 +43,12 @@
 			"layer": "components"
 		},
 		{
+			"id": "module::index::onents_chat_index_ts",
+			"label": "index",
+			"type": "Module",
+			"layer": "components"
+		},
+		{
 			"id": "module::index::onents_auth_index_ts",
 			"label": "index",
 			"type": "Module",
@@ -56,12 +62,6 @@
 		},
 		{
 			"id": "module::index::onents_dice_index_ts",
-			"label": "index",
-			"type": "Module",
-			"layer": "components"
-		},
-		{
-			"id": "module::index::onents_game_index_ts",
 			"label": "index",
 			"type": "Module",
 			"layer": "components"

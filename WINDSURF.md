@@ -31,29 +31,34 @@ See `.claude/CONVENTIONS.md` for full documentation.
 ---
 
 ## Project Overview
-Dicee is a dice probability engine and web application for learning probability through Yahtzee-style gameplay.
+Dicee is a dice probability engine and web application for learning probability through Yahtzee-style gameplay. Part of the Game Lobby platform.
 
-**Production URL**: https://dicee.jefahnierocks.com
+**Production URL**: https://gamelobby.jefahnierocks.com
 
-See `docs/` for architecture RFCs and milestone plans.
+See `docs/` for architecture RFCs and milestone plans:
+- `docs/unified-cloudflare-stack.md` - Migration guide for CF Pages architecture
+- `docs/lobby-ux-ui-refactor.md` - Lobby UI/UX implementation guide
 
 ## Tech Stack
-- **Frontend**: SvelteKit (Svelte 5 with runes)
+- **Frontend**: SvelteKit (Svelte 5 with runes) on Cloudflare Pages
 - **Engine**: Rust/WASM probability calculations
 - **Backend**: Supabase (Auth, Database, Edge Functions)
-- **Realtime**: Cloudflare Durable Objects (multiplayer, hibernatable WebSockets)
+- **Realtime**: Cloudflare Durable Objects (GlobalLobby singleton + GameRoom per-room)
 - **Edge Compute**: Cloudflare (Workers, Pages, D1, KV, R2)
 - **Secrets**: Infisical (self-hosted at infisical.jefahnierocks.com)
-- **Deployment**: Vercel (frontend), Cloudflare (edge services)
+- **Deployment**: Cloudflare (unified stack: Pages + Workers via Service Bindings)
 - **Package Manager**: pnpm (monorepo)
 
 ## Project Structure
 ```
 packages/
-  engine/     # Rust/WASM probability engine
-  web/        # SvelteKit frontend
+  engine/        # Rust/WASM probability engine
+  web/           # SvelteKit frontend (Cloudflare Pages)
+  cloudflare-do/ # Durable Objects (GlobalLobby, GameRoom)
 docs/
-  m1/         # Milestone 1 planning docs
+  m1/                          # Milestone 1 planning docs
+  unified-cloudflare-stack.md  # CF Pages migration guide
+  lobby-ux-ui-refactor.md      # Lobby UI/UX guide
 .claude/
   AGENT-GUARDRAILS.md       # CRITICAL: Mandatory rules for all agents
   CONVENTIONS.md            # Naming conventions and code patterns
@@ -229,16 +234,26 @@ Full quality gate:
 - **Local API**: http://127.0.0.1:54321
 - **Local Studio**: http://127.0.0.1:54323
 
-## Vercel Project Configuration
-- **Project**: dicee
-- **Production URL**: https://dicee.jefahnierocks.com
-- **Adapter**: `@sveltejs/adapter-vercel` (Node 22.x runtime)
+## Vercel Project Configuration (DEPRECATED)
+> Being migrated to Cloudflare Pages. See `docs/unified-cloudflare-stack.md`.
 
-## Cloudflare Configuration
+- **Project**: dicee (legacy)
+- **Status**: Deprecated - migrating to CF Pages
+
+## Cloudflare Configuration (PRIMARY)
 - **Account ID**: 13eb584192d9cefb730fde0cfd271328
-- **Worker Name**: gamelobby
-- **Durable Object Class**: GameRoom
-- **Lobby URL**: gamelobby.jefahnierocks.com
+- **Production URL**: gamelobby.jefahnierocks.com
+
+### Cloudflare Pages (SvelteKit Frontend)
+- **Project Name**: gamelobby-pages
+- **Adapter**: `@sveltejs/adapter-cloudflare`
+- **Service Binding**: `GAME_WORKER` → `gamelobby` worker
+
+### Durable Objects
+| Class | Type | Purpose |
+|-------|------|---------|
+| `GlobalLobby` | Singleton | Global chat, presence, room browser |
+| `GameRoom` | Per-room | Game state, multiplayer sync |
 
 ## References
 
@@ -246,4 +261,5 @@ Full quality gate:
 - Agent guardrails: `.claude/AGENT-GUARDRAILS.md`
 - Conventions: `.claude/CONVENTIONS.md`
 - Workflow orchestration: `.claude/workflow-orchestration.md`
-- UI/UX design: `docs/UI-UX-DESIGN-REPORT.md`
+- Architecture migration: `docs/unified-cloudflare-stack.md`
+- UI/UX design: `docs/lobby-ux-ui-refactor.md`

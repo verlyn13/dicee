@@ -1,10 +1,11 @@
 # Dicee Agentic Workflow Orchestration
 
-> **Version**: 3.0.0
+> **Version**: 4.0.0
 > **Last Updated**: 2025-12-07
 > **Context**: MCP-first agentic development with Opus 4.5, multi-agent orchestration
-> **Project Status**: Phases 0-7 complete, production live at https://dicee.jefahnierocks.com
-> **Active Phase**: Durable Objects Migration (replacing PartyKit with Cloudflare DOs)
+> **Project Status**: Phases 0-8 complete, production live at https://gamelobby.jefahnierocks.com
+> **Active Phase**: Unified Cloudflare Architecture (CF Pages + Durable Objects)
+> **Architecture Docs**: [unified-cloudflare-stack.md](../docs/unified-cloudflare-stack.md), [lobby-ux-ui-refactor.md](../docs/lobby-ux-ui-refactor.md)
 > **Active**: AKG MCP Server with 7 tools for architecture-aware development
 > **Guardrails**: See [AGENT-GUARDRAILS.md](./AGENT-GUARDRAILS.md) for mandatory rules
 
@@ -391,20 +392,24 @@ interface ProjectState {
       migrations: string[];
       functions: string[];
     };
-    vercel: {
-      linked: boolean;
-      domains: string[];
+    cloudflare_pages: {
+      configured: boolean;
+      projectName: string;  // gamelobby-pages
+      productionUrl: string;  // gamelobby.jefahnierocks.com
+      adapter: string;  // @sveltejs/adapter-cloudflare
     };
-    cloudflare: {
+    cloudflare_workers: {
       configured: boolean;
       deployed: boolean;
       workerName: string;  // gamelobby
-      durableObjectClass: string;  // GameRoom
+      durableObjectClasses: string[];  // [GameRoom, GlobalLobby]
+      serviceBinding: string;  // GAME_WORKER
     };
     infisical: {
       configured: boolean;
       environments: string[];
     };
+    // vercel: DEPRECATED - migrating to CF Pages
   };
 }
 ```
@@ -729,9 +734,18 @@ After completing any task:
 
 ## References
 
+### Architecture Docs
+- [Unified Cloudflare Stack](../docs/unified-cloudflare-stack.md) - CF Pages migration guide (8 phases)
+- [Lobby UX/UI Refactor](../docs/lobby-ux-ui-refactor.md) - Lobby-first UI implementation
+- [UI/UX Design Report](../docs/UI-UX-DESIGN-REPORT.md)
+- [Auth Implementation Plan](../docs/m1/auth-implementation-plan.md)
+
+### Project Configuration
+- [Auth Strategy](./auth-strategy.yaml)
+- [Environment Strategy](./environment-strategy.yaml) - CF Pages deployment config
+- [CLI Reference](./cli-reference.yaml) - Wrangler, Supabase, Infisical commands
+
+### MCP Servers
 - [MCP Memory Server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory)
 - [Supabase MCP](https://mcp.supabase.com)
 - [Anthropic MCP Docs](https://docs.anthropic.com/en/docs/mcp)
-- [UI/UX Design Report](../docs/UI-UX-DESIGN-REPORT.md)
-- [Auth Implementation Plan](../docs/m1/auth-implementation-plan.md)
-- [Auth Strategy](./auth-strategy.yaml)

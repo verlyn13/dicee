@@ -1,11 +1,13 @@
 # Dicee Codebase Conventions
 
-**Version**: 1.1.0
+**Version**: 1.2.0
 **Last Updated**: 2025-12-07
 **Scope**: All agents (Claude Code, Windsurf, Codex, Gemini)
+**Architecture**: Unified Cloudflare stack (Pages + Workers via Service Bindings)
 
 > **IMPORTANT**: Read this document before modifying any code.
 > When uncertain, search the codebase for existing patterns.
+> For architecture details, see `docs/unified-cloudflare-stack.md`.
 
 ---
 
@@ -272,7 +274,88 @@ type ProfileId = string | null;
 
 ---
 
-## 6. Import Ordering
+## 6. SvelteKit Routes & Cloudflare Bindings
+
+### Route Structure (Unified Cloudflare Architecture)
+
+```
+packages/web/src/routes/
+├── (marketing)/           # Public pages (landing, about)
+├── (protected)/           # Auth-required routes
+│   └── profile/          # User profile
+├── games/                 # Game hub
+│   └── dicee/            # Dicee game routes
+│       ├── +page.svelte  # Single-player or game entry
+│       └── [code]/       # Room routes (dynamic)
+├── ws/                    # WebSocket proxy endpoints
+│   ├── lobby/+server.ts  # → GlobalLobby DO
+│   └── room/[code]/+server.ts # → GameRoom DO
+└── api/                   # API routes
+```
+
+### Service Binding Access (SvelteKit + CF Pages)
+
+```typescript
+// In +server.ts or +page.server.ts
+import type { RequestHandler } from './$types';
+
+export const GET: RequestHandler = async ({ platform }) => {
+    // Access Durable Object via Service Binding
+    const stub = platform?.env.GAME_WORKER;
+    if (!stub) throw new Error('Service binding not available');
+
+    // Forward request to Worker
+    const response = await stub.fetch(new Request('https://internal/lobby/rooms'));
+    return response;
+};
+```
+
+### WebSocket Proxy Pattern
+
+```typescript
+// src/routes/ws/room/[code]/+server.ts
+export const GET: RequestHandler = async ({ request, params, platform }) => {
+    const { code } = params;
+
+    // Get DO stub and forward WebSocket upgrade
+    const id = platform?.env.GAME_ROOM.idFromName(code);
+    const stub = platform?.env.GAME_ROOM.get(id);
+
+    // Forward the WebSocket upgrade request
+    return stub.fetch(request);
+};
+```
+
+### Route Naming Conventions
+
+| Pattern | Example | Purpose |
+|---------|---------|---------|
+| `/games/[game]` | `/games/dicee` | Game entry points |
+| `/games/[game]/[code]` | `/games/dicee/ABC123` | Room-specific routes |
+| `/ws/*` | `/ws/lobby`, `/ws/room/[code]` | WebSocket proxies |
+| `/api/*` | `/api/rooms`, `/api/leaderboard` | REST API endpoints |
+| `(group)` | `(protected)`, `(marketing)` | Route groups |
+
+### Platform Type Declaration (app.d.ts)
+
+```typescript
+// packages/web/src/app.d.ts
+declare global {
+    namespace App {
+        interface Platform {
+            env: {
+                GAME_WORKER: Fetcher;  // Service binding to Worker
+            };
+            cf: CfProperties;
+            ctx: ExecutionContext;
+        }
+    }
+}
+```
+
+---
+
+## 7. Import Ordering
 
 Biome enforces import ordering. Follow this sequence:
 
@@ -310,7 +393,7 @@ import type { Category, ScoringResult } from '$lib/types';
 
 ---
 
-## 7. Component Documentation
+## 8. Component Documentation
 
 Every component should have a JSDoc header:
 
@@ -329,7 +412,7 @@ Every component should have a JSDoc header:
 
 ---
 
-## 8. Agent-Specific Guidance
+## 9. Agent-Specific Guidance
 
 ### Before Modifying Code
 
@@ -360,7 +443,7 @@ Check for:
 
 ---
 
-## 9. Verification Commands
+## 10. Verification Commands
 
 ```bash
 # Check for naming violations
@@ -380,7 +463,16 @@ pnpm web:sync && pnpm --filter @dicee/web exec svelte-check
 
 ## References
 
+### Architecture
+- [Unified Cloudflare Stack](../docs/unified-cloudflare-stack.md) - CF Pages migration
+- [Lobby UX/UI Refactor](../docs/lobby-ux-ui-refactor.md) - Lobby-first UI
+
+### External Docs
 - [Svelte 5 Runes Documentation](https://svelte.dev/docs/svelte/what-are-runes)
 - [SvelteKit Routing](https://svelte.dev/docs/kit/routing)
+- [SvelteKit Cloudflare Adapter](https://kit.svelte.dev/docs/adapter-cloudflare)
 - [Biome Linter Rules](https://biomejs.dev/linter/rules/)
-- Project: `.claude/typescript-biome-strategy.md`
+
+### Project Files
+- `.claude/typescript-biome-strategy.md` - TypeScript patterns
+- `.claude/cli-reference.yaml` - Wrangler, Supabase commands

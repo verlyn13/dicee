@@ -39,29 +39,34 @@ See `.claude/CONVENTIONS.md` for full documentation.
 ---
 
 ## Project Overview
-Dicee is a dice probability engine and web application for learning probability through Yahtzee-style gameplay.
+Dicee is a dice probability engine and web application for learning probability through Yahtzee-style gameplay. It's part of a unified Game Lobby platform.
 
-**Production URL**: https://dicee.jefahnierocks.com
+**Production URL**: https://gamelobby.jefahnierocks.com
 
-See `docs/` for architecture RFCs and milestone plans.
+See `docs/` for architecture RFCs and milestone plans:
+- `docs/unified-cloudflare-stack.md` - Migration guide for CF Pages architecture
+- `docs/lobby-ux-ui-refactor.md` - Lobby UI/UX implementation guide
 
 ## Tech Stack
-- **Frontend**: SvelteKit (Svelte 5 with runes)
+- **Frontend**: SvelteKit (Svelte 5 with runes) on Cloudflare Pages
 - **Engine**: Rust/WASM probability calculations
 - **Backend**: Supabase (Auth, Database, Edge Functions)
-- **Realtime**: Cloudflare Durable Objects (multiplayer, hibernatable WebSockets)
+- **Realtime**: Cloudflare Durable Objects (GlobalLobby singleton + GameRoom per-room)
 - **Edge Compute**: Cloudflare (Workers, Pages, D1, KV, R2)
 - **Secrets**: Infisical (self-hosted at infisical.jefahnierocks.com)
-- **Deployment**: Vercel (frontend), Cloudflare (edge services)
+- **Deployment**: Cloudflare (unified stack: Pages + Workers via Service Bindings)
 - **Package Manager**: pnpm (monorepo)
 
 ## Project Structure
 ```
 packages/
-  engine/     # Rust/WASM probability engine
-  web/        # SvelteKit frontend
+  engine/        # Rust/WASM probability engine
+  web/           # SvelteKit frontend (Cloudflare Pages)
+  cloudflare-do/ # Durable Objects (GameRoom, GlobalLobby)
 docs/
-  m1/         # Milestone 1 planning docs
+  m1/                          # Milestone 1 planning docs
+  unified-cloudflare-stack.md  # CF Pages migration guide
+  lobby-ux-ui-refactor.md      # Lobby UI/UX guide
 .claude/
   AGENT-GUARDRAILS.md       # CRITICAL: Mandatory rules for all agents
   CONVENTIONS.md            # Naming conventions and code patterns
@@ -127,30 +132,54 @@ scripts/
 - **Console**: https://console.cloud.google.com/welcome?project=dicee-480100
 - **Credentials**: https://console.cloud.google.com/apis/credentials?project=dicee-480100
 
-### Vercel Project Configuration
+### Vercel Project Configuration (DEPRECATED)
+> **Status**: Being migrated to Cloudflare Pages. See `docs/unified-cloudflare-stack.md`.
+> Keep as fallback until migration is complete.
+
 - **Project**: dicee
 - **Team**: jeffrey-johnsons-projects-4efd9acb
-- **Production URL**: https://dicee.jefahnierocks.com
+- **Legacy URL**: https://dicee.jefahnierocks.com (will redirect to gamelobby)
 - **Dashboard**: https://vercel.com/jeffrey-johnsons-projects-4efd9acb/dicee
-- **Adapter**: `@sveltejs/adapter-vercel` (Node 22.x runtime)
-- **Region**: sfo1
 
-### Cloudflare Configuration
+### Cloudflare Configuration (PRIMARY)
 - **Account ID**: 13eb584192d9cefb730fde0cfd271328
 - **Zone ID**: 8d5f44e67ab4b37e47b034ff48b03099
 - **Domain**: jefahnierocks.com
-- **Subdomain**: dicee.jefahnierocks.com (A record → Vercel 76.76.21.21)
-- **Services**: Workers, Pages, D1 (SQLite), KV, R2
+- **Production URL**: gamelobby.jefahnierocks.com
+- **Services**: Workers, Pages, Durable Objects, D1 (SQLite), KV, R2
 
-### Durable Objects Configuration (Game Lobby)
+### Cloudflare Pages (SvelteKit Frontend)
+- **Project Name**: gamelobby-pages
+- **Adapter**: `@sveltejs/adapter-cloudflare`
+- **Build Output**: `.svelte-kit/cloudflare`
+- **Service Binding**: `GAME_WORKER` → `gamelobby` worker
+- **Compatibility Flags**: `nodejs_compat`
+
+### Durable Objects Configuration
 - **Worker Name**: gamelobby
-- **Durable Object Class**: GameRoom
 - **Package**: packages/cloudflare-do/
-- **Lobby URL**: gamelobby.jefahnierocks.com (primary entry point)
+- **Production URL**: gamelobby.jefahnierocks.com
+
+**Durable Object Classes:**
+| Class | Type | Purpose |
+|-------|------|---------|
+| `GlobalLobby` | Singleton | Global chat, presence, room browser |
+| `GameRoom` | Per-room | Game state, multiplayer sync |
+
+**Features:**
 - **SQLite Storage**: Built-in, enabled via `new_sqlite_classes`
-- **Hibernation**: Enabled (pay only when processing, not connection duration)
-- **Migration Guide**: docs/dicee-do-migration-guide.md
-- **Auth Flow**: Users authenticate → land in lobby → select/join games (dicee, etc.)
+- **WebSocket Hibernation**: Pay only when processing, not connection duration
+- **Service Bindings**: Zero-latency RPC from Pages (no CORS)
+
+**Route Structure:**
+| Endpoint | Handler |
+|----------|---------|
+| `/ws/lobby` | → GlobalLobby DO (singleton) |
+| `/ws/room/[code]` | → GameRoom DO (per-room) |
+| `/lobby/rooms` | GET public rooms list |
+| `/lobby/online` | GET online count |
+
+**Auth Flow**: Users land on gamelobby.jefahnierocks.com → lobby with chat + game list → select game (dicee) → create/join room → play
 
 ### Quick Reference
 
@@ -171,13 +200,29 @@ supabase functions deploy           # Deploy edge functions
 supabase secrets set KEY=VALUE      # Set secrets
 ```
 
-#### Vercel - Deployment
+#### Vercel - Deployment (DEPRECATED)
+> Use Cloudflare Pages instead. Vercel kept as temporary fallback.
+
 ```bash
 vercel link           # Link to Vercel project
 vercel pull           # Pull env vars and settings
 vercel               # Deploy to preview
 vercel --prod        # Deploy to production
-vercel env list      # List environment variables
+```
+
+#### Cloudflare Pages - Deployment (PRIMARY)
+```bash
+# Build and deploy
+pnpm build                                      # Build SvelteKit
+wrangler pages deploy .svelte-kit/cloudflare    # Deploy to Pages
+wrangler pages deployment list                  # List deployments
+
+# Local development with service bindings
+wrangler pages dev .svelte-kit/cloudflare --compatibility-flags=nodejs_compat
+
+# Secrets for Pages
+wrangler pages secret put SUPABASE_SERVICE_KEY --project-name gamelobby-pages
+wrangler pages secret list --project-name gamelobby-pages
 ```
 
 #### Wrangler - Durable Objects Development
@@ -186,7 +231,7 @@ wrangler login                # Browser-based OAuth login
 wrangler whoami               # Verify authentication
 wrangler dev                  # Start local dev server
 wrangler dev --remote         # Use remote resources
-wrangler deploy               # Deploy to production
+wrangler deploy               # Deploy worker to production
 wrangler deploy --env staging # Deploy to staging
 ```
 
@@ -196,14 +241,14 @@ wrangler d1 list                                # List D1 databases
 wrangler d1 execute DB_NAME --file schema.sql   # Run migrations
 wrangler kv namespace list                      # List KV namespaces
 wrangler r2 bucket list                         # List R2 buckets
-wrangler pages deploy ./dist                    # Deploy Pages site
 ```
 
-#### Wrangler - Secrets
+#### Wrangler - Secrets & Logs
 ```bash
-wrangler secret put API_KEY   # Set secret (prompts for value)
-wrangler secret list          # List all secrets
+wrangler secret put API_KEY   # Set worker secret (prompts)
+wrangler secret list          # List worker secrets
 wrangler tail                 # Stream production logs
+wrangler tail gamelobby       # Tail specific worker
 ```
 
 #### Infisical - Secret Management (Self-hosted)
@@ -230,11 +275,21 @@ infisical scan                                    # Scan for leaked secrets
 # Install dependencies
 pnpm install
 
-# Development
+# Development (Vite dev server)
 pnpm dev              # Start dev server (web package)
+
+# Development (Cloudflare Pages with Service Bindings)
+pnpm build && wrangler pages dev .svelte-kit/cloudflare --compatibility-flags=nodejs_compat
+
+# Development (Durable Objects worker)
+cd packages/cloudflare-do && wrangler dev  # Start DO worker locally
 
 # Build
 pnpm build            # Build all packages
+
+# Deploy
+pnpm build && wrangler pages deploy .svelte-kit/cloudflare  # Deploy Pages
+cd packages/cloudflare-do && wrangler deploy                # Deploy Workers
 
 # Testing
 pnpm test             # Run tests
@@ -301,19 +356,25 @@ pnpm akg:discover --watch      # Watch mode (developer use, not agents)
 
 Environment variables are managed through:
 1. **Infisical**: Primary secret store (all environments) via `infisical secrets`
-2. **Vercel**: Deployment env vars synced from Infisical via `vercel env`
-3. **Supabase**: Edge function secrets via `supabase secrets`
-4. **Cloudflare**: Worker secrets via `wrangler secret`
+2. **Cloudflare Pages**: Env vars via dashboard or `wrangler pages secret`
+3. **Cloudflare Workers**: Secrets via `wrangler secret`
+4. **Supabase**: Edge function secrets via `supabase secrets`
 5. **Local**: `.env.local` file (git-ignored) - export from Infisical
 
-Required variables:
+**Required variables (Pages):**
 - `PUBLIC_SUPABASE_URL` - Supabase project URL
 - `PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
-- `PUBLIC_WORKER_HOST` - Cloudflare Worker URL (gamelobby.jefahnierocks.com)
-- `PUBLIC_USE_DURABLE_OBJECTS` - Feature flag: "true" to use Durable Objects, omit for PartyKit
-- `PUBLIC_PARTYKIT_HOST` - PartyKit host (legacy, default: localhost:1999)
-- `INFISICAL_CLIENT_ID` - For machine identity auth (CI/CD)
-- `INFISICAL_CLIENT_SECRET` - For machine identity auth (CI/CD)
+- `PUBLIC_APP_NAME` - "Game Lobby"
+- `PUBLIC_APP_VERSION` - Current version
+- `SUPABASE_SERVICE_KEY` - Server-side Supabase key (secret)
+
+**Service Bindings (auto-configured in wrangler.toml):**
+- `GAME_WORKER` - Binding to gamelobby worker (provides DO access)
+
+**CI/CD variables:**
+- `INFISICAL_CLIENT_ID` - For machine identity auth
+- `INFISICAL_CLIENT_SECRET` - For machine identity auth
+- `CLOUDFLARE_API_TOKEN` - For wrangler deployments
 
 ## Credential Management (gopass)
 
@@ -397,13 +458,18 @@ wrangler whoami  # Verify authentication
 
 See `.claude/environment-strategy.yaml` for full architecture.
 
-| Environment | Infisical | Vercel | Cloudflare | Purpose |
-|-------------|-----------|--------|------------|---------|
-| `dev` | dev | development | preview | Local development, feature work |
-| `staging` | staging | preview | staging env | Pre-production testing, QA |
+| Environment | Infisical | CF Pages | CF Workers | Purpose |
+|-------------|-----------|----------|------------|---------|
+| `dev` | dev | preview | local | Local development, feature work |
+| `staging` | staging | preview | staging | Pre-production testing, QA |
 | `prod` | prod | production | production | Live users - **restricted** |
 
 **Default to `dev`** for all local work. Never use `prod` without explicit deployment intent.
+
+**Deployment Flow:**
+1. Local dev: `pnpm dev` + `wrangler dev` (separate terminals)
+2. Preview: Push to PR branch → auto-deploy to CF Pages preview
+3. Production: Merge to main → auto-deploy to gamelobby.jefahnierocks.com
 
 ### Infisical Secret Paths
 ```
