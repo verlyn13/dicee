@@ -4,9 +4,11 @@
  *
  * Mode selection and solo game play.
  * Shows GameGateway for mode selection, then inline solo game when selected.
+ * If ?mode=solo query param is present, skips gateway and starts immediately.
  */
 
 import { onMount } from 'svelte';
+import { page } from '$app/stores';
 import { DiceTray } from '$lib/components/dice/index.js';
 import { GameGateway, GameOverModal } from '$lib/components/game/index.js';
 import { GameStatus, KeyboardHelp, StatsToggle } from '$lib/components/hud/index.js';
@@ -30,7 +32,8 @@ import type {
 	TurnAnalysis,
 } from '$lib/types.js';
 
-// View state
+// View state - check if we should skip gateway (e.g., came from lobby SOLO button)
+const skipGateway = $derived($page.url.searchParams.get('mode') === 'solo');
 let showGateway = $state(true);
 let ready = $state(false);
 
@@ -93,6 +96,11 @@ useKeyboardNavigation({
 onMount(async () => {
 	await initializeEngine();
 	ready = true;
+
+	// Auto-start if mode=solo query param (user clicked SOLO from lobby)
+	if (skipGateway) {
+		handleStartSolo();
+	}
 });
 
 function handleStartSolo() {

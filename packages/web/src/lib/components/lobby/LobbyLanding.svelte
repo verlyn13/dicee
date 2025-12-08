@@ -83,9 +83,9 @@ async function handleCreateRoom() {
 	goto(`/games/dicee/room/${code}`);
 }
 
-// Play solo (no WebSocket needed)
+// Play solo (no WebSocket needed) - skip mode selection gateway
 function handlePlaySolo() {
-	goto('/games/dicee');
+	goto('/games/dicee?mode=solo');
 }
 </script>
 
