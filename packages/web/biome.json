@@ -46,7 +46,7 @@
 			},
 			"style": {
 				"useConst": "error",
-				"noNonNullAssertion": "warn",
+				"noNonNullAssertion": "error",
 				"noInferrableTypes": "off",
 				"useTemplate": "warn",
 				"useExponentiationOperator": "warn",
@@ -163,7 +163,12 @@
 			}
 		},
 		{
-			"includes": ["**/stores/**/*.ts", "**/services/**/*.ts"],
+			"includes": [
+				"**/stores/**/*.ts",
+				"**/stores/**/*.svelte.ts",
+				"**/services/**/*.ts",
+				"**/services/**/*.svelte.ts"
+			],
 			"linter": {
 				"rules": {
 					"suspicious": {
