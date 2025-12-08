@@ -6,6 +6,50 @@
 @import "./tokens.css";
 
 /* ==========================================================================
+ * Mobile Keyboard Handling
+ * 
+ * 2025 paradigm for handling mobile keyboard layout issues:
+ * - interactive-widget=resizes-content in viewport meta (Chrome 108+, Firefox 132+)
+ * - svh units for stable viewport height (accounts for browser chrome)
+ * - --keyboard-height CSS var updated by VisualViewport API (all browsers)
+ * - calc(100svh - var(--keyboard-height)) for keyboard-aware containers
+ * 
+ * IMPORTANT: dvh/svh units do NOT respond to keyboard - only browser chrome!
+ * JavaScript (keyboard.ts) is required for actual keyboard height detection.
+ * 
+ * @see docs/references/keyboard-layout-research.md
+ * ========================================================================== */
+
+:root {
+	/* Updated by keyboard.ts via VisualViewport API */
+	--keyboard-height: 0px;
+}
+
+/* Full-height container using svh (stable, accounts for browser chrome) */
+.h-screen-safe {
+	height: 100vh;
+	/* biome-ignore lint/suspicious/noDuplicateProperties: Intentional fallback - svh not supported in older browsers */
+	height: 100svh;
+}
+
+/* Keyboard-aware full-height container */
+.h-screen-keyboard {
+	height: 100vh;
+	/* biome-ignore lint/suspicious/noDuplicateProperties: Intentional fallback */
+	height: calc(100svh - var(--keyboard-height, 0px));
+}
+
+/* Keyboard-aware bottom padding (VirtualKeyboard API + JS fallback) */
+.keyboard-aware-bottom {
+	padding-bottom: env(keyboard-inset-height, var(--keyboard-height, 0px));
+}
+
+/* Safe area insets for notched devices */
+.safe-area-bottom {
+	padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ==========================================================================
  * Reset & Base
  * ========================================================================== */
 

@@ -238,7 +238,9 @@ function handleCloseGameOver(): void {
 	.multiplayer-game-view {
 		display: flex;
 		flex-direction: column;
+		/* Use svh for stable height (accounts for browser chrome) */
 		min-height: 100vh;
+		min-height: 100svh;
 		background: var(--color-background);
 	}
 

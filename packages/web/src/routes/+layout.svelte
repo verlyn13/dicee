@@ -11,6 +11,7 @@ import {
 	trackPageView,
 } from '$lib/services/telemetry';
 import { auth } from '$lib/stores/auth.svelte';
+import { initKeyboardHandler } from '$lib/utils/keyboard';
 
 let { data, children } = $props();
 
@@ -51,6 +52,9 @@ onMount(() => {
 	// Preload WASM engine for faster first-use
 	preloadEngine();
 
+	// Initialize mobile keyboard handler (Safari VisualViewport fallback)
+	const cleanupKeyboard = initKeyboardHandler();
+
 	// Handle page unload for telemetry shutdown
 	const handleBeforeUnload = () => {
 		shutdownTelemetry();
@@ -60,6 +64,7 @@ onMount(() => {
 	return () => {
 		subscription.unsubscribe();
 		window.removeEventListener('beforeunload', handleBeforeUnload);
+		cleanupKeyboard();
 		shutdownTelemetry();
 	};
 });

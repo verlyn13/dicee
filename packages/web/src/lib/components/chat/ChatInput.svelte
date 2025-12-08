@@ -40,6 +40,17 @@ function handleInput(): void {
 function handleBlur(): void {
 	chat.setTyping(false);
 }
+
+/**
+ * Scroll input into view when focused on mobile.
+ * Waits for keyboard animation to complete before scrolling.
+ */
+function handleFocus(): void {
+	// Delay to allow keyboard animation to complete (typically 250-300ms)
+	setTimeout(() => {
+		inputElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+	}, 300);
+}
 </script>
 
 <form class="chat-input-container" onsubmit={handleSubmit}>
@@ -50,6 +61,7 @@ function handleBlur(): void {
 			oninput={handleInput}
 			onkeydown={handleKeydown}
 			onblur={handleBlur}
+			onfocus={handleFocus}
 			placeholder="Type a message..."
 			rows="1"
 			maxlength={CHAT_RATE_LIMITS.MAX_MESSAGE_LENGTH + 50}

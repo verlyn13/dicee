@@ -102,22 +102,44 @@ $effect(() => {
 		overflow: hidden;
 	}
 
-	/* Mobile: Fixed bottom sheet */
+	/* Mobile: Fixed bottom sheet with keyboard-aware layout
+	 * 
+	 * IMPORTANT: position:fixed + bottom:0 is problematic with mobile keyboards.
+	 * The keyboard pushes the visual viewport up, but fixed elements stay relative
+	 * to the layout viewport (which doesn't resize).
+	 * 
+	 * Solution: Use bottom: var(--keyboard-height) to push the panel up when
+	 * keyboard opens. The keyboard.ts utility updates this CSS variable via
+	 * the VisualViewport API.
+	 */
 	@media (max-width: 768px) {
 		.chat-panel {
 			position: fixed;
-			bottom: 0;
+			/* Key fix: bottom offset by keyboard height */
+			bottom: var(--keyboard-height, 0px);
 			left: 0;
 			right: 0;
+			/* Use svh for stable height (accounts for browser chrome) */
 			max-height: 60vh;
+			max-height: 60svh;
 			border-radius: var(--radius-md) var(--radius-md) 0 0;
 			z-index: var(--z-bottomsheet, 100);
-			transition: transform var(--transition-medium) ease;
+			transition:
+				transform var(--transition-medium) ease,
+				bottom var(--transition-medium) ease;
 			box-shadow: var(--shadow-brutal-lg);
+			/* Safe area for notched devices (home indicator) */
+			padding-bottom: env(safe-area-inset-bottom, 0px);
 		}
 
 		.chat-panel.collapsed {
 			transform: translateY(calc(100% - 48px));
+		}
+
+		/* When keyboard is open, reduce max-height to fit */
+		:global(html.keyboard-open) .chat-panel {
+			max-height: 50vh;
+			max-height: 50svh;
 		}
 	}
 
