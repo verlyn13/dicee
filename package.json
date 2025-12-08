@@ -5,6 +5,7 @@
  "scripts": {
     "dev": "pnpm --filter @dicee/web dev",
     "dev:do": "cd packages/cloudflare-do && wrangler dev",
+    "dev:full": "npx concurrently -n 'do,web' -c 'cyan,magenta' 'pnpm dev:do' 'pnpm dev'",
     "build": "pnpm run build:engine && pnpm --filter @dicee/web build",
     "build:engine": "cd packages/engine && wasm-pack build --target web --out-dir ../web/src/lib/wasm",
     "preview": "pnpm --filter @dicee/web preview",

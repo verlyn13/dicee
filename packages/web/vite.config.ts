@@ -22,6 +22,16 @@ export default defineConfig({
 		hmr: {
 			host: 'localhost', // Will be overridden by --host flag
 		},
+
+		// Proxy WebSocket routes to local Durable Objects worker
+		// Run `pnpm dev:do` in a separate terminal first
+		proxy: {
+			'/ws': {
+				target: 'http://localhost:8787',
+				ws: true,
+				changeOrigin: true,
+			},
+		},
 	},
 
 	build: {
