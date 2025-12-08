@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 10eb108e719d215041576d9d54d8f7e44a2e864a
-> Generated: 2025-12-08T05:06:51.194Z
+> Commit: 7a91b0c
+> Generated: 2025-12-08T17:48:00.852Z
 
 ## Store Dependency Diagram
 
