@@ -1,30 +1,10 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
-	graphql_public: {
-		Tables: {
-			[_ in never]: never;
-		};
-		Views: {
-			[_ in never]: never;
-		};
-		Functions: {
-			graphql: {
-				Args: {
-					extensions?: Json;
-					operationName?: string;
-					query?: string;
-					variables?: Json;
-				};
-				Returns: Json;
-			};
-		};
-		Enums: {
-			[_ in never]: never;
-		};
-		CompositeTypes: {
-			[_ in never]: never;
-		};
+	// Allows to automatically instantiate createClient with right options
+	// instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+	__InternalSupabase: {
+		PostgrestVersion: '13.0.5';
 	};
 	public: {
 		Tables: {
@@ -113,6 +93,42 @@ export type Database = {
 						referencedColumns: ['id'];
 					},
 				];
+			};
+			feature_flags: {
+				Row: {
+					created_at: string;
+					description: string | null;
+					enabled: boolean;
+					id: string;
+					min_games_played: number;
+					premium_only: boolean;
+					rollout_percent: number;
+					updated_at: string;
+					user_ids: string[];
+				};
+				Insert: {
+					created_at?: string;
+					description?: string | null;
+					enabled?: boolean;
+					id: string;
+					min_games_played?: number;
+					premium_only?: boolean;
+					rollout_percent?: number;
+					updated_at?: string;
+					user_ids?: string[];
+				};
+				Update: {
+					created_at?: string;
+					description?: string | null;
+					enabled?: boolean;
+					id?: string;
+					min_games_played?: number;
+					premium_only?: boolean;
+					rollout_percent?: number;
+					updated_at?: string;
+					user_ids?: string[];
+				};
+				Relationships: [];
 			};
 			game_players: {
 				Row: {
@@ -565,9 +581,6 @@ export type CompositeTypes<
 		: never;
 
 export const Constants = {
-	graphql_public: {
-		Enums: {},
-	},
 	public: {
 		Enums: {},
 	},
