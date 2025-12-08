@@ -85,6 +85,14 @@ export class GlobalLobby extends DurableObject<Env> {
 	/** Rate limiting: userId -> message timestamps */
 	private rateLimits: Map<string, number[]> = new Map();
 
+	/**
+	 * User presence tracking: userId -> connection count
+	 * Tracks how many connections each unique user has.
+	 * A user is "online" if they have >= 1 connection.
+	 * This ensures multiple tabs from same user = 1 online user.
+	 */
+	private userConnections: Map<string, number> = new Map();
+
 	// =========================================================================
 	// Main Entry Point
 	// =========================================================================
@@ -138,36 +146,44 @@ export class GlobalLobby extends DurableObject<Env> {
 		};
 		server.serializeAttachment(presence);
 
+		// Track user connection (for unique user counting)
+		const previousCount = this.userConnections.get(userId) || 0;
+		const isNewUser = previousCount === 0;
+		this.userConnections.set(userId, previousCount + 1);
+
 		// Send initial state to new connection
 		this.sendInitialState(server);
 
-		// Broadcast join to others
-		this.broadcast(
-			{
-				type: 'presence',
-				payload: {
-					action: 'join',
-					userId,
-					displayName,
-					avatarSeed,
-					onlineCount: this.ctx.getWebSockets().length,
+		// Only broadcast join if this is the user's first connection
+		// (prevents "X joined" spam when same user opens multiple tabs)
+		if (isNewUser) {
+			this.broadcast(
+				{
+					type: 'presence',
+					payload: {
+						action: 'join',
+						userId,
+						displayName,
+						avatarSeed,
+						onlineCount: this.getUniqueUserCount(),
+					},
+					timestamp: Date.now(),
 				},
-				timestamp: Date.now(),
-			},
-			server,
-		);
+				server,
+			);
+		}
 
 		return new Response(null, { status: 101, webSocket: client });
 	}
 
 	private sendInitialState(ws: WebSocket): void {
-		// Send current online count
+		// Send current online count (unique users, not connections)
 		ws.send(
 			JSON.stringify({
 				type: 'presence',
 				payload: {
 					action: 'init',
-					onlineCount: this.ctx.getWebSockets().length,
+					onlineCount: this.getUniqueUserCount(),
 				},
 				timestamp: Date.now(),
 			}),
@@ -273,23 +289,36 @@ export class GlobalLobby extends DurableObject<Env> {
 		const attachment = ws.deserializeAttachment() as UserPresence | null;
 
 		if (attachment) {
-			// Clean up rate limits
-			this.rateLimits.delete(attachment.userId);
+			const { userId, displayName } = attachment;
 
-			// Broadcast leave
-			this.broadcast(
-				{
-					type: 'presence',
-					payload: {
-						action: 'leave',
-						userId: attachment.userId,
-						displayName: attachment.displayName,
-						onlineCount: this.ctx.getWebSockets().length - 1,
+			// Decrement user connection count
+			const currentCount = this.userConnections.get(userId) || 1;
+			const newCount = currentCount - 1;
+			const isLastConnection = newCount <= 0;
+
+			if (isLastConnection) {
+				// User fully disconnected - clean up
+				this.userConnections.delete(userId);
+				this.rateLimits.delete(userId);
+
+				// Broadcast leave only when user's last connection closes
+				this.broadcast(
+					{
+						type: 'presence',
+						payload: {
+							action: 'leave',
+							userId,
+							displayName,
+							onlineCount: this.getUniqueUserCount(),
+						},
+						timestamp: Date.now(),
 					},
-					timestamp: Date.now(),
-				},
-				ws,
-			);
+					ws,
+				);
+			} else {
+				// User still has other connections open
+				this.userConnections.set(userId, newCount);
+			}
 		}
 
 		console.log(`[GlobalLobby] WebSocket closed: ${code} - ${reason}`);
@@ -401,7 +430,8 @@ export class GlobalLobby extends DurableObject<Env> {
 	private getLobbyInfo(): Response {
 		return Response.json({
 			service: 'Game Lobby',
-			onlineCount: this.ctx.getWebSockets().length,
+			onlineCount: this.getUniqueUserCount(),
+			connectionCount: this.ctx.getWebSockets().length,
 			roomCount: this.activeRooms.size,
 			publicRoomCount: Array.from(this.activeRooms.values()).filter((r) => r.isPublic).length,
 		});
@@ -417,8 +447,21 @@ export class GlobalLobby extends DurableObject<Env> {
 
 	private getOnlineCount(): Response {
 		return Response.json({
-			count: this.ctx.getWebSockets().length,
+			count: this.getUniqueUserCount(),
+			connections: this.ctx.getWebSockets().length,
 		});
+	}
+
+	// =========================================================================
+	// User Presence Helpers
+	// =========================================================================
+
+	/**
+	 * Get count of unique online users (not connections).
+	 * A user with 3 tabs open counts as 1 user.
+	 */
+	private getUniqueUserCount(): number {
+		return this.userConnections.size;
 	}
 
 	// =========================================================================

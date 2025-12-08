@@ -195,22 +195,29 @@ structure:
             description: "Dicee project subdomain"
 
         api_tokens:
+          # IMPORTANT: Use Account API Token (not User API Token) for CI/CD
+          # - User tokens: My Profile → API Tokens (tied to user, breaks if user leaves)
+          # - Account tokens: Manage Account → Account API Tokens (service principal, durable)
+          # See: docs/references/cloudflare/cloudflare-account-api-token.md
           - path: "dicee/cloudflare/api-token"
             value: "[MANUAL_ENTRY]"
-            description: "Primary API token for wrangler CLI"
+            description: "Account API token for wrangler CLI and CI deployment"
             sensitive: true
+            token_type: "account"  # NOT user token - use Account API Tokens
+            create_at: "Manage Account → Account API Tokens"
             permissions:
-              - "Workers Scripts: Edit"
-              - "Workers KV Storage: Edit"
-              - "D1: Edit"
-              - "Workers R2 Storage: Edit"
-              - "Account Settings: Read"
-              - "Zone Settings: Read"
-              - "DNS: Edit"
+              # Required for current infrastructure
+              - "Cloudflare Pages: Edit"      # Deploy SvelteKit frontend
+              - "Workers Scripts: Edit"       # Deploy Durable Objects worker
+              - "Account Settings: Read"      # wrangler whoami, account verification
+              # Optional for future use
+              # - "Workers KV Storage: Edit"  # If KV bindings added
+              # - "D1: Edit"                  # If D1 database added
+              # - "Workers R2 Storage: Edit"  # If R2 storage added
           - path: "dicee/cloudflare/api-token-name"
-            description: "Token name for reference"
+            description: "Token name for reference (e.g., dicee-ci-deploy)"
           - path: "dicee/cloudflare/api-token-expiry"
-            description: "Token expiration date"
+            description: "Token expiration date (optional)"
 
 # Usage patterns for retrieval
 usage:

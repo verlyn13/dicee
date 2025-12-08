@@ -214,7 +214,7 @@ services:
       subdomain: "dicee.jefahnierocks.com"
 
     credentials_in_gopass:
-      - dicee/cloudflare/api-token
+      - dicee/cloudflare/api-token  # Account API Token (not User token)
       - dicee/cloudflare/account-id
       - dicee/cloudflare/zone-id
 
@@ -222,15 +222,23 @@ services:
       - CLOUDFLARE_API_TOKEN  # For CI/CD pipelines
       - CLOUDFLARE_ACCOUNT_ID
 
+    # Token Types (IMPORTANT DISTINCTION):
+    # - User API Token: My Profile → API Tokens (tied to user, ad-hoc scripting)
+    # - Account API Token: Manage Account → Account API Tokens (service principal, CI/CD)
+    # For CI/CD, ALWAYS use Account API Token for durability
+    # See: docs/references/cloudflare/cloudflare-account-api-token.md
+
     auth_methods:
       local_development:
-        method: "OAuth via wrangler login or API token"
+        method: "OAuth via wrangler login or Account API token"
         commands:
-          - "wrangler login                                    # OAuth flow"
+          - "wrangler login                                    # OAuth flow (interactive)"
           - "export CLOUDFLARE_API_TOKEN=$(gopass show -o dicee/cloudflare/api-token)"
       ci_cd:
-        method: "API token from Infisical"
+        method: "Account API token from GitHub Secrets"
         env_var: "CLOUDFLARE_API_TOKEN"
+        token_type: "account"  # Must be Account API Token, not User token
+        create_at: "Manage Account → Account API Tokens"
 
     services:
       workers:

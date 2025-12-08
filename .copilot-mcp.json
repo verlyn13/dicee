@@ -1,0 +1,39 @@
+{
+  "mcpServers": {
+    "memory": {
+      "type": "local",
+      "command": "node",
+      "args": [
+        "./node_modules/@modelcontextprotocol/server-memory/dist/index.js"
+      ],
+      "env": {
+        "MEMORY_FILE_PATH": "/Users/verlyn13/Development/personal/dicee/.claude/state/memory.jsonl"
+      },
+      "description": "Dicee project knowledge graph for persistent state",
+      "tools": ["*"]
+    },
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=duhsbuyxyppgbkwbbtqg&read_only=false&features=database,docs,functions",
+      "headers": {
+        "Authorization": "Bearer ${SUPABASE_MCP_TOKEN}"
+      },
+      "description": "Dicee Supabase database, migrations, and edge functions",
+      "tools": ["*"]
+    },
+    "akg": {
+      "type": "local",
+      "command": "bun",
+      "args": [
+        "run",
+        "./packages/web/src/tools/akg/mcp/server.ts"
+      ],
+      "env": {
+        "AKG_GRAPH_PATH": "./docs/architecture/akg/graph/current.json",
+        "AKG_DIAGRAMS_PATH": "./docs/architecture/akg/diagrams"
+      },
+      "description": "Dicee Architecture Knowledge Graph for layer validation and invariants",
+      "tools": ["*"]
+    }
+  }
+}
