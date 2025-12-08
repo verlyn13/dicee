@@ -1,7 +1,8 @@
 # Dicee Web - Cloudflare Pages Configuration
 # SvelteKit frontend with Service Binding to gamelobby Worker
 
-name = "gamelobby-pages"
+name = "dicee"
+pages_build_output_dir = ".svelte-kit/cloudflare"
 compatibility_date = "2024-12-01"
 
 # Enable Node.js compatibility for SSR
