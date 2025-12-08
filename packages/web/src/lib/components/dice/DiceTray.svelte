@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { DiceArray, KeptMask } from '$lib/types.js';
+import type { DiceArray, KeepRecommendation, KeptMask } from '$lib/types.js';
 import { haptic } from '$lib/utils/haptics';
 import Die from './Die.svelte';
 
@@ -10,6 +10,12 @@ interface Props {
 	canRoll: boolean;
 	canKeep: boolean;
 	rolling?: boolean;
+	/** Keep recommendation from the engine for showing suggestions */
+	keepSuggestion?: KeepRecommendation;
+	/** Current EV before any action */
+	currentEV?: number;
+	/** Show suggestions tooltip on roll button */
+	showSuggestions?: boolean;
 	onRoll: () => void;
 	onToggleKeep: (index: number) => void;
 	onKeepAll?: () => void;
@@ -23,6 +29,9 @@ let {
 	canRoll,
 	canKeep,
 	rolling = false,
+	keepSuggestion,
+	currentEV = 0,
+	showSuggestions = false,
 	onRoll,
 	onToggleKeep,
 	onKeepAll,
@@ -32,6 +41,55 @@ let {
 const isFirstRoll = $derived(rollsRemaining === 3);
 const isFinalRoll = $derived(rollsRemaining === 0);
 const keptCount = $derived(kept.filter(Boolean).length);
+
+// Die faces for display
+const DIE_FACES = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'] as const;
+
+// Suggestion display state
+let showTooltip = $state(false);
+
+// Format keep pattern as dice faces
+const suggestionDice = $derived.by(() => {
+	if (!keepSuggestion) return '';
+	const pattern = keepSuggestion.keepPattern;
+	const faces: string[] = [];
+	for (let i = 0; i < 6; i++) {
+		for (let j = 0; j < pattern[i]; j++) {
+			faces.push(DIE_FACES[i]);
+		}
+	}
+	return faces.join('');
+});
+
+// Check if there's a meaningful suggestion to show
+const hasSuggestion = $derived(
+	showSuggestions && keepSuggestion && !isFirstRoll && !isFinalRoll && rollsRemaining > 0,
+);
+
+// Calculate suggested dice indices for highlighting
+const suggestedKeepIndices = $derived.by(() => {
+	if (!keepSuggestion) return new Set<number>();
+	const pattern = keepSuggestion.keepPattern;
+	const indices = new Set<number>();
+
+	// Match pattern to actual dice - for each face value, find matching dice
+	const remaining = [...pattern] as number[];
+	for (let i = 0; i < dice.length; i++) {
+		const faceIndex = dice[i] - 1; // Convert 1-6 to 0-5
+		if (remaining[faceIndex] > 0) {
+			indices.add(i);
+			remaining[faceIndex]--;
+		}
+	}
+	return indices;
+});
+
+// Format EV change
+function formatEVChange(from: number, to: number): string {
+	const delta = to - from;
+	const sign = delta >= 0 ? '+' : '';
+	return `${from.toFixed(1)} → ${to.toFixed(1)} (${sign}${delta.toFixed(1)})`;
+}
 
 // Track landing state for animation
 let wasRolling = $state(false);
@@ -69,13 +127,28 @@ function handleRoll() {
 					disabled={!canKeep}
 					{rolling}
 					{landing}
+					suggested={hasSuggestion && suggestedKeepIndices.has(i)}
 					onclick={() => canKeep && onToggleKeep(i)}
 				/>
 			{/each}
 		</div>
 
-		<!-- Roll Button -->
-		<button class="roll-btn" class:rolling onclick={handleRoll} disabled={!canRoll}>
+		<!-- Roll Button with Suggestion Tooltip -->
+		<div
+			class="roll-container"
+			onmouseenter={() => (showTooltip = true)}
+			onmouseleave={() => (showTooltip = false)}
+			onfocusin={() => (showTooltip = true)}
+			onfocusout={() => (showTooltip = false)}
+		>
+			{#if hasSuggestion && showTooltip && keepSuggestion}
+				<div class="suggestion-tooltip" role="tooltip">
+					<span class="tooltip-label">Suggested:</span>
+					<span class="tooltip-dice">{suggestionDice || 'Roll all'}</span>
+					<span class="tooltip-ev">EV: {formatEVChange(currentEV, keepSuggestion.expectedValue)}</span>
+				</div>
+			{/if}
+			<button class="roll-btn" class:rolling onclick={handleRoll} disabled={!canRoll}>
 			{#if rolling}
 				ROLLING...
 			{:else if isFirstRoll}
@@ -85,7 +158,8 @@ function handleRoll() {
 			{:else}
 				REROLL ({rollsRemaining})
 			{/if}
-		</button>
+			</button>
+		</div>
 
 		<!-- Quick Actions -->
 		{#if canKeep && !isFirstRoll}
@@ -160,10 +234,70 @@ function handleRoll() {
 		}
 	}
 
+	/* Roll Container with Tooltip */
+	.roll-container {
+		position: relative;
+		width: 100%;
+		max-width: 300px;
+	}
+
+	.suggestion-tooltip {
+		position: absolute;
+		bottom: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		margin-bottom: var(--space-2);
+		padding: var(--space-2) var(--space-3);
+		background: var(--color-surface);
+		border: var(--border-medium);
+		white-space: nowrap;
+		z-index: 10;
+		animation: tooltip-appear 0.15s ease-out;
+	}
+
+	.suggestion-tooltip::after {
+		content: '';
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 6px solid transparent;
+		border-top-color: var(--color-text);
+	}
+
+	@keyframes tooltip-appear {
+		from {
+			opacity: 0;
+			transform: translateX(-50%) translateY(4px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(-50%) translateY(0);
+		}
+	}
+
+	.tooltip-label {
+		font-size: var(--text-small);
+		font-weight: var(--weight-semibold);
+		color: var(--color-text-muted);
+		margin-right: var(--space-1);
+	}
+
+	.tooltip-dice {
+		font-size: var(--text-h3);
+		letter-spacing: -0.05em;
+		margin-right: var(--space-2);
+	}
+
+	.tooltip-ev {
+		font-size: var(--text-small);
+		font-family: var(--font-mono);
+		color: var(--color-success);
+	}
+
 	/* Roll Button */
 	.roll-btn {
 		width: 100%;
-		max-width: 300px;
 		padding: var(--space-2) var(--space-4);
 		font-size: var(--text-body);
 		font-weight: var(--weight-bold);

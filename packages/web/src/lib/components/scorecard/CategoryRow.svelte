@@ -72,6 +72,15 @@ const simplifiedProbability = $derived.by(() => {
 	return 'Unlikely';
 });
 
+// EV Delta calculation: potentialScore - expectedValue
+// Positive = scoring above expectation, Negative = scoring below
+const evDelta = $derived(potentialScore - expectedValue);
+const hasPositiveDelta = $derived(evDelta > 0.5); // Threshold to avoid noise
+const hasNegativeDelta = $derived(evDelta < -0.5);
+
+// Market-style display for expert profile
+const showMarketStyle = $derived(statsProfile === 'expert' && showEV);
+
 // Format helpers
 function formatPercent(n: number): string {
 	return (n * 100).toFixed(1) + '%';
@@ -79,6 +88,11 @@ function formatPercent(n: number): string {
 
 function formatEV(n: number): string {
 	return n.toFixed(1);
+}
+
+function formatDelta(n: number): string {
+	const sign = n >= 0 ? '+' : '';
+	return sign + n.toFixed(1);
 }
 
 // Category icons
@@ -138,12 +152,37 @@ const categoryIcons: Record<Category, string> = {
 		<div class="category-stats">
 			{#if showSimplified}
 				<span class="simple-prob">{simplifiedProbability}</span>
+			{:else if showMarketStyle}
+				<!-- Expert: Market-style display -->
+				<span class="market-display">
+					<span class="market-current">{potentialScore}</span>
+					<span class="market-separator">|</span>
+					<span class="market-ev">EV: {formatEV(expectedValue)}</span>
+					<span class="market-separator">|</span>
+					<span
+						class="market-delta"
+						class:positive={hasPositiveDelta}
+						class:negative={hasNegativeDelta}
+					>
+						{#if hasPositiveDelta}▲{:else if hasNegativeDelta}▼{:else}={/if}
+						{formatDelta(evDelta)}
+					</span>
+				</span>
 			{:else if showProbability}
 				<span class="probability">{formatPercent(probability)}</span>
-			{/if}
-
-			{#if showEV}
-				<span class="ev">EV: {formatEV(expectedValue)}</span>
+				{#if showEV}
+					<span class="ev">EV: {formatEV(expectedValue)}</span>
+					{#if hasPositiveDelta || hasNegativeDelta}
+						<span
+							class="ev-delta"
+							class:positive={hasPositiveDelta}
+							class:negative={hasNegativeDelta}
+						>
+							{#if hasPositiveDelta}▲{:else}▼{/if}
+							{formatDelta(evDelta)}
+						</span>
+					{/if}
+				{/if}
 			{/if}
 		</div>
 	{/if}
@@ -333,6 +372,68 @@ const categoryIcons: Record<Category, string> = {
 	.simple-prob {
 		font-size: var(--text-small);
 		font-weight: var(--weight-medium);
+		color: var(--color-text-muted);
+	}
+
+	/* EV Delta Indicator */
+	.ev-delta {
+		font-size: var(--text-small);
+		font-weight: var(--weight-semibold);
+		padding: 0 var(--space-1);
+		border-radius: 2px;
+	}
+
+	.ev-delta.positive {
+		color: var(--color-success);
+		background: color-mix(in srgb, var(--color-success) 15%, transparent);
+	}
+
+	.ev-delta.negative {
+		color: var(--color-error);
+		background: color-mix(in srgb, var(--color-error) 15%, transparent);
+	}
+
+	/* Market-style Display (Expert) */
+	.market-display {
+		display: flex;
+		align-items: center;
+		gap: var(--space-1);
+		font-size: var(--text-small);
+		font-family: var(--font-mono);
+	}
+
+	.market-current {
+		font-weight: var(--weight-bold);
+		color: var(--color-text);
+	}
+
+	.market-separator {
+		color: var(--color-text-muted);
+		opacity: 0.5;
+	}
+
+	.market-ev {
+		color: var(--color-text-muted);
+	}
+
+	.market-delta {
+		font-weight: var(--weight-semibold);
+		padding: 1px 4px;
+		border-radius: 2px;
+	}
+
+	.market-delta.positive {
+		color: var(--color-success);
+		background: color-mix(in srgb, var(--color-success) 15%, transparent);
+	}
+
+	.market-delta.negative {
+		color: var(--color-error);
+		background: color-mix(in srgb, var(--color-error) 15%, transparent);
+	}
+
+	/* Neutral delta (within threshold) */
+	.market-delta:not(.positive):not(.negative) {
 		color: var(--color-text-muted);
 	}
 

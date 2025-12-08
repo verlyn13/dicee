@@ -9,6 +9,8 @@ interface Props {
 	rolling?: boolean;
 	/** Whether the die just landed (triggers land animation) */
 	landing?: boolean;
+	/** Whether this die is suggested to keep (coach mode highlight) */
+	suggested?: boolean;
 	onclick?: () => void;
 }
 
@@ -18,6 +20,7 @@ let {
 	disabled = false,
 	rolling = false,
 	landing = false,
+	suggested = false,
 	onclick,
 }: Props = $props();
 
@@ -50,10 +53,11 @@ function handleClick() {
 	class:kept
 	class:rolling
 	class:landing
+	class:suggested
 	class:value-changed={showValueChange}
 	{disabled}
 	onclick={handleClick}
-	aria-label="Die showing {value}, {kept ? 'held' : 'not held'}"
+	aria-label="Die showing {value}, {kept ? 'held' : 'not held'}{suggested ? ', suggested to keep' : ''}"
 	aria-pressed={kept}
 >
 	<div class="face" data-value={value}>
@@ -130,6 +134,29 @@ function handleClick() {
 
 	.die.kept:hover:not(:disabled) {
 		transform: translateY(-8px);
+	}
+
+	/* Suggested state (coach mode) */
+	.die.suggested:not(.kept) {
+		border-color: var(--color-success);
+		box-shadow:
+			0 0 0 2px var(--color-success),
+			0 0 8px color-mix(in srgb, var(--color-success) 50%, transparent);
+		animation: suggestion-pulse 1.5s ease-in-out infinite;
+	}
+
+	@keyframes suggestion-pulse {
+		0%,
+		100% {
+			box-shadow:
+				0 0 0 2px var(--color-success),
+				0 0 8px color-mix(in srgb, var(--color-success) 50%, transparent);
+		}
+		50% {
+			box-shadow:
+				0 0 0 3px var(--color-success),
+				0 0 16px color-mix(in srgb, var(--color-success) 70%, transparent);
+		}
 	}
 
 	.die.rolling {
