@@ -228,9 +228,9 @@ impl DiceConfig {
         best_face
     }
 
-    /// Returns true if all 5 dice show the same face (Yahtzee).
+    /// Returns true if all 5 dice show the same face (Dicee/5-of-a-kind).
     #[inline]
-    pub fn is_yahtzee(&self) -> bool {
+    pub fn is_dicee(&self) -> bool {
         self.max_count() == 5
     }
 
@@ -413,13 +413,13 @@ mod tests {
     }
 
     #[test]
-    fn test_yahtzee_detection() {
-        let yahtzee = DiceConfig::from_dice(&[3, 3, 3, 3, 3]);
-        assert!(yahtzee.is_yahtzee());
-        assert_eq!(yahtzee.multiplicity(), 1);
+    fn test_dicee_detection() {
+        let dicee = DiceConfig::from_dice(&[3, 3, 3, 3, 3]);
+        assert!(dicee.is_dicee());
+        assert_eq!(dicee.multiplicity(), 1);
 
-        let not_yahtzee = DiceConfig::from_dice(&[3, 3, 3, 3, 4]);
-        assert!(!not_yahtzee.is_yahtzee());
+        let not_dicee = DiceConfig::from_dice(&[3, 3, 3, 3, 4]);
+        assert!(!not_dicee.is_dicee());
     }
 
     #[test]
@@ -452,8 +452,8 @@ mod tests {
     #[test]
     fn test_specific_multiplicities() {
         // All same: 5!/5! = 1
-        let yahtzee = DiceConfig::from_dice(&[4, 4, 4, 4, 4]);
-        assert_eq!(yahtzee.multiplicity(), 1);
+        let dicee = DiceConfig::from_dice(&[4, 4, 4, 4, 4]);
+        assert_eq!(dicee.multiplicity(), 1);
 
         // All different: 5!/1!^5 = 120
         let all_diff = DiceConfig::from_dice(&[1, 2, 3, 4, 5]);

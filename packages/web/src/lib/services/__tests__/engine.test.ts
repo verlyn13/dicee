@@ -45,7 +45,7 @@ describe('Engine Service', () => {
 	});
 
 	describe('analyzeTurnOptimal', () => {
-		it('returns valid TurnAnalysis for Yahtzee dice', async () => {
+		it('returns valid TurnAnalysis for Dicee dice', async () => {
 			const { initializeEngine, isNewEngineEnabled } = await import('../engine');
 			const { analyzeTurnOptimal } = await import('../engine');
 			await initializeEngine();
@@ -61,9 +61,9 @@ describe('Engine Service', () => {
 			expect(result.expectedValue).toBeGreaterThanOrEqual(0);
 			expect(result.categories).toBeDefined();
 
-			// New engine should recommend scoring Yahtzee immediately
+			// New engine should recommend scoring Dicee immediately
 			if (isNewEngineEnabled() && result.action === 'score') {
-				expect(result.recommendedCategory).toBe('Yahtzee');
+				expect(result.recommendedCategory).toBe('Dicee');
 				expect(result.categoryScore).toBe(50);
 			}
 		});
@@ -129,7 +129,7 @@ describe('Engine Service', () => {
 
 			const dice: DiceArray = [6, 6, 6, 6, 1];
 			const rollsRemaining = 1;
-			const availableCategories: Category[] = ['Sixes', 'FourOfAKind', 'Yahtzee'];
+			const availableCategories: Category[] = ['Sixes', 'FourOfAKind', 'Dicee'];
 
 			const result = await analyzeTurnOptimal(dice, rollsRemaining, availableCategories);
 
@@ -156,7 +156,7 @@ describe('TurnAnalysis Type Validation', () => {
 		await initializeEngine();
 
 		const dice: DiceArray = [5, 5, 5, 5, 5];
-		const result = await analyzeTurnOptimal(dice, 0, ['Yahtzee']);
+		const result = await analyzeTurnOptimal(dice, 0, ['Dicee']);
 
 		// Type guard: when action is 'score', these should be defined
 		if (result.action === 'score') {

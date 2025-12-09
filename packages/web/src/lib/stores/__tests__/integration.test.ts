@@ -223,15 +223,15 @@ describe('Store Integration - Scorecard', () => {
 
 	it('prevents scoring same category twice', () => {
 		game.roll();
-		game.score('Yahtzee');
+		game.score('Dicee');
 
-		expect(game.scorecard.isAvailable('Yahtzee')).toBe(false);
+		expect(game.scorecard.isAvailable('Dicee')).toBe(false);
 
 		// Scoring again should not change the value
-		const yahtzeeScore = game.scorecard.scores.Yahtzee;
+		const diceeScore = game.scorecard.scores.Dicee;
 		game.roll();
-		game.score('Yahtzee'); // Should be no-op
-		expect(game.scorecard.scores.Yahtzee).toBe(yahtzeeScore);
+		game.score('Dicee'); // Should be no-op
+		expect(game.scorecard.scores.Dicee).toBe(diceeScore);
 	});
 });
 

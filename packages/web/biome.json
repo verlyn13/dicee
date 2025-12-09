@@ -139,6 +139,9 @@
 		},
 		{
 			"includes": ["**/database.ts", "**/*.d.ts"],
+			"formatter": {
+				"enabled": false
+			},
 			"linter": {
 				"rules": {
 					"style": {
@@ -173,6 +176,14 @@
 				"rules": {
 					"suspicious": {
 						"noConsole": "off"
+					},
+					"complexity": {
+						"noExcessiveCognitiveComplexity": {
+							"level": "warn",
+							"options": {
+								"maxAllowedComplexity": 25
+							}
+						}
 					}
 				}
 			}
@@ -183,6 +194,21 @@
 				"rules": {
 					"suspicious": {
 						"noConsole": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/supabase/**/*.ts"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noExcessiveCognitiveComplexity": {
+							"level": "warn",
+							"options": {
+								"maxAllowedComplexity": 45
+							}
+						}
 					}
 				}
 			}

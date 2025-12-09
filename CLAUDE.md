@@ -16,6 +16,11 @@
 4. **Ask when stuck** - When in doubt, ask the human
 5. **Follow conventions** - Read `.claude/CONVENTIONS.md` for naming patterns
 
+### Session Startup (Human)
+> **IMPORTANT**: Start Claude Code with `dicee-claude` to enable Supabase MCP.
+> This loads `SUPABASE_MCP_TOKEN` from gopass. Without it, database tools won't work.
+> Check status: `claude mcp list` should show supabase as "✓ Connected"
+
 ### Naming Conventions (Quick Reference)
 ```
 Component files: PascalCase.svelte
@@ -34,6 +39,7 @@ See `.claude/CONVENTIONS.md` for full documentation.
 - `/verify [id]` - Verify task completion
 - `/handoff` - Generate session handoff notes
 - `/quality` - Run quality gate (includes AKG invariant checks)
+- `/health` - Quick diagnostic of MCP servers, hooks, and state files
 - `/akg [subcommand]` - Architecture queries (layer, node, import, diagram, check)
 
 ---

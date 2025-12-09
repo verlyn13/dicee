@@ -1,11 +1,11 @@
 //! Known position tests for the Dicee solver.
 //!
 //! These tests validate that the solver produces optimal decisions for
-//! well-documented Yahtzee positions from the literature.
+//! well-documented dice game positions from the literature.
 //!
 //! References:
-//! - Woodward, "The Mathematics of Yahtzee" (2009)
-//! - Official Yahtzee optimal strategy guides
+//! - Woodward, "The Mathematics of Yahtzee" (2009) - mathematical foundations
+//! - Optimal strategy guides for 5-dice games
 
 use dicee_engine::core::category::{Category, CategorySet};
 use dicee_engine::core::config::DiceConfig;
@@ -18,12 +18,12 @@ fn state(dice: [u8; 5], rolls: u8) -> TurnState {
 }
 
 // =============================================================================
-// YAHTZEE POSITIONS - Must always score immediately
+// DICEE POSITIONS - Must always score immediately
 // =============================================================================
 
 #[test]
-fn test_yahtzee_with_yahtzee_available() {
-    // [5,5,5,5,5] with Yahtzee available: MUST score 50 immediately
+fn test_dicee_with_dicee_available() {
+    // [5,5,5,5,5] with Dicee available: MUST score 50 immediately
     let solver = TurnSolver::new();
     let state = state([5, 5, 5, 5, 5], 2);
     let available = CategorySet::all();
@@ -35,7 +35,7 @@ fn test_yahtzee_with_yahtzee_available() {
         "Should recommend scoring"
     );
     if let Action::Score { category } = analysis.recommendation {
-        assert_eq!(category, Category::Yahtzee, "Should score Yahtzee");
+        assert_eq!(category, Category::Dicee, "Should score Dicee");
     }
     assert!(
         (analysis.expected_value - 50.0).abs() < 0.01,
@@ -44,8 +44,8 @@ fn test_yahtzee_with_yahtzee_available() {
 }
 
 #[test]
-fn test_yahtzee_ones() {
-    // [1,1,1,1,1] - Yahtzee with all ones
+fn test_dicee_ones() {
+    // [1,1,1,1,1] - Dicee with all ones
     let solver = TurnSolver::new();
     let state = state([1, 1, 1, 1, 1], 2);
     let available = CategorySet::all();
@@ -54,13 +54,13 @@ fn test_yahtzee_ones() {
 
     assert!(analysis.recommendation.is_score());
     if let Action::Score { category } = analysis.recommendation {
-        assert_eq!(category, Category::Yahtzee);
+        assert_eq!(category, Category::Dicee);
     }
 }
 
 #[test]
-fn test_yahtzee_sixes() {
-    // [6,6,6,6,6] - Yahtzee with all sixes
+fn test_dicee_sixes() {
+    // [6,6,6,6,6] - Dicee with all sixes
     let solver = TurnSolver::new();
     let state = state([6, 6, 6, 6, 6], 2);
     let available = CategorySet::all();
@@ -69,7 +69,7 @@ fn test_yahtzee_sixes() {
 
     assert!(analysis.recommendation.is_score());
     if let Action::Score { category } = analysis.recommendation {
-        assert_eq!(category, Category::Yahtzee);
+        assert_eq!(category, Category::Dicee);
     }
 }
 
@@ -117,33 +117,33 @@ fn test_large_straight_2_to_6() {
 }
 
 // =============================================================================
-// FOUR OF A KIND POSITIONS - Should reroll for Yahtzee
+// FOUR OF A KIND POSITIONS - Should reroll for Dicee
 // =============================================================================
 
 #[test]
-fn test_four_of_kind_reroll_for_yahtzee() {
-    // [3,3,3,3,1] with Yahtzee available and 2 rolls remaining
-    // Optimal: keep the 3s, reroll the 1 hoping for Yahtzee
+fn test_four_of_kind_reroll_for_dicee() {
+    // [3,3,3,3,1] with Dicee available and 2 rolls remaining
+    // Optimal: keep the 3s, reroll the 1 hoping for Dicee
     let solver = TurnSolver::new();
     let state = state([3, 3, 3, 3, 1], 2);
 
-    // Only Yahtzee available - should definitely try for it
-    let available = CategorySet::new().with(Category::Yahtzee);
+    // Only Dicee available - should definitely try for it
+    let available = CategorySet::new().with(Category::Dicee);
 
     let analysis = solver.analyze(&state, &available);
 
-    // With 2 rolls and only Yahtzee available, rerolling has higher EV
-    // Probability of hitting Yahtzee from 4-of-a-kind is ~11% per roll
+    // With 2 rolls and only Dicee available, rerolling has higher EV
+    // Probability of hitting Dicee from 4-of-a-kind is ~11% per roll
     assert!(
         analysis.recommendation.is_reroll(),
-        "Should reroll when chasing Yahtzee"
+        "Should reroll when chasing Dicee"
     );
 }
 
 #[test]
 fn test_four_of_kind_all_categories() {
     // [4,4,4,4,2] with all categories available
-    // This is a trickier decision - FourOfAKind scores 18, Yahtzee would be 50
+    // This is a trickier decision - FourOfAKind scores 18, Dicee would be 50
     let solver = TurnSolver::new();
     let state = state([4, 4, 4, 4, 2], 2);
     let available = CategorySet::all();

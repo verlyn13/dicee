@@ -227,7 +227,7 @@ mod tests {
 
     #[test]
     fn test_action_variants() {
-        let score_action = Action::score(Category::Yahtzee);
+        let score_action = Action::score(Category::Dicee);
         assert!(score_action.is_score());
         assert!(!score_action.is_reroll());
 

@@ -31,7 +31,7 @@ export const CORE_TO_WIRE: Record<CoreCategory, WireCategory> = {
 	FullHouse: 'fullHouse',
 	SmallStraight: 'smallStraight',
 	LargeStraight: 'largeStraight',
-	Yahtzee: 'yahtzee',
+	Dicee: 'dicee',
 	Chance: 'chance',
 };
 
@@ -50,7 +50,7 @@ export const WIRE_TO_CORE: Record<WireCategory, CoreCategory> = {
 	fullHouse: 'FullHouse',
 	smallStraight: 'SmallStraight',
 	largeStraight: 'LargeStraight',
-	yahtzee: 'Yahtzee',
+	dicee: 'Dicee',
 	chance: 'Chance',
 };
 
@@ -63,7 +63,7 @@ export const WIRE_TO_CORE: Record<WireCategory, CoreCategory> = {
  * Use at boundaries when sending data to PartyKit/WebSocket.
  *
  * @example
- * const wireCategory = toWireCategory('Yahtzee'); // 'yahtzee'
+ * const wireCategory = toWireCategory('Dicee'); // 'dicee'
  */
 export function toWireCategory(category: CoreCategory): WireCategory {
 	return CORE_TO_WIRE[category];
@@ -74,7 +74,7 @@ export function toWireCategory(category: CoreCategory): WireCategory {
  * Use at boundaries when receiving data from PartyKit/WebSocket.
  *
  * @example
- * const coreCategory = toCoreCategory('yahtzee'); // 'Yahtzee'
+ * const coreCategory = toCoreCategory('dicee'); // 'Dicee'
  */
 export function toCoreCategory(category: WireCategory): CoreCategory {
 	return WIRE_TO_CORE[category];
@@ -96,7 +96,7 @@ const WIRE_CATEGORIES = new Set<string>([
 	'fullHouse',
 	'smallStraight',
 	'largeStraight',
-	'yahtzee',
+	'dicee',
 	'chance',
 ]);
 
@@ -112,7 +112,7 @@ const CORE_CATEGORIES = new Set<string>([
 	'FullHouse',
 	'SmallStraight',
 	'LargeStraight',
-	'Yahtzee',
+	'Dicee',
 	'Chance',
 ]);
 

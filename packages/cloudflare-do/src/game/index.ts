@@ -11,6 +11,7 @@ export type {
 	Category,
 	GamePhase,
 	ConnectionStatus,
+	PlayerType,
 	Scorecard,
 	PlayerGameState,
 	PlayerRanking,

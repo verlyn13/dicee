@@ -1,6 +1,6 @@
 //! # Dicee Engine
 //!
-//! A mathematically rigorous Yahtzee probability engine with optimal decision support.
+//! A mathematically rigorous Dicee probability engine with optimal decision support.
 //!
 //! ## Architecture
 //!
@@ -176,7 +176,7 @@ struct TurnAnalysisJs {
 /// Bit 8:  FullHouse      (0x0100)
 /// Bit 9:  SmallStraight  (0x0200)
 /// Bit 10: LargeStraight  (0x0400)
-/// Bit 11: Yahtzee        (0x0800)
+/// Bit 11: Dicee          (0x0800)
 /// Bit 12: Chance         (0x1000)
 /// ```
 ///
@@ -337,10 +337,10 @@ mod wasm_tests {
         assert_eq!(explanation, "Reroll all dice");
     }
 
-    /// Test that `analyze_turn` internal logic works for Yahtzee position.
+    /// Test that `analyze_turn` internal logic works for Dicee position.
     #[test]
-    fn test_analyze_turn_logic_yahtzee() {
-        // Yahtzee with all categories available
+    fn test_analyze_turn_logic_dicee() {
+        // Dicee with all categories available
         let dice = [5, 5, 5, 5, 5];
         let config = DiceConfig::from_dice(&dice);
         let state = TurnState::new(config, 2);
@@ -349,31 +349,31 @@ mod wasm_tests {
         let solver = TurnSolver::new();
         let analysis = solver.analyze(&state, &available);
 
-        // Should recommend scoring Yahtzee (index 11)
+        // Should recommend scoring Dicee (index 11)
         assert!(analysis.recommendation.is_score());
         if let core::turn::Action::Score { category } = analysis.recommendation {
-            assert_eq!(category.index(), 11); // Yahtzee
+            assert_eq!(category.index(), 11); // Dicee
         }
-        // Expected value should be 50 for Yahtzee
+        // Expected value should be 50 for Dicee
         assert!((analysis.expected_value - 50.0).abs() < 0.01);
     }
 
     /// Test that `analyze_turn` handles partial category sets.
     #[test]
     fn test_analyze_turn_logic_partial_categories() {
-        // [3,3,3,3,1] with only Yahtzee available
+        // [3,3,3,3,1] with only Dicee available
         let dice = [3, 3, 3, 3, 1];
         let config = DiceConfig::from_dice(&dice);
         let state = TurnState::new(config, 2);
-        let available = CategorySet::from_bits(0x0800); // Only Yahtzee (bit 11)
+        let available = CategorySet::from_bits(0x0800); // Only Dicee (bit 11)
 
         let solver = TurnSolver::new();
         let analysis = solver.analyze(&state, &available);
 
-        // With 2 rolls remaining and only Yahtzee available, should reroll
+        // With 2 rolls remaining and only Dicee available, should reroll
         assert!(
             analysis.recommendation.is_reroll(),
-            "Should reroll when chasing Yahtzee with 4-of-a-kind"
+            "Should reroll when chasing Dicee with 4-of-a-kind"
         );
     }
 
@@ -408,11 +408,11 @@ mod wasm_tests {
     /// Test bitmask conversion for specific categories.
     #[test]
     fn test_category_bitmask_specific() {
-        // Ones (bit 0) and Yahtzee (bit 11)
+        // Ones (bit 0) and Dicee (bit 11)
         let available = CategorySet::from_bits(0x0801);
         assert_eq!(available.len(), 2);
         assert!(available.contains(core::category::Category::Ones));
-        assert!(available.contains(core::category::Category::Yahtzee));
+        assert!(available.contains(core::category::Category::Dicee));
         assert!(!available.contains(core::category::Category::Twos));
     }
 }

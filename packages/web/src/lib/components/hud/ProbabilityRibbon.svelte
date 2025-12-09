@@ -10,7 +10,7 @@ let { probabilities, rollsRemaining }: Props = $props();
 
 // Key outcomes we want to highlight (high-value categories)
 const KEY_CATEGORIES: Category[] = [
-	'Yahtzee',
+	'Dicee',
 	'LargeStraight',
 	'SmallStraight',
 	'FullHouse',
@@ -20,7 +20,7 @@ const KEY_CATEGORIES: Category[] = [
 
 // Short names for compact display
 const SHORT_NAMES: Partial<Record<Category, string>> = {
-	Yahtzee: 'YTZ',
+	Dicee: 'DCE',
 	LargeStraight: 'LG',
 	SmallStraight: 'SM',
 	FullHouse: 'FH',

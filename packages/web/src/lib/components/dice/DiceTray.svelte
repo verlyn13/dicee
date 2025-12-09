@@ -1,4 +1,5 @@
 <script lang="ts">
+import { audioStore } from '$lib/stores/audio.svelte';
 import type { DiceArray, KeepRecommendation, KeptMask } from '$lib/types.js';
 import { haptic } from '$lib/utils/haptics';
 import Die from './Die.svelte';
@@ -10,6 +11,8 @@ interface Props {
 	canRoll: boolean;
 	canKeep: boolean;
 	rolling?: boolean;
+	/** Whether dice have been rolled this turn (false = show pre-roll state) */
+	hasRolled?: boolean;
 	/** Keep recommendation from the engine for showing suggestions */
 	keepSuggestion?: KeepRecommendation;
 	/** Current EV before any action */
@@ -29,6 +32,7 @@ let {
 	canRoll,
 	canKeep,
 	rolling = false,
+	hasRolled = true,
 	keepSuggestion,
 	currentEV = 0,
 	showSuggestions = false,
@@ -37,6 +41,9 @@ let {
 	onKeepAll,
 	onReleaseAll,
 }: Props = $props();
+
+// Pre-roll state: dice haven't been rolled yet this turn
+const showPreRollState = $derived(!hasRolled && rollsRemaining === 3);
 
 const isFirstRoll = $derived(rollsRemaining === 3);
 const isFinalRoll = $derived(rollsRemaining === 0);
@@ -100,6 +107,9 @@ $effect(() => {
 		// Just finished rolling - trigger landing animation
 		landing = true;
 		haptic('medium');
+		// Play dice landing sounds
+		const unkeptCount = kept.filter((k) => !k).length;
+		audioStore.playDiceLand(unkeptCount || 5);
 		const timeout = setTimeout(() => {
 			landing = false;
 		}, 300);
@@ -111,31 +121,45 @@ $effect(() => {
 function handleRoll() {
 	if (canRoll) {
 		haptic('roll');
+		audioStore.playDiceRoll();
 		onRoll();
 	}
 }
 </script>
 
-<div class="dice-tray" data-rolling={rolling}>
+<div class="dice-tray" data-rolling={rolling} data-pre-roll={showPreRollState}>
 	<div class="tray-surface">
 		<!-- Dice Grid -->
-		<div class="dice-grid">
-			{#each dice as value, i}
-				<Die
-					{value}
-					kept={kept[i]}
-					disabled={!canKeep}
-					{rolling}
-					{landing}
-					suggested={hasSuggestion && suggestedKeepIndices.has(i)}
-					onclick={() => canKeep && onToggleKeep(i)}
-				/>
-			{/each}
+		<div class="dice-grid" class:pre-roll={showPreRollState}>
+			{#if showPreRollState}
+				<!-- Pre-roll: Show placeholder dice -->
+				{#each [0, 1, 2, 3, 4] as i}
+					<div class="die-placeholder" aria-hidden="true">
+						<span class="placeholder-icon">?</span>
+					</div>
+				{/each}
+			{:else}
+				{#each dice as value, i}
+					<Die
+						{value}
+						kept={kept[i]}
+						disabled={!canKeep}
+						{rolling}
+						{landing}
+						suggested={hasSuggestion && suggestedKeepIndices.has(i)}
+						index={i}
+						totalDice={dice.length}
+						onclick={() => canKeep && onToggleKeep(i)}
+					/>
+				{/each}
+			{/if}
 		</div>
 
 		<!-- Roll Button with Suggestion Tooltip -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="roll-container"
+			role="group"
 			onmouseenter={() => (showTooltip = true)}
 			onmouseleave={() => (showTooltip = false)}
 			onfocusin={() => (showTooltip = true)}
@@ -148,9 +172,11 @@ function handleRoll() {
 					<span class="tooltip-ev">EV: {formatEVChange(currentEV, keepSuggestion.expectedValue)}</span>
 				</div>
 			{/if}
-			<button class="roll-btn" class:rolling onclick={handleRoll} disabled={!canRoll}>
+			<button class="roll-btn" class:rolling class:start-turn={showPreRollState} onclick={handleRoll} disabled={!canRoll}>
 			{#if rolling}
 				ROLLING...
+			{:else if showPreRollState}
+				🎲 START YOUR TURN
 			{:else if isFirstRoll}
 				ROLL DICE
 			{:else if isFinalRoll}
@@ -226,11 +252,39 @@ function handleRoll() {
 		padding-bottom: var(--space-2);
 	}
 
+	.dice-grid.pre-roll {
+		opacity: 0.7;
+	}
+
+	/* Placeholder dice for pre-roll state */
+	.die-placeholder {
+		width: 56px;
+		height: 56px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--color-surface);
+		border: var(--border-thick);
+		border-style: dashed;
+		opacity: 0.6;
+	}
+
+	.placeholder-icon {
+		font-size: var(--text-h2);
+		font-weight: var(--weight-bold);
+		color: var(--color-text-muted);
+	}
+
 	@media (max-width: 480px) {
 		.dice-grid {
 			display: grid;
 			grid-template-columns: repeat(3, auto);
 			gap: var(--space-2);
+		}
+
+		.die-placeholder {
+			width: 48px;
+			height: 48px;
 		}
 	}
 
@@ -326,6 +380,30 @@ function handleRoll() {
 
 	.roll-btn.rolling {
 		animation: pulse 0.3s ease-in-out infinite alternate;
+	}
+
+	/* Start turn button - more prominent */
+	.roll-btn.start-turn {
+		background: var(--color-primary);
+		font-size: var(--text-h3);
+		padding: var(--space-3) var(--space-4);
+		animation: attention-pulse 1.5s ease-in-out infinite;
+	}
+
+	.roll-btn.start-turn:hover:not(:disabled) {
+		background: var(--color-primary-dark, var(--color-primary));
+		animation: none;
+	}
+
+	@keyframes attention-pulse {
+		0%, 100% {
+			transform: scale(1);
+			box-shadow: 0 0 0 0 var(--color-primary);
+		}
+		50% {
+			transform: scale(1.02);
+			box-shadow: 0 0 0 8px transparent;
+		}
 	}
 
 	@keyframes pulse {

@@ -1,4 +1,5 @@
 <script lang="ts">
+import { audioStore } from '$lib/stores/audio.svelte';
 import type { Category, StatsProfile } from '$lib/types.js';
 import { CATEGORY_DISPLAY_NAMES } from '$lib/types.js';
 import { haptic } from '$lib/utils/haptics';
@@ -42,6 +43,12 @@ $effect(() => {
 		// Just scored - trigger animation
 		showScoreAnimation = true;
 		haptic('success');
+		// Play appropriate scoring sound
+		if (category === 'Dicee' && score === 50) {
+			audioStore.playDicee();
+		} else {
+			audioStore.playScoreConfirm();
+		}
 		const timeout = setTimeout(() => {
 			showScoreAnimation = false;
 		}, 600);
@@ -54,7 +61,7 @@ $effect(() => {
 // Heat intensity (0-1)
 const heatIntensity = $derived.by(() => {
 	if (!available || !statsEnabled) return 0;
-	// Normalize EV to 0-1 range (assuming max ~50 for Yahtzee)
+	// Normalize EV to 0-1 range (assuming max ~50 for Dicee)
 	return Math.min(expectedValue / 50, 1);
 });
 
@@ -108,7 +115,7 @@ const categoryIcons: Record<Category, string> = {
 	FullHouse: '🏠',
 	SmallStraight: '📏',
 	LargeStraight: '📐',
-	Yahtzee: '🎯',
+	Dicee: '🎯',
 	Chance: '❓',
 };
 </script>

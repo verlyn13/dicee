@@ -1,10 +1,30 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
-	// Allows to automatically instantiate createClient with right options
-	// instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-	__InternalSupabase: {
-		PostgrestVersion: '13.0.5';
+	graphql_public: {
+		Tables: {
+			[_ in never]: never;
+		};
+		Views: {
+			[_ in never]: never;
+		};
+		Functions: {
+			graphql: {
+				Args: {
+					extensions?: Json;
+					operationName?: string;
+					query?: string;
+					variables?: Json;
+				};
+				Returns: Json;
+			};
+		};
+		Enums: {
+			[_ in never]: never;
+		};
+		CompositeTypes: {
+			[_ in never]: never;
+		};
 	};
 	public: {
 		Tables: {
@@ -243,8 +263,9 @@ export type Database = {
 					avg_ev_loss: number;
 					avg_score: number;
 					best_score: number;
-					bonus_yahtzees: number;
+					bonus_dicees: number;
 					category_stats: Json;
+					dicees_rolled: number;
 					games_completed: number;
 					games_played: number;
 					games_won: number;
@@ -254,14 +275,14 @@ export type Database = {
 					updated_at: string;
 					upper_bonuses: number;
 					user_id: string;
-					yahtzees_rolled: number;
 				};
 				Insert: {
 					avg_ev_loss?: number;
 					avg_score?: number;
 					best_score?: number;
-					bonus_yahtzees?: number;
+					bonus_dicees?: number;
 					category_stats?: Json;
+					dicees_rolled?: number;
 					games_completed?: number;
 					games_played?: number;
 					games_won?: number;
@@ -271,14 +292,14 @@ export type Database = {
 					updated_at?: string;
 					upper_bonuses?: number;
 					user_id: string;
-					yahtzees_rolled?: number;
 				};
 				Update: {
 					avg_ev_loss?: number;
 					avg_score?: number;
 					best_score?: number;
-					bonus_yahtzees?: number;
+					bonus_dicees?: number;
 					category_stats?: Json;
+					dicees_rolled?: number;
 					games_completed?: number;
 					games_played?: number;
 					games_won?: number;
@@ -288,7 +309,6 @@ export type Database = {
 					updated_at?: string;
 					upper_bonuses?: number;
 					user_id?: string;
-					yahtzees_rolled?: number;
 				};
 				Relationships: [
 					{
@@ -356,6 +376,7 @@ export type Database = {
 			};
 			rooms: {
 				Row: {
+					allow_spectators: boolean | null;
 					code: string;
 					created_at: string;
 					created_by: string;
@@ -366,6 +387,7 @@ export type Database = {
 					max_players: number;
 				};
 				Insert: {
+					allow_spectators?: boolean | null;
 					code: string;
 					created_at?: string;
 					created_by: string;
@@ -376,6 +398,7 @@ export type Database = {
 					max_players?: number;
 				};
 				Update: {
+					allow_spectators?: boolean | null;
 					code?: string;
 					created_at?: string;
 					created_by?: string;
@@ -398,6 +421,54 @@ export type Database = {
 						columns: ['game_id'];
 						isOneToOne: true;
 						referencedRelation: 'games';
+						referencedColumns: ['id'];
+					},
+				];
+			};
+			solo_leaderboard: {
+				Row: {
+					created_at: string;
+					dicee_count: number | null;
+					efficiency: number | null;
+					game_id: string | null;
+					id: string;
+					score: number;
+					upper_bonus: boolean | null;
+					user_id: string;
+				};
+				Insert: {
+					created_at?: string;
+					dicee_count?: number | null;
+					efficiency?: number | null;
+					game_id?: string | null;
+					id?: string;
+					score: number;
+					upper_bonus?: boolean | null;
+					user_id: string;
+				};
+				Update: {
+					created_at?: string;
+					dicee_count?: number | null;
+					efficiency?: number | null;
+					game_id?: string | null;
+					id?: string;
+					score?: number;
+					upper_bonus?: boolean | null;
+					user_id?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: 'solo_leaderboard_game_id_fkey';
+						columns: ['game_id'];
+						isOneToOne: false;
+						referencedRelation: 'games';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'solo_leaderboard_user_id_fkey';
+						columns: ['user_id'];
+						isOneToOne: false;
+						referencedRelation: 'profiles';
 						referencedColumns: ['id'];
 					},
 				];
@@ -455,6 +526,52 @@ export type Database = {
 			cleanup_old_analysis: { Args: never; Returns: undefined };
 			cleanup_old_telemetry: { Args: never; Returns: undefined };
 			generate_room_code: { Args: never; Returns: string };
+			get_alltime_leaderboard: {
+				Args: { limit_count?: number };
+				Returns: {
+					avatar_seed: string;
+					created_at: string;
+					display_name: string;
+					efficiency: number;
+					rank: number;
+					score: number;
+					user_id: string;
+				}[];
+			};
+			get_daily_leaderboard: {
+				Args: { limit_count?: number };
+				Returns: {
+					avatar_seed: string;
+					created_at: string;
+					display_name: string;
+					efficiency: number;
+					rank: number;
+					score: number;
+					user_id: string;
+				}[];
+			};
+			get_user_best_scores: {
+				Args: { limit_count?: number; target_user_id: string };
+				Returns: {
+					created_at: string;
+					dicee_count: number;
+					efficiency: number;
+					score: number;
+					upper_bonus: boolean;
+				}[];
+			};
+			get_weekly_leaderboard: {
+				Args: { limit_count?: number };
+				Returns: {
+					avatar_seed: string;
+					created_at: string;
+					display_name: string;
+					efficiency: number;
+					rank: number;
+					score: number;
+					user_id: string;
+				}[];
+			};
 		};
 		Enums: {
 			[_ in never]: never;
@@ -581,6 +698,9 @@ export type CompositeTypes<
 		: never;
 
 export const Constants = {
+	graphql_public: {
+		Enums: {},
+	},
 	public: {
 		Enums: {},
 	},

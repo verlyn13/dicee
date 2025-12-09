@@ -1,6 +1,6 @@
 //! Scoring categories and category sets.
 //!
-//! Yahtzee has 13 scoring categories, divided into upper and lower sections.
+//! Dicee has 13 scoring categories, divided into upper and lower sections.
 //! This module provides the [`Category`] enum and an efficient [`CategorySet`]
 //! bitmask for tracking which categories are available.
 
@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 // CATEGORY ENUM
 // =============================================================================
 
-/// The 13 Yahtzee scoring categories.
+/// The 13 Dicee scoring categories.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Serialize, Deserialize)]
 #[repr(u8)]
 pub enum Category {
@@ -42,7 +42,7 @@ pub enum Category {
     /// 40 points for 5 consecutive values
     LargeStraight = 10,
     /// 50 points for 5 of a kind
-    Yahtzee = 11,
+    Dicee = 11,
     /// Sum of all dice (always valid)
     Chance = 12,
 }
@@ -64,7 +64,7 @@ impl Category {
         Category::FullHouse,
         Category::SmallStraight,
         Category::LargeStraight,
-        Category::Yahtzee,
+        Category::Dicee,
         Category::Chance,
     ];
 
@@ -85,7 +85,7 @@ impl Category {
         Category::FullHouse,
         Category::SmallStraight,
         Category::LargeStraight,
-        Category::Yahtzee,
+        Category::Dicee,
         Category::Chance,
     ];
 
@@ -136,7 +136,7 @@ impl Category {
     /// - Full House: 25
     /// - Small Straight: 30
     /// - Large Straight: 40
-    /// - Yahtzee: 50
+    /// - Dicee: 50
     /// - Others: None (score depends on dice)
     #[inline]
     pub const fn fixed_score(self) -> Option<u8> {
@@ -144,7 +144,7 @@ impl Category {
             Category::FullHouse => Some(25),
             Category::SmallStraight => Some(30),
             Category::LargeStraight => Some(40),
-            Category::Yahtzee => Some(50),
+            Category::Dicee => Some(50),
             _ => None,
         }
     }
@@ -176,7 +176,7 @@ impl fmt::Display for Category {
             Category::FullHouse => "Full House",
             Category::SmallStraight => "Small Straight",
             Category::LargeStraight => "Large Straight",
-            Category::Yahtzee => "Yahtzee",
+            Category::Dicee => "Dicee",
             Category::Chance => "Chance",
         };
         write!(f, "{name}")
@@ -198,10 +198,10 @@ impl fmt::Display for Category {
 /// use dicee_engine::core::category::{Category, CategorySet};
 ///
 /// let mut available = CategorySet::all();
-/// assert!(available.contains(Category::Yahtzee));
+/// assert!(available.contains(Category::Dicee));
 ///
-/// available.remove(Category::Yahtzee);
-/// assert!(!available.contains(Category::Yahtzee));
+/// available.remove(Category::Dicee);
+/// assert!(!available.contains(Category::Dicee));
 /// assert_eq!(available.len(), 12);
 /// ```
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
@@ -454,7 +454,7 @@ mod tests {
         assert_eq!(Category::FullHouse.fixed_score(), Some(25));
         assert_eq!(Category::SmallStraight.fixed_score(), Some(30));
         assert_eq!(Category::LargeStraight.fixed_score(), Some(40));
-        assert_eq!(Category::Yahtzee.fixed_score(), Some(50));
+        assert_eq!(Category::Dicee.fixed_score(), Some(50));
         assert_eq!(Category::Chance.fixed_score(), None);
         assert_eq!(Category::Ones.fixed_score(), None);
     }
@@ -475,12 +475,12 @@ mod tests {
         let mut set = CategorySet::new();
         assert!(set.is_empty());
 
-        set.insert(Category::Yahtzee);
-        assert!(set.contains(Category::Yahtzee));
+        set.insert(Category::Dicee);
+        assert!(set.contains(Category::Dicee));
         assert_eq!(set.len(), 1);
 
-        set.remove(Category::Yahtzee);
-        assert!(!set.contains(Category::Yahtzee));
+        set.remove(Category::Dicee);
+        assert!(!set.contains(Category::Dicee));
         assert!(set.is_empty());
     }
 

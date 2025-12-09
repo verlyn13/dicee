@@ -8,25 +8,25 @@
 
 When you open this project in Windsurf:
 
-1. **Cascade will have access to**:
+1. **Start session with `/awaken`**:
+   - Verifies MCP server connectivity
+   - Loads current phase state
+   - Reads handoff notes from previous session
+
+2. **Cascade will have access to**:
    - Shared MCP memory server (`.claude/state/memory.jsonl`)
    - Supabase database schema and docs
    - AKG architectural knowledge graph
    - Project state files (`.claude/state/current-phase.json`)
 
-2. **Start with the workflow**:
-   ```
-   /build-component
-   ```
+3. **End session with `/tidyup`**:
+   - Updates state file timestamps
+   - Persists MCP memory observations
+   - Generates handoff notes
 
-3. **Check current tasks**:
+4. **Check current tasks**:
    ```
-   cat .claude/state/current-phase.json
-   ```
-
-4. **Read the handoff**:
-   ```
-   cat .claude/state/session-handoff.md
+   cat .claude/state/current-phase.json | jq '.currentPhase'
    ```
 
 ## Rules (Automatic)
@@ -39,6 +39,20 @@ When you open this project in Windsurf:
 - **svelte-components.md** - Svelte 5 runes syntax, component patterns, testing
 
 ## Workflows
+
+### `/awaken`
+Initialize session and verify infrastructure:
+1. Check MCP server connectivity (memory, supabase, akg)
+2. Load current phase state
+3. Read handoff notes
+4. Check quality gate status
+
+### `/tidyup`
+Clean up session and prepare for handoff:
+1. Update state file timestamps
+2. Persist MCP memory observations
+3. Generate handoff notes
+4. Run final quality check
 
 ### `/build-component`
 Guides you through creating a new component with AKG validation:
@@ -110,6 +124,13 @@ Query the architectural knowledge graph:
     ├── build-component.md     # /build-component
     ├── verify-task.md         # /verify-task
     └── akg-query.md           # /akg subcommands
+
+.claude/commands/              # Shared slash commands
+├── awaken.md                  # /awaken - Session startup
+├── tidyup.md                  # /tidyup - Session cleanup
+├── status.md                  # /status - Current phase
+├── health.md                  # /health - Environment check
+└── ...                        # Other commands
 ```
 
 ## Integration with Claude Code

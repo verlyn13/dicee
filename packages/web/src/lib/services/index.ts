@@ -5,6 +5,17 @@
  */
 
 export {
+	type AudioState,
+	audio,
+	getAudioState,
+	initAudio,
+	isAudioSupported,
+	playSound,
+	SOUND_BANK,
+	type SoundCategory,
+	type SoundId,
+} from './audio';
+export {
 	analyzeTurnOptimal,
 	EngineInitError,
 	getEngineState,
@@ -14,7 +25,6 @@ export {
 	preloadEngine,
 	resetEngine,
 } from './engine';
-
 export {
 	getTelemetryState,
 	hasConsent,

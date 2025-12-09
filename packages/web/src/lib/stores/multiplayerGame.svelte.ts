@@ -29,7 +29,6 @@ export type UIPhase = 'IDLE' | 'ROLLING' | 'RESOLVED' | 'SCORING' | 'WAITING';
 /**
  * Create a multiplayer game store
  */
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Store factory requires handling multiple event types
 export function createMultiplayerGameStore(myPlayerId: string) {
 	// Core state
 	let gameState = $state<GameState | null>(null);
@@ -268,7 +267,7 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		category: string;
 		score: number;
 		totalScore: number;
-		isYahtzeeBonus: boolean;
+		isDiceeBonus: boolean;
 	}): void {
 		if (gameState) {
 			const player = gameState.players[event.playerId];
@@ -278,8 +277,8 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 					...player.scorecard,
 					[category]: event.score,
 				};
-				if (event.isYahtzeeBonus) {
-					newScorecard.yahtzeeBonus = player.scorecard.yahtzeeBonus + 100;
+				if (event.isDiceeBonus) {
+					newScorecard.diceeBonus = player.scorecard.diceeBonus + 100;
 				}
 
 				gameState = {

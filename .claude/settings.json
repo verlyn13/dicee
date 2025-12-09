@@ -7,10 +7,9 @@
       "Bash(git:*)",
       "Bash(cargo:*)",
       "Bash(wasm-pack:*)",
+      "Bash(bun:*)",
       "Bash(mise:*)",
       "Bash(supabase:*)",
-      "Bash(vercel:*)",
-      "Bash(partykit:*)",
       "Bash(wrangler:*)",
       "Bash(infisical:*)",
       "Bash(gopass:*)"

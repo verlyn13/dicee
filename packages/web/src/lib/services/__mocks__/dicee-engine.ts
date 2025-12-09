@@ -64,17 +64,17 @@ export function analyze_turn(
 		expected_value: number;
 	}>;
 } {
-	// Check if all dice are the same (Yahtzee)
+	// Check if all dice are the same (Dicee)
 	const diceArray = Array.from(dice);
-	const isYahtzee = diceArray.every((d) => d === diceArray[0]);
+	const isDicee = diceArray.every((d) => d === diceArray[0]);
 
-	// Check if Yahtzee category is available (bit 11)
-	const yahtzeeAvailable = (available_categories & (1 << 11)) !== 0;
+	// Check if Dicee category is available (bit 11)
+	const diceeAvailable = (available_categories & (1 << 11)) !== 0;
 
-	if (isYahtzee && yahtzeeAvailable) {
+	if (isDicee && diceeAvailable) {
 		return {
 			action: 'score',
-			recommended_category: 11, // Yahtzee
+			recommended_category: 11, // Dicee
 			category_score: 50,
 			keep_pattern: null,
 			keep_explanation: null,

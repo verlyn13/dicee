@@ -128,7 +128,7 @@ let WASM_VECTOR_LEN = 0;
  * Bit 8:  FullHouse      (0x0100)
  * Bit 9:  SmallStraight  (0x0200)
  * Bit 10: LargeStraight  (0x0400)
- * Bit 11: Yahtzee        (0x0800)
+ * Bit 11: Dicee          (0x0800)
  * Bit 12: Chance         (0x1000)
  * ```
  *

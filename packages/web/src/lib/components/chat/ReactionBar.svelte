@@ -4,28 +4,58 @@
  *
  * Floating bar that appears on message hover/tap.
  * Allows users to add reactions to messages.
+ * Supports rate limiting and haptic feedback.
  */
 import { REACTION_EMOJIS, type ReactionEmoji } from '$lib/stores/chat.svelte';
+import { haptic } from '$lib/utils/haptics';
 
 interface Props {
 	/** Callback when a reaction is selected */
 	onReact: (emoji: ReactionEmoji) => void;
+	/** Number of reactions sent this turn (for rate limit display) */
+	reactionCount?: number;
+	/** Maximum reactions per turn */
+	maxReactions?: number;
+	/** Whether the bar is disabled (rate limited) */
+	disabled?: boolean;
 }
 
-let { onReact }: Props = $props();
+let { onReact, reactionCount = 0, maxReactions = 3, disabled = false }: Props = $props();
+
+// Derived: remaining reactions
+const remaining = $derived(maxReactions - reactionCount);
+const isLimited = $derived(remaining <= 0);
+
+function handleReact(emoji: ReactionEmoji) {
+	if (isLimited || disabled) return;
+	haptic('light');
+	onReact(emoji);
+}
 </script>
 
-<div class="reaction-bar" role="group" aria-label="Add reaction">
+<div
+	class="reaction-bar"
+	class:limited={isLimited}
+	class:disabled
+	role="group"
+	aria-label="Add reaction"
+>
 	{#each REACTION_EMOJIS as emoji}
 		<button
 			type="button"
 			class="reaction-btn"
-			onclick={() => onReact(emoji)}
+			onclick={() => handleReact(emoji)}
 			aria-label="React with {emoji}"
+			disabled={isLimited || disabled}
 		>
 			{emoji}
 		</button>
 	{/each}
+	{#if maxReactions > 0 && reactionCount > 0}
+		<span class="reaction-count" class:warning={remaining === 1}>
+			{remaining}/{maxReactions}
+		</span>
+	{/if}
 </div>
 
 <style>
@@ -79,5 +109,38 @@ let { onReact }: Props = $props();
 			height: 40px;
 			font-size: 20px;
 		}
+	}
+
+	/* Rate limit states */
+	.reaction-bar.limited {
+		opacity: 0.5;
+	}
+
+	.reaction-bar.disabled {
+		pointer-events: none;
+		opacity: 0.3;
+	}
+
+	.reaction-btn:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+
+	.reaction-btn:disabled:hover {
+		transform: none;
+		background: transparent;
+	}
+
+	/* Reaction count badge */
+	.reaction-count {
+		font-size: var(--font-size-xs);
+		color: var(--color-text-muted);
+		padding: 0 var(--space-1);
+		align-self: center;
+	}
+
+	.reaction-count.warning {
+		color: var(--color-warning);
+		font-weight: var(--font-weight-bold);
 	}
 </style>

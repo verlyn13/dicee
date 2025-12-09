@@ -26,7 +26,7 @@ pub fn parse_dice(slice: &[u8]) -> Result<Dice, &'static str> {
     Ok(dice)
 }
 
-/// All 13 Yahtzee scoring categories
+/// All 13 Dicee scoring categories
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[repr(u8)]
 pub enum Category {
@@ -43,7 +43,7 @@ pub enum Category {
     FullHouse = 8,
     SmallStraight = 9,
     LargeStraight = 10,
-    Yahtzee = 11,
+    Dicee = 11,
     Chance = 12,
 }
 
@@ -61,7 +61,7 @@ impl Category {
             Category::FullHouse,
             Category::SmallStraight,
             Category::LargeStraight,
-            Category::Yahtzee,
+            Category::Dicee,
             Category::Chance,
         ]
     }
@@ -79,7 +79,7 @@ impl Category {
             Category::FullHouse => "Full House",
             Category::SmallStraight => "Small Straight",
             Category::LargeStraight => "Large Straight",
-            Category::Yahtzee => "Yahtzee",
+            Category::Dicee => "Dicee",
             Category::Chance => "Chance",
         }
     }
@@ -105,7 +105,7 @@ impl TryFrom<u8> for Category {
             8 => Ok(Category::FullHouse),
             9 => Ok(Category::SmallStraight),
             10 => Ok(Category::LargeStraight),
-            11 => Ok(Category::Yahtzee),
+            11 => Ok(Category::Dicee),
             12 => Ok(Category::Chance),
             _ => Err(format!("invalid category: {}", value)),
         }

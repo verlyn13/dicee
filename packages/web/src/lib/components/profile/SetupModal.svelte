@@ -99,9 +99,9 @@ function handleKeydown(e: KeyboardEvent) {
 <svelte:window onkeydown={handleKeydown} />
 
 {#if open}
-	<!-- Modal Backdrop -->
+	<!-- Modal Backdrop - click to close is intentional UX pattern -->
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-	<div class="modal-backdrop" onclick={handleBackdropClick}>
+	<div class="modal-backdrop" role="presentation" onclick={handleBackdropClick}>
 		<!-- Modal Content -->
 		<div
 			class="modal"

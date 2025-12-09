@@ -211,7 +211,7 @@ const CategorySchema = z.enum([
 	'fullHouse',
 	'smallStraight',
 	'largeStraight',
-	'yahtzee',
+	'dicee',
 	'chance',
 ]);
 
@@ -227,9 +227,9 @@ const ScorecardSchema = z.object({
 	fullHouse: z.number().nullable(),
 	smallStraight: z.number().nullable(),
 	largeStraight: z.number().nullable(),
-	yahtzee: z.number().nullable(),
+	dicee: z.number().nullable(),
 	chance: z.number().nullable(),
-	yahtzeeBonus: z.number(),
+	diceeBonus: z.number(),
 	upperBonus: z.number(),
 });
 
@@ -255,7 +255,7 @@ const PlayerRankingSchema = z.object({
 	displayName: z.string(),
 	rank: z.number().int().min(1),
 	score: z.number().int().min(0),
-	yahtzeeCount: z.number().int().min(0),
+	diceeCount: z.number().int().min(0),
 });
 
 const GameStateSchema = z.object({
@@ -304,7 +304,7 @@ export const CategoryScoredEventSchema = BaseEventSchema.extend({
 	category: CategorySchema,
 	score: z.number().int().min(0),
 	totalScore: z.number().int().min(0),
-	isYahtzeeBonus: z.boolean(),
+	isDiceeBonus: z.boolean(),
 });
 
 export const TurnEndedEventSchema = BaseEventSchema.extend({

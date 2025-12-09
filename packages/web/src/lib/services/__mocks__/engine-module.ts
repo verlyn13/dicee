@@ -27,20 +27,20 @@ export function analyzeTurn(
 	rollsRemaining: number,
 	availableCategories: Category[],
 ): TurnAnalysis {
-	// Check if we have a Yahtzee (all same)
-	const isYahtzee = dice.every((d) => d === dice[0]);
+	// Check if we have a Dicee (all same)
+	const isDicee = dice.every((d) => d === dice[0]);
 
-	if (isYahtzee && availableCategories.includes('Yahtzee')) {
+	if (isDicee && availableCategories.includes('Dicee')) {
 		return {
 			action: 'score',
-			recommendedCategory: 'Yahtzee',
+			recommendedCategory: 'Dicee',
 			categoryScore: 50,
 			expectedValue: 50,
 			categories: availableCategories.map((cat) => ({
 				category: cat,
-				immediateScore: cat === 'Yahtzee' ? 50 : 0,
+				immediateScore: cat === 'Dicee' ? 50 : 0,
 				isValid: true,
-				expectedValue: cat === 'Yahtzee' ? 50 : 10,
+				expectedValue: cat === 'Dicee' ? 50 : 10,
 			})),
 		};
 	}

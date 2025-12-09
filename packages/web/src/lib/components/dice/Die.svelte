@@ -1,5 +1,7 @@
 <script lang="ts">
+import { audioStore } from '$lib/stores/audio.svelte';
 import type { DieValue } from '$lib/types.js';
+import { getDiceLandStyles, getDiceRollStyles, prefersReducedMotion } from '$lib/utils/dicePhysics';
 import { haptic } from '$lib/utils/haptics';
 
 interface Props {
@@ -11,6 +13,10 @@ interface Props {
 	landing?: boolean;
 	/** Whether this die is suggested to keep (coach mode highlight) */
 	suggested?: boolean;
+	/** Index of this die in the dice array (for staggered animations) */
+	index?: number;
+	/** Total number of dice (for animation spread) */
+	totalDice?: number;
 	onclick?: () => void;
 }
 
@@ -21,8 +27,22 @@ let {
 	rolling = false,
 	landing = false,
 	suggested = false,
+	index = 0,
+	totalDice = 5,
 	onclick,
 }: Props = $props();
+
+// Physics animation styles
+const rollStyles = $derived(getDiceRollStyles(index, totalDice));
+const landStyles = $derived(getDiceLandStyles(index));
+const reducedMotion = $derived(prefersReducedMotion());
+
+// Convert styles object to CSS variable string
+function stylesToString(styles: Record<string, string>): string {
+	return Object.entries(styles)
+		.map(([key, value]) => `${key}: ${value}`)
+		.join('; ');
+}
 
 // Track previous value for animation
 let previousValue = $state(value);
@@ -43,6 +63,8 @@ $effect(() => {
 function handleClick() {
 	if (!disabled && onclick) {
 		haptic('light');
+		// Play sound for the new state (opposite of current)
+		audioStore.playDieToggle(!kept);
 		onclick();
 	}
 }
@@ -55,10 +77,12 @@ function handleClick() {
 	class:landing
 	class:suggested
 	class:value-changed={showValueChange}
+	class:reduced-motion={reducedMotion}
 	{disabled}
 	onclick={handleClick}
 	aria-label="Die showing {value}, {kept ? 'held' : 'not held'}{suggested ? ', suggested to keep' : ''}"
 	aria-pressed={kept}
+	style={rolling ? stylesToString(rollStyles) : landing ? stylesToString(landStyles) : ''}
 >
 	<div class="face" data-value={value}>
 		{#if value === 1}
@@ -159,60 +183,144 @@ function handleClick() {
 		}
 	}
 
+	/* Rolling Animation - Enhanced Multi-Phase Physics */
 	.die.rolling {
-		animation: roll 0.08s ease-in-out infinite;
+		animation:
+			dice-roll-launch 0.1s var(--roll-delay, 0ms) cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+			dice-roll-tumble 0.3s calc(var(--roll-delay, 0ms) + 0.1s) linear infinite;
 		filter: blur(0.5px);
 	}
 
-	.die.landing {
-		animation: land 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	}
-
-	.die.value-changed .face {
-		animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-	}
-
-	@keyframes roll {
+	/* Launch Phase - Lift and initial spin */
+	@keyframes dice-roll-launch {
 		0% {
-			transform: rotate(-4deg) translateY(-2px);
+			transform: translateY(0) rotate(0deg) scale(1);
+		}
+		100% {
+			transform:
+				translateY(calc(var(--bounce-height, 12px) * -1))
+				rotate(calc(var(--rotation-variance, 15deg) * 0.5))
+				scale(1.05);
+		}
+	}
+
+	/* Tumble Phase - Continuous spin during roll */
+	@keyframes dice-roll-tumble {
+		0% {
+			transform:
+				translateY(calc(var(--bounce-height, 12px) * -1))
+				rotate(0deg)
+				scale(1.05);
 		}
 		25% {
-			transform: rotate(4deg) translateY(1px);
+			transform:
+				translateY(calc(var(--bounce-height, 12px) * -0.6))
+				rotate(calc(90deg * var(--spin-rotations, 2)))
+				scale(1.02);
 		}
 		50% {
-			transform: rotate(-3deg) translateY(-1px);
+			transform:
+				translateY(calc(var(--bounce-height, 12px) * -1))
+				rotate(calc(180deg * var(--spin-rotations, 2)))
+				scale(1.05);
 		}
 		75% {
-			transform: rotate(3deg) translateY(2px);
+			transform:
+				translateY(calc(var(--bounce-height, 12px) * -0.6))
+				rotate(calc(270deg * var(--spin-rotations, 2)))
+				scale(1.02);
 		}
 		100% {
-			transform: rotate(-4deg) translateY(-2px);
+			transform:
+				translateY(calc(var(--bounce-height, 12px) * -1))
+				rotate(calc(360deg * var(--spin-rotations, 2)))
+				scale(1.05);
 		}
 	}
 
-	@keyframes land {
+	/* Landing Animation - Settle with bounce */
+	.die.landing {
+		animation: dice-land 0.4s var(--land-delay, 0ms) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+	}
+
+	@keyframes dice-land {
 		0% {
-			transform: scale(1.1) rotate(5deg);
+			transform:
+				translateY(calc(var(--bounce-height, 12px) * -1))
+				rotate(calc(var(--rotation-variance, 0deg) * 2))
+				scale(1.1);
+			opacity: 1;
+		}
+		30% {
+			transform:
+				translateY(2px)
+				rotate(calc(var(--settle-rotation, 0deg) * -0.5))
+				scale(var(--bounce-scale, 0.95));
 		}
 		50% {
-			transform: scale(0.95) rotate(-2deg);
+			transform:
+				translateY(-4px)
+				rotate(calc(var(--settle-rotation, 0deg) * 0.3))
+				scale(1.02);
+		}
+		70% {
+			transform:
+				translateY(1px)
+				rotate(calc(var(--settle-rotation, 0deg) * -0.1))
+				scale(0.98);
 		}
 		100% {
-			transform: scale(1) rotate(0deg);
+			transform: translateY(0) rotate(0deg) scale(1);
 		}
 	}
 
-	@keyframes pop {
+	/* Value Change Animation - Pop reveal */
+	.die.value-changed .face {
+		animation: dice-value-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+	}
+
+	@keyframes dice-value-pop {
 		0% {
-			transform: scale(0.8);
+			transform: scale(0.7) rotate(-5deg);
 			opacity: 0.5;
 		}
 		50% {
-			transform: scale(1.1);
+			transform: scale(1.15) rotate(2deg);
+			opacity: 1;
+		}
+		100% {
+			transform: scale(1) rotate(0deg);
+			opacity: 1;
+		}
+	}
+
+	/* Reduced Motion - Simplified animations */
+	.die.reduced-motion.rolling {
+		animation: dice-roll-simple 0.15s ease-in-out infinite;
+		filter: none;
+	}
+
+	.die.reduced-motion.landing {
+		animation: dice-land-simple 0.15s ease-out forwards;
+	}
+
+	@keyframes dice-roll-simple {
+		0%, 100% {
+			transform: scale(0.98);
+			opacity: 0.8;
+		}
+		50% {
+			transform: scale(1.02);
+			opacity: 1;
+		}
+	}
+
+	@keyframes dice-land-simple {
+		0% {
+			transform: scale(1.05);
 		}
 		100% {
 			transform: scale(1);
-			opacity: 1;
 		}
 	}
 

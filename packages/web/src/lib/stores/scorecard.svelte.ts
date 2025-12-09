@@ -54,7 +54,7 @@ export function calculateLowerTotal(scores: Record<Category, number | null>): nu
 		'FullHouse',
 		'SmallStraight',
 		'LargeStraight',
-		'Yahtzee',
+		'Dicee',
 		'Chance',
 	];
 	return lowerCats.reduce((sum, cat) => sum + (scores[cat] ?? 0), 0);

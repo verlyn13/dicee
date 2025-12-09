@@ -1,6 +1,8 @@
 <script lang="ts">
+import { audioStore } from '$lib/stores/audio.svelte';
 import type { Category, CategoryProbability, ScoringResult, StatsProfile } from '$lib/types.js';
 import { LOWER_CATEGORIES, UPPER_CATEGORIES } from '$lib/types.js';
+import { haptic } from '$lib/utils/haptics';
 import CategoryRow from './CategoryRow.svelte';
 
 interface Props {
@@ -54,6 +56,17 @@ function isAvailable(category: Category): boolean {
 const bonusProgress = $derived(Math.min(upperSubtotal, 63));
 const bonusNeeded = $derived(Math.max(63 - upperSubtotal, 0));
 const bonusAchieved = $derived(upperBonus > 0);
+
+// Track bonus achievement for audio/haptic feedback
+let wasBonusAchieved = $state(false);
+$effect(() => {
+	if (bonusAchieved && !wasBonusAchieved) {
+		// Bonus just achieved - celebrate!
+		audioStore.playBonusAchieved();
+		haptic('success');
+	}
+	wasBonusAchieved = bonusAchieved;
+});
 </script>
 
 <div class="scorecard">

@@ -187,7 +187,7 @@ proptest! {
     #![proptest_config(ProptestConfig::with_cases(100))] // Limit cases for expensive solver tests
 
     /// Property: Expected value is bounded [0, 50].
-    /// Maximum possible score is Yahtzee (50 points).
+    /// Maximum possible score is Dicee (50 points).
     #[test]
     fn prop_solver_ev_bounded(
         dice in arbitrary_dice(),
@@ -200,7 +200,7 @@ proptest! {
         let ev = solver.expected_value(&config, rolls, &categories);
 
         prop_assert!(ev >= 0.0, "EV {} < 0", ev);
-        prop_assert!(ev <= 50.0, "EV {} > 50 (max Yahtzee score)", ev);
+        prop_assert!(ev <= 50.0, "EV {} > 50 (max Dicee score)", ev);
     }
 
     /// Property: EV is monotonically non-decreasing with more rolls.

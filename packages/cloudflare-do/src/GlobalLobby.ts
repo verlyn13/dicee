@@ -19,7 +19,7 @@
  */
 
 import { DurableObject } from 'cloudflare:workers';
-import type { Env } from './types';
+import type { Env, RoomStatusUpdate, GameHighlight, PlayerSummary } from './types';
 
 // =============================================================================
 // Types
@@ -36,7 +36,7 @@ interface UserPresence {
 
 /** Message sent/received through the lobby */
 interface LobbyMessage {
-	type: 'chat' | 'presence' | 'room_update' | 'rooms_list' | 'error' | 'pong';
+	type: 'chat' | 'presence' | 'room_update' | 'rooms_list' | 'highlight' | 'error' | 'pong';
 	payload: unknown;
 	timestamp: number;
 }
@@ -50,16 +50,23 @@ interface ChatMessage {
 	timestamp: number;
 }
 
-/** Room info for room browser */
+/** Enhanced room info for room browser - now based on RoomStatusUpdate */
 interface RoomInfo {
 	code: string;
-	game: 'dicee';
+	game: string;
 	hostName: string;
+	hostId: string;
 	playerCount: number;
+	spectatorCount: number;
 	maxPlayers: number;
 	isPublic: boolean;
-	status: 'waiting' | 'playing' | 'completed';
+	allowSpectators: boolean;
+	status: 'waiting' | 'playing' | 'finished';
+	roundNumber: number;
+	totalRounds: number;
+	players: PlayerSummary[];
 	createdAt: number;
+	updatedAt: number;
 }
 
 /** Client command structure */
@@ -429,9 +436,22 @@ export class GlobalLobby extends DurableObject<Env> {
 	// =========================================================================
 
 	private sendRoomsList(ws: WebSocket): void {
+		// Get all public rooms (both waiting and playing)
 		const publicRooms = Array.from(this.activeRooms.values())
-			.filter((r) => r.isPublic && r.status === 'waiting')
-			.sort((a, b) => b.createdAt - a.createdAt);
+			.filter((r) => r.isPublic)
+			.sort((a, b) => {
+				// Playing games first, then waiting, then by activity
+				if (a.status !== b.status) {
+					if (a.status === 'playing') return -1;
+					if (b.status === 'playing') return 1;
+				}
+				// Then by spectator count (more popular first)
+				if (a.spectatorCount !== b.spectatorCount) {
+					return b.spectatorCount - a.spectatorCount;
+				}
+				// Then by most recent
+				return b.updatedAt - a.updatedAt;
+			});
 
 		ws.send(
 			JSON.stringify({
@@ -506,6 +526,96 @@ export class GlobalLobby extends DurableObject<Env> {
 			}
 		}
 		return Array.from(seenUsers.values());
+	}
+
+	// =========================================================================
+	// RPC Methods (called by GameRoom DOs)
+	// =========================================================================
+
+	/**
+	 * Update room status in the directory.
+	 * Called by GameRoom on: player join/leave, spectator join/leave,
+	 * game start, round change, game end.
+	 */
+	updateRoomStatus(update: RoomStatusUpdate): void {
+		const roomInfo: RoomInfo = {
+			code: update.roomCode,
+			game: update.game,
+			hostName: update.hostName,
+			hostId: update.hostId,
+			playerCount: update.playerCount,
+			spectatorCount: update.spectatorCount,
+			maxPlayers: update.maxPlayers,
+			isPublic: update.isPublic,
+			allowSpectators: update.allowSpectators,
+			status: update.status,
+			roundNumber: update.roundNumber,
+			totalRounds: update.totalRounds,
+			players: update.players,
+			createdAt: this.activeRooms.get(update.roomCode)?.createdAt ?? update.updatedAt,
+			updatedAt: update.updatedAt,
+		};
+
+		// Handle finished rooms
+		if (update.status === 'finished') {
+			// Keep finished games briefly for "recent results"
+			this.scheduleRoomRemoval(update.roomCode, 60_000);
+		}
+
+		this.activeRooms.set(update.roomCode, roomInfo);
+
+		// Broadcast to lobby clients
+		this.broadcast({
+			type: 'room_update',
+			payload: { action: 'updated', room: roomInfo },
+			timestamp: Date.now(),
+		});
+
+		console.log(`[GlobalLobby] Room ${update.roomCode} updated: ${update.status}, ${update.playerCount} players, ${update.spectatorCount} spectators`);
+	}
+
+	/**
+	 * Send a game highlight to lobby clients.
+	 * Used for ticker events like Yahtzees, high scores, etc.
+	 */
+	sendHighlight(highlight: GameHighlight): void {
+		this.broadcast({
+			type: 'highlight',
+			payload: highlight,
+			timestamp: Date.now(),
+		});
+
+		console.log(`[GlobalLobby] Highlight: ${highlight.type} in room ${highlight.roomCode}`);
+	}
+
+	/**
+	 * Remove a room from the directory.
+	 * Called when a room closes or is abandoned.
+	 */
+	removeRoom(roomCode: string): void {
+		this.activeRooms.delete(roomCode);
+
+		this.broadcast({
+			type: 'room_update',
+			payload: { action: 'closed', code: roomCode },
+			timestamp: Date.now(),
+		});
+
+		console.log(`[GlobalLobby] Room ${roomCode} removed from directory`);
+	}
+
+	/**
+	 * Schedule a room to be removed after a delay.
+	 * Used for finished games that should stay visible briefly.
+	 */
+	private scheduleRoomRemoval(roomCode: string, delayMs: number): void {
+		// Note: Using setTimeout for simplicity. Could use DO alarms for persistence.
+		setTimeout(() => {
+			const room = this.activeRooms.get(roomCode);
+			if (room?.status === 'finished') {
+				this.removeRoom(roomCode);
+			}
+		}, delayMs);
 	}
 
 	// =========================================================================

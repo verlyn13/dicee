@@ -124,7 +124,6 @@ class LobbyState {
 		this.connectionState = 'disconnected';
 	}
 
-	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: WebSocket message router - switch is clearer than extraction
 	private handleMessage(data: { type: string; payload: unknown; timestamp?: number }) {
 		switch (data.type) {
 			case 'chat': {

@@ -2,7 +2,7 @@
 /**
  * QuickChatBar - Preset quick chat buttons
  *
- * Horizontally scrollable bar of 6 Yahtzee-themed quick chat presets.
+ * Horizontally scrollable bar of 6 Dicee-themed quick chat presets.
  * On mobile, shows only emoji; on desktop, shows emoji + text.
  */
 import { getChatStore, QUICK_CHAT_MESSAGES, type QuickChatKey } from '$lib/stores/chat.svelte';

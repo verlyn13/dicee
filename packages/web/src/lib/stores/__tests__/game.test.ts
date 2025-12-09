@@ -564,7 +564,7 @@ describe('GameState: Turn Analysis', () => {
 			categories: [],
 		});
 
-		expect(game.getCategoryAnalysis('Yahtzee')).toBeNull();
+		expect(game.getCategoryAnalysis('Dicee')).toBeNull();
 	});
 
 	it('getCategoryAnalysis returns null when no analysis', () => {
@@ -671,5 +671,290 @@ describe('GameState: Full Game Simulation', () => {
 		expect(game.status).toBe('rolling');
 		expect(game.turnNumber).toBe(1);
 		expect(game.scorecard.categoriesRemaining).toHaveLength(13);
+	});
+});
+
+// =============================================================================
+// Decision History Tests
+// =============================================================================
+
+describe('GameState: Decision History', () => {
+	describe('turn history initialization', () => {
+		it('starts with empty turn history', () => {
+			const game = createGameState();
+			expect(game.turnHistory).toEqual([]);
+		});
+
+		it('starts with empty current turn rolls', () => {
+			const game = createGameState();
+			expect(game.currentTurnRolls).toEqual([]);
+		});
+
+		it('resets turn history on new game after completion', () => {
+			const game = createGameState();
+			game.startGame();
+
+			// Complete full game
+			for (const category of ALL_CATEGORIES) {
+				game.roll();
+				game.score(category);
+			}
+
+			expect(game.turnHistory.length).toBe(13);
+			expect(game.isGameOver).toBe(true);
+
+			// Start new game - should reset history
+			game.startGame();
+			expect(game.turnHistory).toEqual([]);
+		});
+
+		it('clears turn history on reset', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Ones');
+
+			game.reset();
+			expect(game.turnHistory).toEqual([]);
+			expect(game.currentTurnRolls).toEqual([]);
+		});
+	});
+
+	describe('turn recording', () => {
+		it('records turn after scoring', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Chance');
+
+			expect(game.turnHistory).toHaveLength(1);
+			expect(game.turnHistory[0].turnNumber).toBe(1);
+		});
+
+		it('records correct category in turn decision', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Dicee');
+
+			expect(game.turnHistory[0].decision.category).toBe('Dicee');
+		});
+
+		it('records score in turn decision', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Chance');
+
+			expect(game.turnHistory[0].decision.score).toBeGreaterThanOrEqual(0);
+		});
+
+		it('records duration in turn record', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Chance');
+
+			expect(game.turnHistory[0].durationMs).toBeGreaterThanOrEqual(0);
+		});
+
+		it('records wasOptimal flag based on quality', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			const feedback = game.score('Chance');
+
+			const wasOptimal = feedback?.quality === 'optimal';
+			expect(game.turnHistory[0].decision.wasOptimal).toBe(wasOptimal);
+		});
+
+		it('accumulates turns through game', () => {
+			const game = createGameState();
+			game.startGame();
+
+			// Play 5 turns
+			for (let i = 0; i < 5; i++) {
+				game.roll();
+				game.score(ALL_CATEGORIES[i]);
+			}
+
+			expect(game.turnHistory).toHaveLength(5);
+			expect(game.turnHistory[0].turnNumber).toBe(1);
+			expect(game.turnHistory[4].turnNumber).toBe(5);
+		});
+
+		it('clears current turn rolls after scoring', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			// Current turn rolls should have entry
+			game.score('Chance');
+			// After scoring, should be cleared for next turn
+			expect(game.currentTurnRolls).toEqual([]);
+		});
+	});
+
+	describe('game summary', () => {
+		it('returns null when no turns played', () => {
+			const game = createGameState();
+			expect(game.gameSummary).toBeNull();
+		});
+
+		it('returns null before first score', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			expect(game.gameSummary).toBeNull();
+		});
+
+		it('returns summary after first turn', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Chance');
+
+			const summary = game.gameSummary;
+			expect(summary).not.toBeNull();
+			expect(summary?.totalTurns).toBe(1);
+		});
+
+		it('includes correct final score', () => {
+			const game = createGameState();
+			game.startGame();
+
+			// Complete game
+			for (const category of ALL_CATEGORIES) {
+				game.roll();
+				game.score(category);
+			}
+
+			const summary = game.gameSummary;
+			expect(summary?.finalScore).toBe(game.scorecard.grandTotal);
+		});
+
+		it('calculates total turns correctly', () => {
+			const game = createGameState();
+			game.startGame();
+
+			for (const category of ALL_CATEGORIES) {
+				game.roll();
+				game.score(category);
+			}
+
+			expect(game.gameSummary?.totalTurns).toBe(13);
+		});
+
+		it('counts optimal decisions', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Chance');
+
+			const summary = game.gameSummary;
+			expect(summary?.optimalDecisions).toBeDefined();
+			expect(typeof summary?.optimalDecisions).toBe('number');
+		});
+
+		it('calculates efficiency (0-1 range)', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Chance');
+
+			const summary = game.gameSummary;
+			expect(summary?.efficiency).toBeGreaterThanOrEqual(0);
+			expect(summary?.efficiency).toBeLessThanOrEqual(1);
+		});
+
+		it('calculates total EV loss', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Chance');
+
+			const summary = game.gameSummary;
+			expect(summary?.totalEVLoss).toBeGreaterThanOrEqual(0);
+		});
+
+		it('calculates average EV loss per turn', () => {
+			const game = createGameState();
+			game.startGame();
+
+			// Play a few turns
+			for (let i = 0; i < 3; i++) {
+				game.roll();
+				game.score(ALL_CATEGORIES[i]);
+			}
+
+			const summary = game.gameSummary;
+			expect(summary?.avgEVLoss).toBeGreaterThanOrEqual(0);
+		});
+
+		it('tracks hold efficiency', () => {
+			const game = createGameState();
+			game.startGame();
+			game.roll();
+			game.score('Chance');
+
+			const summary = game.gameSummary;
+			expect(summary?.holdEfficiency).toBeGreaterThanOrEqual(0);
+			expect(summary?.holdEfficiency).toBeLessThanOrEqual(1);
+		});
+
+		it('tracks game duration', () => {
+			const game = createGameState();
+			game.startGame();
+
+			// Complete game
+			for (const category of ALL_CATEGORIES) {
+				game.roll();
+				game.score(category);
+			}
+
+			const summary = game.gameSummary;
+			expect(summary?.gameDurationMs).toBeGreaterThanOrEqual(0);
+		});
+	});
+
+	describe('full game history', () => {
+		it('records all 13 turns in complete game', () => {
+			const game = createGameState();
+			game.startGame();
+
+			for (const category of ALL_CATEGORIES) {
+				game.roll();
+				game.score(category);
+			}
+
+			expect(game.turnHistory).toHaveLength(13);
+		});
+
+		it('maintains turn order', () => {
+			const game = createGameState();
+			game.startGame();
+
+			for (let i = 0; i < 5; i++) {
+				game.roll();
+				game.score(ALL_CATEGORIES[i]);
+			}
+
+			for (let i = 0; i < 5; i++) {
+				expect(game.turnHistory[i].turnNumber).toBe(i + 1);
+			}
+		});
+
+		it('records correct categories for each turn', () => {
+			const game = createGameState();
+			game.startGame();
+
+			for (let i = 0; i < 5; i++) {
+				game.roll();
+				game.score(ALL_CATEGORIES[i]);
+			}
+
+			for (let i = 0; i < 5; i++) {
+				expect(game.turnHistory[i].decision.category).toBe(ALL_CATEGORIES[i]);
+			}
+		});
 	});
 });

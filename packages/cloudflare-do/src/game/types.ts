@@ -225,6 +225,9 @@ export function isScorecardComplete(scorecard: Scorecard): boolean {
 // Player Game State
 // =============================================================================
 
+/** Player type - human or AI */
+export type PlayerType = 'human' | 'ai';
+
 /**
  * Player state within a game
  */
@@ -233,6 +236,10 @@ export interface PlayerGameState {
 	id: string;
 	displayName: string;
 	avatarSeed: string;
+
+	// Player type (human or AI)
+	type: PlayerType;
+	aiProfileId?: string; // For AI players, the profile ID
 
 	// Connection tracking
 	isConnected: boolean;
@@ -263,16 +270,20 @@ export function createPlayerGameState(
 	avatarSeed: string,
 	isHost: boolean,
 	connectionId: string,
+	type: PlayerType = 'human',
+	aiProfileId?: string,
 ): PlayerGameState {
 	const now = new Date().toISOString();
 	return {
 		id,
 		displayName,
 		avatarSeed,
-		isConnected: true,
-		connectionId,
+		type,
+		aiProfileId,
+		isConnected: type === 'human', // AI players don't have connections
+		connectionId: type === 'human' ? connectionId : null,
 		lastActive: now,
-		connectionStatus: 'online',
+		connectionStatus: type === 'human' ? 'online' : 'online', // AI is always "online"
 		isHost,
 		joinedAt: now,
 		scorecard: createEmptyScorecard(),

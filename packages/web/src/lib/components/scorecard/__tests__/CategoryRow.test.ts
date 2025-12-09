@@ -66,7 +66,7 @@ describe('CategoryRow Component - Rendering', () => {
 			'FullHouse',
 			'SmallStraight',
 			'LargeStraight',
-			'Yahtzee',
+			'Dicee',
 			'Chance',
 		];
 
@@ -82,7 +82,7 @@ describe('CategoryRow Component - Rendering', () => {
 			'Full House',
 			'Small Straight',
 			'Large Straight',
-			'Yahtzee',
+			'Dicee',
 			'Chance',
 		];
 
@@ -109,7 +109,7 @@ describe('CategoryRow Component - Rendering', () => {
 			Twos: '⚁',
 			Sixes: '⚅',
 			FullHouse: '🏠',
-			Yahtzee: '🎯',
+			Dicee: '🎯',
 			Chance: '❓',
 		};
 
@@ -292,30 +292,41 @@ describe('CategoryRow Component - Stats Profiles', () => {
 	});
 
 	// Expert profile
-	it('shows percentage probability for expert profile', () => {
+	it('shows market-style display for expert profile', () => {
 		const { container } = render(CategoryRow, {
 			props: createProps({
 				statsEnabled: true,
 				statsProfile: 'expert',
 				probability: 0.789,
+				expectedValue: 25.8,
+				potentialScore: 20,
 			}),
 		});
 
-		const prob = container.querySelector('.probability');
-		expect(prob?.textContent).toBe('78.9%');
+		// Expert profile uses market-style display: Current | EV | Delta
+		const marketDisplay = container.querySelector('.market-display');
+		expect(marketDisplay).toBeInTheDocument();
+
+		const marketEV = container.querySelector('.market-ev');
+		expect(marketEV?.textContent).toBe('EV: 25.8');
+
+		const marketCurrent = container.querySelector('.market-current');
+		expect(marketCurrent?.textContent).toBe('20');
 	});
 
-	it('shows EV for expert profile', () => {
+	it('shows EV delta in market-style for expert profile', () => {
 		const { container } = render(CategoryRow, {
 			props: createProps({
 				statsEnabled: true,
 				statsProfile: 'expert',
 				expectedValue: 25.8,
+				potentialScore: 30, // Higher than EV = positive delta
 			}),
 		});
 
-		const ev = container.querySelector('.ev');
-		expect(ev?.textContent).toBe('EV: 25.8');
+		const delta = container.querySelector('.market-delta');
+		expect(delta).toBeInTheDocument();
+		expect(delta?.classList.contains('positive')).toBe(true);
 	});
 });
 
@@ -573,27 +584,27 @@ describe('CategoryRow Component - Accessibility', () => {
 	it('has descriptive aria-label when unscored', () => {
 		const { container } = render(CategoryRow, {
 			props: createProps({
-				category: 'Yahtzee',
+				category: 'Dicee',
 				score: null,
 				potentialScore: 50,
 			}),
 		});
 
 		const button = container.querySelector('.category-row');
-		expect(button).toHaveAttribute('aria-label', 'Yahtzee: potential 50');
+		expect(button).toHaveAttribute('aria-label', 'Dicee: potential 50');
 	});
 
 	it('has descriptive aria-label when scored', () => {
 		const { container } = render(CategoryRow, {
 			props: createProps({
-				category: 'Yahtzee',
+				category: 'Dicee',
 				score: 50,
 				potentialScore: 30,
 			}),
 		});
 
 		const button = container.querySelector('.category-row');
-		expect(button).toHaveAttribute('aria-label', 'Yahtzee: scored 50');
+		expect(button).toHaveAttribute('aria-label', 'Dicee: scored 50');
 	});
 
 	it('includes "best choice" in aria-label when optimal', () => {

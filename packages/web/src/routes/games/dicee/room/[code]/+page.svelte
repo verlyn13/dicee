@@ -2,36 +2,57 @@
 /**
  * /games/dicee/room/[code] - Multiplayer Game Room
  *
- * Handles game session for a specific room code.
- * Connects via same-origin WebSocket proxy.
+ * Unified entry point for both players and spectators.
+ * Use ?mode=spectator to join as spectator.
+ *
+ * Entry points:
+ * 1. Direct join as player (default)
+ * 2. ?mode=spectator - explicit spectator join
+ * 3. Server downgrade - player → spectator if game started/full
  */
 
 import { onDestroy } from 'svelte';
 import { goto } from '$app/navigation';
 import { page } from '$app/stores';
 import { MultiplayerGameView } from '$lib/components/game';
+import { SpectatorView } from '$lib/components/spectator';
 import { roomService } from '$lib/services/roomService.svelte';
+import { spectatorService } from '$lib/services/spectatorService.svelte';
 import { auth } from '$lib/stores/auth.svelte';
 import { createChatStore, setChatStore } from '$lib/stores/chat.svelte';
 import {
 	createMultiplayerGameStore,
 	setMultiplayerGameStore,
 } from '$lib/stores/multiplayerGame.svelte';
+import { createSpectatorStore, setSpectatorStore } from '$lib/stores/spectator.svelte';
 
-// Get room code from URL params
+// =============================================================================
+// State
+// =============================================================================
+
+// Get room code and mode from URL
 const roomCode = $derived($page.params.code?.toUpperCase() ?? '');
+const requestedMode = $derived($page.url.searchParams.get('mode') ?? 'player');
 
-// Create game store when we have a user ID
+// Actual role (may differ from requested if downgraded)
+let actualRole = $state<'player' | 'spectator'>('player');
+
+// Stores (created based on role)
 let gameStore = $state<ReturnType<typeof createMultiplayerGameStore> | null>(null);
+let spectatorStore = $state<ReturnType<typeof createSpectatorStore> | null>(null);
 let chatStore = $state<ReturnType<typeof createChatStore> | null>(null);
 
 // Connection state
 let isConnecting = $state(true);
 let connectionError = $state<string | null>(null);
+let wasDowngraded = $state(false);
 
-// Wait for auth to initialize, then connect
+// =============================================================================
+// Connection Logic
+// =============================================================================
+
 $effect(() => {
-	if (!auth.initialized) return; // Wait for auth to load
+	if (!auth.initialized) return;
 
 	// Redirect if not authenticated
 	if (!auth.isAuthenticated || !auth.userId) {
@@ -40,13 +61,12 @@ $effect(() => {
 	}
 
 	// Already connected or connecting
-	if (gameStore || connectionError) return;
+	if (gameStore || spectatorStore || connectionError) return;
 
-	// Create game store
-	gameStore = createMultiplayerGameStore(auth.userId);
-	setMultiplayerGameStore(gameStore);
+	// Determine initial role
+	actualRole = requestedMode === 'spectator' ? 'spectator' : 'player';
 
-	// Create chat store with proper display name from user metadata
+	// Get display name
 	const user = auth.user;
 	const displayName = auth.isAnonymous
 		? 'Guest'
@@ -54,63 +74,118 @@ $effect(() => {
 			(user?.user_metadata?.full_name as string) ||
 			auth.email?.split('@')[0] ||
 			'Player';
+
+	// Create chat store (used by both roles)
 	chatStore = createChatStore(auth.userId, displayName);
 	setChatStore(chatStore);
 
-	// Connect to room
-	(async () => {
-		try {
-			const session = auth.session;
-			if (!session?.access_token) {
-				connectionError = 'No valid session';
-				isConnecting = false;
-				return;
-			}
-
-			await roomService.connect(roomCode as string, session.access_token);
-			isConnecting = false;
-		} catch (error) {
-			connectionError = error instanceof Error ? error.message : 'Failed to connect';
-			isConnecting = false;
-		}
-	})();
+	// Connect based on role
+	connectToRoom(actualRole);
 });
 
+async function connectToRoom(role: 'player' | 'spectator'): Promise<void> {
+	try {
+		const session = auth.session;
+		if (!session?.access_token) {
+			connectionError = 'No valid session';
+			isConnecting = false;
+			return;
+		}
+
+		if (role === 'spectator') {
+			// Connect as spectator
+			spectatorStore = createSpectatorStore(auth.userId!);
+			setSpectatorStore(spectatorStore);
+			await spectatorService.connect(roomCode, session.access_token);
+		} else {
+			// Connect as player (may be downgraded to spectator)
+			gameStore = createMultiplayerGameStore(auth.userId!);
+			setMultiplayerGameStore(gameStore);
+
+			// TODO: roomService.connect should return role info if downgraded
+			// For now, connect as player - server will handle role assignment
+			await roomService.connect(roomCode, session.access_token);
+
+			// Check if we were downgraded (TODO: get this from connect response)
+			// const result = await roomService.connect(...)
+			// if (result.wasDowngraded) {
+			//   wasDowngraded = true;
+			//   actualRole = 'spectator';
+			//   // Switch to spectator mode
+			// }
+		}
+
+		isConnecting = false;
+	} catch (error) {
+		connectionError = error instanceof Error ? error.message : 'Failed to connect';
+		isConnecting = false;
+	}
+}
+
+// =============================================================================
+// Cleanup
+// =============================================================================
+
 onDestroy(() => {
-	// Disconnect from room when leaving
-	roomService.disconnect();
+	if (actualRole === 'spectator') {
+		spectatorService.disconnect();
+	} else {
+		roomService.disconnect();
+	}
 	gameStore?.reset();
 	chatStore?.destroy();
 });
 
+// =============================================================================
+// Handlers
+// =============================================================================
+
 function handleLeave(): void {
-	roomService.disconnect();
+	if (actualRole === 'spectator') {
+		spectatorService.disconnect();
+	} else {
+		roomService.disconnect();
+	}
 	goto('/lobby');
 }
 </script>
 
 <svelte:head>
-	<title>Game {roomCode} | Dicee</title>
+	<title>{actualRole === 'spectator' ? 'Watching' : 'Game'} {roomCode} | Dicee</title>
 </svelte:head>
 
 {#if isConnecting}
 	<div class="loading-state">
 		<div class="loading-content">
-			<p class="loading-text">Connecting to game...</p>
+			<p class="loading-text">
+				{requestedMode === 'spectator' ? 'Connecting as spectator...' : 'Connecting to game...'}
+			</p>
 			<p class="room-code">{roomCode}</p>
 		</div>
 	</div>
 {:else if connectionError}
 	<div class="error-state">
 		<div class="error-content">
-			<h2 class="error-title">Connection Failed</h2>
+			<h2 class="error-title">
+				{actualRole === 'spectator' ? 'Cannot Watch' : 'Connection Failed'}
+			</h2>
 			<p class="error-message">{connectionError}</p>
 			<button class="back-btn" onclick={() => goto('/lobby')}>
 				Back to Lobby
 			</button>
 		</div>
 	</div>
-{:else if gameStore}
+{:else if wasDowngraded}
+	<!-- Show notice when player was downgraded to spectator -->
+	<div class="downgrade-notice">
+		<p>Game in progress - joined as spectator</p>
+	</div>
+	{#if spectatorStore}
+		<SpectatorView store={spectatorStore} onLeave={handleLeave} />
+	{/if}
+{:else if actualRole === 'spectator' && spectatorStore}
+	<SpectatorView store={spectatorStore} onLeave={handleLeave} />
+{:else if actualRole === 'player' && gameStore}
 	<MultiplayerGameView store={gameStore} onLeave={handleLeave} />
 {:else}
 	<div class="error-state">
@@ -193,5 +268,19 @@ function handleLeave(): void {
 
 	.back-btn:active {
 		transform: translateY(0);
+	}
+
+	.downgrade-notice {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		padding: var(--space-2);
+		background: var(--color-warning);
+		color: var(--color-text);
+		text-align: center;
+		font-size: var(--text-small);
+		font-weight: var(--weight-bold);
+		z-index: 100;
 	}
 </style>

@@ -3,6 +3,20 @@
 **Scope**: Always On
 **Priority**: Critical
 
+## Session Management
+
+### Start Session
+Run `/awaken` at the beginning of every session to:
+1. Verify MCP server connectivity
+2. Load current phase state
+3. Read handoff notes from previous session
+
+### End Session
+Run `/tidyup` before ending any session to:
+1. Update state file timestamps
+2. Persist MCP memory observations
+3. Generate handoff notes for next agent
+
 ## Quick Reference
 
 ```

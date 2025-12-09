@@ -1,6 +1,6 @@
 /**
  * Type Integrity Tests
- * Validates type definitions match Yahtzee game rules and RFC-003
+ * Validates type definitions match Dicee game rules and RFC-003
  */
 
 import { describe, expect, it } from 'vitest';
@@ -53,7 +53,7 @@ describe('Category Arrays', () => {
 				'FullHouse',
 				'SmallStraight',
 				'LargeStraight',
-				'Yahtzee',
+				'Dicee',
 				'Chance',
 			]);
 		});
@@ -121,7 +121,7 @@ describe('CATEGORY_DISPLAY_NAMES', () => {
 		expect(CATEGORY_DISPLAY_NAMES.FullHouse).toBe('Full House');
 		expect(CATEGORY_DISPLAY_NAMES.SmallStraight).toBe('Small Straight');
 		expect(CATEGORY_DISPLAY_NAMES.LargeStraight).toBe('Large Straight');
-		expect(CATEGORY_DISPLAY_NAMES.Yahtzee).toBe('Yahtzee');
+		expect(CATEGORY_DISPLAY_NAMES.Dicee).toBe('Dicee');
 		expect(CATEGORY_DISPLAY_NAMES.Chance).toBe('Chance');
 	});
 });
@@ -164,7 +164,7 @@ describe('CATEGORY_TO_INDEX', () => {
 		expect(CATEGORY_TO_INDEX.FullHouse).toBe(8);
 		expect(CATEGORY_TO_INDEX.SmallStraight).toBe(9);
 		expect(CATEGORY_TO_INDEX.LargeStraight).toBe(10);
-		expect(CATEGORY_TO_INDEX.Yahtzee).toBe(11);
+		expect(CATEGORY_TO_INDEX.Dicee).toBe(11);
 		expect(CATEGORY_TO_INDEX.Chance).toBe(12);
 	});
 
@@ -177,10 +177,10 @@ describe('CATEGORY_TO_INDEX', () => {
 });
 
 // =============================================================================
-// Yahtzee Game Rules Validation
+// Dicee Game Rules Validation
 // =============================================================================
 
-describe('Yahtzee Game Rules', () => {
+describe('Dicee Game Rules', () => {
 	it('game has 13 turns (one per category)', () => {
 		expect(ALL_CATEGORIES).toHaveLength(13);
 	});
@@ -212,13 +212,13 @@ describe('Yahtzee Game Rules', () => {
 			FullHouse: 25,
 			SmallStraight: 30,
 			LargeStraight: 40,
-			Yahtzee: 50,
+			Dicee: 50,
 		};
 
 		expect(fixedScores.FullHouse).toBe(25);
 		expect(fixedScores.SmallStraight).toBe(30);
 		expect(fixedScores.LargeStraight).toBe(40);
-		expect(fixedScores.Yahtzee).toBe(50);
+		expect(fixedScores.Dicee).toBe(50);
 	});
 
 	it('upper bonus value is 35', () => {

@@ -13,7 +13,7 @@ import { LobbyLanding } from '$lib/components/lobby/index.js';
 
 <svelte:head>
 	<title>Dicee - Probability Learning Game</title>
-	<meta name="description" content="Learn probability through the classic dice game Yahtzee" />
+	<meta name="description" content="Learn probability through the classic dice game Dicee" />
 </svelte:head>
 
 <LobbyLanding />

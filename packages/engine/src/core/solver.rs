@@ -330,20 +330,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_yahtzee_immediate_score() {
+    fn test_dicee_immediate_score() {
         let solver = TurnSolver::new();
 
-        // Yahtzee with Yahtzee available should score 50
+        // Dicee with Dicee available should score 50
         let config = DiceConfig::from_dice(&[4, 4, 4, 4, 4]);
         let state = TurnState::new(config, 2);
         let available = CategorySet::all();
 
         let analysis = solver.analyze(&state, &available);
 
-        // Should recommend scoring Yahtzee
+        // Should recommend scoring Dicee
         assert!(analysis.recommendation.is_score());
         if let Action::Score { category } = analysis.recommendation {
-            assert_eq!(category, Category::Yahtzee);
+            assert_eq!(category, Category::Dicee);
         }
         assert!((analysis.expected_value - 50.0).abs() < 0.01);
     }

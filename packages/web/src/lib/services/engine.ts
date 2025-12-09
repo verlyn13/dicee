@@ -184,7 +184,7 @@ export function preloadEngine(): void {
  *
  * @example
  * ```typescript
- * const analysis = await analyzeTurnOptimal([5,5,5,5,5], 0, ['Yahtzee']);
+ * const analysis = await analyzeTurnOptimal([5,5,5,5,5], 0, ['Dicee']);
  * if (analysis.action === 'score') {
  *   console.log(`Score ${analysis.categoryScore} in ${analysis.recommendedCategory}`);
  * } else {

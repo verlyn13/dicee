@@ -1,7 +1,7 @@
 {
   "name": "dicee-engine",
   "type": "module",
-  "description": "Probability engine for Dicee - Educational Yahtzee Platform",
+  "description": "Probability engine for Dicee - Educational dice game platform",
   "version": "0.1.0",
   "license": "MIT",
   "repository": {
@@ -19,7 +19,7 @@
     "./snippets/*"
   ],
   "keywords": [
-    "yahtzee",
+    "dicee",
     "probability",
     "wasm",
     "game-theory"

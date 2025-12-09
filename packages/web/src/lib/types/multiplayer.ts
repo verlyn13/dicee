@@ -5,15 +5,15 @@
  * These are the canonical types used by both web client and PartyKit server.
  *
  * IMPORTANT: These types represent the JSON wire format for WebSocket messages.
- * Category uses camelCase ('ones', 'yahtzee') for JSON serialization compatibility.
+ * Category uses camelCase ('ones', 'dicee') for JSON serialization compatibility.
  *
  * For internal TypeScript use, import from '$lib/types.ts' which uses PascalCase.
  * Use category-convert.ts utilities when crossing the boundary:
  *
  * @example
  * import { toWireCategory, toCoreCategory } from '$lib/types/category-convert';
- * const wire = toWireCategory('Yahtzee');  // 'yahtzee'
- * const core = toCoreCategory('yahtzee');  // 'Yahtzee'
+ * const wire = toWireCategory('Dicee');  // 'dicee'
+ * const core = toCoreCategory('dicee');  // 'Dicee'
  *
  * @see $lib/types.ts - Internal TypeScript types (PascalCase)
  * @see $lib/types/category-convert.ts - Conversion utilities
@@ -62,7 +62,7 @@ export type Category =
 	| 'fullHouse'
 	| 'smallStraight'
 	| 'largeStraight'
-	| 'yahtzee'
+	| 'dicee'
 	| 'chance';
 
 /** Player scorecard */
@@ -78,9 +78,9 @@ export interface Scorecard {
 	fullHouse: number | null;
 	smallStraight: number | null;
 	largeStraight: number | null;
-	yahtzee: number | null;
+	dicee: number | null;
 	chance: number | null;
-	yahtzeeBonus: number;
+	diceeBonus: number;
 	upperBonus: number;
 }
 
@@ -108,7 +108,7 @@ export interface PlayerRanking {
 	displayName: string;
 	rank: number;
 	score: number;
-	yahtzeeCount: number;
+	diceeCount: number;
 }
 
 /** Full multiplayer game state */
@@ -351,7 +351,7 @@ export interface CategoryScoredEvent extends BaseServerEvent {
 	category: string;
 	score: number;
 	totalScore: number;
-	isYahtzeeBonus: boolean;
+	isDiceeBonus: boolean;
 }
 
 /** Turn ended */
@@ -384,7 +384,7 @@ export interface GameCompletedEvent extends BaseServerEvent {
 		displayName: string;
 		rank: number;
 		score: number;
-		yahtzeeCount: number;
+		diceeCount: number;
 	}>;
 	duration: number;
 }
@@ -441,20 +441,14 @@ export type ReactionEmoji = '👍' | '🎲' | '😱' | '💀' | '🎉';
 export const REACTION_EMOJIS: ReactionEmoji[] = ['👍', '🎲', '😱', '💀', '🎉'];
 
 /** Quick chat preset keys */
-export type QuickChatKey =
-	| 'nice_roll'
-	| 'good_game'
-	| 'your_turn'
-	| 'yahtzee'
-	| 'ouch'
-	| 'thinking';
+export type QuickChatKey = 'nice_roll' | 'good_game' | 'your_turn' | 'dicee' | 'ouch' | 'thinking';
 
 /** Quick chat presets with emoji and text */
 export const QUICK_CHAT_MESSAGES: Record<QuickChatKey, { emoji: string; text: string }> = {
 	nice_roll: { emoji: '🎲', text: 'Nice roll!' },
 	good_game: { emoji: '👏', text: 'Good game!' },
 	your_turn: { emoji: '⏰', text: 'Your turn!' },
-	yahtzee: { emoji: '🎉', text: 'YAHTZEE!' },
+	dicee: { emoji: '🎉', text: 'DICEE!' },
 	ouch: { emoji: '💀', text: 'Ouch...' },
 	thinking: { emoji: '🤔', text: 'Hmm, let me think...' },
 };

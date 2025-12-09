@@ -6,6 +6,8 @@
  * Highlights when it's the local player's turn.
  * Includes turn transition and AFK warning animations.
  */
+
+import { audioStore } from '$lib/stores/audio.svelte';
 import type { PlayerGameState } from '$lib/types/multiplayer';
 import { haptic } from '$lib/utils/haptics';
 
@@ -35,6 +37,8 @@ $effect(() => {
 		if (isMyTurn) {
 			haptic('medium');
 		}
+		// Play turn change sound
+		audioStore.playTurnChange();
 		const timeout = setTimeout(() => {
 			showTurnTransition = false;
 		}, 500);
@@ -57,7 +61,8 @@ const avatarUrl = $derived(
 );
 
 const displayName = $derived(currentPlayer?.displayName ?? 'Unknown');
-const turnLabel = $derived(isMyTurn ? 'YOUR TURN' : `${displayName}'s Turn`);
+const turnLabel = $derived(isMyTurn ? '🎯 YOUR TURN' : `⏳ ${displayName}'s Turn`);
+const turnSubtext = $derived(isMyTurn ? 'Roll the dice!' : 'Please wait...');
 </script>
 
 <div
@@ -82,6 +87,7 @@ const turnLabel = $derived(isMyTurn ? 'YOUR TURN' : `${displayName}'s Turn`);
 		<!-- Turn Info -->
 		<div class="turn-info">
 			<span class="turn-label">{turnLabel}</span>
+			<span class="turn-subtext">{turnSubtext}</span>
 			<span class="round-info">Round {roundNumber}/13</span>
 		</div>
 
@@ -227,6 +233,18 @@ const turnLabel = $derived(isMyTurn ? 'YOUR TURN' : `${displayName}'s Turn`);
 
 	.my-turn .turn-label {
 		color: var(--color-accent-dark);
+	}
+
+	.turn-subtext {
+		font-size: var(--text-small);
+		color: var(--color-text-muted);
+		font-style: italic;
+	}
+
+	.my-turn .turn-subtext {
+		color: var(--color-accent-dark);
+		font-weight: var(--weight-semibold);
+		font-style: normal;
 	}
 
 	.round-info {

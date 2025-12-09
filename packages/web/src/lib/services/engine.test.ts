@@ -26,20 +26,20 @@ vi.mock('$lib/engine', () => ({
 	initEngine: vi.fn(async () => Promise.resolve()),
 	isEngineReady: vi.fn(() => true),
 	analyzeTurn: vi.fn((dice: DiceArray, rollsRemaining: number, categories: Category[]) => {
-		// Check for Yahtzee
-		const isYahtzee = dice.every((d) => d === dice[0]);
+		// Check for Dicee
+		const isDicee = dice.every((d) => d === dice[0]);
 
-		if (isYahtzee && categories.includes('Yahtzee')) {
+		if (isDicee && categories.includes('Dicee')) {
 			return {
 				action: 'score',
-				recommendedCategory: 'Yahtzee',
+				recommendedCategory: 'Dicee',
 				categoryScore: 50,
 				expectedValue: 50,
 				categories: categories.map((cat) => ({
 					category: cat,
-					immediateScore: cat === 'Yahtzee' ? 50 : 0,
+					immediateScore: cat === 'Dicee' ? 50 : 0,
 					isValid: true,
-					expectedValue: cat === 'Yahtzee' ? 50 : 10,
+					expectedValue: cat === 'Dicee' ? 50 : 10,
 				})),
 			} satisfies TurnAnalysis;
 		}
@@ -177,14 +177,14 @@ describe('engine service', () => {
 	});
 
 	describe('analyzeTurnOptimal', () => {
-		it('recommends scoring Yahtzee when applicable', async () => {
+		it('recommends scoring Dicee when applicable', async () => {
 			const dice: DiceArray = [5, 5, 5, 5, 5];
-			const categories: Category[] = ['Yahtzee', 'Fives', 'Chance'];
+			const categories: Category[] = ['Dicee', 'Fives', 'Chance'];
 
 			const analysis = await analyzeTurnOptimal(dice, 2, categories);
 
 			expect(analysis.action).toBe('score');
-			expect(analysis.recommendedCategory).toBe('Yahtzee');
+			expect(analysis.recommendedCategory).toBe('Dicee');
 			expect(analysis.categoryScore).toBe(50);
 			expect(analysis.expectedValue).toBe(50);
 		});

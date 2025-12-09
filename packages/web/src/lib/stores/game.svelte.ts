@@ -648,7 +648,7 @@ export class GameState {
 				return this.#isSmallStraight(counts) ? 30 : 0;
 			case 'LargeStraight':
 				return this.#isLargeStraight(counts) ? 40 : 0;
-			case 'Yahtzee':
+			case 'Dicee':
 				return counts.includes(5) ? 50 : 0;
 			case 'Chance':
 				return sum;

@@ -1,4 +1,4 @@
-//! Scoring module for Yahtzee categories.
+//! Scoring module for Dicee categories.
 //!
 //! This module provides scoring functions that work with both ordered dice arrays
 //! and canonical [`DiceConfig`] representations.
@@ -63,7 +63,7 @@ use crate::types::{Category, Dice, ScoringResult};
 /// use dicee_engine::scoring::score;
 ///
 /// let dice = [5, 5, 5, 5, 5];
-/// let result = score(&dice, Category::Yahtzee);
+/// let result = score(&dice, Category::Dicee);
 /// assert!(result.valid);
 /// assert_eq!(result.score, 50);
 /// ```
@@ -188,15 +188,15 @@ mod tests {
     }
 
     #[test]
-    fn test_yahtzee() {
+    fn test_dicee() {
         let yes: Dice = [5, 5, 5, 5, 5];
         let no: Dice = [5, 5, 5, 5, 4];
 
-        let result = score(&yes, Category::Yahtzee);
+        let result = score(&yes, Category::Dicee);
         assert!(result.valid);
         assert_eq!(result.score, 50);
 
-        assert!(!score(&no, Category::Yahtzee).valid);
+        assert!(!score(&no, Category::Dicee).valid);
     }
 
     #[test]

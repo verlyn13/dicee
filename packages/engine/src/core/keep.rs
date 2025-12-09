@@ -6,7 +6,7 @@
 //!
 //! # Mathematical Background
 //!
-//! In position-based Yahtzee, there are 2^5 = 32 possible keep masks.
+//! In position-based Dicee, there are 2^5 = 32 possible keep masks.
 //! However, many masks are equivalent when considered as face-value counts.
 //! For example, keeping positions {0, 2} when both show 3 is equivalent
 //! to keeping positions {0, 3} if those show 3.

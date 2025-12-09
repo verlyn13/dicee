@@ -79,6 +79,9 @@ function toDiceArray(dice: [number, number, number, number, number] | null): Dic
 
 const displayDice = $derived(toDiceArray(currentDice));
 
+// Has the player rolled this turn? (dice are null until first roll)
+const hasRolled = $derived(currentDice !== null);
+
 // Is the game in a rolling animation state?
 const isRolling = $derived(uiPhase === 'ROLLING');
 
@@ -182,6 +185,7 @@ function handleCloseGameOver(): void {
 						{canRoll}
 						{canKeep}
 						rolling={isRolling}
+						hasRolled={hasRolled && isMyTurn}
 						onRoll={handleRoll}
 						onToggleKeep={handleToggleKeep}
 						onKeepAll={handleKeepAll}
@@ -190,17 +194,23 @@ function handleCloseGameOver(): void {
 				</div>
 
 				<!-- Turn Status Message -->
-				<div class="turn-status" class:my-turn={isMyTurn}>
+				<div class="turn-status" class:my-turn={isMyTurn} class:waiting={!isMyTurn}>
 					{#if !isMyTurn}
-						<p class="status-text">Waiting for {currentPlayer?.displayName ?? 'opponent'}...</p>
+						<p class="status-text waiting-text">
+							<span class="waiting-icon">⏳</span>
+							{currentPlayer?.displayName ?? 'Opponent'}'s turn
+						</p>
 					{:else if uiPhase === 'ROLLING'}
 						<p class="status-text">Rolling...</p>
 					{:else if uiPhase === 'SCORING'}
 						<p class="status-text">Scoring...</p>
 					{:else if rollsRemaining === 3}
-						<p class="status-text">Roll the dice to start your turn!</p>
+						<p class="status-text your-turn-text">
+							<span class="turn-icon">🎯</span>
+							Your turn! Click to roll the dice
+						</p>
 					{:else if rollsRemaining > 0}
-						<p class="status-text">Keep dice or roll again ({rollsRemaining} left)</p>
+						<p class="status-text">Keep dice or roll again ({rollsRemaining} rolls left)</p>
 					{:else}
 						<p class="status-text">Select a category to score</p>
 					{/if}
@@ -395,10 +405,34 @@ function handleCloseGameOver(): void {
 		border: var(--border-medium);
 	}
 
+	.turn-status.waiting {
+		background: var(--color-surface-alt);
+		border: var(--border-thin);
+		opacity: 0.8;
+	}
+
 	.status-text {
 		margin: 0;
 		font-size: var(--text-body);
 		font-weight: var(--weight-semibold);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-1);
+	}
+
+	.waiting-text {
+		color: var(--color-text-muted);
+	}
+
+	.your-turn-text {
+		color: var(--color-primary);
+		font-size: var(--text-h4);
+	}
+
+	.waiting-icon,
+	.turn-icon {
+		font-size: 1.2em;
 	}
 
 	/* Scorecard Area */

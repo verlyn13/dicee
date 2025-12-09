@@ -182,7 +182,7 @@ describe('calculateLowerTotal', () => {
 			FullHouse: 25,
 			SmallStraight: 30,
 			LargeStraight: 40,
-			Yahtzee: 50,
+			Dicee: 50,
 			Chance: 23,
 		});
 
@@ -192,7 +192,7 @@ describe('calculateLowerTotal', () => {
 	it('treats null as 0', () => {
 		const scores = createScores({
 			FullHouse: 25,
-			Yahtzee: null,
+			Dicee: null,
 		});
 
 		expect(calculateLowerTotal(scores)).toBe(25);
@@ -202,7 +202,7 @@ describe('calculateLowerTotal', () => {
 		const scores = createScores({
 			ThreeOfAKind: 0, // Failed to get three of a kind
 			FullHouse: 25,
-			Yahtzee: 0, // Failed Yahtzee
+			Dicee: 0, // Failed Dicee
 		});
 
 		expect(calculateLowerTotal(scores)).toBe(25);
@@ -224,24 +224,24 @@ describe('getCategoriesRemaining', () => {
 	it('excludes scored categories', () => {
 		const scores = createScores({
 			Ones: 3,
-			Yahtzee: 50,
+			Dicee: 50,
 		});
 		const remaining = getCategoriesRemaining(scores);
 
 		expect(remaining).toHaveLength(11);
 		expect(remaining).not.toContain('Ones');
-		expect(remaining).not.toContain('Yahtzee');
+		expect(remaining).not.toContain('Dicee');
 	});
 
 	it('includes categories with score of 0', () => {
 		// A category scored as 0 is still "used"
 		const scores = createScores({
-			Yahtzee: 0, // Failed Yahtzee attempt
+			Dicee: 0, // Failed Dicee attempt
 		});
 		const remaining = getCategoriesRemaining(scores);
 
 		expect(remaining).toHaveLength(12);
-		expect(remaining).not.toContain('Yahtzee');
+		expect(remaining).not.toContain('Dicee');
 	});
 
 	it('returns empty array when all categories scored', () => {
@@ -257,7 +257,7 @@ describe('getCategoriesRemaining', () => {
 			FullHouse: 25,
 			SmallStraight: 30,
 			LargeStraight: 40,
-			Yahtzee: 50,
+			Dicee: 50,
 			Chance: 23,
 		});
 		const remaining = getCategoriesRemaining(scores);
@@ -291,7 +291,7 @@ describe('isCategoryAvailable', () => {
 		const scores = createScores();
 
 		expect(isCategoryAvailable(scores, 'Ones')).toBe(true);
-		expect(isCategoryAvailable(scores, 'Yahtzee')).toBe(true);
+		expect(isCategoryAvailable(scores, 'Dicee')).toBe(true);
 	});
 
 	it('returns false for scored category', () => {
@@ -304,10 +304,10 @@ describe('isCategoryAvailable', () => {
 
 	it('returns false for category scored as 0', () => {
 		const scores = createScores({
-			Yahtzee: 0,
+			Dicee: 0,
 		});
 
-		expect(isCategoryAvailable(scores, 'Yahtzee')).toBe(false);
+		expect(isCategoryAvailable(scores, 'Dicee')).toBe(false);
 	});
 
 	it('correctly identifies mixed availability', () => {
@@ -321,7 +321,7 @@ describe('isCategoryAvailable', () => {
 		expect(isCategoryAvailable(scores, 'Twos')).toBe(true);
 		expect(isCategoryAvailable(scores, 'Threes')).toBe(false);
 		expect(isCategoryAvailable(scores, 'FullHouse')).toBe(false);
-		expect(isCategoryAvailable(scores, 'Yahtzee')).toBe(true);
+		expect(isCategoryAvailable(scores, 'Dicee')).toBe(true);
 	});
 });
 
@@ -345,7 +345,7 @@ describe('Scorecard Calculation Integration', () => {
 			FullHouse: 25,
 			SmallStraight: 30,
 			LargeStraight: 40,
-			Yahtzee: 50,
+			Dicee: 50,
 			Chance: 23,
 		});
 
@@ -375,7 +375,7 @@ describe('Scorecard Calculation Integration', () => {
 			FullHouse: 25,
 			SmallStraight: 30,
 			LargeStraight: 40,
-			Yahtzee: 0,
+			Dicee: 0,
 			Chance: 15,
 		});
 

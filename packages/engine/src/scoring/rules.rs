@@ -1,4 +1,4 @@
-//! Yahtzee scoring rules implementation using DiceConfig.
+//! Dicee scoring rules implementation using DiceConfig.
 //!
 //! All scoring functions work directly with [`DiceConfig`] for efficiency,
 //! avoiding the need to pass around ordered dice arrays.
@@ -112,8 +112,8 @@ pub fn score(config: &DiceConfig, category: CoreCategory) -> ScoreResult {
                 ScoreResult::invalid()
             }
         }
-        CoreCategory::Yahtzee => {
-            if config.is_yahtzee() {
+        CoreCategory::Dicee => {
+            if config.is_dicee() {
                 ScoreResult::valid(50)
             } else {
                 ScoreResult::invalid()
@@ -215,7 +215,7 @@ pub fn score_config(config: &DiceConfig, category: TypesCategory) -> ScoringResu
         TypesCategory::FullHouse => score_full_house(config),
         TypesCategory::SmallStraight => score_small_straight(config),
         TypesCategory::LargeStraight => score_large_straight(config),
-        TypesCategory::Yahtzee => score_yahtzee(config),
+        TypesCategory::Dicee => score_dicee(config),
         TypesCategory::Chance => score_chance(config),
     };
 
@@ -306,11 +306,11 @@ fn score_large_straight(config: &DiceConfig) -> (u16, bool) {
     }
 }
 
-/// Scores Yahtzee (all 5 dice the same).
+/// Scores Dicee (all 5 dice the same).
 ///
 /// Returns 50 points if valid.
-fn score_yahtzee(config: &DiceConfig) -> (u16, bool) {
-    if config.is_yahtzee() {
+fn score_dicee(config: &DiceConfig) -> (u16, bool) {
+    if config.is_dicee() {
         (50, true)
     } else {
         (0, false)
@@ -341,7 +341,7 @@ pub const fn max_score(category: TypesCategory) -> u16 {
         TypesCategory::FullHouse => 25,
         TypesCategory::SmallStraight => 30,
         TypesCategory::LargeStraight => 40,
-        TypesCategory::Yahtzee => 50,
+        TypesCategory::Dicee => 50,
         TypesCategory::Chance => 30, // All 6s
     }
 }
@@ -453,13 +453,13 @@ mod tests {
     }
 
     #[test]
-    fn test_yahtzee() {
+    fn test_dicee() {
         let valid = DiceConfig::from_dice(&[4, 4, 4, 4, 4]);
-        assert!(score_config(&valid, TypesCategory::Yahtzee).valid);
-        assert_eq!(score_config(&valid, TypesCategory::Yahtzee).score, 50);
+        assert!(score_config(&valid, TypesCategory::Dicee).valid);
+        assert_eq!(score_config(&valid, TypesCategory::Dicee).score, 50);
 
         let invalid = DiceConfig::from_dice(&[4, 4, 4, 4, 5]);
-        assert!(!score_config(&invalid, TypesCategory::Yahtzee).valid);
+        assert!(!score_config(&invalid, TypesCategory::Dicee).valid);
     }
 
     #[test]
@@ -494,7 +494,7 @@ mod tests {
 
     #[test]
     fn test_max_scores() {
-        assert_eq!(max_score(TypesCategory::Yahtzee), 50);
+        assert_eq!(max_score(TypesCategory::Dicee), 50);
         assert_eq!(max_score(TypesCategory::LargeStraight), 40);
         assert_eq!(max_score(TypesCategory::FullHouse), 25);
         assert_eq!(max_score(TypesCategory::Sixes), 30);
@@ -504,7 +504,7 @@ mod tests {
     fn test_upper_targets() {
         assert_eq!(upper_target(TypesCategory::Ones), 3);
         assert_eq!(upper_target(TypesCategory::Sixes), 18);
-        assert_eq!(upper_target(TypesCategory::Yahtzee), 0);
+        assert_eq!(upper_target(TypesCategory::Dicee), 0);
     }
 
     // Tests for solver API (score with CoreCategory)
@@ -520,9 +520,9 @@ mod tests {
         assert_eq!(score(&config, CoreCategory::ThreeOfAKind).score, 19);
         assert!(score(&config, CoreCategory::ThreeOfAKind).valid);
 
-        // Yahtzee: invalid
-        assert!(!score(&config, CoreCategory::Yahtzee).valid);
-        assert_eq!(score(&config, CoreCategory::Yahtzee).score, 0);
+        // Dicee: invalid
+        assert!(!score(&config, CoreCategory::Dicee).valid);
+        assert_eq!(score(&config, CoreCategory::Dicee).score, 0);
     }
 
     #[test]

@@ -74,9 +74,9 @@ function getRankLabel(rank: number): string {
 						{/if}
 					</span>
 					<span class="score">{ranking.score}</span>
-					{#if ranking.yahtzeeCount > 0}
-						<span class="yahtzee-badge" title="{ranking.yahtzeeCount} Yahtzee(s)">
-							🎲×{ranking.yahtzeeCount}
+					{#if ranking.diceeCount > 0}
+						<span class="dicee-badge" title="{ranking.diceeCount} Dicee(s)">
+							🎲×{ranking.diceeCount}
 						</span>
 					{/if}
 				</div>
@@ -200,7 +200,7 @@ function getRankLabel(rank: number): string {
 		font-variant-numeric: tabular-nums;
 	}
 
-	.yahtzee-badge {
+	.dicee-badge {
 		font-size: var(--text-small);
 		padding: 2px 6px;
 		background: var(--color-success);

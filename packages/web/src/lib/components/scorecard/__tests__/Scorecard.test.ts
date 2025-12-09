@@ -26,7 +26,7 @@ function createEmptyScores(): Record<Category, number | null> {
 		FullHouse: null,
 		SmallStraight: null,
 		LargeStraight: null,
-		Yahtzee: null,
+		Dicee: null,
 		Chance: null,
 	};
 }
@@ -44,7 +44,7 @@ function createPotentialScores(): ScoringResult[] {
 		{ category: 'FullHouse' as Category, score: 25, valid: true },
 		{ category: 'SmallStraight' as Category, score: 30, valid: true },
 		{ category: 'LargeStraight' as Category, score: 0, valid: true },
-		{ category: 'Yahtzee' as Category, score: 0, valid: true },
+		{ category: 'Dicee' as Category, score: 0, valid: true },
 		{ category: 'Chance' as Category, score: 22, valid: true },
 	];
 }
@@ -511,7 +511,7 @@ describe('Scorecard Component - Edge Cases', () => {
 			FullHouse: 25,
 			SmallStraight: 30,
 			LargeStraight: 40,
-			Yahtzee: 50,
+			Dicee: 50,
 			Chance: 25,
 		};
 
@@ -537,7 +537,7 @@ describe('Scorecard Component - Edge Cases', () => {
 
 	it('handles zero scores correctly', () => {
 		const scores = createEmptyScores();
-		scores.Yahtzee = 0; // Scored as zero
+		scores.Dicee = 0; // Scored as zero
 
 		const { container } = render(Scorecard, {
 			props: createProps({ scores }),

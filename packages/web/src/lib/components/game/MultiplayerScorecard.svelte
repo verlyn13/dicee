@@ -36,7 +36,7 @@ const LOWER_CATEGORIES: { key: Category; label: string; description: string }[] 
 	{ key: 'fullHouse', label: 'Full House', description: '25 pts' },
 	{ key: 'smallStraight', label: 'Sm Straight', description: '30 pts' },
 	{ key: 'largeStraight', label: 'Lg Straight', description: '40 pts' },
-	{ key: 'yahtzee', label: 'Yahtzee', description: '50 pts' },
+	{ key: 'dicee', label: 'Dicee', description: '50 pts' },
 	{ key: 'chance', label: 'Chance', description: 'Sum all dice' },
 ];
 
@@ -84,7 +84,7 @@ function calculatePotential(category: Category): number {
 			const str = sortedDice.join('');
 			return str === '12345' || str === '23456' ? 40 : 0;
 		}
-		case 'yahtzee':
+		case 'dicee':
 			return maxCount === 5 ? 50 : 0;
 		case 'chance':
 			return sum;
@@ -119,7 +119,7 @@ const upperSum = $derived(() => {
 });
 
 const upperBonus = $derived(scorecard?.upperBonus ?? 0);
-const yahtzeeBonus = $derived(scorecard?.yahtzeeBonus ?? 0);
+const diceeBonus = $derived(scorecard?.diceeBonus ?? 0);
 
 // Calculate total
 const totalScore = $derived(() => {
@@ -132,7 +132,7 @@ const totalScore = $derived(() => {
 		total += scorecard[cat.key] ?? 0;
 	}
 	total += scorecard.upperBonus;
-	total += scorecard.yahtzeeBonus;
+	total += scorecard.diceeBonus;
 	return total;
 });
 </script>
@@ -211,11 +211,11 @@ const totalScore = $derived(() => {
 			{/each}
 		</div>
 
-		<!-- Yahtzee Bonus -->
-		{#if yahtzeeBonus > 0}
-			<div class="bonus-row yahtzee-bonus">
-				<span class="bonus-label">Yahtzee Bonus</span>
-				<span class="bonus-value achieved">+{yahtzeeBonus}</span>
+		<!-- Dicee Bonus -->
+		{#if diceeBonus > 0}
+			<div class="bonus-row dicee-bonus">
+				<span class="bonus-label">Dicee Bonus</span>
+				<span class="bonus-value achieved">+{diceeBonus}</span>
 			</div>
 		{/if}
 	</section>
@@ -352,12 +352,12 @@ const totalScore = $derived(() => {
 		color: var(--color-success);
 	}
 
-	.yahtzee-bonus {
+	.dicee-bonus {
 		background: var(--color-success);
 		color: white;
 	}
 
-	.yahtzee-bonus .bonus-value {
+	.dicee-bonus .bonus-value {
 		color: white;
 	}
 

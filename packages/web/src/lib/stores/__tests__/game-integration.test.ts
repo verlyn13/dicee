@@ -23,7 +23,7 @@ vi.mock('../../services/engine.js', () => ({
 		{ category: 'FullHouse', score: 25, valid: true },
 		{ category: 'SmallStraight', score: 30, valid: true },
 		{ category: 'LargeStraight', score: 40, valid: true },
-		{ category: 'Yahtzee', score: 50, valid: true },
+		{ category: 'Dicee', score: 50, valid: true },
 		{ category: 'Chance', score: 18, valid: true },
 	]),
 	calculateProbabilities: vi.fn(async () => []),
@@ -142,7 +142,7 @@ describe('Full Game Integration', () => {
 				'FullHouse',
 				'SmallStraight',
 				'LargeStraight',
-				'Yahtzee',
+				'Dicee',
 				'Chance',
 			];
 

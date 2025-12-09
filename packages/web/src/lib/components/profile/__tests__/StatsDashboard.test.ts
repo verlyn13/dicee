@@ -16,8 +16,8 @@ function createMockStats(overrides: Partial<PlayerStats> = {}): PlayerStats {
 		total_score: 5000,
 		avg_score: 250,
 		best_score: 375,
-		yahtzees_rolled: 8,
-		bonus_yahtzees: 2,
+		dicees_rolled: 8,
+		bonus_dicees: 2,
 		upper_bonuses: 15,
 		optimal_decisions: 180,
 		total_decisions: 200,
@@ -214,20 +214,20 @@ describe('StatsDashboard', () => {
 			expect(screen.getByText('180 / 200 optimal decisions')).toBeInTheDocument();
 		});
 
-		it('displays yahtzees rolled', () => {
-			const stats = createMockStats({ yahtzees_rolled: 8 });
+		it('displays dicees rolled', () => {
+			const stats = createMockStats({ dicees_rolled: 8 });
 			render(StatsDashboard, { props: { stats } });
 
 			expect(screen.getByText('8')).toBeInTheDocument();
-			expect(screen.getByText('Yahtzees')).toBeInTheDocument();
+			expect(screen.getByText('Dicees')).toBeInTheDocument();
 		});
 
-		it('displays bonus yahtzees', () => {
-			const stats = createMockStats({ bonus_yahtzees: 3 });
+		it('displays bonus dicees', () => {
+			const stats = createMockStats({ bonus_dicees: 3 });
 			render(StatsDashboard, { props: { stats } });
 
 			expect(screen.getByText('3')).toBeInTheDocument();
-			expect(screen.getByText('Bonus Yahtzees')).toBeInTheDocument();
+			expect(screen.getByText('Bonus Dicees')).toBeInTheDocument();
 		});
 
 		it('displays upper bonuses', () => {

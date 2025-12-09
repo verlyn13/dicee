@@ -269,7 +269,7 @@ describe('Dice Rolling Workflow', () => {
 		expect(dice).toEqual(finalDice);
 	});
 
-	it('handles yahtzee-hunting scenario', () => {
+	it('handles dicee-hunting scenario', () => {
 		// Scenario: Player rolls and gets 3 sixes, keeps them
 		const dice: DiceArray = [6, 3, 6, 2, 6];
 		const kept: KeptMask = [true, false, true, false, true];

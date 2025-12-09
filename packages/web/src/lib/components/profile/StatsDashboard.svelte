@@ -150,12 +150,12 @@ const ratingTier = $derived(hasRatingData ? getRatingTier(skillRating) : null);
 			<!-- Achievements Row -->
 			<div class="achievements-row">
 				<div class="achievement">
-					<span class="achievement-value">{stats.yahtzees_rolled}</span>
-					<span class="achievement-label">Yahtzees</span>
+					<span class="achievement-value">{stats.dicees_rolled}</span>
+					<span class="achievement-label">Dicees</span>
 				</div>
 				<div class="achievement">
-					<span class="achievement-value">{stats.bonus_yahtzees}</span>
-					<span class="achievement-label">Bonus Yahtzees</span>
+					<span class="achievement-value">{stats.bonus_dicees}</span>
+					<span class="achievement-label">Bonus Dicees</span>
 				</div>
 				<div class="achievement">
 					<span class="achievement-value">{stats.upper_bonuses}</span>

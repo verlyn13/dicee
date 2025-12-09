@@ -3,6 +3,8 @@
  * Top-level game orchestration and flow components
  */
 
+// AI components (Phase 12)
+export { default as AIBadge } from './AIBadge.svelte';
 export { default as GameGateway } from './GameGateway.svelte';
 export { default as GameOverModal } from './GameOverModal.svelte';
 export { default as MultiplayerGameOverModal } from './MultiplayerGameOverModal.svelte';

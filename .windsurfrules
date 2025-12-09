@@ -1,0 +1,170 @@
+# Dicee Project - Windsurf/Cascade Rules
+
+## Agent Identity
+You are Cascade, the AI assistant in Windsurf IDE, working on the Dicee project - a dice probability engine and multiplayer game platform.
+
+## Session Startup
+
+**CRITICAL**: Before starting any work:
+1. Run `/awaken` to initialize session and verify MCP connectivity
+2. Read `.claude/state/session-handoff.md` for context from previous sessions
+3. Check `.claude/state/current-phase.json` for active tasks
+
+## Core Guardrails
+
+### Three Strikes Rule (MANDATORY)
+If you fail at the same operation **3 times**, you must **STOP and ask the human**.
+This applies to: build failures, test failures, file operations, anything.
+Do NOT try a 4th time - escalate immediately.
+
+### Read Before Edit
+NEVER modify a file you haven't read in this session. Always read first.
+
+### Verify After Change
+Run tests/typecheck after every edit:
+```bash
+pnpm check && pnpm biome:check && pnpm web:vitest
+```
+
+### Update State
+Update `.claude/state/current-phase.json` after completing tasks.
+
+## MCP Servers
+
+Three MCP servers are available:
+
+| Server | Purpose | Key Tools |
+|--------|---------|-----------|
+| `memory` | Persistent knowledge graph | `create_entities`, `search_nodes`, `read_graph` |
+| `supabase` | Database schema, migrations | `execute_sql`, `list_tables`, `search_docs` |
+| `akg` | Architectural validation | `akg_check_import`, `akg_layer_rules`, `akg_invariant_status` |
+
+**Supabase MCP** requires token: Start Windsurf with `dicee-windsurf` function or set `SUPABASE_MCP_TOKEN`.
+
+## Naming Conventions
+
+```
+Component files:  PascalCase.svelte (Avatar.svelte)
+Callback props:   onVerb (onRoll, onScore, onClose) - camelCase!
+DOM events:       lowercase (onclick, onkeydown) - Svelte 5
+Handlers:         handleVerb (handleRoll)
+Booleans:         is/has/can prefix (isLoading, hasError)
+CSS classes:      kebab-case (.game-container)
+Stores:           *.svelte.ts extension
+```
+
+## Layer Architecture (AKG Enforced)
+
+**ALWAYS use `akg_check_import` before adding imports!**
+
+```
+routes      → components, stores, services, types, wasm
+components  → components, types (NOT stores, services)
+stores      → services, types, supabase (NOT components, routes)
+services    → types, supabase, wasm (NOT components, routes, stores)
+types       → types only
+supabase    → types only
+wasm        → types only
+```
+
+## Svelte 5 Patterns
+
+Use runes syntax (NOT legacy stores):
+```svelte
+<script lang="ts">
+  // State
+  let count = $state(0);
+
+  // Derived
+  let doubled = $derived(count * 2);
+
+  // Effects
+  $effect(() => {
+    console.log('Count changed:', count);
+  });
+
+  // Props with callbacks
+  interface Props {
+    value: number;
+    onUpdate: (newValue: number) => void;  // onVerb pattern
+  }
+  let { value, onUpdate }: Props = $props();
+</script>
+```
+
+## Quality Checks
+
+Before marking any task complete:
+```bash
+pnpm check          # TypeScript + Svelte
+pnpm biome:check    # Lint
+pnpm web:vitest     # Tests
+pnpm akg:check      # Architectural invariants
+```
+
+Or run the full quality gate:
+```bash
+./scripts/quality-gate.sh
+```
+
+## Testing
+
+Co-locate tests with components:
+```
+src/lib/components/ui/
+├── Avatar.svelte
+└── __tests__/
+    └── Avatar.test.ts
+```
+
+Run tests:
+```bash
+pnpm web:vitest -- Avatar          # Run Avatar tests
+pnpm web:vitest -- --coverage      # With coverage
+```
+
+## Phase State
+
+- **Active phase**: `phase-11-ux-enhancement` (UX Enhancement)
+- **Current tracks**: A (complete), B (complete), C (complete), D (in-progress)
+- **Archived phases**: `.claude/state/archives/phases/`
+
+Read current state:
+```bash
+cat .claude/state/current-phase.json | jq '.phases."phase-11-ux-enhancement".parallelTracks'
+```
+
+## Session Cleanup
+
+Before ending session, run `/tidyup` to:
+1. Update timestamps in state files
+2. Generate handoff notes
+3. Persist any pending state
+
+## Slash Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/awaken` | Initialize session, verify MCP |
+| `/tidyup` | Clean up, prepare handoff |
+| `/status` | Show current phase/tasks |
+| `/health` | Quick environment check |
+| `/akg` | Architecture queries |
+| `/build-component` | Guided component creation |
+| `/verify-task` | Full task verification |
+
+## Handoff Protocol
+
+When handing off to Claude Code or Codex:
+1. Run `/tidyup` to update state
+2. Add summary to `.claude/state/session-handoff.md`
+3. Note which agent should pick up next
+4. Include any blockers or decisions needed
+
+## References
+
+- Guardrails: `.claude/AGENT-GUARDRAILS.md`
+- Conventions: `.claude/CONVENTIONS.md`
+- Workflows: `.claude/workflow-orchestration.md`
+- Full config: `.windsurf/README.md`
+- AKG docs: `docs/architecture/akg/`

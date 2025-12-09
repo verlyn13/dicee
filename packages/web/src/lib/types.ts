@@ -29,7 +29,7 @@ export const LOWER_CATEGORIES = [
 	'FullHouse',
 	'SmallStraight',
 	'LargeStraight',
-	'Yahtzee',
+	'Dicee',
 	'Chance',
 ] as const;
 
@@ -51,7 +51,7 @@ export const CATEGORY_DISPLAY_NAMES: Record<Category, string> = {
 	FullHouse: 'Full House',
 	SmallStraight: 'Small Straight',
 	LargeStraight: 'Large Straight',
-	Yahtzee: 'Yahtzee',
+	Dicee: 'Dicee',
 	Chance: 'Chance',
 };
 
@@ -67,7 +67,7 @@ export const CATEGORY_TO_INDEX: Record<Category, number> = {
 	FullHouse: 8,
 	SmallStraight: 9,
 	LargeStraight: 10,
-	Yahtzee: 11,
+	Dicee: 11,
 	Chance: 12,
 };
 

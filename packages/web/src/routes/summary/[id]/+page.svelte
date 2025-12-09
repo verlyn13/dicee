@@ -19,8 +19,8 @@ const gameId = $derived($page.params.id);
 
 // Placeholder rankings - in production these come from the game state or database
 let rankings = $state<PlayerRanking[]>([
-	{ playerId: 'player1', displayName: 'You', rank: 1, score: 285, yahtzeeCount: 1 },
-	{ playerId: 'player2', displayName: 'Opponent', rank: 2, score: 220, yahtzeeCount: 0 },
+	{ playerId: 'player1', displayName: 'You', rank: 1, score: 285, diceeCount: 1 },
+	{ playerId: 'player2', displayName: 'Opponent', rank: 2, score: 220, diceeCount: 0 },
 ]);
 
 // Placeholder scorecard
@@ -36,9 +36,9 @@ let myScorecard = $state<Scorecard>({
 	fullHouse: 25,
 	smallStraight: 30,
 	largeStraight: 40,
-	yahtzee: 50,
+	dicee: 50,
 	chance: 25,
-	yahtzeeBonus: 0,
+	diceeBonus: 0,
 	upperBonus: 35,
 });
 

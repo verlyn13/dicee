@@ -47,7 +47,7 @@ const categoryNames: Record<Category, string> = {
 	fullHouse: 'Full House',
 	smallStraight: 'Small Straight',
 	largeStraight: 'Large Straight',
-	yahtzee: 'Yahtzee',
+	dicee: 'Dicee',
 	chance: 'Chance',
 };
 
@@ -59,7 +59,7 @@ const lowerCategories: Category[] = [
 	'fullHouse',
 	'smallStraight',
 	'largeStraight',
-	'yahtzee',
+	'dicee',
 	'chance',
 ];
 
@@ -137,9 +137,9 @@ function getRankEmoji(rank: number): string {
 					<span class="rank">{getRankEmoji(player.rank)}</span>
 					<span class="player-name">{player.displayName}</span>
 					<span class="player-score">{player.score}</span>
-					{#if player.yahtzeeCount > 0}
-						<span class="yahtzee-badge" title="{player.yahtzeeCount} Yahtzee(s)">
-							🎯 ×{player.yahtzeeCount}
+					{#if player.diceeCount > 0}
+						<span class="dicee-badge" title="{player.diceeCount} Dicee(s)">
+							🎯 ×{player.diceeCount}
 						</span>
 					{/if}
 				</div>
@@ -185,15 +185,15 @@ function getRankEmoji(rank: number): string {
 							<span class="category-score">{myScorecard[category] ?? 0}</span>
 						</div>
 					{/each}
-					{#if myScorecard.yahtzeeBonus > 0}
+					{#if myScorecard.diceeBonus > 0}
 						<div class="score-row bonus earned">
-							<span class="category-name">Yahtzee Bonus</span>
-							<span class="category-score">+{myScorecard.yahtzeeBonus}</span>
+							<span class="category-name">Dicee Bonus</span>
+							<span class="category-score">+{myScorecard.diceeBonus}</span>
 						</div>
 					{/if}
 					<div class="score-row subtotal">
 						<span class="category-name">Subtotal</span>
-						<span class="category-score">{lowerSubtotal + (myScorecard.yahtzeeBonus ?? 0)}</span>
+						<span class="category-score">{lowerSubtotal + (myScorecard.diceeBonus ?? 0)}</span>
 					</div>
 				</div>
 			</div>
@@ -330,7 +330,7 @@ function getRankEmoji(rank: number): string {
 		font-weight: var(--weight-bold);
 	}
 
-	.yahtzee-badge {
+	.dicee-badge {
 		font-size: var(--text-small);
 		padding: 2px 6px;
 		background: var(--color-accent);
