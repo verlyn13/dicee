@@ -37,6 +37,7 @@ const displayName = $derived(() => {
 import ChatPanel from './ChatPanel.svelte';
 import EmptyRooms from './EmptyRooms.svelte';
 import MobileTabToggle from './MobileTabToggle.svelte';
+import PlayVsAIButton from './PlayVsAIButton.svelte';
 import RoomCard from './RoomCard.svelte';
 import Ticker from './Ticker.svelte';
 
@@ -87,6 +88,11 @@ async function handleCreateRoom() {
 function handlePlaySolo() {
 	goto('/games/dicee?mode=solo');
 }
+
+// Handle AI game creation - navigate to the room
+function handleAIGameCreated(roomCode: string, _aiProfileId: string) {
+	goto(`/games/dicee/room/${roomCode}`);
+}
 </script>
 
 <ConnectionOverlay />
@@ -131,9 +137,14 @@ function handlePlaySolo() {
 			>
 				<div class="panel-header">
 					<h2>Open Games</h2>
-					<button class="solo-btn" onclick={handlePlaySolo}>
-						SOLO
-					</button>
+					<div class="header-actions">
+						<button class="solo-btn" onclick={handlePlaySolo}>
+							SOLO
+						</button>
+						<button class="ai-btn" onclick={() => goto('/games/dicee?mode=ai')}>
+							🤖 VS AI
+						</button>
+					</div>
 				</div>
 
 				{#if lobby.rooms.length === 0}
@@ -369,9 +380,28 @@ function handlePlaySolo() {
 			transform var(--transition-fast);
 	}
 
-	.solo-btn:hover {
+	.solo-btn:hover,
+	.ai-btn:hover {
 		background: var(--color-accent);
 		transform: translateY(-2px);
+	}
+
+	.header-actions {
+		display: flex;
+		gap: var(--space-1);
+	}
+
+	.ai-btn {
+		padding: var(--space-1) var(--space-2);
+		background: var(--color-surface);
+		border: var(--border-medium);
+		font-family: var(--font-mono);
+		font-size: var(--text-small);
+		font-weight: var(--weight-bold);
+		cursor: pointer;
+		transition:
+			background var(--transition-fast),
+			transform var(--transition-fast);
 	}
 
 	.room-grid {

@@ -18,9 +18,13 @@ import { auth } from '$lib/stores/auth.svelte';
 interface Props {
 	/** Callback when solo mode is selected */
 	onStartSolo?: () => void;
+	/** Callback when AI mode is selected */
+	onStartAI?: () => void;
+	/** Whether to show AI mode option */
+	showAIMode?: boolean;
 }
 
-let { onStartSolo }: Props = $props();
+let { onStartSolo, onStartAI, showAIMode = true }: Props = $props();
 
 // Generate random dice values for preview
 const previewDice = $state([1, 2, 3, 4, 5].map(() => Math.floor(Math.random() * 6) + 1));
@@ -38,6 +42,12 @@ function handleMultiplayer() {
 		goto('/lobby');
 	} else {
 		goto('/lobby');
+	}
+}
+
+function handleAIPlay() {
+	if (onStartAI) {
+		onStartAI();
 	}
 }
 
@@ -90,6 +100,21 @@ function handleBackToHub() {
 				<span class="feature">Track your stats</span>
 			</div>
 		</button>
+
+		<!-- VS AI Mode -->
+		{#if showAIMode}
+			<button class="mode-card mode-card--ai" onclick={handleAIPlay}>
+				<div class="mode-icon">
+					<span class="ai-emoji">🤖</span>
+				</div>
+				<h2 class="mode-title">VS AI</h2>
+				<p class="mode-description">Challenge AI opponents</p>
+				<div class="mode-features">
+					<span class="feature">5 personalities</span>
+					<span class="feature">Adjustable difficulty</span>
+				</div>
+			</button>
+		{/if}
 
 		<!-- Multiplayer Mode -->
 		<button class="mode-card mode-card--multi" onclick={handleMultiplayer}>
@@ -219,6 +244,12 @@ function handleBackToHub() {
 		}
 	}
 
+	@media (min-width: 900px) {
+		.mode-cards {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
 	.mode-card {
 		display: flex;
 		flex-direction: column;
@@ -259,6 +290,22 @@ function handleBackToHub() {
 
 	.mode-card--multi:hover {
 		background: rgba(16, 185, 129, 0.1);
+	}
+
+	.mode-card--ai {
+		border-color: var(--color-primary);
+	}
+
+	.mode-card--ai:hover {
+		background: rgba(99, 102, 241, 0.1);
+	}
+
+	.mode-card--ai .mode-icon {
+		color: var(--color-primary);
+	}
+
+	.ai-emoji {
+		font-size: 2.5rem;
 	}
 
 	.mode-icon {

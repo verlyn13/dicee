@@ -8,10 +8,12 @@
  */
 
 import { onMount } from 'svelte';
+import { goto } from '$app/navigation';
 import { page } from '$app/stores';
 import { DiceTray } from '$lib/components/dice/index.js';
 import { GameGateway, GameOverModal } from '$lib/components/game/index.js';
 import { GameStatus, KeyboardHelp, StatsToggle } from '$lib/components/hud/index.js';
+import { AIOpponentSelector } from '$lib/components/lobby/index.js';
 import { Scorecard } from '$lib/components/scorecard/index.js';
 import {
 	trackCategoryScore,
@@ -33,8 +35,12 @@ import type {
 } from '$lib/types.js';
 
 // View state - check if we should skip gateway (e.g., came from lobby SOLO button)
-const skipGateway = $derived($page.url.searchParams.get('mode') === 'solo');
+const mode = $derived($page.url.searchParams.get('mode'));
+const skipGateway = $derived(mode === 'solo');
+const showAISelector = $derived(mode === 'ai');
 let showGateway = $state(true);
+let showAIModal = $state(false);
+let selectedAIProfile = $state<string>('carmen');
 let ready = $state(false);
 
 // Game state (M1-M4 turn analysis)
@@ -66,6 +72,7 @@ const bestEV = $derived(currentAnalysis?.expectedValue ?? 0);
 const dice = $derived(game.dice.values);
 const kept = $derived(game.dice.kept);
 const rollsRemaining = $derived(game.rollsRemaining);
+const hasRolled = $derived(game.rollNumber > 0);
 const statsEnabled = $derived(game.statsEnabled);
 const statsProfile = $derived(game.statsProfile);
 const isGameOver = $derived(game.isGameOver);
@@ -101,13 +108,44 @@ onMount(async () => {
 	if (skipGateway) {
 		handleStartSolo();
 	}
+	// Show AI selector if mode=ai
+	if (showAISelector) {
+		showAIModal = true;
+	}
 });
 
 function handleStartSolo() {
 	showGateway = false;
 	game.startGame();
 	trackGameStart('solo', 1);
-	doRoll();
+	// Don't auto-roll - let player click to start their turn
+}
+
+function handleStartAI() {
+	// Show AI opponent selector modal
+	showAIModal = true;
+}
+
+function handleAIProfileSelect(profileId: string) {
+	selectedAIProfile = profileId;
+}
+
+function handleStartAIGame() {
+	showAIModal = false;
+	showGateway = false;
+	game.startGame();
+	trackGameStart('solo', 1); // Track as solo for now until AI multiplayer is wired
+	// TODO: Connect to multiplayer room with AI opponent
+	// For now, just start a solo game
+	// In the future, this will create a room and add the AI player
+}
+
+function handleCloseAIModal() {
+	showAIModal = false;
+	if (showAISelector) {
+		// If we came from ?mode=ai, go back to gateway
+		goto('/games/dicee');
+	}
 }
 
 async function doRoll() {
@@ -178,16 +216,14 @@ function scoreCategory(category: Category) {
 	// Check for game completion
 	if (isGameOver) {
 		trackGameComplete(grandTotal);
-	} else {
-		// Start next turn
-		doRoll();
 	}
+	// Don't auto-roll next turn - let player click to start
 }
 
 function newGame() {
 	game.startGame();
 	trackGameStart('solo', 1);
-	doRoll();
+	// Don't auto-roll - let player click to start their turn
 }
 
 function handleStatsToggle() {
@@ -196,6 +232,12 @@ function handleStatsToggle() {
 
 function handleProfileChange(profile: StatsProfile) {
 	game.setStatsProfile(profile);
+}
+
+function handleBackdropClick(event: MouseEvent) {
+	if (event.target === event.currentTarget) {
+		handleCloseAIModal();
+	}
 }
 
 function handleBackToGateway() {
@@ -210,7 +252,7 @@ function handleBackToGateway() {
 </svelte:head>
 
 {#if showGateway}
-	<GameGateway onStartSolo={handleStartSolo} />
+	<GameGateway onStartSolo={handleStartSolo} onStartAI={handleStartAI} />
 {:else}
 	<div class="game-container">
 		<!-- Header -->
@@ -256,6 +298,7 @@ function handleBackToGateway() {
 					canRoll={canRoll && !rolling}
 					{canKeep}
 					{rolling}
+					{hasRolled}
 					onRoll={doRoll}
 					onToggleKeep={toggleKeep}
 					onKeepAll={keepAll}
@@ -292,6 +335,58 @@ function handleBackToGateway() {
 				onPlayAgain={newGame}
 			/>
 		{/if}
+	</div>
+{/if}
+
+<!-- AI Opponent Selector Modal -->
+{#if showAIModal}
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div 
+		class="modal-backdrop" 
+		role="dialog" 
+		aria-modal="true"
+		aria-labelledby="ai-modal-title"
+		tabindex="-1"
+		onclick={handleBackdropClick}
+	>
+		<div class="modal-content">
+			<header class="modal-header">
+				<h2 id="ai-modal-title" class="modal-title">Choose Your Opponent</h2>
+				<button 
+					type="button" 
+					class="modal-close" 
+					onclick={handleCloseAIModal}
+					aria-label="Close"
+				>
+					✕
+				</button>
+			</header>
+
+			<div class="modal-body">
+				<AIOpponentSelector 
+					selected={selectedAIProfile} 
+					onSelect={handleAIProfileSelect}
+				/>
+			</div>
+
+			<footer class="modal-footer">
+				<button 
+					type="button" 
+					class="cancel-button" 
+					onclick={handleCloseAIModal}
+				>
+					Cancel
+				</button>
+				<button 
+					type="button" 
+					class="start-button" 
+					onclick={handleStartAIGame}
+				>
+					Start Game
+				</button>
+			</footer>
+		</div>
 	</div>
 {/if}
 
@@ -386,5 +481,99 @@ function handleBackToGateway() {
 			flex: 1;
 			overflow-y: visible;
 		}
+	}
+
+	/* AI Modal Styles */
+	.modal-backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: var(--z-modal);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: var(--space-3);
+		background: rgba(0, 0, 0, 0.7);
+	}
+
+	.modal-content {
+		width: 100%;
+		max-width: 600px;
+		max-height: 90vh;
+		overflow-y: auto;
+		background: var(--color-background);
+		border: var(--border-thick);
+		box-shadow: 8px 8px 0 var(--color-border);
+	}
+
+	.modal-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--space-2) var(--space-3);
+		border-bottom: var(--border-medium);
+		background: var(--color-surface);
+	}
+
+	.modal-title {
+		font-size: var(--text-h3);
+		font-weight: var(--weight-bold);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+		margin: 0;
+	}
+
+	.modal-close {
+		appearance: none;
+		background: none;
+		border: var(--border-thin);
+		padding: var(--space-1);
+		font-size: var(--text-body);
+		cursor: pointer;
+		line-height: 1;
+	}
+
+	.modal-close:hover {
+		background: var(--color-surface-alt);
+	}
+
+	.modal-body {
+		padding: var(--space-3);
+	}
+
+	.modal-footer {
+		display: flex;
+		gap: var(--space-2);
+		justify-content: flex-end;
+		padding: var(--space-2) var(--space-3);
+		border-top: var(--border-medium);
+		background: var(--color-surface);
+	}
+
+	.cancel-button,
+	.start-button {
+		padding: var(--space-1) var(--space-3);
+		font-family: var(--font-sans);
+		font-weight: var(--weight-bold);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+		cursor: pointer;
+		transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+	}
+
+	.cancel-button {
+		background: var(--color-surface);
+		border: var(--border-medium);
+	}
+
+	.start-button {
+		background: var(--color-primary);
+		color: var(--color-text-on-primary, var(--color-text));
+		border: var(--border-medium);
+	}
+
+	.cancel-button:hover,
+	.start-button:hover {
+		transform: translate(-1px, -1px);
+		box-shadow: 2px 2px 0 var(--color-border);
 	}
 </style>
