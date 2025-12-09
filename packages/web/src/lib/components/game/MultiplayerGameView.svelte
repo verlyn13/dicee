@@ -142,6 +142,7 @@ function handleCloseGameOver(): void {
 			</button>
 			<div class="game-info">
 				<span class="room-code">{gameState?.roomCode ?? '----'}</span>
+				<span class="round-badge">R{roundNumber}/13</span>
 				{#if chatStore}
 					<button
 						type="button"
@@ -157,6 +158,32 @@ function handleCloseGameOver(): void {
 				{/if}
 			</div>
 		</header>
+
+		<!-- Mobile Player Bar (shows all players with turn indicator) -->
+		<div class="mobile-player-bar">
+			{#if myPlayer}
+				<div class="player-chip" class:current-turn={isMyTurn}>
+					<img 
+						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={myPlayer.avatarSeed}" 
+						alt="You" 
+						class="player-chip-avatar"
+					/>
+					<span class="player-chip-score">{myPlayer.totalScore}</span>
+					{#if isMyTurn}<span class="turn-dot">🎯</span>{/if}
+				</div>
+			{/if}
+			{#each opponents as opponent (opponent.id)}
+				<div class="player-chip" class:current-turn={opponent.id === currentPlayerId}>
+					<img 
+						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={opponent.avatarSeed}" 
+						alt={opponent.displayName} 
+						class="player-chip-avatar"
+					/>
+					<span class="player-chip-score">{opponent.totalScore}</span>
+					{#if opponent.id === currentPlayerId}<span class="turn-dot">⏳</span>{/if}
+				</div>
+			{/each}
+		</div>
 
 		<!-- Main Game Layout -->
 		<div class="game-layout">
@@ -312,6 +339,70 @@ function handleCloseGameOver(): void {
 		padding: var(--space-1) var(--space-2);
 		background: var(--color-background);
 		border: var(--border-thin);
+	}
+
+	.round-badge {
+		font-family: var(--font-mono);
+		font-size: var(--text-small);
+		font-weight: var(--weight-semibold);
+		padding: var(--space-0) var(--space-1);
+		background: var(--color-accent-light);
+		border: var(--border-thin);
+	}
+
+	/* Mobile Player Bar */
+	.mobile-player-bar {
+		display: flex;
+		justify-content: center;
+		gap: var(--space-2);
+		padding: var(--space-2);
+		background: var(--color-surface);
+		border-bottom: var(--border-medium);
+	}
+
+	/* Hide on desktop (sidebar shows instead) */
+	@media (min-width: 768px) {
+		.mobile-player-bar {
+			display: none;
+		}
+	}
+
+	.player-chip {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-0);
+		padding: var(--space-1);
+		background: var(--color-background);
+		border: var(--border-thin);
+		position: relative;
+		min-width: 48px;
+	}
+
+	.player-chip.current-turn {
+		background: var(--color-accent-light);
+		border-color: var(--color-accent);
+		box-shadow: 0 0 0 2px var(--color-accent);
+	}
+
+	.player-chip-avatar {
+		width: 32px;
+		height: 32px;
+		border: var(--border-thin);
+		background: var(--color-surface);
+	}
+
+	.player-chip-score {
+		font-family: var(--font-mono);
+		font-size: var(--text-tiny);
+		font-weight: var(--weight-bold);
+	}
+
+	.turn-dot {
+		position: absolute;
+		top: -4px;
+		right: -4px;
+		font-size: 12px;
 	}
 
 	.chat-toggle {

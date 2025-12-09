@@ -46,6 +46,7 @@ export interface RoomStore {
 	joinRoom: (roomCode: RoomCode, accessToken: string) => Promise<void>;
 	leaveRoom: () => void;
 	startGame: () => void;
+	addAIPlayer: (profileId: string) => void;
 
 	// Event subscription
 	subscribe: (handler: ServerEventHandler) => () => void;
@@ -141,6 +142,18 @@ export function createRoomStore(userId: string): RoomStore {
 		roomService.sendStartGame();
 	}
 
+	function addAIPlayer(profileId: string): void {
+		if (!isHost) {
+			error = 'Only the host can add AI players';
+			return;
+		}
+		if (isFull) {
+			error = 'Room is full';
+			return;
+		}
+		roomService.sendAddAIPlayer(profileId);
+	}
+
 	function subscribe(handler: ServerEventHandler): () => void {
 		roomService.addEventHandler(handler);
 		return () => roomService.removeEventHandler(handler);
@@ -184,6 +197,7 @@ export function createRoomStore(userId: string): RoomStore {
 		joinRoom,
 		leaveRoom,
 		startGame,
+		addAIPlayer,
 		subscribe,
 	};
 }

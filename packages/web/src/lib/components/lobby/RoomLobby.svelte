@@ -99,8 +99,7 @@ function handleAISelect(profileId: string) {
 /** Add selected AI to the game */
 function addAIOpponent() {
 	if (!selectedAIProfile) return;
-	// TODO: Send message to server to add AI player
-	// room.addAIPlayer(selectedAIProfile);
+	room.addAIPlayer(selectedAIProfile);
 	showAISelector = false;
 	selectedAIProfile = null;
 }

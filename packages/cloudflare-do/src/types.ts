@@ -108,6 +108,14 @@ export const DEFAULT_ROOM_SETTINGS: RoomSettings = {
  * Room state persisted to Durable Object storage.
  * Retrieved via ctx.storage.get<RoomState>('room')
  */
+/** AI player info stored in room state */
+export interface AIPlayerInfo {
+	id: string;
+	profileId: string;
+	displayName: string;
+	avatarSeed: string;
+}
+
 export interface RoomState {
 	/** Room code (6 uppercase alphanumeric) */
 	roomCode: string;
@@ -129,6 +137,9 @@ export interface RoomState {
 
 	/** When game started (epoch ms, null if not started) */
 	startedAt: number | null;
+
+	/** AI players in the room (added during waiting phase) */
+	aiPlayers?: AIPlayerInfo[];
 }
 
 /**

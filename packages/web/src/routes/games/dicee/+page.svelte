@@ -122,8 +122,9 @@ function handleStartSolo() {
 }
 
 function handleStartAI() {
-	// Show AI opponent selector modal
-	showAIModal = true;
+	// Redirect to lobby to create a multiplayer room with AI
+	// The user can add AI opponents in the waiting room
+	goto('/lobby?action=create');
 }
 
 function handleAIProfileSelect(profileId: string) {
@@ -131,20 +132,15 @@ function handleAIProfileSelect(profileId: string) {
 }
 
 function handleStartAIGame() {
-	showAIModal = false;
-	showGateway = false;
-	game.startGame();
-	trackGameStart('solo', 1); // Track as solo for now until AI multiplayer is wired
-	// TODO: Connect to multiplayer room with AI opponent
-	// For now, just start a solo game
-	// In the future, this will create a room and add the AI player
+	// Redirect to lobby to create a multiplayer room with AI
+	goto('/lobby?action=create');
 }
 
 function handleCloseAIModal() {
 	showAIModal = false;
 	if (showAISelector) {
-		// If we came from ?mode=ai, go back to gateway
-		goto('/games/dicee');
+		// If we came from ?mode=ai, redirect to lobby
+		goto('/lobby?action=create');
 	}
 }
 

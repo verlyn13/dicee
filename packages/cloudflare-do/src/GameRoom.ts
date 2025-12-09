@@ -32,6 +32,7 @@ import {
 	type ReactionEmoji,
 } from './chat';
 import { verifySupabaseJWT, extractDisplayName, extractAvatarUrl } from './auth';
+import { createAIPlayerState, getProfile } from './ai';
 
 /**
  * GameRoom Durable Object - manages a single multiplayer game room
@@ -715,6 +716,10 @@ export class GameRoom extends DurableObject<Env> {
 				await this.handleStartGame(ws, connState);
 				break;
 
+			case 'room.addAI':
+				await this.handleAddAIPlayer(ws, connState, payload as { profileId: string });
+				break;
+
 			// ─────────────────────────────────────────────────────────────────────────
 			// Core Game Loop Commands (DO-4)
 			// ─────────────────────────────────────────────────────────────────────────
@@ -976,6 +981,81 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Send highlight to lobby ticker
 		this.sendLobbyHighlight('game_complete', `Game started in ${roomCode}!`);
+	}
+
+	/**
+	 * Handle add AI player command (host only, during waiting)
+	 */
+	private async handleAddAIPlayer(
+		ws: WebSocket,
+		connState: ConnectionState,
+		payload: { profileId: string },
+	): Promise<void> {
+		// Only host can add AI players
+		if (!connState.isHost) {
+			this.sendError(ws, 'NOT_HOST', 'Only the host can add AI players');
+			return;
+		}
+
+		const roomCode = this.getRoomCode();
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (!roomState) {
+			this.sendError(ws, 'ROOM_NOT_FOUND', 'Room not found');
+			return;
+		}
+
+		// Can only add AI during waiting phase
+		if (roomState.status !== 'waiting') {
+			this.sendError(ws, 'GAME_IN_PROGRESS', 'Cannot add AI players after game has started');
+			return;
+		}
+
+		// Check if room is full
+		const currentPlayerCount = this.ctx.getWebSockets(`player:${roomCode}`).length + (roomState.aiPlayers?.length ?? 0);
+		if (currentPlayerCount >= roomState.settings.maxPlayers) {
+			this.sendError(ws, 'ROOM_FULL', 'Room is full');
+			return;
+		}
+
+		// Validate AI profile
+		const profile = getProfile(payload.profileId);
+		if (!profile) {
+			this.sendError(ws, 'INVALID_PROFILE', `Unknown AI profile: ${payload.profileId}`);
+			return;
+		}
+
+		// Create AI player ID
+		const aiPlayerId = `ai:${payload.profileId}:${Date.now()}`;
+
+		// Create AI player state
+		const aiPlayer = createAIPlayerState(aiPlayerId, payload.profileId);
+
+		// Store AI player in room state
+		if (!roomState.aiPlayers) {
+			roomState.aiPlayers = [];
+		}
+		roomState.aiPlayers.push({
+			id: aiPlayerId,
+			profileId: payload.profileId,
+			displayName: aiPlayer.displayName ?? profile.name,
+			avatarSeed: aiPlayer.avatarSeed ?? profile.avatarSeed,
+		});
+		await this.ctx.storage.put('room', roomState);
+
+		// Broadcast AI player joined
+		this.broadcast({
+			type: 'AI_PLAYER_JOINED',
+			payload: {
+				playerId: aiPlayerId,
+				profileId: payload.profileId,
+				displayName: aiPlayer.displayName ?? profile.name,
+				avatarSeed: aiPlayer.avatarSeed ?? profile.avatarSeed,
+				isAI: true,
+			},
+		});
+
+		// Notify lobby
+		await this.notifyLobbyOfUpdate();
 	}
 
 	/**

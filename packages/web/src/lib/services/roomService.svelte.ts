@@ -282,6 +282,13 @@ class RoomService {
 		this.send({ type: 'game.rematch' });
 	}
 
+	/**
+	 * Send add AI player command (host only, during waiting)
+	 */
+	sendAddAIPlayer(profileId: string): void {
+		this.send({ type: 'room.addAI', profileId });
+	}
+
 	// =========================================================================
 	// Chat Commands
 	// =========================================================================

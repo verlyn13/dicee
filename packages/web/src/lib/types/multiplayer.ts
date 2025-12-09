@@ -248,6 +248,13 @@ export interface RematchCommand extends BaseCommand {
 	type: 'game.rematch';
 }
 
+/** Add AI player to room (host only, during waiting) */
+export interface AddAIPlayerCommand extends BaseCommand {
+	type: 'room.addAI';
+	/** AI profile ID (e.g., 'carmen', 'professor') */
+	profileId: string;
+}
+
 /** All command types */
 export type Command =
 	| CreateRoomCommand
@@ -257,7 +264,8 @@ export type Command =
 	| RollDiceCommand
 	| KeepDiceCommand
 	| ScoreCategoryCommand
-	| RematchCommand;
+	| RematchCommand
+	| AddAIPlayerCommand;
 
 // =============================================================================
 // Server Event Types (Server → Client)
