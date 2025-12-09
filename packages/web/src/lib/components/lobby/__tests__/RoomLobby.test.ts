@@ -121,14 +121,14 @@ describe('RoomLobby', () => {
 	it('shows leave button', () => {
 		render(RoomLobby);
 
-		expect(screen.getByRole('button', { name: 'LEAVE' })).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /LEAVE/i })).toBeInTheDocument();
 	});
 
 	it('calls leaveRoom and onleave on leave click', async () => {
 		const onleave = vi.fn();
 		render(RoomLobby, { props: { onleave } });
 
-		const leaveButton = screen.getByRole('button', { name: 'LEAVE' });
+		const leaveButton = screen.getByRole('button', { name: /LEAVE/i });
 		await fireEvent.click(leaveButton);
 
 		expect(mockLeaveRoom).toHaveBeenCalled();
@@ -169,16 +169,27 @@ describe('RoomLobby', () => {
 		expect(screen.getByText('Waiting for more players...')).toBeInTheDocument();
 	});
 
-	it('shows invite hint when room not full', () => {
+	it('shows invite hint when room not full and less than 2 players', () => {
 		mockRoomStore.isFull = false;
+		mockRoomStore.playerCount = 1;
 
 		render(RoomLobby);
 
 		expect(screen.getByText('Share the room code to invite friends!')).toBeInTheDocument();
 	});
 
+	it('hides invite hint when room has 2+ players', () => {
+		mockRoomStore.isFull = false;
+		mockRoomStore.playerCount = 2;
+
+		render(RoomLobby);
+
+		expect(screen.queryByText('Share the room code to invite friends!')).not.toBeInTheDocument();
+	});
+
 	it('hides invite hint when room is full', () => {
 		mockRoomStore.isFull = true;
+		mockRoomStore.playerCount = 4;
 
 		render(RoomLobby);
 
