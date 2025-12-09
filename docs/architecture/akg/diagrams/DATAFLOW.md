@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 49e593f
-> Generated: 2025-12-09T05:51:36.378Z
+> Commit: dabf1ca
+> Generated: 2025-12-09T05:59:46.802Z
 
 ## Data Flow Diagram
 
@@ -29,8 +29,8 @@ flowchart TB
         module__index__mponents_ui_index_ts["index"]
         module__index__onents_chat_index_ts["index"]
         module__index__onents_auth_index_ts["index"]
-        module__index__nents_lobby_index_ts["index"]
-        module__index__onents_dice_index_ts["index"]
+        module__index__ts_skeleton_index_ts["index"]
+        module__index__nts_gallery_index_ts["index"]
     end
 
     subgraph stores["🗄️ STORES"]
@@ -42,18 +42,19 @@ flowchart TB
     end
 
     subgraph services["⚙️ SERVICES"]
+        service__audio__ib_services_audio_ts{{"audio"}}
         service__engine__b_services_engine_ts{{"engine"}}
+        store__spectatorService_svelte__torServi{{"spectatorService"}}
         service__telemetry__ervices_telemetry_ts{{"telemetry"}}
         service__index__ib_services_index_ts{{"index"}}
-        store__roomService_svelte__oomService_sv{{"roomService"}}
     end
 
     subgraph supabase["🔌 SUPABASE"]
         supabasemodule__profiles__supabase_profi[("profiles")]
         supabasemodule__stats__ib_supabase_stats[("stats")]
         supabasemodule__client__b_supabase_clien[("client")]
+        supabasemodule__flags__ib_supabase_flags[("flags")]
         supabasemodule__index__ib_supabase_index[("index")]
-        supabasemodule__server__b_supabase_serve[("server")]
     end
 
     subgraph wasm["🦀 WASM"]
@@ -66,10 +67,6 @@ flowchart TB
     store__game_svelte__tores_game_svelte_ts --> store__scorecard_svelte___scorecard_svel
     store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
     store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
-    store__room_svelte__tores_room_svelte_ts --> store__roomService_svelte__oomService_sv
-    store__room_svelte__tores_room_svelte_ts --> store__roomService_svelte__oomService_sv
-    store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
-    store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
     service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts
     service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts
     service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts
@@ -90,7 +87,7 @@ flowchart TB
 | routes | 5 | SvelteKit page routes |
 | components | 5 | Reusable UI components |
 | stores | 5 | Svelte reactive stores |
-| services | 4 | Business logic services |
+| services | 5 | Business logic services |
 | supabase | 5 | Database & auth integration |
 | wasm | 3 | Rust/WASM probability engine |
 

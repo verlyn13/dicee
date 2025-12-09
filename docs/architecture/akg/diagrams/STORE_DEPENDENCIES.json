@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "store_dependencies",
-	"generatedAt": "2025-12-09T05:51:36.377Z",
-	"graphHash": "sha256:79ff4bc87cb17f6bbbe229f1e5dc781d5177be0128cf99965433ce3f29938225",
-	"sourceCommit": "49e593f",
+	"generatedAt": "2025-12-09T05:59:46.802Z",
+	"graphHash": "sha256:7996f1a655eccc77093ca0fe399832642d138321aa9ddb522c7e91b85b336176",
+	"sourceCommit": "dabf1ca",
 	"nodes": [
 		{
 			"id": "store::game.svelte::tores_game_svelte_ts",
@@ -49,6 +49,24 @@
 			"layer": "stores"
 		},
 		{
+			"id": "store::spectator.svelte::_spectator_svelte_ts",
+			"label": "spectator.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::flags.svelte::ores_flags_svelte_ts",
+			"label": "flags.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
+			"id": "store::coach.svelte::ores_coach_svelte_ts",
+			"label": "coach.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
 			"id": "store::index::_lib_stores_index_ts",
 			"label": "index",
 			"type": "Store",
@@ -61,9 +79,21 @@
 			"layer": "stores"
 		},
 		{
+			"id": "store::audio.svelte::ores_audio_svelte_ts",
+			"label": "audio.svelte",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
 			"id": "store::useKeyboardNavigation.svelte::Navigation_svelte_ts",
 			"label": "useKeyboardNavigation.svelte",
 			"type": "Store"
+		},
+		{
+			"id": "store::spectatorService.svelte::torService_svelte_ts",
+			"label": "spectatorService.svelte",
+			"type": "Store",
+			"layer": "services"
 		},
 		{
 			"id": "store::roomService.svelte::oomService_svelte_ts",
@@ -124,6 +154,21 @@
 			"type": "imports"
 		},
 		{
+			"from": "store::spectator.svelte::_spectator_svelte_ts",
+			"to": "store::spectatorService.svelte::torService_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::spectator.svelte::_spectator_svelte_ts",
+			"to": "store::spectatorService.svelte::torService_svelte_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::spectator.svelte::_spectator_svelte_ts",
+			"to": "store::spectatorService.svelte::torService_svelte_ts",
+			"type": "imports"
+		},
+		{
 			"from": "store::chat.svelte::tores_chat_svelte_ts",
 			"to": "store::roomService.svelte::oomService_svelte_ts",
 			"type": "imports"
@@ -140,7 +185,7 @@
 		}
 	],
 	"metadata": {
-		"totalNodes": 11,
-		"totalEdges": 13
+		"totalNodes": 16,
+		"totalEdges": 16
 	}
 }

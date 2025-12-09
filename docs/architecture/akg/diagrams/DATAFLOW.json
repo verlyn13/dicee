@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "dataflow",
-	"generatedAt": "2025-12-09T05:51:36.378Z",
-	"graphHash": "sha256:79ff4bc87cb17f6bbbe229f1e5dc781d5177be0128cf99965433ce3f29938225",
-	"sourceCommit": "49e593f",
+	"generatedAt": "2025-12-09T05:59:46.802Z",
+	"graphHash": "sha256:7996f1a655eccc77093ca0fe399832642d138321aa9ddb522c7e91b85b336176",
+	"sourceCommit": "dabf1ca",
 	"nodes": [
 		{
 			"id": "module::+layout::rc_routes__layout_ts",
@@ -55,13 +55,13 @@
 			"layer": "components"
 		},
 		{
-			"id": "module::index::nents_lobby_index_ts",
+			"id": "module::index::ts_skeleton_index_ts",
 			"label": "index",
 			"type": "Module",
 			"layer": "components"
 		},
 		{
-			"id": "module::index::onents_dice_index_ts",
+			"id": "module::index::nts_gallery_index_ts",
 			"label": "index",
 			"type": "Module",
 			"layer": "components"
@@ -97,9 +97,21 @@
 			"layer": "stores"
 		},
 		{
+			"id": "service::audio::ib_services_audio_ts",
+			"label": "audio",
+			"type": "Service",
+			"layer": "services"
+		},
+		{
 			"id": "service::engine::b_services_engine_ts",
 			"label": "engine",
 			"type": "Service",
+			"layer": "services"
+		},
+		{
+			"id": "store::spectatorService.svelte::torService_svelte_ts",
+			"label": "spectatorService",
+			"type": "Store",
 			"layer": "services"
 		},
 		{
@@ -112,12 +124,6 @@
 			"id": "service::index::ib_services_index_ts",
 			"label": "index",
 			"type": "Service",
-			"layer": "services"
-		},
-		{
-			"id": "store::roomService.svelte::oomService_svelte_ts",
-			"label": "roomService",
-			"type": "Store",
 			"layer": "services"
 		},
 		{
@@ -139,14 +145,14 @@
 			"layer": "supabase"
 		},
 		{
-			"id": "supabasemodule::index::ib_supabase_index_ts",
-			"label": "index",
+			"id": "supabasemodule::flags::ib_supabase_flags_ts",
+			"label": "flags",
 			"type": "SupabaseModule",
 			"layer": "supabase"
 		},
 		{
-			"id": "supabasemodule::server::b_supabase_server_ts",
-			"label": "server",
+			"id": "supabasemodule::index::ib_supabase_index_ts",
+			"label": "index",
 			"type": "SupabaseModule",
 			"layer": "supabase"
 		},
@@ -191,26 +197,6 @@
 			"type": "imports"
 		},
 		{
-			"from": "store::room.svelte::tores_room_svelte_ts",
-			"to": "store::roomService.svelte::oomService_svelte_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::room.svelte::tores_room_svelte_ts",
-			"to": "store::roomService.svelte::oomService_svelte_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::multiplayerGame.svelte::playerGame_svelte_ts",
-			"to": "store::roomService.svelte::oomService_svelte_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::multiplayerGame.svelte::playerGame_svelte_ts",
-			"to": "store::roomService.svelte::oomService_svelte_ts",
-			"type": "imports"
-		},
-		{
 			"from": "service::engine::b_services_engine_ts",
 			"to": "wasmbridge::engine::eb_src_lib_engine_ts",
 			"type": "imports"
@@ -227,7 +213,7 @@
 		}
 	],
 	"metadata": {
-		"totalNodes": 27,
-		"totalEdges": 11
+		"totalNodes": 28,
+		"totalEdges": 7
 	}
 }

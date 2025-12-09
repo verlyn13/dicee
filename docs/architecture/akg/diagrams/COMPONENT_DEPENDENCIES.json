@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "component_dependencies",
-	"generatedAt": "2025-12-09T05:51:36.378Z",
-	"graphHash": "sha256:79ff4bc87cb17f6bbbe229f1e5dc781d5177be0128cf99965433ce3f29938225",
-	"sourceCommit": "49e593f",
+	"generatedAt": "2025-12-09T05:59:46.802Z",
+	"graphHash": "sha256:7996f1a655eccc77093ca0fe399832642d138321aa9ddb522c7e91b85b336176",
+	"sourceCommit": "dabf1ca",
 	"nodes": [
 		{
 			"id": "component::Avatar::nts_ui_Avatar_svelte",
@@ -15,6 +15,30 @@
 		{
 			"id": "component::BottomSheet::i_BottomSheet_svelte",
 			"label": "BottomSheet",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::ReactionFloat::ReactionFloat_svelte",
+			"label": "ReactionFloat",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::ScorecardSkeleton::ecardSkeleton_svelte",
+			"label": "ScorecardSkeleton",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::GameViewSkeleton::eViewSkeleton_svelte",
+			"label": "GameViewSkeleton",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::GalleryLeaderboard::ryLeaderboard_svelte",
+			"label": "GalleryLeaderboard",
 			"type": "Component",
 			"layer": "components"
 		},
@@ -31,14 +55,8 @@
 			"layer": "components"
 		},
 		{
-			"id": "component::Die::ents_dice_Die_svelte",
-			"label": "Die",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::DiceTray::dice_DiceTray_svelte",
-			"label": "DiceTray",
+			"id": "component::AIOpponentSelector::onentSelector_svelte",
+			"label": "AIOpponentSelector",
 			"type": "Component",
 			"layer": "components"
 		},
@@ -73,8 +91,8 @@
 			"layer": "components"
 		},
 		{
-			"id": "component::TurnIndicator::TurnIndicator_svelte",
-			"label": "TurnIndicator",
+			"id": "component::AIBadge::_game_AIBadge_svelte",
+			"label": "AIBadge",
 			"type": "Component",
 			"layer": "components"
 		},
@@ -103,14 +121,14 @@
 			"layer": "components"
 		},
 		{
-			"id": "component::Scorecard::ard_Scorecard_svelte",
-			"label": "Scorecard",
+			"id": "component::AllScorecards::AllScorecards_svelte",
+			"label": "AllScorecards",
 			"type": "Component",
 			"layer": "components"
 		},
 		{
-			"id": "component::CategoryRow::d_CategoryRow_svelte",
-			"label": "CategoryRow",
+			"id": "component::SpectatorHeader::ectatorHeader_svelte",
+			"label": "SpectatorHeader",
 			"type": "Component",
 			"layer": "components"
 		},
@@ -155,11 +173,17 @@
 			"label": "KeyboardHelp",
 			"type": "Component",
 			"layer": "components"
+		},
+		{
+			"id": "component::ProbabilityRibbon::abilityRibbon_svelte",
+			"label": "ProbabilityRibbon",
+			"type": "Component",
+			"layer": "components"
 		}
 	],
 	"edges": [],
 	"metadata": {
-		"totalNodes": 25,
+		"totalNodes": 29,
 		"totalEdges": 0
 	}
 }

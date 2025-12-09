@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 49e593f
-> Generated: 2025-12-09T05:51:36.377Z
+> Commit: dabf1ca
+> Generated: 2025-12-09T05:59:46.802Z
 
 ## Store Dependency Diagram
 
@@ -19,9 +19,14 @@ flowchart LR
     store__scorecard_svelte___scorecard_svel[("scorecard.svelte")]
     store__dice_svelte__tores_dice_svelte_ts[("dice.svelte")]
     store__auth_svelte__tores_auth_svelte_ts[("auth.svelte")]
+    store__spectator_svelte___spectator_svel[("spectator.svelte")]
+    store__flags_svelte__ores_flags_svelte_t[("flags.svelte")]
+    store__coach_svelte__ores_coach_svelte_t[("coach.svelte")]
     store__index___lib_stores_index_ts[("index")]
     store__chat_svelte__tores_chat_svelte_ts[("chat.svelte")]
+    store__audio_svelte__ores_audio_svelte_t[("audio.svelte")]
     store__useKeyboardNavigation_svelte__Nav[("useKeyboardNavigation.svelte")]
+    store__spectatorService_svelte__torServi[("spectatorService.svelte")]
     store__roomService_svelte__oomService_sv[("roomService.svelte")]
 
     store__game_svelte__tores_game_svelte_ts --> store__dice_svelte__tores_dice_svelte_ts
@@ -34,6 +39,9 @@ flowchart LR
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
+    store__spectator_svelte___spectator_svel --> store__spectatorService_svelte__torServi
+    store__spectator_svelte___spectator_svel --> store__spectatorService_svelte__torServi
+    store__spectator_svelte___spectator_svel --> store__spectatorService_svelte__torServi
     store__chat_svelte__tores_chat_svelte_ts --> store__roomService_svelte__oomService_sv
     store__chat_svelte__tores_chat_svelte_ts --> store__roomService_svelte__oomService_sv
     store__chat_svelte__tores_chat_svelte_ts --> store__roomService_svelte__oomService_sv
@@ -48,7 +56,12 @@ flowchart LR
 - **scorecard.svelte**: `packages/web/src/lib/stores/scorecard.svelte.ts`
 - **dice.svelte**: `packages/web/src/lib/stores/dice.svelte.ts`
 - **auth.svelte**: `packages/web/src/lib/stores/auth.svelte.ts`
+- **spectator.svelte**: `packages/web/src/lib/stores/spectator.svelte.ts`
+- **flags.svelte**: `packages/web/src/lib/stores/flags.svelte.ts`
+- **coach.svelte**: `packages/web/src/lib/stores/coach.svelte.ts`
 - **index**: `packages/web/src/lib/stores/index.ts`
 - **chat.svelte**: `packages/web/src/lib/stores/chat.svelte.ts`
+- **audio.svelte**: `packages/web/src/lib/stores/audio.svelte.ts`
 - **useKeyboardNavigation.svelte**: `packages/web/src/lib/hooks/useKeyboardNavigation.svelte.ts`
+- **spectatorService.svelte**: `packages/web/src/lib/services/spectatorService.svelte.ts`
 - **roomService.svelte**: `packages/web/src/lib/services/roomService.svelte.ts`
