@@ -8,6 +8,7 @@
 import { onDestroy, onMount } from 'svelte';
 import { ChatPanel } from '$lib/components/chat';
 import { DiceTray } from '$lib/components/dice';
+import { RoomLobby } from '$lib/components/lobby';
 import { getChatStoreOptional } from '$lib/stores/chat.svelte';
 import type { MultiplayerGameStore } from '$lib/stores/multiplayerGame.svelte';
 import type { DiceArray, DieValue } from '$lib/types';
@@ -119,64 +120,60 @@ function handleCloseGameOver(): void {
 }
 </script>
 
-<div class="multiplayer-game-view" data-phase={phase} data-ui-phase={uiPhase}>
-	<!-- Error Banner -->
-	{#if error}
-		<div class="error-banner" role="alert">
-			<span class="error-message">{error}</span>
-		</div>
-	{/if}
+<!-- Show Waiting Room or Game View based on phase -->
+{#if phase === 'waiting' || phase === 'starting'}
+	<!-- Full-screen Waiting Room -->
+	<div class="waiting-room-container">
+		<RoomLobby onleave={handleLeave} />
+	</div>
+{:else}
+	<div class="multiplayer-game-view" data-phase={phase} data-ui-phase={uiPhase}>
+		<!-- Error Banner -->
+		{#if error}
+			<div class="error-banner" role="alert">
+				<span class="error-message">{error}</span>
+			</div>
+		{/if}
 
-	<!-- Game Header -->
-	<header class="game-header">
-		<button class="leave-btn" onclick={handleLeave} type="button">
-			← Leave
-		</button>
-		<div class="game-info">
-			<span class="room-code">{gameState?.roomCode ?? '----'}</span>
-			{#if chatStore}
-				<button
-					type="button"
-					class="chat-toggle"
-					onclick={handleChatToggle}
-					aria-label="Toggle chat"
-				>
-					💬
-					{#if chatStore.hasUnread}
-						<span class="unread-dot"></span>
-					{/if}
-				</button>
-			{/if}
-		</div>
-	</header>
-
-	<!-- Main Game Layout -->
-	<div class="game-layout">
-		<!-- Left Column: Turn Indicator + Opponents -->
-		<aside class="sidebar">
-			<TurnIndicator
-				{currentPlayer}
-				{isMyTurn}
-				{roundNumber}
-				{totalPlayers}
-				{afkWarning}
-			/>
-			<OpponentPanel {opponents} {currentPlayerId} />
-		</aside>
-
-		<!-- Center: Dice Tray -->
-		<main class="game-main">
-			{#if phase === 'waiting' || phase === 'starting'}
-				<div class="waiting-state">
-					<p class="waiting-text">
-						{#if phase === 'waiting'}
-							Waiting for game to start...
-						{:else}
-							Game starting...
+		<!-- Game Header -->
+		<header class="game-header">
+			<button class="leave-btn" onclick={handleLeave} type="button">
+				← Leave
+			</button>
+			<div class="game-info">
+				<span class="room-code">{gameState?.roomCode ?? '----'}</span>
+				{#if chatStore}
+					<button
+						type="button"
+						class="chat-toggle"
+						onclick={handleChatToggle}
+						aria-label="Toggle chat"
+					>
+						💬
+						{#if chatStore.hasUnread}
+							<span class="unread-dot"></span>
 						{/if}
-					</p>
-				</div>
-			{:else}
+					</button>
+				{/if}
+			</div>
+		</header>
+
+		<!-- Main Game Layout -->
+		<div class="game-layout">
+			<!-- Left Column: Turn Indicator + Opponents -->
+			<aside class="sidebar">
+				<TurnIndicator
+					{currentPlayer}
+					{isMyTurn}
+					{roundNumber}
+					{totalPlayers}
+					{afkWarning}
+				/>
+				<OpponentPanel {opponents} {currentPlayerId} />
+			</aside>
+
+			<!-- Center: Dice Tray -->
+			<main class="game-main">
 				<div class="dice-area">
 					<DiceTray
 						dice={displayDice}
@@ -215,36 +212,47 @@ function handleCloseGameOver(): void {
 						<p class="status-text">Select a category to score</p>
 					{/if}
 				</div>
-			{/if}
-		</main>
+			</main>
 
-		<!-- Right Column: Scorecard -->
-		<aside class="scorecard-area">
-			<MultiplayerScorecard
-				scorecard={myScorecard}
-				{currentDice}
-				{canScore}
-				onScore={handleScore}
+			<!-- Right Column: Scorecard -->
+			<aside class="scorecard-area">
+				<MultiplayerScorecard
+					scorecard={myScorecard}
+					{currentDice}
+					{canScore}
+					onScore={handleScore}
+				/>
+			</aside>
+		</div>
+
+		<!-- Chat Panel -->
+		{#if chatStore}
+			<ChatPanel collapsed={chatCollapsed} onToggle={handleChatToggle} />
+		{/if}
+
+		<!-- Game Over Modal -->
+		{#if isGameOver && rankings}
+			<MultiplayerGameOverModal
+				{rankings}
+				myPlayerId={myPlayer?.id ?? ''}
+				onClose={handleCloseGameOver}
 			/>
-		</aside>
+		{/if}
 	</div>
-
-	<!-- Chat Panel -->
-	{#if chatStore}
-		<ChatPanel collapsed={chatCollapsed} onToggle={handleChatToggle} />
-	{/if}
-
-	<!-- Game Over Modal -->
-	{#if isGameOver && rankings}
-		<MultiplayerGameOverModal
-			{rankings}
-			myPlayerId={myPlayer?.id ?? ''}
-			onClose={handleCloseGameOver}
-		/>
-	{/if}
-</div>
+{/if}
 
 <style>
+	/* Waiting Room Container */
+	.waiting-room-container {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		min-height: 100svh;
+		padding: var(--space-3);
+		background: var(--color-background);
+	}
+
 	.multiplayer-game-view {
 		display: flex;
 		flex-direction: column;
@@ -374,20 +382,6 @@ function handleCloseGameOver(): void {
 		flex-direction: column;
 		align-items: center;
 		gap: var(--space-3);
-	}
-
-	.waiting-state {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 200px;
-	}
-
-	.waiting-text {
-		font-size: var(--text-body);
-		color: var(--color-text-muted);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
 	}
 
 	.dice-area {
