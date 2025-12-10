@@ -108,96 +108,133 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 
 	function handleServerEvent(event: ServerEvent): void {
 		switch (event.type) {
-			case 'game.started':
-				handleGameStarted(event);
+			case 'GAME_STARTED':
+			case 'QUICK_PLAY_STARTED':
+				handleGameStarted(event as unknown as Parameters<typeof handleGameStarted>[0]);
 				break;
 
-			case 'turn.started':
-				handleTurnStarted(event);
+			case 'TURN_STARTED':
+			case 'TURN_CHANGED':
+				handleTurnStarted(event as unknown as Parameters<typeof handleTurnStarted>[0]);
 				break;
 
-			case 'dice.rolled':
-				handleDiceRolled(event);
+			case 'DICE_ROLLED':
+				handleDiceRolled(event as unknown as Parameters<typeof handleDiceRolled>[0]);
 				break;
 
-			case 'dice.kept':
-				handleDiceKept(event);
+			case 'DICE_KEPT':
+				handleDiceKept(event as unknown as Parameters<typeof handleDiceKept>[0]);
 				break;
 
-			case 'category.scored':
-				handleCategoryScored(event);
+			case 'CATEGORY_SCORED':
+				handleCategoryScored(event as unknown as Parameters<typeof handleCategoryScored>[0]);
 				break;
 
-			case 'turn.ended':
-				handleTurnEnded(event);
+			case 'TURN_SKIPPED':
+				handleTurnSkipped(event as unknown as Parameters<typeof handleTurnSkipped>[0]);
 				break;
 
-			case 'turn.skipped':
-				handleTurnSkipped(event);
+			case 'PLAYER_AFK':
+				handleAfkWarning(event as unknown as Parameters<typeof handleAfkWarning>[0]);
 				break;
 
-			case 'player.afk_warning':
-				handleAfkWarning(event);
+			case 'GAME_OVER':
+				handleGameCompleted(event as unknown as Parameters<typeof handleGameCompleted>[0]);
 				break;
 
-			case 'game.completed':
-				handleGameCompleted(event);
-				break;
-
-			case 'state.sync':
-				handleStateSync(event);
-				break;
-
-			case 'game.error':
-				error = event.message;
+			case 'ERROR':
+				error = (event as { payload: { message: string } }).payload?.message ?? 'Unknown error';
 				pending = false;
 				break;
 		}
 	}
 
 	function handleGameStarted(event: {
-		playerOrder: string[];
-		currentPlayerId: string;
-		turnNumber: number;
+		playerOrder?: string[];
+		currentPlayerId?: string;
+		turnNumber?: number;
+		roundNumber?: number;
+		phase?: string;
+		players?: Record<string, unknown>;
+		roomCode?: string;
+		payload?: {
+			playerOrder?: string[];
+			currentPlayerId?: string;
+			turnNumber?: number;
+			roundNumber?: number;
+			phase?: string;
+			players?: Record<string, unknown>;
+		};
 	}): void {
-		if (gameState) {
-			gameState = {
-				...gameState,
-				phase: 'turn_roll',
-				playerOrder: event.playerOrder,
-				currentPlayerIndex: event.playerOrder.indexOf(event.currentPlayerId),
-				turnNumber: event.turnNumber,
-				roundNumber: 1,
-				gameStartedAt: new Date().toISOString(),
-				turnStartedAt: new Date().toISOString(),
-			};
-		}
-		uiPhase = event.currentPlayerId === myPlayerId ? 'IDLE' : 'WAITING';
+		// Support both direct properties and nested payload (UPPERCASE format)
+		const data = event.payload ?? event;
+		const now = new Date().toISOString();
+		const players = (data.players ?? {}) as Record<
+			string,
+			import('$lib/types/multiplayer').PlayerGameState
+		>;
+		const playerOrder = data.playerOrder ?? [];
+		const currentPlayerId = data.currentPlayerId ?? '';
+
+		// Initialize or update game state
+		gameState = {
+			roomCode: event.roomCode ?? gameState?.roomCode ?? '',
+			phase: (data.phase as import('$lib/types/multiplayer').GamePhase) ?? 'turn_roll',
+			playerOrder,
+			currentPlayerIndex: playerOrder.indexOf(currentPlayerId),
+			turnNumber: data.turnNumber ?? 1,
+			roundNumber: data.roundNumber ?? 1,
+			players,
+			turnStartedAt: now,
+			gameStartedAt: now,
+			gameCompletedAt: null,
+			rankings: null,
+			config: gameState?.config ?? {
+				maxPlayers: 2,
+				turnTimeoutSeconds: 60,
+				isPublic: false,
+			},
+		};
+
+		uiPhase = currentPlayerId === myPlayerId ? 'IDLE' : 'WAITING';
 		afkWarning = null;
 	}
 
 	function handleTurnStarted(event: {
-		playerId: string;
-		turnNumber: number;
-		roundNumber: number;
+		playerId?: string;
+		turnNumber?: number;
+		roundNumber?: number;
+		currentPlayerId?: string;
+		payload?: {
+			playerId?: string;
+			turnNumber?: number;
+			roundNumber?: number;
+			currentPlayerId?: string;
+		};
 	}): void {
+		// Support both direct properties and nested payload (UPPERCASE format)
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? data.currentPlayerId ?? '';
+		const turnNumber = data.turnNumber ?? 1;
+		const roundNumber = data.roundNumber ?? 1;
+
 		if (gameState) {
-			const playerIndex = gameState.playerOrder.indexOf(event.playerId);
+			const playerIndex = gameState.playerOrder.indexOf(playerId);
 			gameState = {
 				...gameState,
 				phase: 'turn_roll',
 				currentPlayerIndex: playerIndex,
-				turnNumber: event.turnNumber,
-				roundNumber: event.roundNumber,
+				turnNumber,
+				roundNumber,
 				turnStartedAt: new Date().toISOString(),
 			};
 
 			// Reset turn state for current player
-			const player = gameState.players[event.playerId];
+			const player = gameState.players[playerId];
 			if (player) {
 				gameState.players = {
 					...gameState.players,
-					[event.playerId]: {
+					[playerId]: {
 						...player,
 						currentDice: null,
 						keptDice: null,
@@ -206,53 +243,74 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 				};
 			}
 		}
-		uiPhase = event.playerId === myPlayerId ? 'IDLE' : 'WAITING';
+		uiPhase = playerId === myPlayerId ? 'IDLE' : 'WAITING';
 		afkWarning = null;
 	}
 
 	function handleDiceRolled(event: {
-		playerId: string;
-		dice: DiceArray;
-		rollNumber: number;
-		rollsRemaining: number;
+		playerId?: string;
+		dice?: DiceArray;
+		rollNumber?: number;
+		rollsRemaining?: number;
+		payload?: {
+			playerId?: string;
+			dice?: DiceArray;
+			rollNumber?: number;
+			rollsRemaining?: number;
+		};
 	}): void {
+		// Support both direct properties and nested payload (UPPERCASE format)
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? '';
+		const dice = data.dice ?? ([1, 1, 1, 1, 1] as DiceArray);
+		const rollsRemaining = data.rollsRemaining ?? 0;
+
 		if (gameState) {
-			const player = gameState.players[event.playerId];
+			const player = gameState.players[playerId];
 			if (player) {
 				gameState = {
 					...gameState,
 					phase: 'turn_decide',
 					players: {
 						...gameState.players,
-						[event.playerId]: {
+						[playerId]: {
 							...player,
-							currentDice: event.dice,
+							currentDice: dice,
 							keptDice: [false, false, false, false, false],
-							rollsRemaining: event.rollsRemaining,
+							rollsRemaining,
 						},
 					},
 				};
 			}
 		}
 		// Transition through ROLLING -> RESOLVED for animation
-		if (event.playerId === myPlayerId) {
+		if (playerId === myPlayerId) {
 			uiPhase = 'RESOLVED';
 		}
 		pending = false;
 		afkWarning = null;
 	}
 
-	function handleDiceKept(event: { playerId: string; kept: KeptMask }): void {
+	function handleDiceKept(event: {
+		playerId?: string;
+		kept?: KeptMask;
+		payload?: { playerId?: string; kept?: KeptMask };
+	}): void {
+		// Support both direct properties and nested payload (UPPERCASE format)
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? '';
+		const kept = data.kept ?? ([false, false, false, false, false] as KeptMask);
+
 		if (gameState) {
-			const player = gameState.players[event.playerId];
+			const player = gameState.players[playerId];
 			if (player) {
 				gameState = {
 					...gameState,
 					players: {
 						...gameState.players,
-						[event.playerId]: {
+						[playerId]: {
 							...player,
-							keptDice: event.kept,
+							keptDice: kept,
 						},
 					},
 				};
@@ -263,21 +321,35 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 	}
 
 	function handleCategoryScored(event: {
-		playerId: string;
-		category: string;
-		score: number;
-		totalScore: number;
-		isDiceeBonus: boolean;
+		playerId?: string;
+		category?: string;
+		score?: number;
+		totalScore?: number;
+		isDiceeBonus?: boolean;
+		payload?: {
+			playerId?: string;
+			category?: string;
+			score?: number;
+			totalScore?: number;
+			isDiceeBonus?: boolean;
+		};
 	}): void {
+		// Support both direct properties and nested payload (UPPERCASE format)
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? '';
+		const category = (data.category ?? '') as Category;
+		const score = data.score ?? 0;
+		const totalScore = data.totalScore ?? 0;
+		const isDiceeBonus = data.isDiceeBonus ?? false;
+
 		if (gameState) {
-			const player = gameState.players[event.playerId];
+			const player = gameState.players[playerId];
 			if (player) {
-				const category = event.category as Category;
 				const newScorecard: Scorecard = {
 					...player.scorecard,
-					[category]: event.score,
+					[category]: score,
 				};
-				if (event.isDiceeBonus) {
+				if (isDiceeBonus) {
 					newScorecard.diceeBonus = player.scorecard.diceeBonus + 100;
 				}
 
@@ -285,62 +357,54 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 					...gameState,
 					players: {
 						...gameState.players,
-						[event.playerId]: {
+						[playerId]: {
 							...player,
 							scorecard: newScorecard,
-							totalScore: event.totalScore,
+							totalScore,
 						},
 					},
 				};
 			}
 		}
-		if (event.playerId === myPlayerId) {
+		if (playerId === myPlayerId) {
 			uiPhase = 'SCORING';
 		}
 		pending = false;
 	}
 
-	function handleTurnEnded(event: { playerId: string }): void {
-		if (gameState) {
-			const player = gameState.players[event.playerId];
-			if (player) {
-				gameState = {
-					...gameState,
-					phase: 'turn_score',
-					players: {
-						...gameState.players,
-						[event.playerId]: {
-							...player,
-							currentDice: null,
-							keptDice: null,
-							rollsRemaining: 0,
-						},
-					},
-				};
-			}
-		}
-	}
-
 	function handleTurnSkipped(event: {
-		playerId: string;
-		reason: 'timeout' | 'disconnect';
-		categoryScored: string;
-		score: number;
+		playerId?: string;
+		reason?: 'timeout' | 'disconnect';
+		categoryScored?: string;
+		category?: string;
+		score?: number;
+		payload?: {
+			playerId?: string;
+			reason?: 'timeout' | 'disconnect';
+			categoryScored?: string;
+			category?: string;
+			score?: number;
+		};
 	}): void {
+		// Support both direct properties and nested payload (UPPERCASE format)
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? '';
+		const categoryScored = (data.categoryScored ?? data.category ?? '') as Category;
+		const score = data.score ?? 0;
+
 		if (gameState) {
-			const player = gameState.players[event.playerId];
+			const player = gameState.players[playerId];
 			if (player) {
-				const category = event.categoryScored as Category;
 				const newScorecard: Scorecard = {
 					...player.scorecard,
-					[category]: event.score,
+					[categoryScored]: score,
 				};
 
 				gameState = {
 					...gameState,
 					players: {
 						...gameState.players,
-						[event.playerId]: {
+						[playerId]: {
 							...player,
 							scorecard: newScorecard,
 							currentDice: null,
@@ -354,32 +418,40 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		afkWarning = null;
 	}
 
-	function handleAfkWarning(event: { playerId: string; secondsRemaining: number }): void {
-		if (event.playerId === myPlayerId) {
-			afkWarning = event.secondsRemaining;
+	function handleAfkWarning(event: {
+		playerId?: string;
+		secondsRemaining?: number;
+		payload?: { playerId?: string; secondsRemaining?: number };
+	}): void {
+		// Support both direct properties and nested payload (UPPERCASE format)
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? '';
+		const secondsRemaining = data.secondsRemaining ?? 0;
+
+		if (playerId === myPlayerId) {
+			afkWarning = secondsRemaining;
 		}
 	}
 
-	function handleGameCompleted(event: { rankings: PlayerRanking[]; duration: number }): void {
+	function handleGameCompleted(event: {
+		rankings?: PlayerRanking[];
+		duration?: number;
+		payload?: { rankings?: PlayerRanking[]; duration?: number };
+	}): void {
+		// Support both direct properties and nested payload (UPPERCASE format)
+		const data = event.payload ?? event;
+		const rankings = data.rankings ?? [];
+
 		if (gameState) {
 			gameState = {
 				...gameState,
 				phase: 'game_over',
-				rankings: event.rankings,
+				rankings,
 				gameCompletedAt: new Date().toISOString(),
 			};
 		}
 		uiPhase = 'IDLE';
 		afkWarning = null;
-	}
-
-	function handleStateSync(event: { state: GameState }): void {
-		gameState = event.state;
-		const currentId = event.state.playerOrder[event.state.currentPlayerIndex];
-		uiPhase = currentId === myPlayerId ? 'IDLE' : 'WAITING';
-		pending = false;
-		afkWarning = null;
-		error = null;
 	}
 
 	// ==========================================================================
@@ -394,10 +466,8 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		pending = true;
 		error = null;
 
-		roomService.send({
-			type: 'dice.roll',
-			kept,
-		});
+		// Use sendRollDice which sends DICE_ROLL (server expects uppercase)
+		roomService.sendRollDice(kept);
 	}
 
 	function keepDice(indices: number[]): void {
@@ -406,10 +476,8 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		pending = true;
 		error = null;
 
-		roomService.send({
-			type: 'dice.keep',
-			indices,
-		});
+		// Use sendKeepDice which sends DICE_KEEP (server expects uppercase)
+		roomService.sendKeepDice(indices);
 	}
 
 	function toggleKeep(index: number): void {
@@ -434,10 +502,8 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		pending = true;
 		error = null;
 
-		roomService.send({
-			type: 'category.score',
-			category,
-		});
+		// Use sendScoreCategory which sends CATEGORY_SCORE (server expects uppercase)
+		roomService.sendScoreCategory(category);
 	}
 
 	function reset(): void {

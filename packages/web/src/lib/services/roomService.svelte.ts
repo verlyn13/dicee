@@ -17,7 +17,6 @@ import type {
 	RoomCode,
 	ServerEvent,
 } from '$lib/types/multiplayer';
-import { parseServerEvent } from '$lib/types/multiplayer.schema';
 
 // =============================================================================
 // Types
@@ -230,63 +229,53 @@ class RoomService {
 	}
 
 	/**
-	 * Rejoin/update presence in room
-	 * Note: Display name is set via JWT claims on connection
-	 */
-	sendRejoin(): void {
-		this.send({
-			type: 'room.join',
-			roomCode: this._roomCode ?? '',
-		});
-	}
-
-	/**
-	 * Send leave room command
-	 */
-	sendLeave(): void {
-		this.send({ type: 'room.leave' });
-	}
-
-	/**
 	 * Send start game command (host only)
 	 */
 	sendStartGame(): void {
-		this.send({ type: 'START_GAME' } as unknown as Command);
+		this.send({ type: 'START_GAME' });
+	}
+
+	/**
+	 * Send quick play start command - creates AI players and starts game immediately.
+	 * Human always goes first, skips waiting room entirely.
+	 */
+	sendQuickPlayStart(aiProfiles: string[]): void {
+		this.send({ type: 'QUICK_PLAY_START', payload: { aiProfiles } });
 	}
 
 	/**
 	 * Send roll dice command
 	 */
 	sendRollDice(kept: [boolean, boolean, boolean, boolean, boolean]): void {
-		this.send({ type: 'dice.roll', kept });
+		this.send({ type: 'DICE_ROLL', payload: { kept } });
 	}
 
 	/**
 	 * Send keep dice command
 	 */
 	sendKeepDice(indices: number[]): void {
-		this.send({ type: 'dice.keep', indices });
+		this.send({ type: 'DICE_KEEP', payload: { indices } });
 	}
 
 	/**
 	 * Send score category command
 	 */
 	sendScoreCategory(category: string): void {
-		this.send({ type: 'category.score', category });
+		this.send({ type: 'CATEGORY_SCORE', payload: { category } });
 	}
 
 	/**
 	 * Send rematch command (host only)
 	 */
 	sendRematch(): void {
-		this.send({ type: 'game.rematch' });
+		this.send({ type: 'REMATCH' });
 	}
 
 	/**
 	 * Send add AI player command (host only, during waiting)
 	 */
 	sendAddAIPlayer(profileId: string): void {
-		this.send({ type: 'room.addAI', profileId });
+		this.send({ type: 'ADD_AI_PLAYER', payload: { profileId } });
 	}
 
 	// =========================================================================
@@ -375,7 +364,6 @@ class RoomService {
 	// =========================================================================
 
 	private handleOpen(): void {
-		console.log('[RoomService] Connected to room:', this._roomCode);
 		this.setStatus('connected');
 		this._error = null;
 	}
@@ -383,6 +371,9 @@ class RoomService {
 	private handleMessage(event: MessageEvent): void {
 		try {
 			const raw = JSON.parse(event.data);
+
+			// Debug: Log all raw messages during AI turn debugging
+			console.log('[RoomService] RAW WS message:', raw.type ?? 'unknown', raw);
 
 			// Handle both PartyKit and Durable Objects message formats
 			const serverEvent = this.normalizeServerEvent(raw);
@@ -409,75 +400,19 @@ class RoomService {
 	}
 
 	/**
-	 * Normalize events from different backends to a common format
+	 * Filter server events - only PONG is suppressed, everything else passes through.
+	 * All events use UPPERCASE format with payload structure.
 	 */
 	private normalizeServerEvent(raw: Record<string, unknown>): ServerEvent | null {
-		// Try standard parsing first (PartyKit format)
-		const result = parseServerEvent(raw);
-		if (result.success) {
-			return result.data as ServerEvent;
-		}
-
-		// Handle Durable Objects format
 		const type = raw.type as string;
 
-		switch (type) {
-			case 'CONNECTED':
-				// Convert DO CONNECTED to room.state format
-				return {
-					type: 'room.state',
-					room: this.convertDOPayloadToRoom(raw.payload as Record<string, unknown>),
-				} as ServerEvent;
-
-			case 'PLAYER_JOINED':
-				return {
-					type: 'player.joined',
-					player: this.convertDOPlayer(raw.payload as Record<string, unknown>),
-				} as ServerEvent;
-
-			case 'PLAYER_LEFT':
-				return {
-					type: 'player.left',
-					playerId: (raw.payload as Record<string, unknown>)?.userId as string,
-				} as ServerEvent;
-
-			case 'GAME_STARTING':
-				return { type: 'game.starting' } as ServerEvent;
-
-			case 'GAME_STARTED': {
-				const payload = raw.payload as Record<string, unknown>;
-				return {
-					type: 'game.started',
-					playerOrder: (payload?.playerOrder as string[]) ?? [],
-					currentPlayerId: (payload?.currentPlayerId as string) ?? '',
-					turnNumber: 1,
-					timestamp: new Date().toISOString(),
-				} as unknown as ServerEvent;
-			}
-
-			case 'ERROR':
-				return {
-					type: 'error',
-					code: (raw.payload as Record<string, unknown>)?.code as string,
-					message: (raw.payload as Record<string, unknown>)?.message as string,
-				} as ServerEvent;
-
-			case 'PONG':
-				// Ignore pong messages
-				return null;
-
-			// Chat events - pass through
-			case 'CHAT_MESSAGE':
-			case 'CHAT_HISTORY':
-			case 'REACTION_UPDATE':
-			case 'TYPING_UPDATE':
-			case 'CHAT_ERROR':
-				return raw as unknown as ServerEvent;
-
-			default:
-				console.warn('[RoomService] Unknown message type:', type);
-				return null;
+		// Suppress heartbeat responses
+		if (type === 'PONG') {
+			return null;
 		}
+
+		// All events pass through - they all use UPPERCASE format now
+		return raw as unknown as ServerEvent;
 	}
 
 	/**
@@ -485,6 +420,7 @@ class RoomService {
 	 */
 	private convertDOPayloadToRoom(payload: Record<string, unknown>): GameRoom {
 		const players = (payload.players as Array<Record<string, unknown>>) ?? [];
+		const aiPlayers = (payload.aiPlayers as Array<Record<string, unknown>>) ?? [];
 
 		// Map DO room status to our RoomState type
 		const rawStatus = (payload.roomStatus as string) ?? 'waiting';
@@ -506,6 +442,12 @@ class RoomService {
 				maxPlayers: 4,
 			},
 			players: players.map((p) => this.convertDOPlayer(p)),
+			aiPlayers: aiPlayers.map((ai) => ({
+				id: (ai.id as string) ?? '',
+				profileId: (ai.profileId as string) ?? '',
+				displayName: (ai.displayName as string) ?? 'AI Player',
+				avatarSeed: (ai.avatarSeed as string) ?? '',
+			})),
 			createdAt: new Date().toISOString(),
 			startedAt: state === 'playing' ? new Date().toISOString() : null,
 		};
@@ -527,9 +469,7 @@ class RoomService {
 		};
 	}
 
-	private handleClose(event: CloseEvent): void {
-		console.log('[RoomService] Disconnected:', event.code, event.reason);
-
+	private handleClose(_event: CloseEvent): void {
 		// ReconnectingWebSocket auto-reconnects
 		if (this._status === 'connected') {
 			this.setStatus('connecting'); // Reconnecting
@@ -554,59 +494,108 @@ class RoomService {
 	}
 
 	private processEvent(event: ServerEvent): void {
+		// All events use UPPERCASE format with payload structure
 		switch (event.type) {
-			case 'room.state':
-				this._room = event.room;
+			case 'CONNECTED':
+				// Convert CONNECTED payload to room structure
+				this._room = this.convertDOPayloadToRoom(
+					(event as { payload: Record<string, unknown> }).payload,
+				);
 				break;
 
-			case 'player.joined':
+			case 'PLAYER_JOINED': {
 				if (this._room) {
-					// Check if player already exists (shouldn't happen but be safe)
-					const existing = this._room.players.find((p) => p.id === event.player.id);
+					const payload = (
+						event as { payload: { userId: string; displayName: string; avatarSeed: string } }
+					).payload;
+					const existing = this._room.players.find((p) => p.id === payload.userId);
 					if (!existing) {
 						this._room = {
 							...this._room,
-							players: [...this._room.players, event.player],
+							players: [
+								...this._room.players,
+								{
+									id: payload.userId,
+									displayName: payload.displayName,
+									avatarSeed: payload.avatarSeed,
+									isHost: false,
+									isConnected: true,
+									joinedAt: new Date().toISOString(),
+								},
+							],
 						};
 					}
 				}
 				break;
+			}
 
-			case 'player.left':
+			case 'PLAYER_LEFT': {
 				if (this._room) {
+					const payload = (event as { payload: { userId: string } }).payload;
 					this._room = {
 						...this._room,
-						players: this._room.players.filter((p) => p.id !== event.playerId),
+						players: this._room.players.filter((p) => p.id !== payload.userId),
 					};
 				}
 				break;
+			}
 
-			case 'player.connection':
+			case 'AI_PLAYER_JOINED': {
 				if (this._room) {
-					this._room = {
-						...this._room,
-						players: this._room.players.map((p) =>
-							p.id === event.playerId ? { ...p, isConnected: event.isConnected } : p,
-						),
-					};
+					const payload = (
+						event as {
+							payload: { id: string; profileId: string; displayName: string; avatarSeed: string };
+						}
+					).payload;
+					const existingAI = this._room.aiPlayers?.find((p) => p.id === payload.id);
+					if (!existingAI) {
+						this._room = {
+							...this._room,
+							aiPlayers: [
+								...(this._room.aiPlayers ?? []),
+								{
+									id: payload.id,
+									profileId: payload.profileId,
+									displayName: payload.displayName,
+									avatarSeed: payload.avatarSeed,
+								},
+							],
+						};
+					}
 				}
 				break;
+			}
 
-			case 'game.starting':
+			case 'GAME_STARTING':
 				if (this._room) {
 					this._room = { ...this._room, state: 'starting' };
 				}
 				break;
 
-			case 'game.started':
+			case 'GAME_STARTED':
+			case 'QUICK_PLAY_STARTED':
 				if (this._room) {
 					this._room = { ...this._room, state: 'playing' };
 				}
 				break;
 
-			case 'error':
-				this._error = event.message;
+			case 'REMATCH_STARTED':
+				if (this._room) {
+					this._room = { ...this._room, state: 'waiting' };
+				}
 				break;
+
+			case 'GAME_OVER':
+				if (this._room) {
+					this._room = { ...this._room, state: 'completed' };
+				}
+				break;
+
+			case 'ERROR': {
+				const payload = (event as { payload: { message: string } }).payload;
+				this._error = payload.message;
+				break;
+			}
 		}
 	}
 }

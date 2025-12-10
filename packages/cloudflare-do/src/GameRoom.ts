@@ -15,6 +15,7 @@ import {
 	canRollDice,
 	canKeepDice,
 	canScoreCategory,
+	canRematch,
 	type Category,
 	type KeptMask,
 	type MultiplayerGameState,
@@ -32,7 +33,7 @@ import {
 	type ReactionEmoji,
 } from './chat';
 import { verifySupabaseJWT, extractDisplayName, extractAvatarUrl } from './auth';
-import { createAIPlayerState, getProfile } from './ai';
+import { createAIPlayerState, getProfile, AIRoomManager, type AICommand } from './ai';
 
 /**
  * GameRoom Durable Object - manages a single multiplayer game room
@@ -89,6 +90,9 @@ export class GameRoom extends DurableObject<Env> {
 	/** Per-game point caps tracking (D9) */
 	private gamePointCaps: Map<string, { reactions: number; chat: number }> = new Map();
 
+	/** AI Room Manager for handling AI player turns */
+	private aiManager: AIRoomManager;
+
 	/** Maximum predictions per spectator per turn */
 	private static readonly MAX_PREDICTIONS_PER_TURN = 3;
 
@@ -119,6 +123,9 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Set up auto-response for ping/pong without waking the DO
 		this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
+
+		// Initialize AI room manager
+		this.aiManager = new AIRoomManager();
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -164,8 +171,8 @@ export class GameRoom extends DurableObject<Env> {
 			}
 		}
 
-		// Verify JWT against Supabase JWKS
-		const authResult = await verifySupabaseJWT(token, this.env.SUPABASE_URL);
+		// Verify JWT - tries JWKS first (ES256), falls back to HS256 if secret provided
+		const authResult = await verifySupabaseJWT(token, this.env.SUPABASE_URL, this.env.SUPABASE_JWT_SECRET);
 		if (!authResult.success) {
 			// Return appropriate error based on failure reason
 			const statusCode = authResult.code === 'EXPIRED' ? 401 : authResult.code === 'JWKS_ERROR' ? 503 : 401;
@@ -417,12 +424,19 @@ export class GameRoom extends DurableObject<Env> {
 	 * Broadcast message to all connected WebSockets.
 	 */
 	private broadcast(message: object, exclude?: WebSocket): void {
+		const allSockets = this.ctx.getWebSockets();
+		const msgType = (message as { type?: string }).type ?? 'unknown';
+		let sentCount = 0;
+
 		const payload = JSON.stringify(message);
-		for (const ws of this.ctx.getWebSockets()) {
+		for (const ws of allSockets) {
 			if (ws !== exclude && ws.readyState === WebSocket.OPEN) {
 				ws.send(payload);
+				sentCount++;
 			}
 		}
+
+		console.log(`[Broadcast] ${msgType} → ${sentCount}/${allSockets.length} sockets`);
 	}
 
 	/**
@@ -659,6 +673,7 @@ export class GameRoom extends DurableObject<Env> {
 					roomCode: roomState.roomCode,
 					isHost: connState.isHost,
 					players: await this.getPlayerList(),
+					aiPlayers: roomState.aiPlayers ?? [],
 					spectators: this.getSpectatorList(),
 					roomStatus: roomState.status,
 					spectatorCount: this.getSpectatorCount(),
@@ -716,7 +731,11 @@ export class GameRoom extends DurableObject<Env> {
 				await this.handleStartGame(ws, connState);
 				break;
 
-			case 'room.addAI':
+			case 'QUICK_PLAY_START':
+				await this.handleQuickPlayStart(ws, connState, payload as { aiProfiles: string[] });
+				break;
+
+			case 'ADD_AI_PLAYER':
 				await this.handleAddAIPlayer(ws, connState, payload as { profileId: string });
 				break;
 
@@ -825,6 +844,10 @@ export class GameRoom extends DurableObject<Env> {
 				ws.send(JSON.stringify({ type: 'PONG', payload: Date.now() }));
 				break;
 
+			case 'REMATCH':
+				await this.handleRematch(ws, connState);
+				break;
+
 			default:
 				this.sendError(ws, 'UNKNOWN_COMMAND', `Unknown message type: ${type}`);
 		}
@@ -906,13 +929,15 @@ export class GameRoom extends DurableObject<Env> {
 			return;
 		}
 
-		// Gather connected players
+		// Gather connected human players
 		const players: Array<{
 			id: string;
 			displayName: string;
 			avatarSeed: string;
 			isHost: boolean;
 			connectionId: string;
+			type?: 'human' | 'ai';
+			aiProfileId?: string;
 		}> = [];
 
 		for (const playerWs of this.ctx.getWebSockets(`player:${roomCode}`)) {
@@ -923,7 +948,23 @@ export class GameRoom extends DurableObject<Env> {
 				avatarSeed: state.avatarSeed,
 				isHost: state.isHost,
 				connectionId: state.userId, // Use userId as connectionId
+				type: 'human',
 			});
+		}
+
+		// Add AI players from room state
+		if (roomState.aiPlayers && roomState.aiPlayers.length > 0) {
+			for (const aiPlayer of roomState.aiPlayers) {
+				players.push({
+					id: aiPlayer.id,
+					displayName: aiPlayer.displayName,
+					avatarSeed: aiPlayer.avatarSeed,
+					isHost: false,
+					connectionId: aiPlayer.id, // AI uses its own ID as connectionId
+					type: 'ai',
+					aiProfileId: aiPlayer.profileId,
+				});
+			}
 		}
 
 		if (players.length < 2) {
@@ -939,6 +980,14 @@ export class GameRoom extends DurableObject<Env> {
 		};
 
 		await this.gameStateManager.initializeFromRoom(players, config);
+
+		// Initialize AI manager and register AI players
+		await this.aiManager.initialize();
+		for (const player of players) {
+			if (player.type === 'ai' && player.aiProfileId) {
+				await this.aiManager.addAIPlayer(player.id, player.aiProfileId);
+			}
+		}
 
 		// Update room status
 		roomState.status = 'starting';
@@ -971,16 +1020,214 @@ export class GameRoom extends DurableObject<Env> {
 			},
 		});
 
-		// Schedule turn timeout if configured
-		if (roomState.settings.turnTimeoutSeconds > 0) {
+		// Schedule turn timeout if configured (only for human players)
+		if (roomState.settings.turnTimeoutSeconds > 0 && !this.aiManager.isAIPlayer(startResult.currentPlayerId)) {
 			await this.gameStateManager.scheduleAfkWarning(startResult.currentPlayerId);
 		}
 
 		// Notify lobby
 		await this.notifyLobbyOfUpdate();
 
-		// Send highlight to lobby ticker
-		this.sendLobbyHighlight('game_complete', `Game started in ${roomCode}!`);
+		// Note: No lobby highlight for game start (only for notable game events)
+
+		// Trigger AI turn if first player is AI
+		console.log(`[GameRoom] About to trigger AI turn check for: ${startResult.currentPlayerId}`);
+		await this.triggerAITurnIfNeeded(startResult.currentPlayerId);
+		console.log(`[GameRoom] AI turn trigger complete`);
+	}
+
+	/**
+	 * Handle rematch request from host after game over.
+	 * Resets game state and starts a new game with the same players.
+	 */
+	private async handleRematch(ws: WebSocket, connState: ConnectionState): Promise<void> {
+		// Validate using game machine
+		const gameState = await this.gameStateManager.getState();
+		if (!gameState) {
+			this.sendError(ws, 'NO_GAME', 'No game in progress');
+			return;
+		}
+
+		const validation = canRematch(gameState, connState.userId);
+		if (!validation.success) {
+			this.sendError(ws, validation.error?.code ?? 'REMATCH_ERROR', validation.error?.message ?? 'Cannot rematch');
+			return;
+		}
+
+		// Reset game state for rematch
+		await this.gameStateManager.resetForRematch();
+
+		// Update room state back to waiting
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (roomState) {
+			roomState.status = 'waiting';
+			roomState.startedAt = undefined;
+			await this.ctx.storage.put('room', roomState);
+		}
+
+		// Broadcast rematch started - clients should show waiting room
+		this.broadcast({
+			type: 'REMATCH_STARTED',
+			payload: {
+				roomCode: this.getRoomCode(),
+				players: await this.getPlayerList(),
+			},
+		});
+
+		// Notify lobby
+		await this.notifyLobbyOfUpdate();
+	}
+
+	/**
+	 * Handle Quick Play start - creates room directly in playing state with human first.
+	 * This skips the waiting room entirely for solo vs AI games.
+	 */
+	private async handleQuickPlayStart(
+		ws: WebSocket,
+		connState: ConnectionState,
+		payload: { aiProfiles: string[] },
+	): Promise<void> {
+		// Only host can start quick play
+		if (!connState.isHost) {
+			this.sendError(ws, 'NOT_HOST', 'Only the host can start quick play');
+			return;
+		}
+
+		const roomCode = this.getRoomCode();
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (!roomState) {
+			this.sendError(ws, 'ROOM_NOT_FOUND', 'Room not found');
+			return;
+		}
+
+		// Must be in waiting phase
+		if (roomState.status !== 'waiting') {
+			this.sendError(ws, 'GAME_IN_PROGRESS', 'Game already in progress');
+			return;
+		}
+
+		// Validate AI profiles and create AI players
+		const aiProfiles = payload.aiProfiles || [];
+		if (aiProfiles.length === 0) {
+			this.sendError(ws, 'NO_AI_PROFILES', 'Quick play requires at least one AI opponent');
+			return;
+		}
+
+		// Create AI players
+		const aiPlayers: Array<{
+			id: string;
+			profileId: string;
+			displayName: string;
+			avatarSeed: string;
+		}> = [];
+
+		for (const profileId of aiProfiles) {
+			const profile = getProfile(profileId);
+			if (!profile) {
+				this.sendError(ws, 'INVALID_PROFILE', `Unknown AI profile: ${profileId}`);
+				return;
+			}
+
+			const aiPlayerId = `ai:${profileId}:${Date.now()}`;
+			const aiPlayer = createAIPlayerState(aiPlayerId, profileId);
+			aiPlayers.push({
+				id: aiPlayerId,
+				profileId,
+				displayName: aiPlayer.displayName ?? profile.name,
+				avatarSeed: aiPlayer.avatarSeed ?? profile.avatarSeed,
+			});
+		}
+
+		// Store AI players in room state
+		roomState.aiPlayers = aiPlayers;
+		await this.ctx.storage.put('room', roomState);
+
+		// Build player list: Human first (always), then AI players
+		const players: Array<{
+			id: string;
+			displayName: string;
+			avatarSeed: string;
+			isHost: boolean;
+			connectionId: string;
+			type: 'human' | 'ai';
+			aiProfileId?: string;
+		}> = [];
+
+		// Add human player first (guaranteed first turn)
+		players.push({
+			id: connState.userId,
+			displayName: connState.displayName,
+			avatarSeed: connState.avatarSeed,
+			isHost: true,
+			connectionId: connState.userId,
+			type: 'human',
+		});
+
+		// Add AI players
+		for (const aiPlayer of aiPlayers) {
+			players.push({
+				id: aiPlayer.id,
+				displayName: aiPlayer.displayName,
+				avatarSeed: aiPlayer.avatarSeed,
+				isHost: false,
+				connectionId: aiPlayer.id,
+				type: 'ai',
+				aiProfileId: aiPlayer.profileId,
+			});
+		}
+
+		// Initialize game state with human first in turn order
+		const config: MultiplayerGameState['config'] = {
+			maxPlayers: roomState.settings.maxPlayers,
+			turnTimeoutSeconds: roomState.settings.turnTimeoutSeconds,
+			isPublic: roomState.settings.isPublic,
+		};
+
+		await this.gameStateManager.initializeFromRoom(players, config);
+
+		// Initialize AI manager and register AI players
+		await this.aiManager.initialize();
+		for (const player of players) {
+			if (player.type === 'ai' && player.aiProfileId) {
+				await this.aiManager.addAIPlayer(player.id, player.aiProfileId);
+			}
+		}
+
+		// Start game with human as first player (no randomization for quick play)
+		const startResult = await this.gameStateManager.startGameWithOrder(
+			players.map((p) => p.id), // Human first, then AI
+		);
+
+		// Update room status directly to playing (skip 'starting' phase)
+		roomState.status = 'playing';
+		roomState.startedAt = Date.now();
+		await this.ctx.storage.put('room', roomState);
+
+		// Get full game state for broadcast
+		const gameState = await this.gameStateManager.getState();
+
+		// Broadcast game started (skip GAME_STARTING for quick play)
+		// Send full player state (same format as GAME_STARTED)
+		this.broadcast({
+			type: 'QUICK_PLAY_STARTED',
+			payload: {
+				playerOrder: startResult.playerOrder,
+				currentPlayerId: startResult.currentPlayerId,
+				turnNumber: startResult.turnNumber,
+				roundNumber: 1,
+				phase: gameState?.phase ?? 'turn_roll',
+				players: gameState?.players ?? {},
+				config: gameState?.config,
+			},
+		});
+
+		// Notify lobby
+		await this.notifyLobbyOfUpdate();
+
+		console.log(`[GameRoom] Quick Play started: human=${connState.userId}, AI=${aiPlayers.map((p) => p.id).join(', ')}`);
+
+		// Human always goes first in quick play, so no AI turn trigger needed here
+		// AI will play after human scores
 	}
 
 	/**
@@ -1210,7 +1457,7 @@ export class GameRoom extends DurableObject<Env> {
 		// bricked: scored 0
 		this.evaluatePredictions({
 			playerId: connState.userId,
-			wasDicee: result.isYahtzeeBonus || (category === 'yahtzee' && result.score === 50),
+			wasDicee: result.isDiceeBonus || (category === 'dicee' && result.score === 50),
 			improved: result.score > 0,
 			bricked: result.score === 0,
 			finalScore: result.score,
@@ -1224,7 +1471,7 @@ export class GameRoom extends DurableObject<Env> {
 				category,
 				score: result.score,
 				totalScore: result.totalScore,
-				isYahtzeeBonus: result.isYahtzeeBonus,
+				isDiceeBonus: result.isDiceeBonus,
 			},
 		});
 
@@ -1236,14 +1483,14 @@ export class GameRoom extends DurableObject<Env> {
 				category,
 				score: result.score,
 				totalScore: result.totalScore,
-				isYahtzeeBonus: result.isYahtzeeBonus,
+				isDiceeBonus: result.isDiceeBonus,
 			},
 		});
 
-		// Check for Yahtzee highlight
-		if (result.isYahtzeeBonus || (category === 'yahtzee' && result.score === 50)) {
+		// Check for Dicee highlight
+		if (result.isDiceeBonus || (category === 'dicee' && result.score === 50)) {
 			const player = gameState.players[connState.userId];
-			this.sendLobbyHighlight('yahtzee', `${player?.displayName ?? 'Player'} rolled a Dicee!`, player?.displayName, result.score);
+			this.sendLobbyHighlight('dicee', `${player?.displayName ?? 'Player'} rolled a Dicee!`, player?.displayName, result.score);
 		}
 
 		// Handle game completion or turn advancement
@@ -1282,11 +1529,16 @@ export class GameRoom extends DurableObject<Env> {
 			// Clear kibitz votes for new turn
 			this.kibitzVotes.clear();
 
-			// Schedule turn timeout for next player
+			// Schedule turn timeout for next player (only for human players)
 			const roomState = await this.ctx.storage.get<RoomState>('room');
 			if (roomState?.settings.turnTimeoutSeconds && roomState.settings.turnTimeoutSeconds > 0) {
-				await this.gameStateManager.scheduleAfkWarning(result.nextPlayerId);
+				if (!this.aiManager.isAIPlayer(result.nextPlayerId)) {
+					await this.gameStateManager.scheduleAfkWarning(result.nextPlayerId);
+				}
 			}
+
+			// Trigger AI turn if next player is AI
+			await this.triggerAITurnIfNeeded(result.nextPlayerId);
 		}
 
 		// Notify lobby of update
@@ -1296,7 +1548,7 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Handle game over - broadcast rankings and send highlights
 	 */
-	private handleGameOver(rankings: Array<{ playerId: string; displayName: string; rank: number; score: number; yahtzeeCount: number }> | null): void {
+	private handleGameOver(rankings: Array<{ playerId: string; displayName: string; rank: number; score: number; diceeCount: number }> | null): void {
 		if (!rankings) return;
 
 		// Broadcast game over
@@ -1350,6 +1602,203 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Notify lobby
 		this.notifyLobbyOfUpdate();
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────────
+	// AI Turn Execution
+	// ─────────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * Execute an AI command on behalf of an AI player.
+	 * This is called by AIRoomManager during AI turn execution.
+	 */
+	private async executeAICommand(playerId: string, command: AICommand): Promise<void> {
+		console.log(`[GameRoom] executeAICommand ENTRY: ${playerId} ${command.type}`);
+
+		const gameState = await this.gameStateManager.getState();
+		if (!gameState) {
+			console.error('[GameRoom] No game state for AI command');
+			return;
+		}
+
+		console.log(`[GameRoom] executeAICommand has game state, processing ${command.type}`);
+
+
+		switch (command.type) {
+			case 'roll': {
+				// Execute the roll
+				const keptMask = gameState.players[playerId]?.keptDice ?? [false, false, false, false, false];
+				const result = await this.gameStateManager.rollDice(playerId, keptMask);
+
+				// Broadcast dice rolled
+				this.broadcast({
+					type: 'DICE_ROLLED',
+					payload: {
+						playerId,
+						dice: result.dice,
+						rollNumber: result.rollNumber,
+						rollsRemaining: result.rollsRemaining,
+						phase: result.newPhase,
+					},
+				});
+
+				this.broadcastToSpectators({
+					type: 'DICE_ROLLED',
+					payload: {
+						playerId,
+						dice: result.dice,
+						rollNumber: result.rollNumber,
+						rollsRemaining: result.rollsRemaining,
+						phase: result.newPhase,
+					},
+				});
+				break;
+			}
+
+			case 'keep': {
+				// Convert keepMask to indices
+				const indices: number[] = [];
+				for (let i = 0; i < 5; i++) {
+					if (command.keepMask[i]) {
+						indices.push(i);
+					}
+				}
+
+				// Execute keep
+				const newKept = await this.gameStateManager.keepDice(playerId, indices);
+
+				// Broadcast dice kept
+				this.broadcast({
+					type: 'DICE_KEPT',
+					payload: {
+						playerId,
+						kept: newKept,
+					},
+				});
+
+				this.broadcastToSpectators({
+					type: 'DICE_KEPT',
+					payload: {
+						playerId,
+						kept: newKept,
+					},
+				});
+				break;
+			}
+
+			case 'score': {
+				// Execute scoring
+				const result = await this.gameStateManager.scoreCategory(playerId, command.category);
+
+				// Broadcast category scored
+				this.broadcast({
+					type: 'CATEGORY_SCORED',
+					payload: {
+						playerId,
+						category: command.category,
+						score: result.score,
+						totalScore: result.totalScore,
+						isDiceeBonus: result.isDiceeBonus,
+					},
+				});
+
+				this.broadcastToSpectators({
+					type: 'CATEGORY_SCORED',
+					payload: {
+						playerId,
+						category: command.category,
+						score: result.score,
+						totalScore: result.totalScore,
+						isDiceeBonus: result.isDiceeBonus,
+					},
+				});
+
+				// Check for Dicee highlight
+				if (result.isDiceeBonus || (command.category === 'dicee' && result.score === 50)) {
+					const player = gameState.players[playerId];
+					this.sendLobbyHighlight('dicee', `${player?.displayName ?? 'AI'} rolled a Dicee!`, player?.displayName, result.score);
+				}
+
+				// Handle game completion or turn advancement
+				if (result.gameCompleted) {
+					this.handleGameOver(result.rankings);
+				} else if (result.nextPlayerId) {
+					// Broadcast turn change
+					this.broadcast({
+						type: 'TURN_CHANGED',
+						payload: {
+							currentPlayerId: result.nextPlayerId,
+							turnNumber: result.nextTurnNumber,
+							roundNumber: result.nextRoundNumber,
+							phase: result.nextPhase,
+						},
+					});
+
+					this.broadcastToSpectators({
+						type: 'TURN_CHANGED',
+						payload: {
+							currentPlayerId: result.nextPlayerId,
+							turnNumber: result.nextTurnNumber,
+							roundNumber: result.nextRoundNumber,
+							phase: result.nextPhase,
+						},
+					});
+
+					// Schedule turn timeout for next player (if human)
+					const roomState = await this.ctx.storage.get<RoomState>('room');
+					if (roomState?.settings.turnTimeoutSeconds && roomState.settings.turnTimeoutSeconds > 0) {
+						// Only schedule timeout for human players
+						if (!this.aiManager.isAIPlayer(result.nextPlayerId)) {
+							await this.gameStateManager.scheduleAfkWarning(result.nextPlayerId);
+						}
+					}
+
+					// Trigger AI turn if next player is AI
+					await this.triggerAITurnIfNeeded(result.nextPlayerId);
+				}
+
+				// Notify lobby
+				await this.notifyLobbyOfUpdate();
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Trigger AI turn execution if the given player is an AI.
+	 */
+	private async triggerAITurnIfNeeded(playerId: string): Promise<void> {
+		if (!this.aiManager.isAIPlayer(playerId)) {
+			return;
+		}
+
+		console.log(`[GameRoom] triggerAITurnIfNeeded: ${playerId}`);
+
+		// Execute AI turn in background (don't await to avoid blocking)
+		this.ctx.waitUntil(
+			this.aiManager.executeAITurn(
+				playerId,
+				// Pass a getter function so AI gets fresh state each step
+				async () => this.gameStateManager.getState(),
+				async (pid, cmd) => {
+					console.log(`[GameRoom] execute callback invoked: ${pid} ${cmd.type}`);
+					try {
+						await this.executeAICommand(pid, cmd);
+						console.log(`[GameRoom] execute callback complete: ${cmd.type}`);
+					} catch (e) {
+						console.error(`[GameRoom] execute callback FAILED: ${cmd.type}`, e);
+						throw e;
+					}
+				},
+				(event) => {
+					// Broadcast AI events to all clients
+					this.broadcast(event);
+					this.broadcastToSpectators(event);
+				},
+			).catch((error) => {
+				console.error('[GameRoom] AI turn execution failed:', error);
+			}),
+		);
 	}
 
 	/**
@@ -3131,7 +3580,7 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Base points by type
 		if (predictionType === 'dicee') {
-			awarded = GALLERY_POINT_VALUES.PREDICTION_YAHTZEE;
+			awarded = GALLERY_POINT_VALUES.PREDICTION_DICEE;
 		} else if (predictionType === 'exact') {
 			awarded = GALLERY_POINT_VALUES.PREDICTION_EXACT_SCORE;
 			points.predictions.exactScore += awarded;
@@ -3251,7 +3700,7 @@ export class GameRoom extends DurableObject<Env> {
 			samePlayerBackings?: number;
 			lostPickStreak?: number;
 			exactPredictions?: number;
-			predictedYahtzee?: boolean;
+			predictedDicee?: boolean;
 			gamesWatched?: number;
 			roomsVisited?: number;
 		},
@@ -3283,8 +3732,8 @@ export class GameRoom extends DurableObject<Env> {
 			unlocked.push('analyst');
 		}
 
-		// Called It: Predicted a Yahtzee correctly
-		if (stats.predictedYahtzee) {
+		// Called It: Predicted a Dicee correctly
+		if (stats.predictedDicee) {
 			unlocked.push('called_it');
 		}
 

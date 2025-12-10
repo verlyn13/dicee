@@ -1,8 +1,8 @@
 /**
- * Multiplayer Zod Schemas
+ * Multiplayer Zod Schemas - UPPERCASE Protocol
  *
  * Zod 4 schemas for runtime validation of multiplayer messages.
- * Shared between web client and PartyKit server.
+ * All wire protocol messages use UPPERCASE_SNAKE_CASE for type identifiers.
  *
  * Zod 4 Key Patterns:
  * - Use `{ error: "..." }` not `{ message: "..." }`
@@ -74,120 +74,79 @@ export const RoomPlayerSchema = z.object({
 });
 
 // =============================================================================
-// Command Schemas (Client → Server)
+// Command Schemas (Client → Server) - UPPERCASE format
 // =============================================================================
 
-export const CreateRoomCommandSchema = z.object({
-	type: z.literal('room.create'),
-	config: RoomConfigSchema.partial().optional(),
-});
-
-export const JoinRoomCommandSchema = z.object({
-	type: z.literal('room.join'),
-	roomCode: RoomCodeSchema,
-});
-
-export const LeaveRoomCommandSchema = z.object({
-	type: z.literal('room.leave'),
-});
-
 export const StartGameCommandSchema = z.object({
-	type: z.literal('game.start'),
+	type: z.literal('START_GAME'),
+});
+
+export const QuickPlayStartCommandSchema = z.object({
+	type: z.literal('QUICK_PLAY_START'),
+	payload: z.object({
+		aiProfiles: z.array(z.string()),
+	}),
 });
 
 export const RollDiceCommandSchema = z.object({
-	type: z.literal('dice.roll'),
-	kept: z.tuple([z.boolean(), z.boolean(), z.boolean(), z.boolean(), z.boolean()]),
+	type: z.literal('DICE_ROLL'),
+	payload: z.object({
+		kept: z.tuple([z.boolean(), z.boolean(), z.boolean(), z.boolean(), z.boolean()]).optional(),
+	}),
 });
 
 export const KeepDiceCommandSchema = z.object({
-	type: z.literal('dice.keep'),
-	indices: z.array(z.number().int().min(0).max(4)).max(5),
+	type: z.literal('DICE_KEEP'),
+	payload: z.object({
+		indices: z.array(z.number().int().min(0).max(4)).max(5),
+	}),
 });
 
 export const ScoreCategoryCommandSchema = z.object({
-	type: z.literal('category.score'),
-	category: z.string().min(1),
+	type: z.literal('CATEGORY_SCORE'),
+	payload: z.object({
+		category: z.string().min(1),
+	}),
 });
 
 export const RematchCommandSchema = z.object({
-	type: z.literal('game.rematch'),
+	type: z.literal('REMATCH'),
+});
+
+export const AddAIPlayerCommandSchema = z.object({
+	type: z.literal('ADD_AI_PLAYER'),
+	payload: z.object({
+		profileId: z.string().min(1),
+	}),
+});
+
+export const PingCommandSchema = z.object({
+	type: z.literal('PING'),
 });
 
 /**
  * All commands - discriminated union
  */
 export const CommandSchema = z.discriminatedUnion('type', [
-	CreateRoomCommandSchema,
-	JoinRoomCommandSchema,
-	LeaveRoomCommandSchema,
 	StartGameCommandSchema,
+	QuickPlayStartCommandSchema,
 	RollDiceCommandSchema,
 	KeepDiceCommandSchema,
 	ScoreCategoryCommandSchema,
 	RematchCommandSchema,
+	AddAIPlayerCommandSchema,
+	PingCommandSchema,
 ]);
 
 export type CommandInput = z.input<typeof CommandSchema>;
 
 // =============================================================================
-// Server Event Schemas (Server → Client)
+// Server Event Schemas (Server → Client) - UPPERCASE format
 // =============================================================================
 
 const BaseEventSchema = z.object({
-	timestamp: z.string(),
+	timestamp: z.string().optional(),
 });
-
-export const RoomCreatedEventSchema = BaseEventSchema.extend({
-	type: z.literal('room.created'),
-	roomCode: RoomCodeSchema,
-});
-
-export const RoomStateEventSchema = BaseEventSchema.extend({
-	type: z.literal('room.state'),
-	room: z.object({
-		code: RoomCodeSchema,
-		config: RoomConfigSchema,
-		state: RoomStateSchema,
-		players: z.array(RoomPlayerSchema),
-		hostId: PlayerIdSchema,
-		createdAt: z.string(),
-		startedAt: z.string().nullable(),
-	}),
-});
-
-export const PlayerJoinedEventSchema = BaseEventSchema.extend({
-	type: z.literal('player.joined'),
-	player: RoomPlayerSchema,
-});
-
-export const PlayerLeftEventSchema = BaseEventSchema.extend({
-	type: z.literal('player.left'),
-	playerId: PlayerIdSchema,
-	reason: z.enum(['left', 'disconnected', 'kicked']),
-});
-
-export const PlayerConnectionEventSchema = BaseEventSchema.extend({
-	type: z.literal('player.connection'),
-	playerId: PlayerIdSchema,
-	isConnected: z.boolean(),
-});
-
-export const GameStartingEventSchema = BaseEventSchema.extend({
-	type: z.literal('game.starting'),
-	countdown: z.number().int().min(0),
-});
-
-export const GameStartedEventSchema = BaseEventSchema.extend({
-	type: z.literal('game.started'),
-	playerOrder: z.array(PlayerIdSchema),
-	currentPlayerId: PlayerIdSchema,
-	turnNumber: z.number().int().min(1).optional(),
-});
-
-// =============================================================================
-// Game Event Schemas (Phase 5)
-// =============================================================================
 
 const DiceArraySchema = z.tuple([
 	z.number().int().min(1).max(6),
@@ -258,119 +217,206 @@ const PlayerRankingSchema = z.object({
 	diceeCount: z.number().int().min(0),
 });
 
-const GameStateSchema = z.object({
-	roomCode: z.string(),
-	phase: z.enum(['waiting', 'starting', 'turn_roll', 'turn_decide', 'turn_score', 'game_over']),
-	playerOrder: z.array(z.string()),
-	currentPlayerIndex: z.number().int().min(0),
-	turnNumber: z.number().int().min(0),
-	roundNumber: z.number().int().min(0),
-	players: z.record(z.string(), PlayerGameStateSchema),
-	turnStartedAt: z.string().nullable(),
-	gameStartedAt: z.string().nullable(),
-	gameCompletedAt: z.string().nullable(),
-	rankings: z.array(PlayerRankingSchema).nullable(),
-	config: z.object({
-		maxPlayers: z.union([z.literal(2), z.literal(3), z.literal(4)]),
-		turnTimeoutSeconds: z.number(),
-		isPublic: z.boolean(),
+const PlayerInfoSchema = z.object({
+	id: z.string(),
+	displayName: z.string(),
+	avatarSeed: z.string(),
+	isHost: z.boolean(),
+	isConnected: z.boolean(),
+});
+
+const AIPlayerInfoSchema = z.object({
+	id: z.string(),
+	profileId: z.string(),
+	displayName: z.string(),
+	avatarSeed: z.string(),
+});
+
+// Event Schemas
+export const ConnectedEventSchema = BaseEventSchema.extend({
+	type: z.literal('CONNECTED'),
+	payload: z.object({
+		roomCode: RoomCodeSchema,
+		isHost: z.boolean(),
+		players: z.array(PlayerInfoSchema),
+		aiPlayers: z.array(AIPlayerInfoSchema).optional(),
+		spectators: z.array(z.object({ id: z.string(), displayName: z.string() })),
+		roomStatus: RoomStateSchema,
+		spectatorCount: z.number().int().min(0),
+	}),
+});
+
+export const PlayerJoinedEventSchema = BaseEventSchema.extend({
+	type: z.literal('PLAYER_JOINED'),
+	payload: z.object({
+		userId: z.string(),
+		displayName: z.string(),
+		avatarSeed: z.string(),
+	}),
+});
+
+export const PlayerLeftEventSchema = BaseEventSchema.extend({
+	type: z.literal('PLAYER_LEFT'),
+	payload: z.object({
+		userId: z.string(),
+		reason: z.enum(['left', 'disconnected', 'kicked']),
+	}),
+});
+
+export const AIPlayerJoinedEventSchema = BaseEventSchema.extend({
+	type: z.literal('AI_PLAYER_JOINED'),
+	payload: AIPlayerInfoSchema,
+});
+
+export const GameStartingEventSchema = BaseEventSchema.extend({
+	type: z.literal('GAME_STARTING'),
+	payload: z.object({
+		playerCount: z.number().int().min(2),
+	}),
+});
+
+export const GameStartedEventSchema = BaseEventSchema.extend({
+	type: z.literal('GAME_STARTED'),
+	payload: z.object({
+		playerOrder: z.array(z.string()),
+		currentPlayerId: z.string(),
+		turnNumber: z.number().int().min(1),
+		roundNumber: z.number().int().min(1),
+		phase: z.string(),
+		players: z.record(z.string(), PlayerGameStateSchema),
+	}),
+});
+
+export const QuickPlayStartedEventSchema = BaseEventSchema.extend({
+	type: z.literal('QUICK_PLAY_STARTED'),
+	payload: z.object({
+		playerOrder: z.array(z.string()),
+		currentPlayerId: z.string(),
+		turnNumber: z.number().int().min(1),
+		roundNumber: z.number().int().min(1),
+		phase: z.string(),
+		players: z.record(z.string(), PlayerGameStateSchema),
+		aiPlayers: z.array(AIPlayerInfoSchema),
 	}),
 });
 
 export const TurnStartedEventSchema = BaseEventSchema.extend({
-	type: z.literal('turn.started'),
-	playerId: PlayerIdSchema,
-	turnNumber: z.number().int().min(1),
-	roundNumber: z.number().int().min(1),
+	type: z.literal('TURN_STARTED'),
+	payload: z.object({
+		playerId: z.string(),
+		turnNumber: z.number().int().min(1),
+		roundNumber: z.number().int().min(1),
+	}),
+});
+
+export const TurnChangedEventSchema = BaseEventSchema.extend({
+	type: z.literal('TURN_CHANGED'),
+	payload: z.object({
+		currentPlayerId: z.string(),
+		turnNumber: z.number().int().min(1),
+		roundNumber: z.number().int().min(1),
+		phase: z.string(),
+	}),
 });
 
 export const DiceRolledEventSchema = BaseEventSchema.extend({
-	type: z.literal('dice.rolled'),
-	playerId: PlayerIdSchema,
-	dice: DiceArraySchema,
-	rollNumber: z.number().int().min(1).max(3),
-	rollsRemaining: z.number().int().min(0).max(2),
+	type: z.literal('DICE_ROLLED'),
+	payload: z.object({
+		playerId: z.string(),
+		dice: DiceArraySchema,
+		rollNumber: z.number().int().min(1).max(3),
+		rollsRemaining: z.number().int().min(0).max(2),
+	}),
 });
 
 export const DiceKeptEventSchema = BaseEventSchema.extend({
-	type: z.literal('dice.kept'),
-	playerId: PlayerIdSchema,
-	kept: KeptMaskSchema,
+	type: z.literal('DICE_KEPT'),
+	payload: z.object({
+		playerId: z.string(),
+		kept: KeptMaskSchema,
+	}),
 });
 
 export const CategoryScoredEventSchema = BaseEventSchema.extend({
-	type: z.literal('category.scored'),
-	playerId: PlayerIdSchema,
-	category: CategorySchema,
-	score: z.number().int().min(0),
-	totalScore: z.number().int().min(0),
-	isDiceeBonus: z.boolean(),
-});
-
-export const TurnEndedEventSchema = BaseEventSchema.extend({
-	type: z.literal('turn.ended'),
-	playerId: PlayerIdSchema,
+	type: z.literal('CATEGORY_SCORED'),
+	payload: z.object({
+		playerId: z.string(),
+		category: CategorySchema,
+		score: z.number().int().min(0),
+		totalScore: z.number().int().min(0),
+		isDiceeBonus: z.boolean(),
+	}),
 });
 
 export const TurnSkippedEventSchema = BaseEventSchema.extend({
-	type: z.literal('turn.skipped'),
-	playerId: PlayerIdSchema,
-	reason: z.enum(['timeout', 'disconnect']),
-	categoryScored: CategorySchema,
-	score: z.number().int().min(0),
+	type: z.literal('TURN_SKIPPED'),
+	payload: z.object({
+		playerId: z.string(),
+		reason: z.enum(['timeout', 'disconnect']),
+		categoryScored: CategorySchema,
+		score: z.number().int().min(0),
+	}),
 });
 
-export const AfkWarningEventSchema = BaseEventSchema.extend({
-	type: z.literal('player.afk_warning'),
-	playerId: PlayerIdSchema,
-	secondsRemaining: z.number().int().min(0),
+export const PlayerAfkEventSchema = BaseEventSchema.extend({
+	type: z.literal('PLAYER_AFK'),
+	payload: z.object({
+		playerId: z.string(),
+		secondsRemaining: z.number().int().min(0),
+	}),
 });
 
-export const GameCompletedEventSchema = BaseEventSchema.extend({
-	type: z.literal('game.completed'),
-	rankings: z.array(PlayerRankingSchema),
-	duration: z.number().int().min(0),
+export const GameOverEventSchema = BaseEventSchema.extend({
+	type: z.literal('GAME_OVER'),
+	payload: z.object({
+		rankings: z.array(PlayerRankingSchema),
+		duration: z.number().int().min(0),
+	}),
 });
 
-export const StateSyncEventSchema = BaseEventSchema.extend({
-	type: z.literal('state.sync'),
-	state: GameStateSchema,
-});
-
-export const GameErrorEventSchema = BaseEventSchema.extend({
-	type: z.literal('game.error'),
-	message: z.string(),
-	code: z.string(),
+export const RematchStartedEventSchema = BaseEventSchema.extend({
+	type: z.literal('REMATCH_STARTED'),
+	payload: z.object({
+		roomCode: RoomCodeSchema,
+		players: z.array(PlayerInfoSchema),
+	}),
 });
 
 export const ErrorEventSchema = BaseEventSchema.extend({
-	type: z.literal('error'),
-	message: z.string(),
-	code: z.string(),
+	type: z.literal('ERROR'),
+	payload: z.object({
+		code: z.string(),
+		message: z.string(),
+	}),
+});
+
+export const PongEventSchema = BaseEventSchema.extend({
+	type: z.literal('PONG'),
+	payload: z.number(),
 });
 
 /**
  * All server events - discriminated union
  */
 export const ServerEventSchema = z.discriminatedUnion('type', [
-	RoomCreatedEventSchema,
-	RoomStateEventSchema,
+	ConnectedEventSchema,
 	PlayerJoinedEventSchema,
 	PlayerLeftEventSchema,
-	PlayerConnectionEventSchema,
+	AIPlayerJoinedEventSchema,
 	GameStartingEventSchema,
 	GameStartedEventSchema,
+	QuickPlayStartedEventSchema,
 	TurnStartedEventSchema,
+	TurnChangedEventSchema,
 	DiceRolledEventSchema,
 	DiceKeptEventSchema,
 	CategoryScoredEventSchema,
-	TurnEndedEventSchema,
 	TurnSkippedEventSchema,
-	AfkWarningEventSchema,
-	GameCompletedEventSchema,
-	StateSyncEventSchema,
-	GameErrorEventSchema,
+	PlayerAfkEventSchema,
+	GameOverEventSchema,
+	RematchStartedEventSchema,
 	ErrorEventSchema,
+	PongEventSchema,
 ]);
 
 export type ServerEventInput = z.input<typeof ServerEventSchema>;

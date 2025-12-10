@@ -41,9 +41,10 @@ function handleChatToggle(): void {
 // Subscribe to game starting events
 $effect(() => {
 	const unsubscribe = room.subscribe((event) => {
-		if (event.type === 'game.starting') {
-			countdown = event.countdown;
-		} else if (event.type === 'game.started') {
+		if (event.type === 'GAME_STARTING') {
+			// Start countdown timer (server sends playerCount, client counts down)
+			countdown = 3;
+		} else if (event.type === 'GAME_STARTED' || event.type === 'QUICK_PLAY_STARTED') {
 			countdown = null;
 			ongamestart?.();
 		}
@@ -163,8 +164,18 @@ const waitingMessage = $derived.by(() => {
 		</div>
 
 		<div class="player-list">
+			<!-- Human players -->
 			{#each room.room?.players ?? [] as player (player.id)}
 				<PlayerListItem {player} isCurrentUser={player.id === auth.userId} />
+			{/each}
+			
+			<!-- AI players -->
+			{#each room.room?.aiPlayers ?? [] as aiPlayer (aiPlayer.id)}
+				<div class="player-item ai-player">
+					<span class="player-avatar">🤖</span>
+					<span class="player-name">{aiPlayer.displayName}</span>
+					<span class="player-badge ai-badge">AI</span>
+				</div>
 			{/each}
 			
 			<!-- Empty slots -->
@@ -540,6 +551,34 @@ const waitingMessage = $derived.by(() => {
 		font-size: var(--text-small);
 		color: var(--color-text-muted);
 		font-style: italic;
+	}
+
+	/* AI player item */
+	.player-item.ai-player {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: var(--space-2);
+		background: var(--color-surface);
+		border: var(--border-medium);
+	}
+
+	.player-avatar {
+		font-size: var(--text-h3);
+	}
+
+	.player-name {
+		flex: 1;
+		font-weight: var(--weight-semibold);
+	}
+
+	.player-badge.ai-badge {
+		padding: var(--space-0) var(--space-1);
+		background: var(--color-primary);
+		border: var(--border-thin);
+		font-size: var(--text-tiny);
+		font-weight: var(--weight-bold);
+		text-transform: uppercase;
 	}
 
 	.invite-hint {

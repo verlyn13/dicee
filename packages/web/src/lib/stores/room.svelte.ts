@@ -79,8 +79,10 @@ export function createRoomStore(userId: string): RoomStore {
 	const isConnecting = $derived(status === 'connecting');
 	const currentPlayer = $derived(room?.players.find((p) => p.id === userId) ?? null);
 	const isHost = $derived(room?.hostId === userId);
-	const playerCount = $derived(room?.players.length ?? 0);
-	const isFull = $derived(room ? room.players.length >= room.config.maxPlayers : false);
+	const humanPlayerCount = $derived(room?.players.length ?? 0);
+	const aiPlayerCount = $derived(room?.aiPlayers?.length ?? 0);
+	const playerCount = $derived(humanPlayerCount + aiPlayerCount);
+	const isFull = $derived(room ? playerCount >= room.config.maxPlayers : false);
 	const canStart = $derived(isHost && playerCount >= 2 && room?.state === 'waiting');
 
 	// Sync with roomService
@@ -129,7 +131,7 @@ export function createRoomStore(userId: string): RoomStore {
 	}
 
 	function leaveRoom(): void {
-		roomService.sendLeave();
+		// Server handles leave on WebSocket disconnect - no explicit command needed
 		roomService.disconnect();
 		syncFromService();
 	}
