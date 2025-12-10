@@ -150,8 +150,9 @@ function setupQuickPlayHandler(): void {
 	const handler = (event: { type: string }) => {
 		const eventType = event.type as string;
 
-		// When we get room state, immediately start quick play
-		if (eventType === 'room.state' && !hasStarted) {
+		// When we get CONNECTED (room ready), immediately start quick play
+		// Server sends CONNECTED, not room.state
+		if ((eventType === 'CONNECTED' || eventType === 'room.state') && !hasStarted) {
 			hasStarted = true;
 			console.log('[QuickPlay] Room ready, starting quick play with AI:', quickPlayAIProfile);
 			// Send quick play start command - this creates AI and starts game in one step

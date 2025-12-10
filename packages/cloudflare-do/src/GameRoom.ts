@@ -719,6 +719,7 @@ export class GameRoom extends DurableObject<Env> {
 		message: { type: string; payload?: unknown },
 	): Promise<void> {
 		const { type, payload } = message;
+		console.log(`[GameRoom] >>> RECEIVED: ${type} from ${connState.userId}`);
 
 		// Route chat-related messages through ChatManager
 		if (isChatMessageType(type)) {
