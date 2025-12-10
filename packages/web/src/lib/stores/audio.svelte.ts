@@ -246,21 +246,41 @@ class AudioStore {
 	}
 
 	/**
-	 * Play score confirmation sound.
+	 * Play score sound based on score value.
+	 * Uses range-based feedback per audio-plan.md Section 4:
+	 * - 0 points → scoreZero (scratch/forced zero)
+	 * - 1-15 points → scoreNegative (low/disappointing)
+	 * - 16-29 points → scorePositive (decent/neutral-good)
+	 * - 30+ points → scoreGood (high score)
+	 * - 50 (Dicee) → dicee fanfare (handled separately)
 	 */
-	async playScoreConfirm(): Promise<void> {
-		await this.play('scoreConfirm');
+	async playScoreSound(score: number, isDicee: boolean = false): Promise<void> {
+		if (isDicee) {
+			await this.playDicee();
+			return;
+		}
+
+		if (score === 0) {
+			await this.play('scoreZero');
+		} else if (score <= 15) {
+			await this.play('scoreNegative');
+		} else if (score <= 29) {
+			await this.play('scorePositive');
+		} else {
+			await this.play('scoreGood');
+		}
 	}
 
 	/**
-	 * Play bonus achieved sound.
+	 * Play bonus achieved sound (upper section 63+ bonus).
 	 */
 	async playBonusAchieved(): Promise<void> {
 		await this.play('bonusAchieved');
 	}
 
 	/**
-	 * Play Dicee celebration sound.
+	 * Play Dicee celebration sound (five of a kind).
+	 * This is the hero sound - should cut through everything.
 	 */
 	async playDicee(): Promise<void> {
 		await this.play('dicee');

@@ -47,10 +47,18 @@ $effect(() => {
 	}
 });
 
-// AFK warning haptic feedback
+// AFK warning feedback (haptic + audio)
+let lastWarningSecond = $state<number | null>(null);
 $effect(() => {
 	if (afkWarning !== null && afkWarning <= 10 && isMyTurn) {
-		haptic('error');
+		// Only trigger once per second to avoid spam
+		if (lastWarningSecond !== afkWarning) {
+			lastWarningSecond = afkWarning;
+			haptic('error');
+			audioStore.play('timerWarning');
+		}
+	} else {
+		lastWarningSecond = null;
 	}
 });
 
@@ -62,7 +70,7 @@ const avatarUrl = $derived(
 
 const displayName = $derived(currentPlayer?.displayName ?? 'Unknown');
 const turnLabel = $derived(isMyTurn ? '🎯 YOUR TURN' : `⏳ ${displayName}'s Turn`);
-const turnSubtext = $derived(isMyTurn ? 'Roll the dice!' : 'Please wait...');
+const turnSubtext = $derived(isMyTurn ? 'Click START YOUR TURN below' : 'Please wait...');
 </script>
 
 <div

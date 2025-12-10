@@ -54,7 +54,7 @@ function handleReset() {
 
 // Test sound playback
 async function handleTestSound() {
-	await audioStore.play('scoreConfirm');
+	await audioStore.play('scorePositive');
 }
 </script>
 

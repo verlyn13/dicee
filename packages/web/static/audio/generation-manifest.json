@@ -1,0 +1,55 @@
+{
+	"version": "1.0.0",
+	"updatedAt": "2025-12-10T17:41:31.855Z",
+	"totalCreditsUsed": 0,
+	"results": {
+		"MVP-01": {
+			"assetId": "MVP-01",
+			"status": "generated",
+			"timestamp": "2025-12-10T17:40:52.439Z",
+			"files": ["sfx/dice/dice_roll_heavy.ogg"]
+		},
+		"MVP-02": {
+			"assetId": "MVP-02",
+			"status": "generated",
+			"timestamp": "2025-12-10T17:40:56.298Z",
+			"files": ["sfx/dice/dice_roll_light.ogg"]
+		},
+		"MVP-03": {
+			"assetId": "MVP-03",
+			"status": "generated",
+			"timestamp": "2025-12-10T17:41:00.756Z",
+			"files": ["sfx/dice/dice_select.ogg"]
+		},
+		"MVP-04": {
+			"assetId": "MVP-04",
+			"status": "generated",
+			"timestamp": "2025-12-10T17:41:04.846Z",
+			"files": ["sfx/score/score_positive.ogg"]
+		},
+		"MVP-05": {
+			"assetId": "MVP-05",
+			"status": "generated",
+			"timestamp": "2025-12-10T17:41:08.847Z",
+			"files": ["sfx/score/score_negative.ogg"]
+		},
+		"MVP-06": {
+			"assetId": "MVP-06",
+			"status": "generated",
+			"timestamp": "2025-12-10T17:41:13.220Z",
+			"files": ["sfx/score/dicee_fanfare.ogg"]
+		},
+		"MVP-07": {
+			"assetId": "MVP-07",
+			"status": "generated",
+			"timestamp": "2025-12-10T17:41:18.024Z",
+			"files": ["sfx/ui/turn_start.ogg"]
+		},
+		"MVP-08": {
+			"assetId": "MVP-08",
+			"status": "generated",
+			"timestamp": "2025-12-10T17:41:31.855Z",
+			"files": ["ambient/ambient_base.ogg"]
+		}
+	}
+}

@@ -430,8 +430,13 @@ describe('AudioStore', () => {
 			await expect(audioStore.playDieToggle(false)).resolves.toBeUndefined();
 		});
 
-		it('should have playScoreConfirm method', async () => {
-			await expect(audioStore.playScoreConfirm()).resolves.toBeUndefined();
+		it('should have playScoreSound method with range-based feedback', async () => {
+			// Test different score ranges
+			await expect(audioStore.playScoreSound(0)).resolves.toBeUndefined(); // scoreZero
+			await expect(audioStore.playScoreSound(10)).resolves.toBeUndefined(); // scoreNegative
+			await expect(audioStore.playScoreSound(20)).resolves.toBeUndefined(); // scorePositive
+			await expect(audioStore.playScoreSound(35)).resolves.toBeUndefined(); // scoreGood
+			await expect(audioStore.playScoreSound(50, true)).resolves.toBeUndefined(); // dicee
 		});
 
 		it('should have playBonusAchieved method', async () => {

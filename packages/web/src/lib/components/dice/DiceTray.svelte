@@ -192,14 +192,20 @@ function handleRoll() {
 			<div class="quick-actions">
 				<button
 					class="quick-btn"
-					onclick={onKeepAll}
+					onclick={() => {
+						audioStore.play('buttonClick');
+						onKeepAll?.();
+					}}
 					disabled={keptCount === 5}
 				>
 					Keep All
 				</button>
 				<button
 					class="quick-btn"
-					onclick={onReleaseAll}
+					onclick={() => {
+						audioStore.play('buttonClick');
+						onReleaseAll?.();
+					}}
 					disabled={keptCount === 0}
 				>
 					Release All
@@ -384,15 +390,28 @@ function handleRoll() {
 
 	/* Start turn button - more prominent */
 	.roll-btn.start-turn {
-		background: var(--color-primary);
+		background: var(--color-success, #22c55e);
+		color: white;
 		font-size: var(--text-h3);
 		padding: var(--space-3) var(--space-4);
 		animation: attention-pulse 1.5s ease-in-out infinite;
+		border: 3px solid var(--color-text);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 	}
 
 	.roll-btn.start-turn:hover:not(:disabled) {
-		background: var(--color-primary-dark, var(--color-primary));
+		background: var(--color-success-dark, #16a34a);
 		animation: none;
+		transform: translateY(-2px);
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+	}
+
+	.roll-btn.start-turn:disabled {
+		background: var(--color-disabled, #6b7280);
+		color: var(--color-text-muted, #9ca3af);
+		animation: none;
+		box-shadow: none;
+		cursor: not-allowed;
 	}
 
 	@keyframes attention-pulse {

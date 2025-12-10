@@ -17,10 +17,13 @@ export type SoundId =
 	| 'diceLand'
 	| 'diceKeep'
 	| 'diceUnkeep'
-	// Scoring sounds
-	| 'scoreConfirm'
-	| 'bonusAchieved'
-	| 'dicee'
+	// Scoring sounds (range-based feedback per audio-plan.md)
+	| 'scoreZero' // 0 points - scratch/forced zero
+	| 'scoreNegative' // 1-15 points - low/disappointing
+	| 'scorePositive' // 16-29 points - decent/neutral-good
+	| 'scoreGood' // 30+ points - high score
+	| 'bonusAchieved' // Upper section bonus (63+)
+	| 'dicee' // Five of a kind (50 points)
 	// UI sounds
 	| 'buttonClick'
 	| 'turnChange'
@@ -58,27 +61,47 @@ export interface AudioState {
  */
 export const SOUND_BANK: Record<SoundId, SoundConfig> = {
 	// Dice (preloaded for responsiveness)
-	diceRoll: { src: '/audio/dice-roll.mp3', category: 'dice', volume: 0.7, preload: true },
-	diceLand: { src: '/audio/dice-land.mp3', category: 'dice', volume: 0.5, variants: 3 },
-	diceKeep: { src: '/audio/chip-click.mp3', category: 'dice', volume: 0.3 },
-	diceUnkeep: { src: '/audio/chip-unclick.mp3', category: 'dice', volume: 0.25 },
+	// Paths follow audio-gen output structure: /audio/sfx/{category}/{filename}.ogg
+	diceRoll: {
+		src: '/audio/sfx/dice/dice_roll_heavy.ogg',
+		category: 'dice',
+		volume: 0.7,
+		preload: true,
+	},
+	diceLand: {
+		src: '/audio/sfx/dice/dice_roll_light.ogg',
+		category: 'dice',
+		volume: 0.5,
+		variants: 3,
+	},
+	diceKeep: { src: '/audio/sfx/dice/dice_select.ogg', category: 'dice', volume: 0.3 },
+	diceUnkeep: { src: '/audio/sfx/dice/dice_deselect.ogg', category: 'dice', volume: 0.25 },
 
-	// Scoring
-	scoreConfirm: { src: '/audio/register-ding.mp3', category: 'score', volume: 0.4, preload: true },
-	bonusAchieved: { src: '/audio/bell-triple.mp3', category: 'score', volume: 0.6 },
-	dicee: { src: '/audio/jackpot.mp3', category: 'score', volume: 0.8 },
+	// Scoring (range-based feedback per audio-plan.md Section 4)
+	// 0 points → scoreZero, 1-15 → scoreNegative, 16-29 → scorePositive, 30+ → scoreGood
+	scoreZero: { src: '/audio/sfx/score/score_zero.ogg', category: 'score', volume: 0.35 },
+	scoreNegative: { src: '/audio/sfx/score/score_negative.ogg', category: 'score', volume: 0.4 },
+	scorePositive: {
+		src: '/audio/sfx/score/score_positive.ogg',
+		category: 'score',
+		volume: 0.4,
+		preload: true,
+	},
+	scoreGood: { src: '/audio/sfx/score/score_good.ogg', category: 'score', volume: 0.5 },
+	bonusAchieved: { src: '/audio/sfx/score/upper_bonus.ogg', category: 'score', volume: 0.6 },
+	dicee: { src: '/audio/sfx/score/dicee_fanfare.ogg', category: 'score', volume: 0.8 },
 
 	// UI
-	buttonClick: { src: '/audio/click.mp3', category: 'ui', volume: 0.2 },
-	turnChange: { src: '/audio/soft-chime.mp3', category: 'ui', volume: 0.3 },
-	timerWarning: { src: '/audio/tick.mp3', category: 'ui', volume: 0.4 },
+	buttonClick: { src: '/audio/sfx/ui/btn_click.ogg', category: 'ui', volume: 0.2 },
+	turnChange: { src: '/audio/sfx/ui/turn_start.ogg', category: 'ui', volume: 0.3 },
+	timerWarning: { src: '/audio/sfx/ui/timer_tick.ogg', category: 'ui', volume: 0.4 },
 
 	// System
-	chatMessage: { src: '/audio/pop.mp3', category: 'system', volume: 0.2 },
-	playerJoin: { src: '/audio/join.mp3', category: 'system', volume: 0.3 },
-	playerLeave: { src: '/audio/leave.mp3', category: 'system', volume: 0.25 },
-	gameStart: { src: '/audio/game-start.mp3', category: 'system', volume: 0.5 },
-	gameEnd: { src: '/audio/game-end.mp3', category: 'system', volume: 0.5 },
+	chatMessage: { src: '/audio/sfx/ui/chat_pop.ogg', category: 'system', volume: 0.2 },
+	playerJoin: { src: '/audio/sfx/ui/player_join.ogg', category: 'system', volume: 0.3 },
+	playerLeave: { src: '/audio/sfx/ui/player_leave.ogg', category: 'system', volume: 0.25 },
+	gameStart: { src: '/audio/sfx/score/game_start.ogg', category: 'system', volume: 0.5 },
+	gameEnd: { src: '/audio/sfx/score/game_end.ogg', category: 'system', volume: 0.5 },
 };
 
 // =============================================================================

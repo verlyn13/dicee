@@ -43,12 +43,9 @@ $effect(() => {
 		// Just scored - trigger animation
 		showScoreAnimation = true;
 		haptic('success');
-		// Play appropriate scoring sound
-		if (category === 'Dicee' && score === 50) {
-			audioStore.playDicee();
-		} else {
-			audioStore.playScoreConfirm();
-		}
+		// Play range-based scoring sound (Dicee handled specially)
+		const isDicee = category === 'Dicee' && score === 50;
+		audioStore.playScoreSound(score, isDicee);
 		const timeout = setTimeout(() => {
 			showScoreAnimation = false;
 		}, 600);
