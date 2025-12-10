@@ -217,16 +217,16 @@ function handleRoll() {
 				</button>
 			</div>
 
-			<!-- Quick Actions (only when not readonly) -->
-			{#if canKeep && !isFirstRoll}
-				<div class="quick-actions">
+			<!-- Quick Actions (only when not readonly, always rendered after first roll to prevent layout shift) -->
+			{#if hasRolled && !isFirstRoll}
+				<div class="quick-actions" class:hidden={rolling || !canKeep}>
 					<button
 						class="quick-btn"
 						onclick={() => {
 							audioStore.play('buttonClick');
 							onKeepAll?.();
 						}}
-						disabled={keptCount === 5}
+						disabled={keptCount === 5 || rolling || !canKeep}
 					>
 						Keep All
 					</button>
@@ -236,7 +236,7 @@ function handleRoll() {
 							audioStore.play('buttonClick');
 							onReleaseAll?.();
 						}}
-						disabled={keptCount === 0}
+						disabled={keptCount === 0 || rolling || !canKeep}
 					>
 						Release All
 					</button>
@@ -478,6 +478,13 @@ function handleRoll() {
 		gap: var(--space-2);
 		width: 100%;
 		max-width: 300px;
+		transition: opacity var(--transition-fast);
+	}
+
+	/* Hide buttons during rolling but preserve layout space */
+	.quick-actions.hidden {
+		opacity: 0;
+		pointer-events: none;
 	}
 
 	.quick-btn {

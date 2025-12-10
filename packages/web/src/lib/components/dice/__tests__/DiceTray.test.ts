@@ -169,7 +169,10 @@ describe('DiceTray Component - Quick Actions', () => {
 		const props = createProps({ rollsRemaining: 2, canKeep: false });
 		const { container } = render(DiceTray, { props });
 
-		expect(container.querySelector('.quick-actions')).not.toBeInTheDocument();
+		// Quick actions are rendered but hidden (opacity 0) to prevent layout shift
+		const quickActions = container.querySelector('.quick-actions');
+		expect(quickActions).toBeInTheDocument();
+		expect(quickActions).toHaveClass('hidden');
 	});
 
 	it('disables Keep All when all dice kept', () => {
@@ -467,7 +470,9 @@ describe('DiceTray Component - Game Flow', () => {
 		const usedPips = container.querySelectorAll('.counter-pip.used');
 		expect(usedPips).toHaveLength(3);
 
-		// Quick actions hidden (canKeep false)
-		expect(container.querySelector('.quick-actions')).not.toBeInTheDocument();
+		// Quick actions hidden (canKeep false) but still in DOM to prevent layout shift
+		const quickActions = container.querySelector('.quick-actions');
+		expect(quickActions).toBeInTheDocument();
+		expect(quickActions).toHaveClass('hidden');
 	});
 });
