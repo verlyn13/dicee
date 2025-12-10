@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "store_dependencies",
-	"generatedAt": "2025-12-09T06:35:17.514Z",
-	"graphHash": "sha256:7996f1a655eccc77093ca0fe399832642d138321aa9ddb522c7e91b85b336176",
-	"sourceCommit": "5a1ab09",
+	"generatedAt": "2025-12-10T18:30:24.073Z",
+	"graphHash": "sha256:ab5142d0ee57a3ef559c90f9348bb7116f0113507f7faa639b5a8aebe21a820f",
+	"sourceCommit": "f154306",
 	"nodes": [
 		{
 			"id": "store::game.svelte::tores_game_svelte_ts",

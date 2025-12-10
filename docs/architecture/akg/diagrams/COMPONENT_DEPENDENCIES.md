@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 5a1ab09
-> Generated: 2025-12-09T06:35:17.515Z
+> Commit: f154306
+> Generated: 2025-12-10T18:30:24.074Z
 
 ## Component Dependency Diagram
 
@@ -21,6 +21,8 @@ flowchart LR
     component__PlayerListItem__layerListItem["PlayerListItem"]
     component__EmptyRooms__by_EmptyRooms_sve["EmptyRooms"]
     component__AIOpponentSelector__onentSele["AIOpponentSelector"]
+    component__CreateRoomModal__eateRoomModa["CreateRoomModal"]
+    component__JoinRoomModal__JoinRoomModal_["JoinRoomModal"]
     component__OpponentPanel__OpponentPanel_["OpponentPanel"]
     component__MultiplayerGameOverModal__Gam["MultiplayerGameOverModal"]
     component__GameOverModal__GameOverModal_["GameOverModal"]
@@ -40,11 +42,10 @@ flowchart LR
     component__StatsToggle__d_StatsToggle_sv["StatsToggle"]
     component__GameStatus__ud_GameStatus_sve["GameStatus"]
     component__KeyboardHelp___KeyboardHelp_s["KeyboardHelp"]
-    component__ProbabilityRibbon__abilityRib["ProbabilityRibbon"]
 
 ```
 
-## Component List (showing 29 of 29)
+## Component List (showing 30 of 31)
 
 - **Avatar**: `packages/web/src/lib/components/ui/Avatar.svelte`
 - **BottomSheet**: `packages/web/src/lib/components/ui/BottomSheet.svelte`
@@ -55,6 +56,8 @@ flowchart LR
 - **PlayerListItem**: `packages/web/src/lib/components/lobby/PlayerListItem.svelte`
 - **EmptyRooms**: `packages/web/src/lib/components/lobby/EmptyRooms.svelte`
 - **AIOpponentSelector**: `packages/web/src/lib/components/lobby/AIOpponentSelector.svelte`
+- **CreateRoomModal**: `packages/web/src/lib/components/lobby/CreateRoomModal.svelte`
+- **JoinRoomModal**: `packages/web/src/lib/components/lobby/JoinRoomModal.svelte`
 - **OpponentPanel**: `packages/web/src/lib/components/game/OpponentPanel.svelte`
 - **MultiplayerGameOverModal**: `packages/web/src/lib/components/game/MultiplayerGameOverModal.svelte`
 - **GameOverModal**: `packages/web/src/lib/components/game/GameOverModal.svelte`
@@ -74,4 +77,3 @@ flowchart LR
 - **StatsToggle**: `packages/web/src/lib/components/hud/StatsToggle.svelte`
 - **GameStatus**: `packages/web/src/lib/components/hud/GameStatus.svelte`
 - **KeyboardHelp**: `packages/web/src/lib/components/hud/KeyboardHelp.svelte`
-- **ProbabilityRibbon**: `packages/web/src/lib/components/hud/ProbabilityRibbon.svelte`

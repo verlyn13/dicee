@@ -2,10 +2,20 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "layer_architecture",
-	"generatedAt": "2025-12-09T06:35:17.514Z",
-	"graphHash": "sha256:7996f1a655eccc77093ca0fe399832642d138321aa9ddb522c7e91b85b336176",
-	"sourceCommit": "5a1ab09",
+	"generatedAt": "2025-12-10T18:30:24.072Z",
+	"graphHash": "sha256:ab5142d0ee57a3ef559c90f9348bb7116f0113507f7faa639b5a8aebe21a820f",
+	"sourceCommit": "f154306",
 	"nodes": [
+		{
+			"id": "layer::shared",
+			"label": "shared",
+			"nodeCount": 14
+		},
+		{
+			"id": "layer::cloudflare-do",
+			"label": "cloudflare-do",
+			"nodeCount": 28
+		},
 		{
 			"id": "layer::routes",
 			"label": "routes",
@@ -14,7 +24,7 @@
 		{
 			"id": "layer::components",
 			"label": "components",
-			"nodeCount": 87
+			"nodeCount": 89
 		},
 		{
 			"id": "layer::stores",
@@ -44,6 +54,11 @@
 	],
 	"edges": [
 		{
+			"from": "layer::cloudflare-do",
+			"to": "layer::shared",
+			"type": "allowed_import"
+		},
+		{
 			"from": "layer::routes",
 			"to": "layer::components",
 			"type": "allowed_import"
@@ -69,6 +84,11 @@
 			"type": "allowed_import"
 		},
 		{
+			"from": "layer::routes",
+			"to": "layer::shared",
+			"type": "allowed_import"
+		},
+		{
 			"from": "layer::components",
 			"to": "layer::components",
 			"type": "allowed_import"
@@ -76,6 +96,11 @@
 		{
 			"from": "layer::components",
 			"to": "layer::types",
+			"type": "allowed_import"
+		},
+		{
+			"from": "layer::components",
+			"to": "layer::shared",
 			"type": "allowed_import"
 		},
 		{
@@ -101,6 +126,11 @@
 		{
 			"from": "layer::stores",
 			"to": "layer::supabase",
+			"type": "allowed_import"
+		},
+		{
+			"from": "layer::stores",
+			"to": "layer::shared",
 			"type": "allowed_import"
 		},
 		{
@@ -126,6 +156,11 @@
 		{
 			"from": "layer::services",
 			"to": "layer::wasm",
+			"type": "allowed_import"
+		},
+		{
+			"from": "layer::services",
+			"to": "layer::shared",
 			"type": "allowed_import"
 		},
 		{
@@ -149,8 +184,18 @@
 			"type": "allowed_import"
 		},
 		{
+			"from": "layer::types",
+			"to": "layer::shared",
+			"type": "allowed_import"
+		},
+		{
 			"from": "layer::supabase",
 			"to": "layer::types",
+			"type": "allowed_import"
+		},
+		{
+			"from": "layer::supabase",
+			"to": "layer::shared",
 			"type": "allowed_import"
 		},
 		{
@@ -177,10 +222,15 @@
 			"from": "layer::wasm",
 			"to": "layer::types",
 			"type": "allowed_import"
+		},
+		{
+			"from": "layer::wasm",
+			"to": "layer::shared",
+			"type": "allowed_import"
 		}
 	],
 	"metadata": {
-		"totalNodes": 7,
-		"totalEdges": 27
+		"totalNodes": 9,
+		"totalEdges": 35
 	}
 }
