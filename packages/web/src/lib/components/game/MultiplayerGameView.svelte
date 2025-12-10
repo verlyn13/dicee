@@ -9,10 +9,12 @@ import { onDestroy, onMount } from 'svelte';
 import { ChatPanel } from '$lib/components/chat';
 import { DiceTray } from '$lib/components/dice';
 import { RoomLobby } from '$lib/components/lobby';
+import { KEY_BINDINGS, useKeyboardNavigation } from '$lib/hooks/useKeyboardNavigation.svelte';
 import { getChatStoreOptional } from '$lib/stores/chat.svelte';
 import type { MultiplayerGameStore } from '$lib/stores/multiplayerGame.svelte';
 import type { DiceArray, DieValue } from '$lib/types';
 import type { Category, KeptMask } from '$lib/types/multiplayer';
+import { isPlayingPhase } from '$lib/types/multiplayer';
 import MultiplayerGameOverModal from './MultiplayerGameOverModal.svelte';
 import MultiplayerScorecard from './MultiplayerScorecard.svelte';
 import OpponentPanel from './OpponentPanel.svelte';
@@ -63,6 +65,31 @@ const roundNumber = $derived(store.roundNumber);
 const afkWarning = $derived(store.afkWarning);
 const error = $derived(store.error);
 
+// Active player's dice (show opponent's dice when watching their turn)
+const activeDice = $derived(
+	isMyTurn
+		? currentDice
+		: ((currentPlayer?.currentDice as [number, number, number, number, number] | null) ?? null),
+);
+
+// Active player's kept dice
+const activeKept = $derived(
+	isMyTurn
+		? keptDice
+		: ((currentPlayer?.keptDice as KeptMask | null) ??
+				([false, false, false, false, false] as KeptMask)),
+);
+
+// Active player's rolls remaining
+const activeRollsRemaining = $derived(
+	isMyTurn ? rollsRemaining : (currentPlayer?.rollsRemaining ?? 0),
+);
+
+// Spectator label when watching opponent
+const spectatorLabel = $derived(
+	!isMyTurn && currentPlayer ? `Watching ${currentPlayer.displayName}...` : undefined,
+);
+
 // Chat state
 const chatStore = getChatStoreOptional();
 let chatCollapsed = $state(true);
@@ -70,6 +97,36 @@ let chatCollapsed = $state(true);
 function handleChatToggle(): void {
 	chatCollapsed = !chatCollapsed;
 }
+
+// Keyboard navigation for game controls (only active when it's my turn and game is in playing phase)
+const keyboardNav = useKeyboardNavigation({
+	onRoll: handleRoll,
+	onToggleKeep: handleToggleKeep,
+	onKeepAll: handleKeepAll,
+	onReleaseAll: handleReleaseAll,
+	canRoll: () => canRoll,
+	canKeep: () => canKeep,
+	enabled: () => isMyTurn && isPlayingPhase(phase),
+});
+
+// Additional keyboard shortcut: 'C' to toggle chat
+onMount(() => {
+	function handleGlobalKeydown(e: KeyboardEvent): void {
+		// Skip if typing in input
+		if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+			return;
+		}
+
+		// 'C' toggles chat panel
+		if (e.key.toLowerCase() === 'c' && chatStore) {
+			e.preventDefault();
+			handleChatToggle();
+		}
+	}
+
+	document.addEventListener('keydown', handleGlobalKeydown);
+	return () => document.removeEventListener('keydown', handleGlobalKeydown);
+});
 
 // Default dice for display before first roll
 const defaultDice: DiceArray = [1, 1, 1, 1, 1] as DiceArray;
@@ -80,10 +137,11 @@ function toDiceArray(dice: [number, number, number, number, number] | null): Dic
 	return dice.map((d) => Math.max(1, Math.min(6, d)) as DieValue) as DiceArray;
 }
 
-const displayDice = $derived(toDiceArray(currentDice));
+// Display the active player's dice (self or opponent)
+const displayDice = $derived(toDiceArray(activeDice));
 
-// Has the player rolled this turn? (dice are null until first roll)
-const hasRolled = $derived(currentDice !== null);
+// Has the active player rolled this turn? (dice are null until first roll)
+const hasRolled = $derived(activeDice !== null);
 
 // Is the game in a rolling animation state?
 const isRolling = $derived(uiPhase === 'ROLLING');
@@ -214,12 +272,14 @@ function handleCloseGameOver(): void {
 				<div class="dice-area">
 					<DiceTray
 						dice={displayDice}
-						kept={keptDice}
-						{rollsRemaining}
+						kept={activeKept}
+						rollsRemaining={activeRollsRemaining}
 						{canRoll}
 						{canKeep}
 						rolling={isRolling}
-						hasRolled={hasRolled && isMyTurn}
+						{hasRolled}
+						readonly={!isMyTurn}
+						{spectatorLabel}
 						onRoll={handleRoll}
 						onToggleKeep={handleToggleKeep}
 						onKeepAll={handleKeepAll}
@@ -248,6 +308,14 @@ function handleCloseGameOver(): void {
 					{:else}
 						<p class="status-text">Select a category to score</p>
 					{/if}
+				</div>
+
+				<!-- Keyboard Shortcuts Hint (desktop only) -->
+				<div class="keyboard-hints">
+					<span class="hint-label">Keys:</span>
+					<span class="hint-key">R</span> roll
+					<span class="hint-key">1-5</span> keep
+					<span class="hint-key">C</span> chat
 				</div>
 			</main>
 
@@ -574,6 +642,43 @@ function handleCloseGameOver(): void {
 
 		.game-main {
 			order: 1;
+		}
+	}
+
+	/* Keyboard Hints */
+	.keyboard-hints {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-2);
+		padding: var(--space-1) var(--space-2);
+		font-size: var(--text-tiny);
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+	}
+
+	.hint-label {
+		font-weight: var(--weight-semibold);
+	}
+
+	.hint-key {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 20px;
+		padding: 2px 4px;
+		font-family: var(--font-mono);
+		font-weight: var(--weight-bold);
+		background: var(--color-surface);
+		border: var(--border-thin);
+		margin-right: 2px;
+	}
+
+	/* Hide keyboard hints on mobile (no keyboard) */
+	@media (max-width: 768px) {
+		.keyboard-hints {
+			display: none;
 		}
 	}
 </style>

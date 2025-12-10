@@ -71,6 +71,24 @@ const avatarUrl = $derived(
 const displayName = $derived(currentPlayer?.displayName ?? 'Unknown');
 const turnLabel = $derived(isMyTurn ? '🎯 YOUR TURN' : `⏳ ${displayName}'s Turn`);
 const turnSubtext = $derived(isMyTurn ? 'Click START YOUR TURN below' : 'Please wait...');
+
+// Dice state for preview
+const hasRolled = $derived(
+	currentPlayer?.currentDice !== null && currentPlayer?.currentDice !== undefined,
+);
+const dicePreview = $derived(currentPlayer?.currentDice ?? null);
+const keptDice = $derived(currentPlayer?.keptDice ?? null);
+const rollsRemaining = $derived(currentPlayer?.rollsRemaining ?? 0);
+
+// Dice face emojis for visual preview
+const dieEmoji: Record<number, string> = {
+	1: '⚀',
+	2: '⚁',
+	3: '⚂',
+	4: '⚃',
+	5: '⚄',
+	6: '⚅',
+};
 </script>
 
 <div
@@ -106,6 +124,26 @@ const turnSubtext = $derived(isMyTurn ? 'Click START YOUR TURN below' : 'Please 
 			</div>
 		{/if}
 	</div>
+
+	<!-- Dice Preview (shows current player's dice state) -->
+	{#if hasRolled && dicePreview}
+		<div class="dice-preview">
+			<div class="dice-preview-grid">
+				{#each dicePreview as die, i}
+					<span
+						class="preview-die"
+						class:kept={keptDice?.[i]}
+						title={keptDice?.[i] ? 'Kept' : 'Rolling'}
+					>
+						{dieEmoji[die] ?? '?'}
+					</span>
+				{/each}
+			</div>
+			<span class="preview-rolls">
+				{rollsRemaining} rolls left
+			</span>
+		</div>
+	{/if}
 
 	<!-- Player count indicator -->
 	<div class="player-count">
@@ -287,6 +325,44 @@ const turnSubtext = $derived(isMyTurn ? 'Click START YOUR TURN below' : 'Please 
 
 	.count-label {
 		font-size: var(--text-tiny);
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+	}
+
+	/* Dice Preview Styles */
+	.dice-preview {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-2);
+		padding: var(--space-1) var(--space-2);
+		margin-top: var(--space-1);
+		background: var(--color-background);
+		border: var(--border-thin);
+	}
+
+	.dice-preview-grid {
+		display: flex;
+		gap: 2px;
+	}
+
+	.preview-die {
+		font-size: var(--text-h3);
+		line-height: 1;
+		opacity: 0.6;
+		transition: all var(--transition-fast);
+	}
+
+	.preview-die.kept {
+		opacity: 1;
+		transform: scale(1.1);
+		filter: drop-shadow(0 0 2px var(--color-accent));
+	}
+
+	.preview-rolls {
+		font-size: var(--text-tiny);
+		font-weight: var(--weight-semibold);
 		color: var(--color-text-muted);
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-wide);

@@ -19,6 +19,10 @@ interface Props {
 	currentEV?: number;
 	/** Show suggestions tooltip on roll button */
 	showSuggestions?: boolean;
+	/** Readonly mode for watching opponents */
+	readonly?: boolean;
+	/** Label shown when watching opponent (e.g., "Watching Alice...") */
+	spectatorLabel?: string;
 	onRoll: () => void;
 	onToggleKeep: (index: number) => void;
 	onKeepAll?: () => void;
@@ -36,6 +40,8 @@ let {
 	keepSuggestion,
 	currentEV = 0,
 	showSuggestions = false,
+	readonly = false,
+	spectatorLabel,
 	onRoll,
 	onToggleKeep,
 	onKeepAll,
@@ -127,7 +133,15 @@ function handleRoll() {
 }
 </script>
 
-<div class="dice-tray" data-rolling={rolling} data-pre-roll={showPreRollState}>
+<div class="dice-tray" data-rolling={rolling} data-pre-roll={showPreRollState} data-readonly={readonly}>
+	<!-- Spectator Label -->
+	{#if readonly && spectatorLabel}
+		<div class="spectator-label">
+			<span class="watching-icon">👁️</span>
+			{spectatorLabel}
+		</div>
+	{/if}
+
 	<div class="tray-surface">
 		<!-- Dice Grid -->
 		<div class="dice-grid" class:pre-roll={showPreRollState}>
@@ -143,74 +157,91 @@ function handleRoll() {
 					<Die
 						{value}
 						kept={kept[i]}
-						disabled={!canKeep}
+						disabled={!canKeep || readonly}
 						{rolling}
 						{landing}
-						suggested={hasSuggestion && suggestedKeepIndices.has(i)}
+						suggested={hasSuggestion && suggestedKeepIndices.has(i) && !readonly}
 						index={i}
 						totalDice={dice.length}
-						onclick={() => canKeep && onToggleKeep(i)}
+						onclick={() => !readonly && canKeep && onToggleKeep(i)}
 					/>
 				{/each}
 			{/if}
 		</div>
 
-		<!-- Roll Button with Suggestion Tooltip -->
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div
-			class="roll-container"
-			role="group"
-			onmouseenter={() => (showTooltip = true)}
-			onmouseleave={() => (showTooltip = false)}
-			onfocusin={() => (showTooltip = true)}
-			onfocusout={() => (showTooltip = false)}
-		>
-			{#if hasSuggestion && showTooltip && keepSuggestion}
-				<div class="suggestion-tooltip" role="tooltip">
-					<span class="tooltip-label">Suggested:</span>
-					<span class="tooltip-dice">{suggestionDice || 'Roll all'}</span>
-					<span class="tooltip-ev">EV: {formatEVChange(currentEV, keepSuggestion.expectedValue)}</span>
-				</div>
-			{/if}
-			<button class="roll-btn" class:rolling class:start-turn={showPreRollState} onclick={handleRoll} disabled={!canRoll}>
-			{#if rolling}
-				ROLLING...
-			{:else if showPreRollState}
-				🎲 START YOUR TURN
-			{:else if isFirstRoll}
-				ROLL DICE
-			{:else if isFinalRoll}
-				NO ROLLS LEFT
-			{:else}
-				REROLL ({rollsRemaining})
-			{/if}
-			</button>
-		</div>
-
-		<!-- Quick Actions -->
-		{#if canKeep && !isFirstRoll}
-			<div class="quick-actions">
-				<button
-					class="quick-btn"
-					onclick={() => {
-						audioStore.play('buttonClick');
-						onKeepAll?.();
-					}}
-					disabled={keptCount === 5}
-				>
-					Keep All
-				</button>
-				<button
-					class="quick-btn"
-					onclick={() => {
-						audioStore.play('buttonClick');
-						onReleaseAll?.();
-					}}
-					disabled={keptCount === 0}
-				>
-					Release All
+		<!-- Roll Button with Suggestion Tooltip (hidden in readonly mode) -->
+		{#if readonly}
+			<!-- Watching indicator instead of roll button -->
+			<div class="watching-indicator">
+				<span class="watching-status">
+					{#if rolling}
+						<span class="rolling-dots">Rolling</span>
+					{:else if rollsRemaining === 3 && !hasRolled}
+						<span class="waiting-roll">Waiting to roll...</span>
+					{:else if rollsRemaining > 0}
+						<span class="deciding">{rollsRemaining} rolls left</span>
+					{:else}
+						<span class="scoring">Selecting category...</span>
+					{/if}
+				</span>
+			</div>
+		{:else}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div
+				class="roll-container"
+				role="group"
+				onmouseenter={() => (showTooltip = true)}
+				onmouseleave={() => (showTooltip = false)}
+				onfocusin={() => (showTooltip = true)}
+				onfocusout={() => (showTooltip = false)}
+			>
+				{#if hasSuggestion && showTooltip && keepSuggestion}
+					<div class="suggestion-tooltip" role="tooltip">
+						<span class="tooltip-label">Suggested:</span>
+						<span class="tooltip-dice">{suggestionDice || 'Roll all'}</span>
+						<span class="tooltip-ev">EV: {formatEVChange(currentEV, keepSuggestion.expectedValue)}</span>
+					</div>
+				{/if}
+				<button class="roll-btn" class:rolling class:start-turn={showPreRollState} onclick={handleRoll} disabled={!canRoll}>
+				{#if rolling}
+					ROLLING...
+				{:else if showPreRollState}
+					🎲 START YOUR TURN
+				{:else if isFirstRoll}
+					ROLL DICE
+				{:else if isFinalRoll}
+					NO ROLLS LEFT
+				{:else}
+					REROLL ({rollsRemaining})
+				{/if}
 				</button>
 			</div>
+
+			<!-- Quick Actions (only when not readonly) -->
+			{#if canKeep && !isFirstRoll}
+				<div class="quick-actions">
+					<button
+						class="quick-btn"
+						onclick={() => {
+							audioStore.play('buttonClick');
+							onKeepAll?.();
+						}}
+						disabled={keptCount === 5}
+					>
+						Keep All
+					</button>
+					<button
+						class="quick-btn"
+						onclick={() => {
+							audioStore.play('buttonClick');
+							onReleaseAll?.();
+						}}
+						disabled={keptCount === 0}
+					>
+						Release All
+					</button>
+				</div>
+			{/if}
 		{/if}
 	</div>
 
@@ -498,5 +529,81 @@ function handleRoll() {
 
 	.counter-pip.used {
 		background: transparent;
+	}
+
+	/* Readonly/Spectator Mode Styles */
+	.dice-tray[data-readonly='true'] {
+		opacity: 0.95;
+	}
+
+	.dice-tray[data-readonly='true'] .tray-surface {
+		position: relative;
+	}
+
+	.spectator-label {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-1);
+		padding: var(--space-2);
+		background: rgba(0, 0, 0, 0.3);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		font-size: var(--text-body);
+		font-weight: var(--weight-semibold);
+		color: var(--color-surface);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+	}
+
+	.watching-icon {
+		font-size: 1.1em;
+		animation: pulse-eye 2s ease-in-out infinite;
+	}
+
+	@keyframes pulse-eye {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.6; }
+	}
+
+	.watching-indicator {
+		width: 100%;
+		max-width: 300px;
+		padding: var(--space-2) var(--space-4);
+		background: rgba(255, 255, 255, 0.1);
+		border: var(--border-thin);
+		border-style: dashed;
+		text-align: center;
+	}
+
+	.watching-status {
+		font-size: var(--text-body);
+		font-weight: var(--weight-semibold);
+		color: var(--color-surface);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+	}
+
+	.rolling-dots::after {
+		content: '';
+		animation: dots 1.5s ease-in-out infinite;
+	}
+
+	@keyframes dots {
+		0%, 20% { content: ''; }
+		40% { content: '.'; }
+		60% { content: '..'; }
+		80%, 100% { content: '...'; }
+	}
+
+	.waiting-roll {
+		opacity: 0.7;
+	}
+
+	.deciding {
+		color: var(--color-accent);
+	}
+
+	.scoring {
+		color: var(--color-success, #22c55e);
 	}
 </style>

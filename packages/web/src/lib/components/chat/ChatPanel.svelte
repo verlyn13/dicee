@@ -7,7 +7,11 @@
  * - Desktop: Fixed-width sidebar
  *
  * Contains message list, typing indicator, quick chat, and input.
+ *
+ * Keyboard shortcuts:
+ * - Escape: Close/collapse chat panel (when chat is focused)
  */
+import { onMount } from 'svelte';
 import { getChatStore } from '$lib/stores/chat.svelte';
 import ChatInput from './ChatInput.svelte';
 import ChatMessage from './ChatMessage.svelte';
@@ -26,41 +30,111 @@ let { collapsed = false, onToggle }: Props = $props();
 const chat = getChatStore();
 
 let messagesContainer: HTMLDivElement | undefined = $state();
+let panelElement: HTMLDivElement | undefined = $state();
+let chatInputRef: { focus: () => void; blur: () => void } | undefined = $state();
 
-// Auto-scroll to bottom when new messages arrive
+// Track scroll state for scroll-to-bottom button
+let isScrolledUp = $state(false);
+let hasNewMessages = $state(false);
+
+// Auto-scroll to bottom when new messages arrive (if not scrolled up)
 $effect(() => {
 	// Trigger on messageGroups change
 	const _groups = chat.messageGroups;
 	if (messagesContainer) {
-		// Defer to allow DOM update
-		setTimeout(() => {
-			if (messagesContainer) {
-				messagesContainer.scrollTop = messagesContainer.scrollHeight;
-			}
-		}, 0);
+		if (isScrolledUp) {
+			// User is scrolled up, show indicator instead
+			hasNewMessages = true;
+		} else {
+			// Defer to allow DOM update
+			setTimeout(() => {
+				if (messagesContainer) {
+					messagesContainer.scrollTop = messagesContainer.scrollHeight;
+				}
+			}, 0);
+		}
 	}
+});
+
+// Focus chat input when panel expands
+$effect(() => {
+	if (!collapsed && chatInputRef) {
+		// Small delay to let the panel animation start
+		setTimeout(() => chatInputRef?.focus(), 100);
+	}
+});
+
+// Handle scroll events to track scroll position
+function handleScroll(): void {
+	if (!messagesContainer) return;
+	const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+	// Consider "scrolled up" if more than 100px from bottom
+	isScrolledUp = scrollHeight - scrollTop - clientHeight > 100;
+	if (!isScrolledUp) {
+		hasNewMessages = false;
+	}
+}
+
+// Scroll to bottom when button clicked
+function scrollToBottom(): void {
+	if (messagesContainer) {
+		messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' });
+		hasNewMessages = false;
+		isScrolledUp = false;
+	}
+}
+
+// Handle Escape key to close chat panel
+// Uses global listener to catch Escape even when focus is on non-bubbling elements
+// and to properly blur input when closing
+onMount(() => {
+	function handleEscapeKey(e: KeyboardEvent): void {
+		// Only handle Escape if chat is open and focus is within the chat panel
+		if (e.key === 'Escape' && !collapsed && panelElement?.contains(document.activeElement)) {
+			e.preventDefault();
+			e.stopPropagation();
+			onToggle?.();
+			// Blur chat input to return focus to game
+			chatInputRef?.blur();
+		}
+	}
+
+	document.addEventListener('keydown', handleEscapeKey);
+	return () => document.removeEventListener('keydown', handleEscapeKey);
 });
 </script>
 
-<div class="chat-panel" class:collapsed>
+<div
+	bind:this={panelElement}
+	class="chat-panel"
+	class:collapsed
+	role="region"
+	aria-label="Chat"
+>
 	<!-- Header (mobile toggle) -->
 	<button
 		type="button"
 		class="chat-header"
 		onclick={onToggle}
 		aria-expanded={!collapsed}
+		aria-controls="chat-body"
 	>
 		<span class="chat-title">💬 CHAT</span>
 		{#if collapsed && chat.hasUnread}
 			<span class="unread-badge">{chat.unreadCount}</span>
 		{/if}
 		<span class="toggle-icon">{collapsed ? '▲' : '▼'}</span>
+		<span class="escape-hint" class:visible={!collapsed}>ESC to close</span>
 	</button>
 
 	{#if !collapsed}
-		<div class="chat-body">
+		<div id="chat-body" class="chat-body">
 			<!-- Messages -->
-			<div bind:this={messagesContainer} class="messages-container">
+			<div
+				bind:this={messagesContainer}
+				class="messages-container"
+				onscroll={handleScroll}
+			>
 				{#if chat.messageGroups.length === 0}
 					<p class="empty-state">No messages yet. Say hello! 👋</p>
 				{:else}
@@ -72,6 +146,21 @@ $effect(() => {
 				{/if}
 			</div>
 
+			<!-- Scroll to bottom button -->
+			{#if hasNewMessages || isScrolledUp}
+				<button
+					type="button"
+					class="scroll-bottom-btn"
+					onclick={scrollToBottom}
+					aria-label="Scroll to latest messages"
+				>
+					{#if hasNewMessages}
+						<span class="new-messages-badge">New</span>
+					{/if}
+					↓
+				</button>
+			{/if}
+
 			<!-- Typing Indicator -->
 			<TypingIndicator />
 
@@ -79,11 +168,11 @@ $effect(() => {
 			<QuickChatBar />
 
 			<!-- Input -->
-			<ChatInput />
+			<ChatInput bind:this={chatInputRef} />
 
 			<!-- Error Toast -->
 			{#if chat.error}
-				<div class="error-toast" role="alert">
+				<div class="error-toast" role="alert" aria-live="assertive">
 					{chat.error.message}
 				</div>
 			{/if}
@@ -103,11 +192,11 @@ $effect(() => {
 	}
 
 	/* Mobile: Fixed bottom sheet with keyboard-aware layout
-	 * 
+	 *
 	 * IMPORTANT: position:fixed + bottom:0 is problematic with mobile keyboards.
 	 * The keyboard pushes the visual viewport up, but fixed elements stay relative
 	 * to the layout viewport (which doesn't resize).
-	 * 
+	 *
 	 * Solution: Use bottom: var(--keyboard-height) to push the panel up when
 	 * keyboard opens. The keyboard.ts utility updates this CSS variable via
 	 * the VisualViewport API.
@@ -126,7 +215,8 @@ $effect(() => {
 			z-index: var(--z-bottomsheet, 100);
 			transition:
 				transform var(--transition-medium) ease,
-				bottom var(--transition-medium) ease;
+				bottom var(--transition-medium) ease,
+				max-height var(--transition-medium) ease;
 			box-shadow: var(--shadow-brutal-lg);
 			/* Safe area for notched devices (home indicator) */
 			padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -136,10 +226,22 @@ $effect(() => {
 			transform: translateY(calc(100% - 48px));
 		}
 
-		/* When keyboard is open, reduce max-height to fit */
+		/* When keyboard is open, reduce max-height significantly
+		 * to leave room for game view above.
+		 * Uses calc to account for keyboard height dynamically.
+		 */
 		:global(html.keyboard-open) .chat-panel {
-			max-height: 50vh;
-			max-height: 50svh;
+			/* Calculate available height: viewport - keyboard - safe area */
+			max-height: calc(100svh - var(--keyboard-height, 0px) - 60px);
+			/* Fallback for older browsers */
+			max-height: 40vh;
+			/* Cap at reasonable size even if calculation allows more */
+			max-height: min(40svh, calc(100svh - var(--keyboard-height, 0px) - 60px));
+		}
+
+		/* Reduce messages container when keyboard is open */
+		:global(html.keyboard-open) .messages-container {
+			max-height: 120px;
 		}
 	}
 
@@ -236,5 +338,68 @@ $effect(() => {
 			transform: translateY(0);
 			opacity: 1;
 		}
+	}
+
+	/* Escape hint */
+	.escape-hint {
+		font-size: var(--text-tiny);
+		font-weight: var(--weight-normal);
+		color: var(--color-text-muted);
+		opacity: 0;
+		transition: opacity var(--transition-fast);
+		margin-left: auto;
+		padding-right: var(--space-1);
+	}
+
+	.escape-hint.visible {
+		opacity: 0.6;
+	}
+
+	/* Hide escape hint on mobile (no physical keyboard) */
+	@media (max-width: 768px) {
+		.escape-hint {
+			display: none;
+		}
+	}
+
+	/* Scroll to bottom button */
+	.scroll-bottom-btn {
+		position: absolute;
+		bottom: 120px;
+		right: var(--space-2);
+		width: 36px;
+		height: 36px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--color-surface);
+		border: var(--border-medium);
+		font-size: var(--text-body);
+		cursor: pointer;
+		z-index: 10;
+		transition: all var(--transition-fast);
+		box-shadow: var(--shadow-brutal);
+	}
+
+	.scroll-bottom-btn:hover {
+		background: var(--color-accent-light);
+		transform: translateY(-2px);
+	}
+
+	.scroll-bottom-btn:active {
+		transform: translateY(0);
+	}
+
+	.new-messages-badge {
+		position: absolute;
+		top: -8px;
+		left: -8px;
+		background: var(--color-accent);
+		color: var(--color-surface);
+		font-size: 10px;
+		font-weight: var(--weight-bold);
+		padding: 2px 4px;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
 	}
 </style>

@@ -51,6 +51,18 @@ function handleFocus(): void {
 		inputElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	}, 300);
 }
+
+/**
+ * Exposed methods for parent component control.
+ * Used by ChatPanel to manage focus when panel opens/closes.
+ */
+export function focus(): void {
+	inputElement?.focus();
+}
+
+export function blur(): void {
+	inputElement?.blur();
+}
 </script>
 
 <form class="chat-input-container" onsubmit={handleSubmit}>

@@ -68,6 +68,7 @@ let keptDice = $state<[boolean, boolean, boolean, boolean, boolean]>([
 ]);
 let rollsRemaining = $state(3);
 let currentPlayerId = $state<string | null>(null);
+let hasRolled = $state(false);
 
 // Update game state from events
 store.subscribe((event) => {
@@ -89,17 +90,37 @@ store.subscribe((event) => {
 			if (typeof payload?.rollsRemaining === 'number') {
 				rollsRemaining = payload.rollsRemaining;
 			}
+			if (payload?.playerId) {
+				currentPlayerId = payload.playerId as string;
+			}
+			hasRolled = true;
+			break;
+
+		case 'DICE_KEPT':
+			if (payload?.kept) {
+				keptDice = payload.kept as [boolean, boolean, boolean, boolean, boolean];
+			}
+			if (payload?.playerId) {
+				currentPlayerId = payload.playerId as string;
+			}
 			break;
 
 		case 'TURN_STARTED':
+		case 'TURN_CHANGED':
 		case 'PLAYER_TURN':
-			if (payload?.playerId) {
-				currentPlayerId = payload.playerId as string;
+			if (payload?.playerId || payload?.currentPlayerId) {
+				currentPlayerId = (payload.playerId ?? payload.currentPlayerId) as string;
 			}
 			// Reset dice state for new turn
 			currentDice = defaultDice;
 			keptDice = [false, false, false, false, false];
 			rollsRemaining = 3;
+			hasRolled = false;
+			break;
+
+		case 'CATEGORY_SCORED':
+			// Clear dice after scoring
+			hasRolled = false;
 			break;
 	}
 });
@@ -107,12 +128,42 @@ store.subscribe((event) => {
 // Current player info
 const currentPlayer = $derived(players.find((p) => p.id === currentPlayerId) ?? null);
 
+// Spectator label for DiceTray
+const spectatorLabel = $derived(
+	currentPlayer ? `Watching ${currentPlayer.displayName}...` : 'Watching game...',
+);
+
 // Check if game is active
 const isGameActive = $derived(roomStatus === 'playing');
 
 function handleLeave(): void {
 	onLeave?.();
 }
+
+// Keyboard shortcuts for spectators
+onMount(() => {
+	function handleGlobalKeydown(e: KeyboardEvent): void {
+		// Skip if typing in input
+		if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+			return;
+		}
+
+		// 'C' toggles chat panel
+		if (e.key.toLowerCase() === 'c' && chatStore) {
+			e.preventDefault();
+			handleChatToggle();
+		}
+
+		// 'Escape' closes chat if open
+		if (e.key === 'Escape' && !chatCollapsed) {
+			e.preventDefault();
+			handleChatToggle();
+		}
+	}
+
+	document.addEventListener('keydown', handleGlobalKeydown);
+	return () => document.removeEventListener('keydown', handleGlobalKeydown);
+});
 </script>
 
 <div class="spectator-view" data-status={roomStatus}>
@@ -177,6 +228,9 @@ function handleLeave(): void {
 						canRoll={false}
 						canKeep={false}
 						rolling={false}
+						{hasRolled}
+						readonly={true}
+						{spectatorLabel}
 						onRoll={() => {}}
 						onToggleKeep={() => {}}
 						onKeepAll={() => {}}
@@ -200,6 +254,11 @@ function handleLeave(): void {
 					{:else}
 						<p class="status-text">Watching the game...</p>
 					{/if}
+					<!-- Keyboard Hints -->
+					<span class="keyboard-hint">
+						<span class="hint-key">C</span> chat
+						<span class="hint-key">ESC</span> close
+					</span>
 				</div>
 			{/if}
 		</main>
@@ -373,6 +432,39 @@ function handleLeave(): void {
 		font-size: var(--text-body);
 		font-weight: var(--weight-semibold);
 		color: var(--color-text-muted);
+	}
+
+	/* Keyboard Hints */
+	.keyboard-hint {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-2);
+		margin-top: var(--space-1);
+		font-size: var(--text-tiny);
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+	}
+
+	.hint-key {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 20px;
+		padding: 2px 4px;
+		font-family: var(--font-mono);
+		font-weight: var(--weight-bold);
+		background: var(--color-surface);
+		border: var(--border-thin);
+		margin-right: 2px;
+	}
+
+	/* Hide keyboard hints on mobile (no keyboard) */
+	@media (max-width: 768px) {
+		.keyboard-hint {
+			display: none;
+		}
 	}
 
 	/* Scorecards Area */

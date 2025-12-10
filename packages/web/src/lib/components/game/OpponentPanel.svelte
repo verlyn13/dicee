@@ -74,6 +74,31 @@ function getConnectionIcon(status: string): string {
 					<span class="score-value">{opponent.totalScore}</span>
 					<span class="score-label">pts</span>
 				</div>
+
+				<!-- Mini Dice Row (shows when opponent is playing and has rolled) -->
+				{#if isCurrentTurn && opponent.currentDice}
+					<div
+						class="mini-dice-row"
+						role="group"
+						aria-label="{opponent.displayName}'s dice: {opponent.currentDice.join(', ')}"
+					>
+						<div class="mini-dice-grid" role="list">
+							{#each opponent.currentDice as die, i}
+								<span
+									class="mini-die"
+									class:kept={opponent.keptDice?.[i]}
+									role="listitem"
+									aria-label="Die {i + 1}: {die}{opponent.keptDice?.[i] ? ' (kept)' : ''}"
+								>
+									{die}
+								</span>
+							{/each}
+						</div>
+						<span class="rolls-badge" aria-label="{opponent.rollsRemaining} rolls remaining">
+							{opponent.rollsRemaining} left
+						</span>
+					</div>
+				{/if}
 			</div>
 		{:else}
 			<div class="no-opponents">
@@ -111,7 +136,8 @@ function getConnectionIcon(status: string): string {
 	}
 
 	.opponent-card {
-		display: flex;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
 		align-items: center;
 		gap: var(--space-2);
 		padding: var(--space-2);
@@ -125,6 +151,51 @@ function getConnectionIcon(status: string): string {
 
 	.opponent-card.current-turn {
 		background: var(--color-accent-light);
+	}
+
+	/* Mini Dice Row spans full width */
+	.mini-dice-row {
+		grid-column: 1 / -1;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-2);
+		padding-top: var(--space-1);
+		margin-top: var(--space-1);
+		border-top: 1px dashed var(--color-border);
+	}
+
+	.mini-dice-grid {
+		display: flex;
+		gap: 4px;
+	}
+
+	.mini-die {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		font-size: var(--text-small);
+		font-weight: var(--weight-bold);
+		font-family: var(--font-mono);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		transition: all var(--transition-fast);
+	}
+
+	.mini-die.kept {
+		background: var(--color-accent);
+		border-color: var(--color-accent-dark, var(--color-border));
+		box-shadow: 0 0 0 1px var(--color-accent);
+	}
+
+	.rolls-badge {
+		font-size: var(--text-tiny);
+		font-weight: var(--weight-semibold);
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
 	}
 
 	.opponent-avatar {

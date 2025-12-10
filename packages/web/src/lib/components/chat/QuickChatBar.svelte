@@ -102,4 +102,11 @@ const quickChats = Object.entries(QUICK_CHAT_MESSAGES) as [
 			font-size: 18px;
 		}
 	}
+
+	/* Hide quick chat when keyboard is open on mobile to save space */
+	@media (max-width: 768px) {
+		:global(html.keyboard-open) .quick-chat-bar {
+			display: none;
+		}
+	}
 </style>

@@ -18,7 +18,8 @@ export interface KeyboardNavigationOptions {
 	onReleaseAll: () => void;
 	canRoll: () => boolean;
 	canKeep: () => boolean;
-	enabled?: boolean;
+	/** Whether keyboard navigation is enabled. Can be boolean or getter for reactive updates. */
+	enabled?: boolean | (() => boolean);
 }
 
 export interface KeyboardNavigationState {
@@ -35,7 +36,11 @@ export function useKeyboardNavigation(options: KeyboardNavigationOptions): Keybo
 		isListening: false,
 	});
 
-	const enabled = options.enabled ?? true;
+	/** Check if navigation is enabled (handles both boolean and getter) */
+	function isEnabled(): boolean {
+		const enabled = options.enabled ?? true;
+		return typeof enabled === 'function' ? enabled() : enabled;
+	}
 
 	/** Check if user is typing in an input field */
 	function isTypingInInput(target: EventTarget | null): boolean {
@@ -69,7 +74,7 @@ export function useKeyboardNavigation(options: KeyboardNavigationOptions): Keybo
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
-		if (!enabled || isTypingInInput(event.target)) {
+		if (!isEnabled() || isTypingInInput(event.target)) {
 			return;
 		}
 
