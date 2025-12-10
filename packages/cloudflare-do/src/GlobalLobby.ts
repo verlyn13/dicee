@@ -36,7 +36,7 @@ interface UserPresence {
 
 /** Message sent/received through the lobby */
 interface LobbyMessage {
-	type: 'chat' | 'presence' | 'room_update' | 'rooms_list' | 'highlight' | 'error' | 'pong';
+	type: 'chat' | 'presence' | 'room_update' | 'rooms_list' | 'online_users' | 'highlight' | 'error' | 'pong';
 	payload: unknown;
 	timestamp: number;
 }
@@ -71,7 +71,7 @@ interface RoomInfo {
 
 /** Client command structure */
 interface LobbyCommand {
-	type: 'chat' | 'ping' | 'get_rooms' | 'room_created' | 'room_updated' | 'room_closed';
+	type: 'chat' | 'ping' | 'get_rooms' | 'get_online_users' | 'room_created' | 'room_updated' | 'room_closed';
 	content?: string;
 	room?: RoomInfo;
 	code?: string;
@@ -267,6 +267,9 @@ export class GlobalLobby extends DurableObject<Env> {
 				case 'get_rooms':
 					this.sendRoomsList(ws);
 					break;
+				case 'get_online_users':
+					this.sendOnlineUsers(ws);
+					break;
 				case 'room_created':
 					if (data.room) {
 						this.activeRooms.set(data.room.code, data.room);
@@ -457,6 +460,26 @@ export class GlobalLobby extends DurableObject<Env> {
 			JSON.stringify({
 				type: 'rooms_list',
 				payload: { rooms: publicRooms },
+				timestamp: Date.now(),
+			}),
+		);
+	}
+
+	/**
+	 * Send list of online users to requesting client.
+	 * Returns deduplicated list with display info.
+	 */
+	private sendOnlineUsers(ws: WebSocket): void {
+		const users = this.getOnlineUsers().map((u) => ({
+			userId: u.userId,
+			displayName: u.displayName,
+			avatarSeed: u.avatarSeed,
+		}));
+
+		ws.send(
+			JSON.stringify({
+				type: 'online_users',
+				payload: { users, count: users.length },
 				timestamp: Date.now(),
 			}),
 		);

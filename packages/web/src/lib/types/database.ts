@@ -332,6 +332,7 @@ export type Database = {
 					is_anonymous: boolean;
 					is_public: boolean;
 					last_seen_at: string;
+					preferences: Json | null;
 					rating_deviation: number;
 					rating_volatility: number;
 					skill_rating: number;
@@ -349,6 +350,7 @@ export type Database = {
 					is_anonymous?: boolean;
 					is_public?: boolean;
 					last_seen_at?: string;
+					preferences?: Json | null;
 					rating_deviation?: number;
 					rating_volatility?: number;
 					skill_rating?: number;
@@ -366,6 +368,7 @@ export type Database = {
 					is_anonymous?: boolean;
 					is_public?: boolean;
 					last_seen_at?: string;
+					preferences?: Json | null;
 					rating_deviation?: number;
 					rating_volatility?: number;
 					skill_rating?: number;

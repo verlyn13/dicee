@@ -33,6 +33,7 @@ const mockProfile: Profile = {
 	badges: [],
 	is_anonymous: false,
 	is_public: true,
+	preferences: null,
 	created_at: '2024-01-01T00:00:00Z',
 	updated_at: '2024-01-01T00:00:00Z',
 	last_seen_at: '2024-01-01T00:00:00Z',

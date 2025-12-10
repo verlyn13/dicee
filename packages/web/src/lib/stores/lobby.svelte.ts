@@ -39,6 +39,12 @@ export interface TickerEvent {
 	timestamp: number;
 }
 
+export interface OnlineUser {
+	userId: string;
+	displayName: string;
+	avatarSeed: string;
+}
+
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
 
 // Reactive state with Svelte 5 runes
@@ -49,6 +55,7 @@ class LobbyState {
 
 	// Data
 	onlineCount = $state(0);
+	onlineUsers = $state<OnlineUser[]>([]);
 	rooms = $state<RoomInfo[]>([]);
 	messages = $state<ChatMessage[]>([]);
 	ticker = $state<TickerEvent[]>([]);
@@ -57,6 +64,7 @@ class LobbyState {
 	// UI state
 	activeTab = $state<'games' | 'chat'>('games');
 	isCreateDrawerOpen = $state(false);
+	showOnlineUsers = $state(false);
 
 	// Derived
 	openRooms = $derived(this.rooms.filter((r) => r.status === 'open'));
@@ -223,6 +231,12 @@ class LobbyState {
 			case 'pong':
 				// Heartbeat acknowledged
 				break;
+
+			case 'online_users': {
+				const usersPayload = data.payload as { users: OnlineUser[]; count: number };
+				this.onlineUsers = usersPayload.users;
+				break;
+			}
 		}
 	}
 
@@ -297,6 +311,34 @@ class LobbyState {
 		if (this.ws?.readyState === WebSocket.OPEN) {
 			this.ws.send(JSON.stringify({ type: 'get_rooms' }));
 		}
+	}
+
+	/**
+	 * Request list of online users from server.
+	 * Called when user clicks on the online indicator.
+	 */
+	requestOnlineUsers() {
+		if (this.ws?.readyState === WebSocket.OPEN) {
+			this.ws.send(JSON.stringify({ type: 'get_online_users' }));
+		}
+	}
+
+	/**
+	 * Toggle the online users display panel.
+	 * Requests fresh data when opening.
+	 */
+	toggleOnlineUsers() {
+		this.showOnlineUsers = !this.showOnlineUsers;
+		if (this.showOnlineUsers) {
+			this.requestOnlineUsers();
+		}
+	}
+
+	/**
+	 * Close the online users display panel.
+	 */
+	closeOnlineUsers() {
+		this.showOnlineUsers = false;
 	}
 }
 

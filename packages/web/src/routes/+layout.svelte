@@ -4,12 +4,14 @@ import '$lib/styles/global.css';
 import { onMount } from 'svelte';
 import { afterNavigate, invalidate } from '$app/navigation';
 import { preloadEngine } from '$lib/services/engine';
+import { preferencesService } from '$lib/services/preferences.svelte';
 import {
 	initializeTelemetry,
 	setUserId,
 	shutdownTelemetry,
 	trackPageView,
 } from '$lib/services/telemetry';
+import { audioStore } from '$lib/stores/audio.svelte';
 import { auth } from '$lib/stores/auth.svelte';
 import { initKeyboardHandler } from '$lib/utils/keyboard';
 
@@ -26,9 +28,18 @@ onMount(() => {
 	// Initialize auth with server-provided session data
 	auth.init(data.supabase, data.session, data.user);
 
+	// Initialize audio store
+	audioStore.init();
+
+	// Initialize preferences service with Supabase client
+	preferencesService.init();
+	preferencesService.setSupabase(data.supabase);
+
 	// Set user ID if already authenticated
 	if (data.user?.id) {
 		setUserId(data.user.id);
+		// Sync preferences on initial load if authenticated
+		preferencesService.onLogin(data.user.id);
 	}
 
 	// Listen for auth changes and invalidate the layout data
@@ -44,8 +55,12 @@ onMount(() => {
 		// Update telemetry user ID on auth changes
 		if (event === 'SIGNED_IN' && session?.user?.id) {
 			setUserId(session.user.id);
+			// Sync preferences on login
+			preferencesService.onLogin(session.user.id);
 		} else if (event === 'SIGNED_OUT') {
 			setUserId(null);
+			// Stop syncing on logout
+			preferencesService.onLogout();
 		}
 	});
 

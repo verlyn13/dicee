@@ -17,7 +17,9 @@ import { onDestroy, onMount } from 'svelte';
 import { goto } from '$app/navigation';
 import GoogleButton from '$lib/components/auth/GoogleButton.svelte';
 import MagicLinkForm from '$lib/components/auth/MagicLinkForm.svelte';
+import { SettingsButton, SettingsPanel } from '$lib/components/settings';
 import { BottomSheet } from '$lib/components/ui';
+import { audioStore } from '$lib/stores/audio.svelte';
 import { auth } from '$lib/stores/auth.svelte';
 import { lobby } from '$lib/stores/lobby.svelte';
 import AIOpponentSelector from './AIOpponentSelector.svelte';
@@ -25,6 +27,9 @@ import ConnectionOverlay from './ConnectionOverlay.svelte';
 
 // Auth sheet state
 let authSheetOpen = $state(false);
+
+// Settings panel state
+let settingsOpen = $state(false);
 
 // Quick Play AI selector state
 let showAISelector = $state(false);
@@ -178,18 +183,63 @@ function handleAISelect(profileId: string) {
 	<header class="lobby-header">
 		<div class="header-left">
 			<h1 class="logo">DICEE</h1>
-			<span class="online-indicator" class:connected={lobby.connectionState === 'connected'}>
+			<button
+				class="online-indicator"
+				class:connected={lobby.connectionState === 'connected'}
+				onclick={() => lobby.toggleOnlineUsers()}
+				aria-expanded={lobby.showOnlineUsers}
+				aria-label="Show online users"
+			>
 				<span class="status-dot"></span>
 				{lobby.onlineDisplay}
-			</span>
+			</button>
+
+			<!-- Online Users Panel -->
+			{#if lobby.showOnlineUsers}
+				<div class="online-users-dropdown">
+					<div class="online-users-panel">
+						<header class="panel-header">
+							<h3>Online Users ({lobby.onlineUsers.length})</h3>
+							<button class="close-btn" onclick={() => lobby.closeOnlineUsers()}>×</button>
+						</header>
+						<ul class="users-list">
+							{#each lobby.onlineUsers as user (user.userId)}
+								<li class="user-item">
+									<span class="user-avatar">👤</span>
+									<span class="user-name">{user.displayName}</span>
+								</li>
+							{:else}
+								<li class="user-item empty">Loading...</li>
+							{/each}
+						</ul>
+					</div>
+				</div>
+			{/if}
 		</div>
 		<div class="header-right">
+			<SettingsButton onclick={() => (settingsOpen = !settingsOpen)} isOpen={settingsOpen} />
 			{#if auth.isAuthenticated}
 				<a href="/profile" class="user-link">{displayName()}</a>
 			{:else}
 				<button class="auth-link" onclick={() => (authSheetOpen = true)}>Sign In</button>
 			{/if}
 		</div>
+
+		<!-- Settings Panel (positioned absolutely) -->
+		{#if settingsOpen}
+			<div class="settings-dropdown">
+				<SettingsPanel
+					masterVolume={Math.round(audioStore.masterVolume * 100)}
+					muted={audioStore.isMuted}
+					hapticsEnabled={audioStore.hapticsEnabled}
+					onVolumeChange={(v) => audioStore.setMasterVolume(v / 100)}
+					onMuteChange={(m) => audioStore.setMuted(m)}
+					onHapticsChange={(e) => audioStore.setHapticsEnabled(e)}
+					onReset={() => audioStore.resetToDefaults()}
+					onClose={() => (settingsOpen = false)}
+				/>
+			</div>
+		{/if}
 	</header>
 
 	<!-- Ticker -->
@@ -375,6 +425,16 @@ function handleAISelect(profileId: string) {
 		padding: var(--space-2) var(--space-3);
 		border-bottom: var(--border-thick);
 		background: var(--color-surface);
+		position: relative;
+	}
+
+	/* Settings Dropdown */
+	.settings-dropdown {
+		position: absolute;
+		top: 100%;
+		right: var(--space-3);
+		z-index: 100;
+		margin-top: var(--space-2);
 	}
 
 	.header-left {
@@ -401,11 +461,97 @@ function handleAISelect(profileId: string) {
 		border: var(--border-thin);
 		border-radius: var(--radius-sm);
 		background: var(--color-background);
+		cursor: pointer;
+		transition: all var(--transition-fast);
+	}
+
+	.online-indicator:hover {
+		background: var(--color-surface);
 	}
 
 	.online-indicator.connected {
 		color: var(--color-signal-live);
 		border-color: var(--color-signal-live);
+	}
+
+	/* Online Users Dropdown */
+	.online-users-dropdown {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		z-index: 100;
+		margin-top: var(--space-2);
+	}
+
+	.online-users-panel {
+		background: var(--color-surface);
+		border: var(--border-thin);
+		border-radius: var(--radius-md);
+		min-width: 200px;
+		max-width: 280px;
+		box-shadow: var(--shadow-lg);
+	}
+
+	.online-users-panel .panel-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--space-2) var(--space-3);
+		border-bottom: var(--border-thin);
+	}
+
+	.online-users-panel .panel-header h3 {
+		font-size: var(--text-small);
+		font-weight: var(--weight-semibold);
+		margin: 0;
+	}
+
+	.online-users-panel .close-btn {
+		padding: var(--space-1);
+		background: none;
+		border: none;
+		font-size: var(--text-h4);
+		color: var(--color-text-muted);
+		cursor: pointer;
+		line-height: 1;
+	}
+
+	.online-users-panel .close-btn:hover {
+		color: var(--color-text);
+	}
+
+	.users-list {
+		list-style: none;
+		margin: 0;
+		padding: var(--space-2);
+		max-height: 200px;
+		overflow-y: auto;
+	}
+
+	.user-item {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: var(--space-1) var(--space-2);
+		font-size: var(--text-small);
+		border-radius: var(--radius-sm);
+	}
+
+	.user-item:hover:not(.empty) {
+		background: var(--color-background);
+	}
+
+	.user-item.empty {
+		color: var(--color-text-muted);
+		font-style: italic;
+	}
+
+	.user-avatar {
+		font-size: var(--text-base);
+	}
+
+	.user-name {
+		font-weight: var(--weight-medium);
 	}
 
 	.status-dot {
