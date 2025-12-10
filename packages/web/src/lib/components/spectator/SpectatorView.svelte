@@ -24,19 +24,6 @@ interface Props {
 
 let { store, onLeave }: Props = $props();
 
-// Subscribe to store events
-let unsubscribe: (() => void) | null = null;
-
-onMount(() => {
-	unsubscribe = store.subscribe(() => {
-		// Store updates trigger reactivity automatically
-	});
-});
-
-onDestroy(() => {
-	unsubscribe?.();
-});
-
 // Derived state from store
 const status = $derived(store.status);
 const roomCode = $derived(store.roomCode);
@@ -70,11 +57,14 @@ let rollsRemaining = $state(3);
 let currentPlayerId = $state<string | null>(null);
 let hasRolled = $state(false);
 
-// Update game state from events
-store.subscribe((event) => {
+/**
+ * Handle game events for dice state updates
+ * Processes DICE_ROLLED, DICE_KEPT, TURN_STARTED, etc.
+ */
+function handleGameEvent(event: unknown): void {
 	if (!event) return;
 
-	const eventType = event.type as string;
+	const eventType = (event as { type?: string }).type;
 	const payload = (event as { payload?: Record<string, unknown> }).payload;
 
 	switch (eventType) {
@@ -123,6 +113,17 @@ store.subscribe((event) => {
 			hasRolled = false;
 			break;
 	}
+}
+
+// Subscribe to store events (single subscription to avoid memory leaks)
+let unsubscribe: (() => void) | null = null;
+
+onMount(() => {
+	unsubscribe = store.subscribe(handleGameEvent);
+});
+
+onDestroy(() => {
+	unsubscribe?.();
 });
 
 // Current player info
