@@ -9,12 +9,14 @@
 import { ChatPanel } from '$lib/components/chat';
 import { Avatar } from '$lib/components/ui';
 import { auth } from '$lib/stores/auth.svelte';
-import { getChatStoreOptional } from '$lib/stores/chat.svelte';
+import type { ChatStore } from '$lib/stores/chat.svelte';
 import { getRoomStore } from '$lib/stores/room.svelte';
 import AIOpponentSelector from './AIOpponentSelector.svelte';
 import PlayerListItem from './PlayerListItem.svelte';
 
 interface Props {
+	/** Optional chat store for chat functionality */
+	chatStore?: ChatStore;
 	/** Callback when leaving the room */
 	onleave?: () => void;
 	/** Callback when game starts */
@@ -23,10 +25,9 @@ interface Props {
 	class?: string;
 }
 
-let { onleave, ongamestart, class: className = '' }: Props = $props();
+let { chatStore, onleave, ongamestart, class: className = '' }: Props = $props();
 
 const room = getRoomStore();
-const chatStore = getChatStoreOptional();
 
 let countdown = $state<number | null>(null);
 let chatCollapsed = $state(false); // Chat visible by default in waiting room

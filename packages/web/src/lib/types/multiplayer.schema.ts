@@ -4,6 +4,9 @@
  * Zod 4 schemas for runtime validation of multiplayer messages.
  * All wire protocol messages use UPPERCASE_SNAKE_CASE for type identifiers.
  *
+ * Domain schemas (Dice, Scorecard, PlayerGameState) are imported from @dicee/shared
+ * to prevent drift. Protocol-specific schemas (Commands, Events) are defined locally.
+ *
  * Zod 4 Key Patterns:
  * - Use `{ error: "..." }` not `{ message: "..." }`
  * - String formats are top-level: z.uuid(), z.email()
@@ -11,6 +14,14 @@
  * - z.enum() supports native enums
  */
 
+// Import domain schemas from @dicee/shared to prevent drift
+import {
+	CategorySchema,
+	DiceArraySchema,
+	KeptMaskSchema,
+	PlayerGameStateSchema,
+	PlayerRankingSchema,
+} from '@dicee/shared';
 import { z } from 'zod';
 
 // =============================================================================
@@ -148,74 +159,13 @@ const BaseEventSchema = z.object({
 	timestamp: z.string().optional(),
 });
 
-const DiceArraySchema = z.tuple([
-	z.number().int().min(1).max(6),
-	z.number().int().min(1).max(6),
-	z.number().int().min(1).max(6),
-	z.number().int().min(1).max(6),
-	z.number().int().min(1).max(6),
-]);
-
-const KeptMaskSchema = z.tuple([z.boolean(), z.boolean(), z.boolean(), z.boolean(), z.boolean()]);
-
-const CategorySchema = z.enum([
-	'ones',
-	'twos',
-	'threes',
-	'fours',
-	'fives',
-	'sixes',
-	'threeOfAKind',
-	'fourOfAKind',
-	'fullHouse',
-	'smallStraight',
-	'largeStraight',
-	'dicee',
-	'chance',
-]);
-
-const ScorecardSchema = z.object({
-	ones: z.number().nullable(),
-	twos: z.number().nullable(),
-	threes: z.number().nullable(),
-	fours: z.number().nullable(),
-	fives: z.number().nullable(),
-	sixes: z.number().nullable(),
-	threeOfAKind: z.number().nullable(),
-	fourOfAKind: z.number().nullable(),
-	fullHouse: z.number().nullable(),
-	smallStraight: z.number().nullable(),
-	largeStraight: z.number().nullable(),
-	dicee: z.number().nullable(),
-	chance: z.number().nullable(),
-	diceeBonus: z.number(),
-	upperBonus: z.number(),
-});
-
-const PlayerGameStateSchema = z.object({
-	id: z.string(),
-	displayName: z.string(),
-	avatarSeed: z.string(),
-	isConnected: z.boolean(),
-	connectionId: z.string().nullable(),
-	lastActive: z.string(),
-	connectionStatus: z.enum(['online', 'away', 'disconnected']),
-	isHost: z.boolean(),
-	joinedAt: z.string(),
-	scorecard: ScorecardSchema,
-	totalScore: z.number(),
-	currentDice: DiceArraySchema.nullable(),
-	keptDice: KeptMaskSchema.nullable(),
-	rollsRemaining: z.number(),
-});
-
-const PlayerRankingSchema = z.object({
-	playerId: z.string(),
-	displayName: z.string(),
-	rank: z.number().int().min(1),
-	score: z.number().int().min(0),
-	diceeCount: z.number().int().min(0),
-});
+// Domain schemas imported from @dicee/shared above:
+// - DiceArraySchema
+// - KeptMaskSchema
+// - CategorySchema
+// - ScorecardSchema
+// - PlayerGameStateSchema (includes type + aiProfileId fields)
+// - PlayerRankingSchema
 
 const PlayerInfoSchema = z.object({
 	id: z.string(),

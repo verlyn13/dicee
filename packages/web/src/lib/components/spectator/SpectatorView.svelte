@@ -9,7 +9,7 @@
 import { onDestroy, onMount } from 'svelte';
 import { ChatPanel } from '$lib/components/chat';
 import { DiceTray } from '$lib/components/dice';
-import { getChatStoreOptional } from '$lib/stores/chat.svelte';
+import type { ChatStore } from '$lib/stores/chat.svelte';
 import type { SpectatorStore } from '$lib/stores/spectator.svelte';
 import type { DiceArray, DieValue } from '$lib/types';
 import AllScorecards from './AllScorecards.svelte';
@@ -18,11 +18,13 @@ import SpectatorHeader from './SpectatorHeader.svelte';
 interface Props {
 	/** The spectator store instance */
 	store: SpectatorStore;
+	/** Optional chat store for chat functionality */
+	chatStore?: ChatStore;
 	/** Callback when spectator wants to stop watching */
 	onLeave?: () => void;
 }
 
-let { store, onLeave }: Props = $props();
+let { store, chatStore, onLeave }: Props = $props();
 
 // Derived state from store
 const status = $derived(store.status);
@@ -34,7 +36,6 @@ const spectatorDisplay = $derived(store.spectatorDisplay);
 const error = $derived(store.error);
 
 // Chat state
-const chatStore = getChatStoreOptional();
 let chatCollapsed = $state(true);
 
 function handleChatToggle(): void {

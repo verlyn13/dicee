@@ -1,6 +1,6 @@
 {
 	"version": "1.0.0",
-	"generatedAt": "2025-12-10T21:13:37.052Z",
+	"generatedAt": "2025-12-10T22:23:28.910Z",
 	"projectRoot": "/Users/verlyn13/Development/personal/dicee",
 	"nodes": [
 		{
@@ -64,7 +64,7 @@
 				"endLine": 96
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.274Z",
+				"discoveredAt": "2025-12-10T22:23:30.163Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -160,7 +160,7 @@
 				"endLine": 80
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.275Z",
+				"discoveredAt": "2025-12-10T22:23:30.164Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -211,7 +211,7 @@
 				"endLine": 487
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.276Z",
+				"discoveredAt": "2025-12-10T22:23:30.164Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -377,7 +377,7 @@
 				"endLine": 53
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.277Z",
+				"discoveredAt": "2025-12-10T22:23:30.165Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -403,7 +403,7 @@
 				"endLine": 638
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.277Z",
+				"discoveredAt": "2025-12-10T22:23:30.165Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -439,7 +439,7 @@
 				"endLine": 745
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.277Z",
+				"discoveredAt": "2025-12-10T22:23:30.165Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -565,7 +565,7 @@
 				"endLine": 309
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.277Z",
+				"discoveredAt": "2025-12-10T22:23:30.166Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -881,7 +881,7 @@
 				"endLine": 85
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.278Z",
+				"discoveredAt": "2025-12-10T22:23:30.167Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -942,7 +942,7 @@
 				"endLine": 269
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.279Z",
+				"discoveredAt": "2025-12-10T22:23:30.167Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1293,7 +1293,7 @@
 				"endLine": 85
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.279Z",
+				"discoveredAt": "2025-12-10T22:23:30.168Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1594,7 +1594,7 @@
 				"endLine": 1014
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.280Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1670,7 +1670,7 @@
 				"endLine": 228
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.280Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1711,7 +1711,7 @@
 				"endLine": 518
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.280Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1762,7 +1762,7 @@
 				"endLine": 655
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.280Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1833,7 +1833,7 @@
 				"endLine": 245
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.281Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1884,7 +1884,7 @@
 				"endLine": 303
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.281Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1910,7 +1910,7 @@
 				"endLine": 497
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.281Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1936,7 +1936,7 @@
 				"endLine": 164
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.281Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1992,7 +1992,7 @@
 				"endLine": 135
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.281Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2018,7 +2018,7 @@
 				"endLine": 126
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.281Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2059,7 +2059,7 @@
 				"endLine": 113
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.281Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2155,7 +2155,7 @@
 				"endLine": 26
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.281Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2181,7 +2181,7 @@
 				"endLine": 305
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.281Z",
+				"discoveredAt": "2025-12-10T22:23:30.169Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2497,7 +2497,7 @@
 				"endLine": 78
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.282Z",
+				"discoveredAt": "2025-12-10T22:23:30.170Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2553,7 +2553,7 @@
 				"endLine": 473
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.282Z",
+				"discoveredAt": "2025-12-10T22:23:30.170Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2614,7 +2614,7 @@
 				"endLine": 319
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.282Z",
+				"discoveredAt": "2025-12-10T22:23:30.170Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2655,7 +2655,7 @@
 				"endLine": 65
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.283Z",
+				"discoveredAt": "2025-12-10T22:23:30.171Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2681,7 +2681,7 @@
 				"endLine": 3820
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.283Z",
+				"discoveredAt": "2025-12-10T22:23:30.171Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2731,7 +2731,7 @@
 				"endLine": 417
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.283Z",
+				"discoveredAt": "2025-12-10T22:23:30.171Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2781,7 +2781,7 @@
 				"endLine": 15
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.283Z",
+				"discoveredAt": "2025-12-10T22:23:30.171Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2800,7 +2800,7 @@
 				"endLine": 475
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.283Z",
+				"discoveredAt": "2025-12-10T22:23:30.171Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2920,7 +2920,7 @@
 				"endLine": 238
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.283Z",
+				"discoveredAt": "2025-12-10T22:23:30.172Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3095,7 +3095,7 @@
 				"endLine": 52
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.284Z",
+				"discoveredAt": "2025-12-10T22:23:30.172Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3170,7 +3170,7 @@
 				"endLine": 113
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.284Z",
+				"discoveredAt": "2025-12-10T22:23:30.172Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3400,7 +3400,7 @@
 				"endLine": 26
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.284Z",
+				"discoveredAt": "2025-12-10T22:23:30.172Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3440,7 +3440,7 @@
 				"endLine": 221
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.284Z",
+				"discoveredAt": "2025-12-10T22:23:30.172Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3480,7 +3480,7 @@
 				"endLine": 13
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.284Z",
+				"discoveredAt": "2025-12-10T22:23:30.172Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3560,7 +3560,7 @@
 				"endLine": 338
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.284Z",
+				"discoveredAt": "2025-12-10T22:23:30.173Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3730,7 +3730,7 @@
 				"endLine": 38
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.285Z",
+				"discoveredAt": "2025-12-10T22:23:30.173Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3800,7 +3800,7 @@
 				"endLine": 348
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.285Z",
+				"discoveredAt": "2025-12-10T22:23:30.173Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3865,7 +3865,7 @@
 				"endLine": 477
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.285Z",
+				"discoveredAt": "2025-12-10T22:23:30.173Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3925,7 +3925,7 @@
 				"endLine": 357
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.285Z",
+				"discoveredAt": "2025-12-10T22:23:30.173Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4000,7 +4000,7 @@
 				"endLine": 467
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.285Z",
+				"discoveredAt": "2025-12-10T22:23:30.173Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4245,7 +4245,7 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.286Z",
+				"discoveredAt": "2025-12-10T22:23:30.174Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4300,7 +4300,7 @@
 				"endLine": 409
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.286Z",
+				"discoveredAt": "2025-12-10T22:23:30.174Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4440,7 +4440,7 @@
 				"endLine": 422
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.286Z",
+				"discoveredAt": "2025-12-10T22:23:30.174Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4545,7 +4545,7 @@
 				"endLine": 828
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.286Z",
+				"discoveredAt": "2025-12-10T22:23:30.174Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4670,7 +4670,7 @@
 				"endLine": 32
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.286Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4715,7 +4715,7 @@
 				"endLine": 167
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.286Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4795,7 +4795,7 @@
 				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.286Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4814,7 +4814,7 @@
 				"endLine": 85
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.286Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4833,7 +4833,7 @@
 				"endLine": 88
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.286Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4852,7 +4852,7 @@
 				"endLine": 115
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4871,7 +4871,7 @@
 				"endLine": 92
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4901,7 +4901,7 @@
 				"endLine": 31
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4920,7 +4920,7 @@
 				"endLine": 137
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4939,7 +4939,7 @@
 				"endLine": 99
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4958,7 +4958,7 @@
 				"endLine": 98
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5003,7 +5003,7 @@
 				"endLine": 284
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5022,7 +5022,7 @@
 				"endLine": 696
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5041,7 +5041,7 @@
 				"endLine": 13
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5060,7 +5060,7 @@
 				"endLine": 941
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5085,7 +5085,7 @@
 				"endLine": 774
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5104,7 +5104,7 @@
 				"endLine": 341
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5129,7 +5129,7 @@
 				"endLine": 306
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.175Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5244,7 +5244,7 @@
 				"endLine": 387
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.176Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5384,7 +5384,7 @@
 				"endLine": 355
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.287Z",
+				"discoveredAt": "2025-12-10T22:23:30.176Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5609,7 +5609,7 @@
 				"endLine": 446
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.288Z",
+				"discoveredAt": "2025-12-10T22:23:30.176Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6049,7 +6049,7 @@
 				"endLine": 80
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.288Z",
+				"discoveredAt": "2025-12-10T22:23:30.177Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6919,7 +6919,7 @@
 				"endLine": 24
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.178Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6954,7 +6954,7 @@
 				"endLine": 316
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.178Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7004,7 +7004,7 @@
 				"endLine": 294
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.178Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7059,7 +7059,7 @@
 				"endLine": 290
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.178Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7159,7 +7159,7 @@
 				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.178Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7184,7 +7184,7 @@
 				"endLine": 69
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.178Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7204,7 +7204,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.178Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7224,7 +7224,7 @@
 				"endLine": 31
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.178Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7335,7 +7335,7 @@
 				"endLine": 215
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.179Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7396,7 +7396,7 @@
 				"endLine": 138
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.290Z",
+				"discoveredAt": "2025-12-10T22:23:30.179Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7457,7 +7457,7 @@
 				"endLine": 708
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.291Z",
+				"discoveredAt": "2025-12-10T22:23:30.179Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7475,215 +7475,215 @@
 					{
 						"name": "parseCommand",
 						"kind": "function",
-						"line": 431
+						"line": 383
 					},
 					{
 						"name": "parseServerEvent",
 						"kind": "function",
-						"line": 438
+						"line": 390
 					},
 					{
 						"name": "isValidRoomCode",
 						"kind": "function",
-						"line": 445
+						"line": 397
 					},
 					{
 						"name": "generateRoomCode",
 						"kind": "function",
-						"line": 459
+						"line": 411
 					},
 					{
 						"name": "RoomCodeSchema",
 						"kind": "const",
-						"line": 24
+						"line": 37
 					},
 					{
 						"name": "PlayerIdSchema",
 						"kind": "const",
-						"line": 33
+						"line": 46
 					},
 					{
 						"name": "DisplayNameSchema",
 						"kind": "const",
-						"line": 38
+						"line": 51
 					},
 					{
 						"name": "RoomConfigSchema",
 						"kind": "const",
-						"line": 48
+						"line": 61
 					},
 					{
 						"name": "RoomConfigInput",
 						"kind": "type",
-						"line": 55
+						"line": 68
 					},
 					{
 						"name": "RoomStateSchema",
 						"kind": "const",
-						"line": 61
+						"line": 74
 					},
 					{
 						"name": "RoomPlayerSchema",
 						"kind": "const",
-						"line": 67
+						"line": 80
 					},
 					{
 						"name": "StartGameCommandSchema",
 						"kind": "const",
-						"line": 80
+						"line": 93
 					},
 					{
 						"name": "QuickPlayStartCommandSchema",
 						"kind": "const",
-						"line": 84
+						"line": 97
 					},
 					{
 						"name": "RollDiceCommandSchema",
 						"kind": "const",
-						"line": 91
+						"line": 104
 					},
 					{
 						"name": "KeepDiceCommandSchema",
 						"kind": "const",
-						"line": 98
+						"line": 111
 					},
 					{
 						"name": "ScoreCategoryCommandSchema",
 						"kind": "const",
-						"line": 105
+						"line": 118
 					},
 					{
 						"name": "RematchCommandSchema",
 						"kind": "const",
-						"line": 112
+						"line": 125
 					},
 					{
 						"name": "AddAIPlayerCommandSchema",
 						"kind": "const",
-						"line": 116
+						"line": 129
 					},
 					{
 						"name": "PingCommandSchema",
 						"kind": "const",
-						"line": 123
+						"line": 136
 					},
 					{
 						"name": "CommandSchema",
 						"kind": "const",
-						"line": 130
+						"line": 143
 					},
 					{
 						"name": "CommandInput",
 						"kind": "type",
-						"line": 141
+						"line": 154
 					},
 					{
 						"name": "ConnectedEventSchema",
 						"kind": "const",
-						"line": 236
+						"line": 188
 					},
 					{
 						"name": "PlayerJoinedEventSchema",
 						"kind": "const",
-						"line": 249
+						"line": 201
 					},
 					{
 						"name": "PlayerLeftEventSchema",
 						"kind": "const",
-						"line": 258
+						"line": 210
 					},
 					{
 						"name": "AIPlayerJoinedEventSchema",
 						"kind": "const",
-						"line": 266
+						"line": 218
 					},
 					{
 						"name": "GameStartingEventSchema",
 						"kind": "const",
-						"line": 271
+						"line": 223
 					},
 					{
 						"name": "GameStartedEventSchema",
 						"kind": "const",
-						"line": 278
+						"line": 230
 					},
 					{
 						"name": "QuickPlayStartedEventSchema",
 						"kind": "const",
-						"line": 290
+						"line": 242
 					},
 					{
 						"name": "TurnStartedEventSchema",
 						"kind": "const",
-						"line": 303
+						"line": 255
 					},
 					{
 						"name": "TurnChangedEventSchema",
 						"kind": "const",
-						"line": 312
+						"line": 264
 					},
 					{
 						"name": "DiceRolledEventSchema",
 						"kind": "const",
-						"line": 322
+						"line": 274
 					},
 					{
 						"name": "DiceKeptEventSchema",
 						"kind": "const",
-						"line": 332
+						"line": 284
 					},
 					{
 						"name": "CategoryScoredEventSchema",
 						"kind": "const",
-						"line": 340
+						"line": 292
 					},
 					{
 						"name": "TurnSkippedEventSchema",
 						"kind": "const",
-						"line": 351
+						"line": 303
 					},
 					{
 						"name": "PlayerAfkEventSchema",
 						"kind": "const",
-						"line": 361
+						"line": 313
 					},
 					{
 						"name": "GameOverEventSchema",
 						"kind": "const",
-						"line": 369
+						"line": 321
 					},
 					{
 						"name": "RematchStartedEventSchema",
 						"kind": "const",
-						"line": 377
+						"line": 329
 					},
 					{
 						"name": "ErrorEventSchema",
 						"kind": "const",
-						"line": 385
+						"line": 337
 					},
 					{
 						"name": "PongEventSchema",
 						"kind": "const",
-						"line": 393
+						"line": 345
 					},
 					{
 						"name": "ServerEventSchema",
 						"kind": "const",
-						"line": 401
+						"line": 353
 					},
 					{
 						"name": "ServerEventInput",
 						"kind": "type",
-						"line": 422
+						"line": 374
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 464
+				"endLine": 416
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.291Z",
+				"discoveredAt": "2025-12-10T22:23:30.179Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8299,7 +8299,7 @@
 				"endLine": 607
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.180Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8360,7 +8360,7 @@
 				"endLine": 88
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.180Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8421,7 +8421,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.180Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8502,7 +8502,7 @@
 				"endLine": 171
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.180Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8553,7 +8553,7 @@
 				"endLine": 714
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.180Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8599,7 +8599,7 @@
 				"endLine": 304
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.180Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8645,7 +8645,7 @@
 				"endLine": 235
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.180Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8691,7 +8691,7 @@
 				"endLine": 635
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8752,7 +8752,7 @@
 				"endLine": 164
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8813,7 +8813,7 @@
 				"endLine": 192
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8839,7 +8839,7 @@
 				"endLine": 240
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8885,7 +8885,7 @@
 				"endLine": 293
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8921,7 +8921,7 @@
 				"endLine": 217
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8972,7 +8972,7 @@
 				"endLine": 331
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9033,7 +9033,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.292Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9129,7 +9129,7 @@
 				"endLine": 747
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9160,7 +9160,7 @@
 				"endLine": 502
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9195,7 +9195,7 @@
 				"endLine": 155
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9290,7 +9290,7 @@
 				"endLine": 182
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.181Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9435,7 +9435,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9490,7 +9490,7 @@
 				"endLine": 126
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9565,7 +9565,7 @@
 				"endLine": 187
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9621,7 +9621,7 @@
 				"endLine": 116
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9747,7 +9747,7 @@
 				"endLine": 593
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9773,7 +9773,7 @@
 				"endLine": 12
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9814,7 +9814,7 @@
 				"endLine": 73
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.293Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9870,7 +9870,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.294Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9931,7 +9931,7 @@
 				"endLine": 228
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.294Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9957,7 +9957,7 @@
 				"endLine": 25
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.294Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10118,7 +10118,7 @@
 				"endLine": 254
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.294Z",
+				"discoveredAt": "2025-12-10T22:23:30.182Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10159,7 +10159,7 @@
 				"endLine": 6
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.294Z",
+				"discoveredAt": "2025-12-10T22:23:30.183Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10250,7 +10250,7 @@
 				"endLine": 14
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.295Z",
+				"discoveredAt": "2025-12-10T22:23:30.184Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10321,7 +10321,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.296Z",
+				"discoveredAt": "2025-12-10T22:23:30.184Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10362,7 +10362,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.296Z",
+				"discoveredAt": "2025-12-10T22:23:30.185Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10513,7 +10513,7 @@
 				"endLine": 26
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.298Z",
+				"discoveredAt": "2025-12-10T22:23:30.186Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10684,7 +10684,7 @@
 				"endLine": 26
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.299Z",
+				"discoveredAt": "2025-12-10T22:23:30.188Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10725,7 +10725,7 @@
 				"endLine": 3
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.300Z",
+				"discoveredAt": "2025-12-10T22:23:30.188Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10826,7 +10826,7 @@
 				"endLine": 15
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.301Z",
+				"discoveredAt": "2025-12-10T22:23:30.189Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10967,7 +10967,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.302Z",
+				"discoveredAt": "2025-12-10T22:23:30.191Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11018,7 +11018,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.303Z",
+				"discoveredAt": "2025-12-10T22:23:30.191Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11059,7 +11059,7 @@
 				"endLine": 3
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.303Z",
+				"discoveredAt": "2025-12-10T22:23:30.191Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11130,7 +11130,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.304Z",
+				"discoveredAt": "2025-12-10T22:23:30.192Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11181,7 +11181,7 @@
 				"endLine": 4
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.304Z",
+				"discoveredAt": "2025-12-10T22:23:30.192Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11241,7 +11241,7 @@
 				"endLine": 133
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.304Z",
+				"discoveredAt": "2025-12-10T22:23:30.192Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11281,7 +11281,7 @@
 				"endLine": 117
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.304Z",
+				"discoveredAt": "2025-12-10T22:23:30.192Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11361,7 +11361,7 @@
 				"endLine": 23
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.304Z",
+				"discoveredAt": "2025-12-10T22:23:30.192Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11391,7 +11391,7 @@
 				"endLine": 123
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.304Z",
+				"discoveredAt": "2025-12-10T22:23:30.193Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11416,7 +11416,7 @@
 				"endLine": 63
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.304Z",
+				"discoveredAt": "2025-12-10T22:23:30.193Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11451,7 +11451,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.304Z",
+				"discoveredAt": "2025-12-10T22:23:30.193Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11651,7 +11651,7 @@
 				"endLine": 20
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.305Z",
+				"discoveredAt": "2025-12-10T22:23:30.193Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11722,7 +11722,7 @@
 				"endLine": 607
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.305Z",
+				"discoveredAt": "2025-12-10T22:23:30.193Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11783,7 +11783,7 @@
 				"endLine": 211
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.305Z",
+				"discoveredAt": "2025-12-10T22:23:30.193Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11969,7 +11969,7 @@
 				"endLine": 1614
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.305Z",
+				"discoveredAt": "2025-12-10T22:23:30.193Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12045,7 +12045,7 @@
 				"endLine": 364
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.305Z",
+				"discoveredAt": "2025-12-10T22:23:30.193Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12206,7 +12206,7 @@
 				"endLine": 40
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12247,7 +12247,7 @@
 				"endLine": 611
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12272,7 +12272,7 @@
 				"endLine": 47
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12298,7 +12298,7 @@
 				"endLine": 38
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12324,7 +12324,7 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12350,7 +12350,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12376,7 +12376,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12402,7 +12402,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12428,7 +12428,7 @@
 				"endLine": 12
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12454,7 +12454,7 @@
 				"endLine": 23
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12480,7 +12480,7 @@
 				"endLine": 51
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12506,7 +12506,7 @@
 				"endLine": 32
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12532,7 +12532,7 @@
 				"endLine": 32
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12558,7 +12558,7 @@
 				"endLine": 111
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12584,7 +12584,7 @@
 				"endLine": 85
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12610,7 +12610,7 @@
 				"endLine": 56
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12636,7 +12636,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12717,7 +12717,7 @@
 				"endLine": 100
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12778,7 +12778,7 @@
 				"endLine": 73
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12834,7 +12834,7 @@
 				"endLine": 115
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12910,7 +12910,7 @@
 				"endLine": 91
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12971,7 +12971,7 @@
 				"endLine": 129
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13032,7 +13032,7 @@
 				"endLine": 31
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13123,7 +13123,7 @@
 				"endLine": 134
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.306Z",
+				"discoveredAt": "2025-12-10T22:23:30.194Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13484,7 +13484,7 @@
 				"endLine": 91
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.307Z",
+				"discoveredAt": "2025-12-10T22:23:30.195Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14162,17 +14162,17 @@
 					{
 						"name": "parseCommand",
 						"kind": "function",
-						"line": 597
+						"line": 646
 					},
 					{
 						"name": "parseServerEvent",
 						"kind": "function",
-						"line": 604
+						"line": 653
 					},
 					{
 						"name": "isValidRoomCode",
 						"kind": "function",
-						"line": 611
+						"line": 660
 					},
 					{
 						"name": "RoomCodeSchema",
@@ -14220,269 +14220,284 @@
 						"line": 111
 					},
 					{
+						"name": "PlayerTypeSchema",
+						"kind": "const",
+						"line": 123
+					},
+					{
 						"name": "PlayerGameStateSchema",
 						"kind": "const",
-						"line": 120
+						"line": 125
 					},
 					{
 						"name": "PlayerRankingSchema",
 						"kind": "const",
-						"line": 137
+						"line": 155
 					},
 					{
 						"name": "RoomConfigSchema",
 						"kind": "const",
-						"line": 149
+						"line": 167
 					},
 					{
 						"name": "RoomStateValueSchema",
 						"kind": "const",
-						"line": 156
+						"line": 174
 					},
 					{
 						"name": "GamePhaseSchema",
 						"kind": "const",
-						"line": 162
+						"line": 180
 					},
 					{
 						"name": "GameStateSchema",
 						"kind": "const",
-						"line": 164
+						"line": 182
 					},
 					{
 						"name": "QuickChatKeySchema",
 						"kind": "const",
-						"line": 187
+						"line": 208
 					},
 					{
 						"name": "ReactionEmojiSchema",
 						"kind": "const",
-						"line": 198
+						"line": 220
+					},
+					{
+						"name": "MessageReactionsSchema",
+						"kind": "const",
+						"line": 225
+					},
+					{
+						"name": "ChatMessageTypeSchema",
+						"kind": "const",
+						"line": 236
 					},
 					{
 						"name": "ChatMessageSchema",
 						"kind": "const",
-						"line": 200
+						"line": 241
 					},
 					{
 						"name": "ChatErrorCodeSchema",
 						"kind": "const",
-						"line": 211
+						"line": 254
 					},
 					{
 						"name": "CreateRoomCommandSchema",
 						"kind": "const",
-						"line": 219
+						"line": 268
 					},
 					{
 						"name": "JoinRoomCommandSchema",
 						"kind": "const",
-						"line": 228
+						"line": 277
 					},
 					{
 						"name": "LeaveRoomCommandSchema",
 						"kind": "const",
-						"line": 235
+						"line": 284
 					},
 					{
 						"name": "AddAICommandSchema",
 						"kind": "const",
-						"line": 239
+						"line": 288
 					},
 					{
 						"name": "RemoveAICommandSchema",
 						"kind": "const",
-						"line": 246
+						"line": 295
 					},
 					{
 						"name": "StartGameCommandSchema",
 						"kind": "const",
-						"line": 253
+						"line": 302
 					},
 					{
 						"name": "RematchCommandSchema",
 						"kind": "const",
-						"line": 257
+						"line": 306
 					},
 					{
 						"name": "RollDiceCommandSchema",
 						"kind": "const",
-						"line": 261
+						"line": 310
 					},
 					{
 						"name": "KeepDiceCommandSchema",
 						"kind": "const",
-						"line": 270
+						"line": 319
 					},
 					{
 						"name": "ScoreCategoryCommandSchema",
 						"kind": "const",
-						"line": 277
+						"line": 326
 					},
 					{
 						"name": "ChatCommandSchema",
 						"kind": "const",
-						"line": 284
+						"line": 333
 					},
 					{
 						"name": "QuickChatCommandSchema",
 						"kind": "const",
-						"line": 291
+						"line": 340
 					},
 					{
 						"name": "ReactionCommandSchema",
 						"kind": "const",
-						"line": 298
+						"line": 347
 					},
 					{
 						"name": "TypingStartCommandSchema",
 						"kind": "const",
-						"line": 307
+						"line": 356
 					},
 					{
 						"name": "TypingStopCommandSchema",
 						"kind": "const",
-						"line": 311
+						"line": 360
 					},
 					{
 						"name": "CommandSchema",
 						"kind": "const",
-						"line": 318
+						"line": 367
 					},
 					{
 						"name": "CommandInput",
 						"kind": "type",
-						"line": 336
+						"line": 385
 					},
 					{
 						"name": "RoomCreatedEventSchema",
 						"kind": "const",
-						"line": 346
+						"line": 395
 					},
 					{
 						"name": "RoomStateEventSchema",
 						"kind": "const",
-						"line": 353
+						"line": 402
 					},
 					{
 						"name": "PlayerJoinedEventSchema",
 						"kind": "const",
-						"line": 368
+						"line": 417
 					},
 					{
 						"name": "PlayerLeftEventSchema",
 						"kind": "const",
-						"line": 375
+						"line": 424
 					},
 					{
 						"name": "AIJoinedEventSchema",
 						"kind": "const",
-						"line": 383
+						"line": 432
 					},
 					{
 						"name": "PlayerConnectionEventSchema",
 						"kind": "const",
-						"line": 393
+						"line": 442
 					},
 					{
 						"name": "GameStartingEventSchema",
 						"kind": "const",
-						"line": 401
+						"line": 450
 					},
 					{
 						"name": "GameStartedEventSchema",
 						"kind": "const",
-						"line": 408
+						"line": 457
 					},
 					{
 						"name": "TurnStartedEventSchema",
 						"kind": "const",
-						"line": 417
+						"line": 466
 					},
 					{
 						"name": "TurnEndedEventSchema",
 						"kind": "const",
-						"line": 426
+						"line": 475
 					},
 					{
 						"name": "TurnSkippedEventSchema",
 						"kind": "const",
-						"line": 433
+						"line": 482
 					},
 					{
 						"name": "AfkWarningEventSchema",
 						"kind": "const",
-						"line": 443
+						"line": 492
 					},
 					{
 						"name": "GameCompletedEventSchema",
 						"kind": "const",
-						"line": 451
+						"line": 500
 					},
 					{
 						"name": "DiceRolledEventSchema",
 						"kind": "const",
-						"line": 459
+						"line": 508
 					},
 					{
 						"name": "DiceKeptEventSchema",
 						"kind": "const",
-						"line": 469
+						"line": 518
 					},
 					{
 						"name": "CategoryScoredEventSchema",
 						"kind": "const",
-						"line": 477
+						"line": 526
 					},
 					{
 						"name": "StateSyncEventSchema",
 						"kind": "const",
-						"line": 488
+						"line": 537
 					},
 					{
 						"name": "GameErrorEventSchema",
 						"kind": "const",
-						"line": 495
+						"line": 544
 					},
 					{
 						"name": "ErrorEventSchema",
 						"kind": "const",
-						"line": 503
+						"line": 552
 					},
 					{
 						"name": "ChatMessageEventSchema",
 						"kind": "const",
-						"line": 511
+						"line": 560
 					},
 					{
 						"name": "ChatHistoryEventSchema",
 						"kind": "const",
-						"line": 516
+						"line": 565
 					},
 					{
 						"name": "ReactionUpdateEventSchema",
 						"kind": "const",
-						"line": 523
+						"line": 572
 					},
 					{
 						"name": "TypingUpdateEventSchema",
 						"kind": "const",
-						"line": 531
+						"line": 580
 					},
 					{
 						"name": "ChatErrorEventSchema",
 						"kind": "const",
-						"line": 543
+						"line": 592
 					},
 					{
 						"name": "ServerEventSchema",
 						"kind": "const",
-						"line": 554
+						"line": 603
 					},
 					{
 						"name": "ServerEventInput",
 						"kind": "type",
-						"line": 588
+						"line": 637
 					}
 				],
 				"usesRunes": false,
@@ -14490,7 +14505,7 @@
 				"endLine": 42
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.308Z",
+				"discoveredAt": "2025-12-10T22:23:30.196Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14631,7 +14646,7 @@
 				"endLine": 213
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.308Z",
+				"discoveredAt": "2025-12-10T22:23:30.196Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14852,7 +14867,7 @@
 				"endLine": 422
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.308Z",
+				"discoveredAt": "2025-12-10T22:23:30.196Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -15193,7 +15208,7 @@
 				"endLine": 78
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.309Z",
+				"discoveredAt": "2025-12-10T22:23:30.197Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -15211,17 +15226,17 @@
 					{
 						"name": "parseCommand",
 						"kind": "function",
-						"line": 597
+						"line": 646
 					},
 					{
 						"name": "parseServerEvent",
 						"kind": "function",
-						"line": 604
+						"line": 653
 					},
 					{
 						"name": "isValidRoomCode",
 						"kind": "function",
-						"line": 611
+						"line": 660
 					},
 					{
 						"name": "RoomCodeSchema",
@@ -15269,277 +15284,292 @@
 						"line": 111
 					},
 					{
+						"name": "PlayerTypeSchema",
+						"kind": "const",
+						"line": 123
+					},
+					{
 						"name": "PlayerGameStateSchema",
 						"kind": "const",
-						"line": 120
+						"line": 125
 					},
 					{
 						"name": "PlayerRankingSchema",
 						"kind": "const",
-						"line": 137
+						"line": 155
 					},
 					{
 						"name": "RoomConfigSchema",
 						"kind": "const",
-						"line": 149
+						"line": 167
 					},
 					{
 						"name": "RoomStateValueSchema",
 						"kind": "const",
-						"line": 156
+						"line": 174
 					},
 					{
 						"name": "GamePhaseSchema",
 						"kind": "const",
-						"line": 162
+						"line": 180
 					},
 					{
 						"name": "GameStateSchema",
 						"kind": "const",
-						"line": 164
+						"line": 182
 					},
 					{
 						"name": "QuickChatKeySchema",
 						"kind": "const",
-						"line": 187
+						"line": 208
 					},
 					{
 						"name": "ReactionEmojiSchema",
 						"kind": "const",
-						"line": 198
+						"line": 220
+					},
+					{
+						"name": "MessageReactionsSchema",
+						"kind": "const",
+						"line": 225
+					},
+					{
+						"name": "ChatMessageTypeSchema",
+						"kind": "const",
+						"line": 236
 					},
 					{
 						"name": "ChatMessageSchema",
 						"kind": "const",
-						"line": 200
+						"line": 241
 					},
 					{
 						"name": "ChatErrorCodeSchema",
 						"kind": "const",
-						"line": 211
+						"line": 254
 					},
 					{
 						"name": "CreateRoomCommandSchema",
 						"kind": "const",
-						"line": 219
+						"line": 268
 					},
 					{
 						"name": "JoinRoomCommandSchema",
 						"kind": "const",
-						"line": 228
+						"line": 277
 					},
 					{
 						"name": "LeaveRoomCommandSchema",
 						"kind": "const",
-						"line": 235
+						"line": 284
 					},
 					{
 						"name": "AddAICommandSchema",
 						"kind": "const",
-						"line": 239
+						"line": 288
 					},
 					{
 						"name": "RemoveAICommandSchema",
 						"kind": "const",
-						"line": 246
+						"line": 295
 					},
 					{
 						"name": "StartGameCommandSchema",
 						"kind": "const",
-						"line": 253
+						"line": 302
 					},
 					{
 						"name": "RematchCommandSchema",
 						"kind": "const",
-						"line": 257
+						"line": 306
 					},
 					{
 						"name": "RollDiceCommandSchema",
 						"kind": "const",
-						"line": 261
+						"line": 310
 					},
 					{
 						"name": "KeepDiceCommandSchema",
 						"kind": "const",
-						"line": 270
+						"line": 319
 					},
 					{
 						"name": "ScoreCategoryCommandSchema",
 						"kind": "const",
-						"line": 277
+						"line": 326
 					},
 					{
 						"name": "ChatCommandSchema",
 						"kind": "const",
-						"line": 284
+						"line": 333
 					},
 					{
 						"name": "QuickChatCommandSchema",
 						"kind": "const",
-						"line": 291
+						"line": 340
 					},
 					{
 						"name": "ReactionCommandSchema",
 						"kind": "const",
-						"line": 298
+						"line": 347
 					},
 					{
 						"name": "TypingStartCommandSchema",
 						"kind": "const",
-						"line": 307
+						"line": 356
 					},
 					{
 						"name": "TypingStopCommandSchema",
 						"kind": "const",
-						"line": 311
+						"line": 360
 					},
 					{
 						"name": "CommandSchema",
 						"kind": "const",
-						"line": 318
+						"line": 367
 					},
 					{
 						"name": "CommandInput",
 						"kind": "type",
-						"line": 336
+						"line": 385
 					},
 					{
 						"name": "RoomCreatedEventSchema",
 						"kind": "const",
-						"line": 346
+						"line": 395
 					},
 					{
 						"name": "RoomStateEventSchema",
 						"kind": "const",
-						"line": 353
+						"line": 402
 					},
 					{
 						"name": "PlayerJoinedEventSchema",
 						"kind": "const",
-						"line": 368
+						"line": 417
 					},
 					{
 						"name": "PlayerLeftEventSchema",
 						"kind": "const",
-						"line": 375
+						"line": 424
 					},
 					{
 						"name": "AIJoinedEventSchema",
 						"kind": "const",
-						"line": 383
+						"line": 432
 					},
 					{
 						"name": "PlayerConnectionEventSchema",
 						"kind": "const",
-						"line": 393
+						"line": 442
 					},
 					{
 						"name": "GameStartingEventSchema",
 						"kind": "const",
-						"line": 401
+						"line": 450
 					},
 					{
 						"name": "GameStartedEventSchema",
 						"kind": "const",
-						"line": 408
+						"line": 457
 					},
 					{
 						"name": "TurnStartedEventSchema",
 						"kind": "const",
-						"line": 417
+						"line": 466
 					},
 					{
 						"name": "TurnEndedEventSchema",
 						"kind": "const",
-						"line": 426
+						"line": 475
 					},
 					{
 						"name": "TurnSkippedEventSchema",
 						"kind": "const",
-						"line": 433
+						"line": 482
 					},
 					{
 						"name": "AfkWarningEventSchema",
 						"kind": "const",
-						"line": 443
+						"line": 492
 					},
 					{
 						"name": "GameCompletedEventSchema",
 						"kind": "const",
-						"line": 451
+						"line": 500
 					},
 					{
 						"name": "DiceRolledEventSchema",
 						"kind": "const",
-						"line": 459
+						"line": 508
 					},
 					{
 						"name": "DiceKeptEventSchema",
 						"kind": "const",
-						"line": 469
+						"line": 518
 					},
 					{
 						"name": "CategoryScoredEventSchema",
 						"kind": "const",
-						"line": 477
+						"line": 526
 					},
 					{
 						"name": "StateSyncEventSchema",
 						"kind": "const",
-						"line": 488
+						"line": 537
 					},
 					{
 						"name": "GameErrorEventSchema",
 						"kind": "const",
-						"line": 495
+						"line": 544
 					},
 					{
 						"name": "ErrorEventSchema",
 						"kind": "const",
-						"line": 503
+						"line": 552
 					},
 					{
 						"name": "ChatMessageEventSchema",
 						"kind": "const",
-						"line": 511
+						"line": 560
 					},
 					{
 						"name": "ChatHistoryEventSchema",
 						"kind": "const",
-						"line": 516
+						"line": 565
 					},
 					{
 						"name": "ReactionUpdateEventSchema",
 						"kind": "const",
-						"line": 523
+						"line": 572
 					},
 					{
 						"name": "TypingUpdateEventSchema",
 						"kind": "const",
-						"line": 531
+						"line": 580
 					},
 					{
 						"name": "ChatErrorEventSchema",
 						"kind": "const",
-						"line": 543
+						"line": 592
 					},
 					{
 						"name": "ServerEventSchema",
 						"kind": "const",
-						"line": 554
+						"line": 603
 					},
 					{
 						"name": "ServerEventInput",
 						"kind": "type",
-						"line": 588
+						"line": 637
 					}
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 614
+				"endLine": 663
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.309Z",
+				"discoveredAt": "2025-12-10T22:23:30.197Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -15557,17 +15587,17 @@
 					{
 						"name": "parseCommand",
 						"kind": "function",
-						"line": 597
+						"line": 646
 					},
 					{
 						"name": "parseServerEvent",
 						"kind": "function",
-						"line": 604
+						"line": 653
 					},
 					{
 						"name": "isValidRoomCode",
 						"kind": "function",
-						"line": 611
+						"line": 660
 					},
 					{
 						"name": "RoomCodeSchema",
@@ -15615,269 +15645,284 @@
 						"line": 111
 					},
 					{
+						"name": "PlayerTypeSchema",
+						"kind": "const",
+						"line": 123
+					},
+					{
 						"name": "PlayerGameStateSchema",
 						"kind": "const",
-						"line": 120
+						"line": 125
 					},
 					{
 						"name": "PlayerRankingSchema",
 						"kind": "const",
-						"line": 137
+						"line": 155
 					},
 					{
 						"name": "RoomConfigSchema",
 						"kind": "const",
-						"line": 149
+						"line": 167
 					},
 					{
 						"name": "RoomStateValueSchema",
 						"kind": "const",
-						"line": 156
+						"line": 174
 					},
 					{
 						"name": "GamePhaseSchema",
 						"kind": "const",
-						"line": 162
+						"line": 180
 					},
 					{
 						"name": "GameStateSchema",
 						"kind": "const",
-						"line": 164
+						"line": 182
 					},
 					{
 						"name": "QuickChatKeySchema",
 						"kind": "const",
-						"line": 187
+						"line": 208
 					},
 					{
 						"name": "ReactionEmojiSchema",
 						"kind": "const",
-						"line": 198
+						"line": 220
+					},
+					{
+						"name": "MessageReactionsSchema",
+						"kind": "const",
+						"line": 225
+					},
+					{
+						"name": "ChatMessageTypeSchema",
+						"kind": "const",
+						"line": 236
 					},
 					{
 						"name": "ChatMessageSchema",
 						"kind": "const",
-						"line": 200
+						"line": 241
 					},
 					{
 						"name": "ChatErrorCodeSchema",
 						"kind": "const",
-						"line": 211
+						"line": 254
 					},
 					{
 						"name": "CreateRoomCommandSchema",
 						"kind": "const",
-						"line": 219
+						"line": 268
 					},
 					{
 						"name": "JoinRoomCommandSchema",
 						"kind": "const",
-						"line": 228
+						"line": 277
 					},
 					{
 						"name": "LeaveRoomCommandSchema",
 						"kind": "const",
-						"line": 235
+						"line": 284
 					},
 					{
 						"name": "AddAICommandSchema",
 						"kind": "const",
-						"line": 239
+						"line": 288
 					},
 					{
 						"name": "RemoveAICommandSchema",
 						"kind": "const",
-						"line": 246
+						"line": 295
 					},
 					{
 						"name": "StartGameCommandSchema",
 						"kind": "const",
-						"line": 253
+						"line": 302
 					},
 					{
 						"name": "RematchCommandSchema",
 						"kind": "const",
-						"line": 257
+						"line": 306
 					},
 					{
 						"name": "RollDiceCommandSchema",
 						"kind": "const",
-						"line": 261
+						"line": 310
 					},
 					{
 						"name": "KeepDiceCommandSchema",
 						"kind": "const",
-						"line": 270
+						"line": 319
 					},
 					{
 						"name": "ScoreCategoryCommandSchema",
 						"kind": "const",
-						"line": 277
+						"line": 326
 					},
 					{
 						"name": "ChatCommandSchema",
 						"kind": "const",
-						"line": 284
+						"line": 333
 					},
 					{
 						"name": "QuickChatCommandSchema",
 						"kind": "const",
-						"line": 291
+						"line": 340
 					},
 					{
 						"name": "ReactionCommandSchema",
 						"kind": "const",
-						"line": 298
+						"line": 347
 					},
 					{
 						"name": "TypingStartCommandSchema",
 						"kind": "const",
-						"line": 307
+						"line": 356
 					},
 					{
 						"name": "TypingStopCommandSchema",
 						"kind": "const",
-						"line": 311
+						"line": 360
 					},
 					{
 						"name": "CommandSchema",
 						"kind": "const",
-						"line": 318
+						"line": 367
 					},
 					{
 						"name": "CommandInput",
 						"kind": "type",
-						"line": 336
+						"line": 385
 					},
 					{
 						"name": "RoomCreatedEventSchema",
 						"kind": "const",
-						"line": 346
+						"line": 395
 					},
 					{
 						"name": "RoomStateEventSchema",
 						"kind": "const",
-						"line": 353
+						"line": 402
 					},
 					{
 						"name": "PlayerJoinedEventSchema",
 						"kind": "const",
-						"line": 368
+						"line": 417
 					},
 					{
 						"name": "PlayerLeftEventSchema",
 						"kind": "const",
-						"line": 375
+						"line": 424
 					},
 					{
 						"name": "AIJoinedEventSchema",
 						"kind": "const",
-						"line": 383
+						"line": 432
 					},
 					{
 						"name": "PlayerConnectionEventSchema",
 						"kind": "const",
-						"line": 393
+						"line": 442
 					},
 					{
 						"name": "GameStartingEventSchema",
 						"kind": "const",
-						"line": 401
+						"line": 450
 					},
 					{
 						"name": "GameStartedEventSchema",
 						"kind": "const",
-						"line": 408
+						"line": 457
 					},
 					{
 						"name": "TurnStartedEventSchema",
 						"kind": "const",
-						"line": 417
+						"line": 466
 					},
 					{
 						"name": "TurnEndedEventSchema",
 						"kind": "const",
-						"line": 426
+						"line": 475
 					},
 					{
 						"name": "TurnSkippedEventSchema",
 						"kind": "const",
-						"line": 433
+						"line": 482
 					},
 					{
 						"name": "AfkWarningEventSchema",
 						"kind": "const",
-						"line": 443
+						"line": 492
 					},
 					{
 						"name": "GameCompletedEventSchema",
 						"kind": "const",
-						"line": 451
+						"line": 500
 					},
 					{
 						"name": "DiceRolledEventSchema",
 						"kind": "const",
-						"line": 459
+						"line": 508
 					},
 					{
 						"name": "DiceKeptEventSchema",
 						"kind": "const",
-						"line": 469
+						"line": 518
 					},
 					{
 						"name": "CategoryScoredEventSchema",
 						"kind": "const",
-						"line": 477
+						"line": 526
 					},
 					{
 						"name": "StateSyncEventSchema",
 						"kind": "const",
-						"line": 488
+						"line": 537
 					},
 					{
 						"name": "GameErrorEventSchema",
 						"kind": "const",
-						"line": 495
+						"line": 544
 					},
 					{
 						"name": "ErrorEventSchema",
 						"kind": "const",
-						"line": 503
+						"line": 552
 					},
 					{
 						"name": "ChatMessageEventSchema",
 						"kind": "const",
-						"line": 511
+						"line": 560
 					},
 					{
 						"name": "ChatHistoryEventSchema",
 						"kind": "const",
-						"line": 516
+						"line": 565
 					},
 					{
 						"name": "ReactionUpdateEventSchema",
 						"kind": "const",
-						"line": 523
+						"line": 572
 					},
 					{
 						"name": "TypingUpdateEventSchema",
 						"kind": "const",
-						"line": 531
+						"line": 580
 					},
 					{
 						"name": "ChatErrorEventSchema",
 						"kind": "const",
-						"line": 543
+						"line": 592
 					},
 					{
 						"name": "ServerEventSchema",
 						"kind": "const",
-						"line": 554
+						"line": 603
 					},
 					{
 						"name": "ServerEventInput",
 						"kind": "type",
-						"line": 588
+						"line": 637
 					}
 				],
 				"usesRunes": false,
@@ -15885,7 +15930,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.197Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -15904,7 +15949,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -15923,7 +15968,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -15942,7 +15987,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -15961,7 +16006,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -15980,7 +16025,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -15999,7 +16044,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16018,7 +16063,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16037,7 +16082,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16056,7 +16101,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16075,7 +16120,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16094,7 +16139,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16113,7 +16158,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16132,7 +16177,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16151,7 +16196,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16170,7 +16215,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16189,7 +16234,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16208,7 +16253,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16227,7 +16272,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16246,7 +16291,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16265,7 +16310,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16284,7 +16329,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16303,7 +16348,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16322,7 +16367,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16341,7 +16386,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16360,7 +16405,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16379,7 +16424,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16398,7 +16443,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16417,7 +16462,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16436,7 +16481,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16455,7 +16500,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16474,7 +16519,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16493,7 +16538,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16512,7 +16557,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16531,7 +16576,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16550,7 +16595,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16569,7 +16614,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16588,7 +16633,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16607,7 +16652,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16626,7 +16671,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16645,7 +16690,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16664,7 +16709,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16683,7 +16728,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16702,7 +16747,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16721,7 +16766,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16740,7 +16785,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16759,7 +16804,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16778,7 +16823,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16797,7 +16842,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16816,7 +16861,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16835,7 +16880,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16854,7 +16899,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16873,7 +16918,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16892,7 +16937,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16911,7 +16956,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16930,7 +16975,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16949,7 +16994,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16968,7 +17013,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16987,7 +17032,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17006,7 +17051,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17025,7 +17070,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17044,7 +17089,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17063,7 +17108,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17082,7 +17127,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17101,7 +17146,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17120,7 +17165,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17139,7 +17184,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17158,7 +17203,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17177,7 +17222,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17196,7 +17241,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17215,7 +17260,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17234,7 +17279,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.310Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17253,7 +17298,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17272,7 +17317,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17291,7 +17336,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17310,7 +17355,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17329,7 +17374,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17348,7 +17393,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17367,7 +17412,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17386,7 +17431,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17405,7 +17450,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17424,7 +17469,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17443,7 +17488,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17462,7 +17507,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17481,7 +17526,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17500,7 +17545,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17519,7 +17564,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17538,7 +17583,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17552,7 +17597,7 @@
 				"mayImport": []
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -17568,7 +17613,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -17589,7 +17634,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -17611,7 +17656,7 @@
 				"notes": "Smart containers may import stores (exception)"
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -17633,7 +17678,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -17656,7 +17701,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -17672,7 +17717,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -17694,7 +17739,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -17711,7 +17756,7 @@
 				"notes": "Only engine.ts should be imported by other modules"
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -17722,7 +17767,7 @@
 			"name": "unknown",
 			"attributes": {},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17733,7 +17778,7 @@
 			"name": "@dicee/web",
 			"attributes": {},
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.198Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17763,7 +17808,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.311Z",
+				"discoveredAt": "2025-12-10T22:23:30.199Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17800,7 +17845,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17827,7 +17872,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17856,7 +17901,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17888,7 +17933,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17920,7 +17965,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17948,7 +17993,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17978,7 +18023,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18007,7 +18052,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18035,7 +18080,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18063,7 +18108,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18091,7 +18136,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18119,7 +18164,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.312Z",
+				"discoveredAt": "2025-12-10T22:23:30.200Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18146,7 +18191,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18172,7 +18217,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18199,7 +18244,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18225,7 +18270,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18253,7 +18298,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18281,7 +18326,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18309,7 +18354,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18335,7 +18380,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18361,7 +18406,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18388,7 +18433,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18414,7 +18459,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18438,7 +18483,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18462,7 +18507,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18486,7 +18531,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18510,7 +18555,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18534,7 +18579,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18562,7 +18607,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18588,7 +18633,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18616,7 +18661,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.313Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18645,7 +18690,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18671,7 +18716,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18697,7 +18742,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18727,7 +18772,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18753,7 +18798,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.201Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18779,7 +18824,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18805,7 +18850,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18831,7 +18876,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18890,7 +18935,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18926,7 +18971,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18952,7 +18997,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18978,7 +19023,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19005,7 +19050,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19031,7 +19076,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19060,7 +19105,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19091,7 +19136,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19122,7 +19167,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.314Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19151,7 +19196,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.202Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19177,7 +19222,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19203,7 +19248,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19236,7 +19281,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19262,7 +19307,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19288,7 +19333,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19314,7 +19359,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19347,7 +19392,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19374,7 +19419,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19402,7 +19447,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19428,7 +19473,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19454,7 +19499,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19482,7 +19527,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19509,7 +19554,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19536,7 +19581,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19563,7 +19608,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19588,7 +19633,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19614,7 +19659,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19641,7 +19686,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19665,7 +19710,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19691,7 +19736,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19718,7 +19763,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19744,7 +19789,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19770,7 +19815,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.315Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19796,7 +19841,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19823,7 +19868,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19849,7 +19894,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19875,7 +19920,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.203Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19901,7 +19946,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19928,7 +19973,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19954,7 +19999,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19980,7 +20025,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20006,7 +20051,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20033,7 +20078,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20059,7 +20104,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20085,7 +20130,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20109,7 +20154,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20133,7 +20178,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20157,7 +20202,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20181,7 +20226,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20205,7 +20250,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20229,7 +20274,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20253,7 +20298,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20279,7 +20324,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20306,7 +20351,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20332,7 +20377,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20358,7 +20403,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20384,7 +20429,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20411,7 +20456,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20437,7 +20482,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20463,7 +20508,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20489,7 +20534,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20516,7 +20561,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20542,7 +20587,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20568,7 +20613,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.316Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20595,7 +20640,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20621,7 +20666,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20648,7 +20693,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20678,7 +20723,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20705,7 +20750,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20730,7 +20775,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.204Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20756,7 +20801,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20782,7 +20827,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20808,7 +20853,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20835,7 +20880,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20862,7 +20907,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20889,7 +20934,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20913,7 +20958,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20938,7 +20983,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20965,7 +21010,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21003,7 +21048,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21031,7 +21076,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21061,7 +21106,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21085,7 +21130,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21111,7 +21156,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21147,7 +21192,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21173,7 +21218,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21199,7 +21244,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21228,7 +21273,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21254,7 +21299,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21281,7 +21326,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21307,7 +21352,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21333,7 +21378,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.317Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21359,7 +21404,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21385,7 +21430,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21412,7 +21457,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21443,7 +21488,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21470,7 +21515,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21496,7 +21541,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21522,7 +21567,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21548,7 +21593,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21575,7 +21620,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21601,7 +21646,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21627,7 +21672,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.205Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21653,7 +21698,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21679,7 +21724,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21711,7 +21756,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21738,7 +21783,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21764,7 +21809,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21799,7 +21844,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21825,7 +21870,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21851,7 +21896,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21875,7 +21920,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -21899,7 +21944,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -21923,7 +21968,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21947,7 +21992,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21975,7 +22020,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22003,7 +22048,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22029,7 +22074,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -22055,7 +22100,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22081,7 +22126,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22113,7 +22158,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22137,7 +22182,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22161,7 +22206,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22185,7 +22230,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -22209,7 +22254,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22236,7 +22281,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22263,7 +22308,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22291,7 +22336,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22317,7 +22362,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.318Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22350,7 +22395,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22377,7 +22422,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22408,7 +22453,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -22439,7 +22484,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22465,7 +22510,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22492,7 +22537,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22518,7 +22563,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22545,7 +22590,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22572,7 +22617,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22609,7 +22654,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22634,7 +22679,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -22659,7 +22704,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22687,7 +22732,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22713,7 +22758,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22739,7 +22784,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22767,7 +22812,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22795,7 +22840,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.206Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22821,7 +22866,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22848,7 +22893,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22874,7 +22919,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22900,7 +22945,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22926,7 +22971,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22950,7 +22995,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22976,7 +23021,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23004,7 +23049,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23028,7 +23073,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -23054,7 +23099,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23080,7 +23125,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23104,7 +23149,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -23128,7 +23173,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23152,7 +23197,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23176,7 +23221,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23200,7 +23245,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23222,7 +23267,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23244,7 +23289,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23266,7 +23311,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23296,7 +23341,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.319Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23325,7 +23370,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23351,7 +23396,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23383,7 +23428,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23407,7 +23452,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23431,7 +23476,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23455,7 +23500,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23481,7 +23526,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23507,7 +23552,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.207Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23534,7 +23579,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23560,7 +23605,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23586,7 +23631,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23613,7 +23658,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23640,7 +23685,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23666,7 +23711,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23692,7 +23737,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23718,7 +23763,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23746,7 +23791,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23773,7 +23818,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23803,7 +23848,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23839,7 +23884,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.320Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23852,7 +23897,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23865,7 +23910,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23878,7 +23923,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23891,7 +23936,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23904,7 +23949,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23917,7 +23962,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23930,7 +23975,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23943,7 +23988,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23956,7 +24001,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23969,7 +24014,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23982,7 +24027,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -23995,7 +24040,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24008,7 +24053,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24021,7 +24066,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24034,7 +24079,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24047,7 +24092,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24060,7 +24105,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24073,7 +24118,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24086,7 +24131,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24099,7 +24144,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24112,7 +24157,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24125,7 +24170,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24138,7 +24183,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24151,7 +24196,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24164,7 +24209,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24177,7 +24222,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24190,7 +24235,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24203,7 +24248,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24216,7 +24261,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24229,7 +24274,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24242,7 +24287,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24255,7 +24300,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24268,7 +24313,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24281,7 +24326,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24294,7 +24339,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24307,7 +24352,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24320,7 +24365,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24333,7 +24378,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24346,7 +24391,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24359,7 +24404,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24372,7 +24417,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24385,7 +24430,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24398,7 +24443,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24411,7 +24456,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24424,7 +24469,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24437,7 +24482,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24450,7 +24495,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24463,7 +24508,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24476,7 +24521,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24489,7 +24534,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24502,7 +24547,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24515,7 +24560,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24528,7 +24573,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24541,7 +24586,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24554,7 +24599,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24567,7 +24612,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24580,7 +24625,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24593,7 +24638,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24606,7 +24651,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24619,7 +24664,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24632,7 +24677,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24645,7 +24690,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24658,7 +24703,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24671,7 +24716,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24684,7 +24729,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24697,7 +24742,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24710,7 +24755,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24723,7 +24768,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24736,7 +24781,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24749,7 +24794,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24762,7 +24807,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24775,7 +24820,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24788,7 +24833,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24801,7 +24846,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24814,7 +24859,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24827,7 +24872,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24840,7 +24885,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24853,7 +24898,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24866,7 +24911,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24879,7 +24924,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24892,7 +24937,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24905,7 +24950,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24918,7 +24963,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24931,7 +24976,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24944,7 +24989,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24957,7 +25002,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24970,7 +25015,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24983,7 +25028,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -24996,7 +25041,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25009,7 +25054,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25022,7 +25067,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25035,7 +25080,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25048,7 +25093,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25061,7 +25106,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25074,7 +25119,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25087,7 +25132,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25100,7 +25145,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25113,7 +25158,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25126,7 +25171,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25139,7 +25184,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25152,7 +25197,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25165,7 +25210,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25178,7 +25223,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25191,7 +25236,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25204,7 +25249,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25217,7 +25262,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25230,7 +25275,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25243,7 +25288,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25256,7 +25301,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25269,7 +25314,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25282,7 +25327,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25295,7 +25340,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25308,7 +25353,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25321,7 +25366,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25334,7 +25379,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25347,7 +25392,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25360,7 +25405,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25373,7 +25418,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25386,7 +25431,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25399,7 +25444,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25412,7 +25457,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25425,7 +25470,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25438,7 +25483,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25451,7 +25496,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25464,7 +25509,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25477,7 +25522,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25490,7 +25535,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25503,7 +25548,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25516,7 +25561,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25529,7 +25574,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25542,7 +25587,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25555,7 +25600,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25568,7 +25613,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25581,7 +25626,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25594,7 +25639,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25607,7 +25652,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25620,7 +25665,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25633,7 +25678,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25646,7 +25691,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25659,7 +25704,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25672,7 +25717,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25685,7 +25730,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25698,7 +25743,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25711,7 +25756,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25724,7 +25769,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25737,7 +25782,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25750,7 +25795,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25763,7 +25808,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25776,7 +25821,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25789,7 +25834,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25802,7 +25847,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25815,7 +25860,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25828,7 +25873,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25841,7 +25886,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25854,7 +25899,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25867,7 +25912,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25880,7 +25925,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25893,7 +25938,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25906,7 +25951,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25919,7 +25964,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25932,7 +25977,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25945,7 +25990,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25958,7 +26003,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25971,7 +26016,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25984,7 +26029,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25997,7 +26042,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26010,7 +26055,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26023,7 +26068,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26036,7 +26081,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26049,7 +26094,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26062,7 +26107,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26075,7 +26120,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26088,7 +26133,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26101,7 +26146,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26114,7 +26159,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26127,7 +26172,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26140,7 +26185,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26153,7 +26198,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26166,7 +26211,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26179,7 +26224,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26192,7 +26237,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26205,7 +26250,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26218,7 +26263,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26231,7 +26276,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26244,7 +26289,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26257,7 +26302,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26270,7 +26315,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26283,7 +26328,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26296,7 +26341,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26309,7 +26354,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26322,7 +26367,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26335,7 +26380,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26348,7 +26393,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26361,7 +26406,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26374,7 +26419,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26387,7 +26432,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26400,7 +26445,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26413,7 +26458,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26426,7 +26471,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26439,7 +26484,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26452,7 +26497,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26465,7 +26510,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26478,7 +26523,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26491,7 +26536,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26504,7 +26549,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26517,7 +26562,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26530,7 +26575,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26543,7 +26588,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26556,7 +26601,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26569,7 +26614,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26582,7 +26627,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26595,7 +26640,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26608,7 +26653,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26621,7 +26666,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26634,7 +26679,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26647,7 +26692,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26660,7 +26705,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26673,7 +26718,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26686,7 +26731,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26699,7 +26744,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26712,7 +26757,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26725,7 +26770,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26738,7 +26783,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26751,7 +26796,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26764,7 +26809,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26777,7 +26822,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26790,7 +26835,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26803,7 +26848,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-10T21:13:38.321Z",
+				"discoveredAt": "2025-12-10T22:23:30.208Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -26811,12 +26856,12 @@
 	],
 	"metadata": {
 		"totalFiles": 253,
-		"discoveryDurationMs": 1276,
+		"discoveryDurationMs": 1305,
 		"packages": [
 			"unknown",
 			"@dicee/web"
 		],
-		"gitCommit": "97c4a8b66b892edb8a19894d32aabd9f89bb9d61",
+		"gitCommit": "afeaf2b777760fb288822fd96909739213f78232",
 		"gitBranch": "main"
 	}
 }

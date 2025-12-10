@@ -224,12 +224,12 @@ function handleLeave(): void {
 		<p>Game in progress - joined as spectator</p>
 	</div>
 	{#if spectatorStore}
-		<SpectatorView store={spectatorStore} onLeave={handleLeave} />
+		<SpectatorView store={spectatorStore} chatStore={chatStore ?? undefined} onLeave={handleLeave} />
 	{/if}
 {:else if actualRole === 'spectator' && spectatorStore}
-	<SpectatorView store={spectatorStore} onLeave={handleLeave} />
+	<SpectatorView store={spectatorStore} chatStore={chatStore ?? undefined} onLeave={handleLeave} />
 {:else if actualRole === 'player' && gameStore}
-	<MultiplayerGameView store={gameStore} onLeave={handleLeave} isQuickPlay={quickPlayAutoStart} />
+	<MultiplayerGameView store={gameStore} chatStore={chatStore ?? undefined} onLeave={handleLeave} isQuickPlay={quickPlayAutoStart} />
 {:else}
 	<div class="error-state">
 		<div class="error-content">

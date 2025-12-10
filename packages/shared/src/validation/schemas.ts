@@ -117,18 +117,36 @@ export const RoomPlayerSchema = z.object({
 	joinedAt: z.string(),
 });
 
+/**
+ * Player type - matches types/player.ts PlayerType
+ */
+export const PlayerTypeSchema = z.enum(['human', 'ai']);
+
 export const PlayerGameStateSchema = z.object({
+	// Identity
 	id: z.string(),
 	displayName: z.string(),
 	avatarSeed: z.string(),
+
+	// Player type (human or AI)
+	type: PlayerTypeSchema,
+	aiProfileId: z.string().optional(),
+
+	// Connection tracking
 	isConnected: z.boolean(),
 	connectionId: z.string().nullable(),
 	lastActive: z.string(),
 	connectionStatus: z.enum(['online', 'away', 'disconnected']),
+
+	// Room role
 	isHost: z.boolean(),
 	joinedAt: z.string(),
+
+	// Game state
 	scorecard: ScorecardSchema,
 	totalScore: z.number(),
+
+	// Current turn state
 	currentDice: DiceArraySchema.nullable(),
 	keptDice: KeptMaskSchema.nullable(),
 	rollsRemaining: z.number(),
@@ -184,31 +202,62 @@ export const GameStateSchema = z.object({
 // Chat Schemas
 // =============================================================================
 
+/**
+ * Quick chat keys - matches types/chat.ts QuickChatKey
+ */
 export const QuickChatKeySchema = z.enum([
-	'nice',
-	'goodGame',
-	'thanks',
-	'sorry',
-	'wow',
-	'oops',
-	'hurryUp',
-	'goodLuck',
+	'nice_roll',
+	'good_game',
+	'your_turn',
+	'dicee',
+	'ouch',
+	'thinking',
 ]);
 
-export const ReactionEmojiSchema = z.enum(['thumbsUp', 'thumbsDown', 'laugh', 'sad', 'angry', 'fire', 'heart', 'dice']);
+/**
+ * Reaction emoji - matches types/chat.ts ReactionEmoji (actual emoji characters)
+ */
+export const ReactionEmojiSchema = z.enum(['👍', '🎲', '😱', '💀', '🎉']);
 
-export const ChatMessageSchema = z.object({
-	id: z.string(),
-	playerId: z.string(),
-	displayName: z.string(),
-	content: z.string(),
-	isQuickChat: z.boolean(),
-	quickChatKey: QuickChatKeySchema.nullable(),
-	reactions: z.record(ReactionEmojiSchema, z.array(z.string())),
-	timestamp: z.string(),
+/**
+ * Message reactions keyed by emoji - matches types/chat.ts MessageReactions
+ */
+export const MessageReactionsSchema = z.object({
+	'👍': z.array(z.string()),
+	'🎲': z.array(z.string()),
+	'😱': z.array(z.string()),
+	'💀': z.array(z.string()),
+	'🎉': z.array(z.string()),
 });
 
-export const ChatErrorCodeSchema = z.enum(['RATE_LIMITED', 'MESSAGE_TOO_LONG', 'EMPTY_MESSAGE', 'PROFANITY_DETECTED']);
+/**
+ * Chat message type discriminator - matches types/chat.ts ChatMessage.type
+ */
+export const ChatMessageTypeSchema = z.enum(['text', 'quick', 'system']);
+
+/**
+ * Chat message - matches types/chat.ts ChatMessage interface
+ */
+export const ChatMessageSchema = z.object({
+	id: z.string(),
+	type: ChatMessageTypeSchema,
+	userId: z.string(),
+	displayName: z.string(),
+	content: z.string(),
+	timestamp: z.number(),
+	reactions: MessageReactionsSchema,
+});
+
+/**
+ * Chat error codes - matches types/chat.ts ChatErrorCode
+ */
+export const ChatErrorCodeSchema = z.enum([
+	'INVALID_MESSAGE',
+	'RATE_LIMITED',
+	'MESSAGE_TOO_LONG',
+	'REACTION_FAILED',
+	'MESSAGE_NOT_FOUND',
+]);
 
 // =============================================================================
 // Command Schemas (Client → Server) - UPPERCASE format

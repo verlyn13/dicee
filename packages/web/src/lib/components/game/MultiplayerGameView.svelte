@@ -10,7 +10,7 @@ import { ChatPanel } from '$lib/components/chat';
 import { DiceTray } from '$lib/components/dice';
 import { RoomLobby } from '$lib/components/lobby';
 import { KEY_BINDINGS, useKeyboardNavigation } from '$lib/hooks/useKeyboardNavigation.svelte';
-import { getChatStoreOptional } from '$lib/stores/chat.svelte';
+import type { ChatStore } from '$lib/stores/chat.svelte';
 import type { MultiplayerGameStore } from '$lib/stores/multiplayerGame.svelte';
 import type { DiceArray, DieValue } from '$lib/types';
 import type { Category, KeptMask } from '$lib/types/multiplayer';
@@ -23,13 +23,15 @@ import TurnIndicator from './TurnIndicator.svelte';
 interface Props {
 	/** The multiplayer game store instance */
 	store: MultiplayerGameStore;
+	/** Optional chat store for chat functionality */
+	chatStore?: ChatStore;
 	/** Callback when player wants to leave the game */
 	onLeave?: () => void;
 	/** Whether this is a Quick Play session (skip waiting room) */
 	isQuickPlay?: boolean;
 }
 
-let { store, onLeave, isQuickPlay = false }: Props = $props();
+let { store, chatStore, onLeave, isQuickPlay = false }: Props = $props();
 
 // Subscribe to store events
 let unsubscribe: (() => void) | null = null;
@@ -91,7 +93,6 @@ const spectatorLabel = $derived(
 );
 
 // Chat state
-const chatStore = getChatStoreOptional();
 let chatCollapsed = $state(true);
 
 function handleChatToggle(): void {
@@ -184,7 +185,7 @@ function handleCloseGameOver(): void {
 {#if (phase === 'waiting' || phase === 'starting') && !isQuickPlay}
 	<!-- Full-screen Waiting Room (not shown for Quick Play) -->
 	<div class="waiting-room-container">
-		<RoomLobby onleave={handleLeave} />
+		<RoomLobby {chatStore} onleave={handleLeave} />
 	</div>
 {:else if (phase === 'waiting' || phase === 'starting') && isQuickPlay}
 	<!-- Quick Play loading state - game is starting -->
