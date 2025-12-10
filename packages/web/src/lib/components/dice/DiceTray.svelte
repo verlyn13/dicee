@@ -279,6 +279,8 @@ function handleRoll() {
 		flex-direction: column;
 		align-items: center;
 		gap: var(--space-3);
+		/* Isolate animations to prevent affecting parent layout */
+		isolation: isolate;
 	}
 
 	/* Dice Grid - 5 across on desktop, 3+2 on mobile */
@@ -287,6 +289,9 @@ function handleRoll() {
 		justify-content: center;
 		gap: var(--space-3);
 		padding-bottom: var(--space-2);
+		/* Prevent dice animations from causing layout shifts in other components */
+		contain: layout style;
+		min-height: 80px; /* Reserve space for dice + animation headroom */
 	}
 
 	.dice-grid.pre-roll {

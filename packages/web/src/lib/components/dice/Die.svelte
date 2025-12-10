@@ -133,6 +133,9 @@ function handleClick() {
 			background var(--transition-fast),
 			border-color var(--transition-fast),
 			box-shadow var(--transition-fast);
+		/* Promote to own compositing layer for smooth animations */
+		will-change: transform;
+		transform: translateZ(0);
 	}
 
 	.die:hover:not(:disabled) {
