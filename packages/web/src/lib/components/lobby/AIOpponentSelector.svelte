@@ -30,7 +30,12 @@ interface Props {
 	disabled?: boolean;
 }
 
-let { selected, onSelect, disabled = false }: Props = $props();
+let props: Props = $props();
+
+// Destructure with reactivity
+const selected = $derived(props.selected);
+const onSelect = $derived(props.onSelect);
+const disabled = $derived(props.disabled ?? false);
 
 /**
  * Pre-built AI profiles (synced with cloudflare-do/src/ai/profiles.ts)
@@ -208,13 +213,15 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 	}
 
 	.ai-card--selected {
-		background: var(--color-primary-light);
-		border-color: var(--color-primary);
-		box-shadow: 4px 4px 0 var(--color-primary);
+		background: var(--color-success, #90EE90);
+		border-color: var(--color-text, #000);
+		border-width: 3px;
+		box-shadow: 4px 4px 0 var(--color-text, #000);
+		transform: translate(-2px, -2px);
 	}
 
 	.ai-card--selected:hover {
-		box-shadow: 6px 6px 0 var(--color-primary);
+		box-shadow: 6px 6px 0 var(--color-text, #000);
 	}
 
 	.ai-card--disabled {

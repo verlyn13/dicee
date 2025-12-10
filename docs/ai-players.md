@@ -112,7 +112,7 @@ interface AITraits {
   riskTolerance: number;
   
   // Category biases (-1 to 1, 0 = neutral)
-  yahtzeeChaser: number;         // Positive = always goes for Yahtzee
+  diceeChaser: number;         // Positive = always goes for Dicee
   upperSectionFocus: number;     // Positive = prioritizes upper bonus
   
   // Mistake patterns
@@ -161,7 +161,7 @@ const AI_PROFILES: Record<string, AIProfile> = {
     skillLevel: 0.4,
     traits: {
       riskTolerance: 0.3,
-      yahtzeeChaser: 0.2,
+      diceeChaser: 0.2,
       upperSectionFocus: -0.3,      // Undervalues upper section
       overvaluesFullHouse: true,
       avoidsEarlyZeros: true,       // Classic beginner mistake
@@ -193,7 +193,7 @@ const AI_PROFILES: Record<string, AIProfile> = {
     skillLevel: 0.75,
     traits: {
       riskTolerance: 0.4,
-      yahtzeeChaser: -0.2,          // Avoids low-probability gambles
+      diceeChaser: -0.2,          // Avoids low-probability gambles
       upperSectionFocus: 0.3,
       overvaluesFullHouse: false,
       avoidsEarlyZeros: false,      // Knows when to take the zero
@@ -221,7 +221,7 @@ const AI_PROFILES: Record<string, AIProfile> = {
     skillLevel: 0.6,
     traits: {
       riskTolerance: 0.9,           // YOLO energy
-      yahtzeeChaser: 0.8,           // Always chasing
+      diceeChaser: 0.8,           // Always chasing
       upperSectionFocus: -0.2,
       overvaluesFullHouse: false,
       avoidsEarlyZeros: false,
@@ -253,7 +253,7 @@ const AI_PROFILES: Record<string, AIProfile> = {
     skillLevel: 0.95,
     traits: {
       riskTolerance: 0.5,           // EV-neutral
-      yahtzeeChaser: 0,             // Pure EV
+      diceeChaser: 0,             // Pure EV
       upperSectionFocus: 0,
       overvaluesFullHouse: false,
       avoidsEarlyZeros: false,
@@ -285,7 +285,7 @@ const AI_PROFILES: Record<string, AIProfile> = {
     skillLevel: 0.2,
     traits: {
       riskTolerance: 0.5,
-      yahtzeeChaser: 0,
+      diceeChaser: 0,
       upperSectionFocus: 0,
       overvaluesFullHouse: false,
       avoidsEarlyZeros: false,
@@ -409,9 +409,9 @@ export class DeterministicBrain implements AIBrain {
     const biasedOptions = scoringOptions.map(option => {
       let biasedEV = option.ev;
       
-      // Yahtzee chaser bias
-      if (option.category === 'yahtzee') {
-        biasedEV *= (1 + traits.yahtzeeChaser * 0.5);
+      // Dicee chaser bias
+      if (option.category === 'dicee') {
+        biasedEV *= (1 + traits.diceeChaser * 0.5);
       }
       
       // Upper section focus
@@ -910,11 +910,11 @@ class LLMBrain implements AIBrain {
   
   private buildDecisionPrompt(context: GameContext, profile: AIProfile): string {
     return `
-You are ${profile.name}, a Yahtzee player. ${profile.tagline}.
+You are ${profile.name}, a Dicee player. ${profile.tagline}.
 
 Your personality traits:
 - Risk tolerance: ${profile.traits.riskTolerance}/1.0
-- ${profile.traits.yahtzeeChaser > 0 ? 'You love chasing Yahtzee' : 'You play conservatively'}
+- ${profile.traits.diceeChaser > 0 ? 'You love chasing Dicee' : 'You play conservatively'}
 
 Current game state:
 - Round: ${context.roundNumber}/13
@@ -948,17 +948,17 @@ type ChatTrigger =
   | { type: 'my_score'; category: Category; score: number }
   | { type: 'opponent_roll'; playerId: string; dice: number[] }
   | { type: 'opponent_score'; playerId: string; category: Category; score: number }
-  | { type: 'yahtzee'; playerId: string }
+  | { type: 'dicee'; playerId: string }
   | { type: 'game_end'; myRank: number; winner: string };
 
 // Deterministic chat responses (Phase 1)
 const DETERMINISTIC_CHAT: Record<string, string[]> = {
-  'my_yahtzee': [
-    "YAHTZEE! 🎲🎲🎲🎲🎲",
+  'my_dicee': [
+    "DICEE! 🎲🎲🎲🎲🎲",
     "Now THAT'S what I'm talking about!",
     "Did that just happen?!",
   ],
-  'opponent_yahtzee': [
+  'opponent_dicee': [
     "Nice roll! 👏",
     "Wow, impressive!",
     "Well played!",

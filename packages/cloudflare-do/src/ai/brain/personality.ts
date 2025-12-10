@@ -14,7 +14,7 @@ import { OptimalBrain } from './optimal';
 /**
  * Personality brain - trait-influenced decisions.
  *
- * Uses traits like riskTolerance, yahtzeeChaser, etc. to modify
+ * Uses traits like riskTolerance, diceeChaser, etc. to modify
  * decisions from the optimal baseline.
  */
 export class PersonalityBrain implements AIBrain {
@@ -73,9 +73,9 @@ export class PersonalityBrain implements AIBrain {
 	): TurnDecision {
 		const traits = this.traits!;
 
-		// Check for Yahtzee chasing behavior
-		if (this.shouldChaseYahtzee(context, decision)) {
-			return this.chaseYahtzee(context);
+		// Check for Dicee chasing behavior
+		if (this.shouldChaseDicee(context, decision)) {
+			return this.chaseDicee(context);
 		}
 
 		// Check for risk-influenced decisions
@@ -100,30 +100,30 @@ export class PersonalityBrain implements AIBrain {
 		return decision;
 	}
 
-	private shouldChaseYahtzee(context: GameContext, decision: TurnDecision): boolean {
+	private shouldChaseDicee(context: GameContext, decision: TurnDecision): boolean {
 		const traits = this.traits!;
 
-		// Already scored yahtzee
-		if (context.scorecard.yahtzee !== null) {
+		// Already scored dicee
+		if (context.scorecard.dicee !== null) {
 			return false;
 		}
 
-		// Check if we have potential (3+ of a kind)
+		// Check if we have 3+ of a kind
 		const counts = this.countDice(context.dice);
 		const maxCount = Math.max(...counts.slice(1));
 
-		// Yahtzee chasers will chase with 3+, others need 4+
-		const threshold = traits.yahtzeeChaser > 0.5 ? 3 : 4;
+		// Dicee chasers will chase with 3+, others need 4+
+		const threshold = traits.diceeChaser > 0.5 ? 3 : 4;
 
 		if (maxCount >= threshold && context.rollsRemaining > 0) {
-			// Probability check based on yahtzeeChaser trait
-			return Math.random() < traits.yahtzeeChaser;
+			// Probability check based on diceeChaser trait
+			return Math.random() < traits.diceeChaser;
 		}
 
 		return false;
 	}
 
-	private chaseYahtzee(context: GameContext): TurnDecision {
+	private chaseDicee(context: GameContext): TurnDecision {
 		const counts = this.countDice(context.dice);
 
 		// Find value with most occurrences
@@ -144,14 +144,14 @@ export class PersonalityBrain implements AIBrain {
 			}
 		}
 
-		// If keeping all 5 (already yahtzee), score it
+		// If keeping all 5 (already dicee), score it
 		if (bestCount === 5) {
 			const remaining = getRemainingCategories(context.scorecard);
-			if (remaining.includes('yahtzee')) {
+			if (remaining.includes('dicee')) {
 				return {
 					action: 'score',
-					category: 'yahtzee' as Category,
-					reasoning: 'YAHTZEE!!! 🎲🎲🎲🎲🎲',
+					category: 'dicee' as Category,
+					reasoning: 'DICEE!!! 🎲🎲🎲🎲🎲',
 					confidence: 1.0,
 				};
 			}
@@ -160,7 +160,7 @@ export class PersonalityBrain implements AIBrain {
 		return {
 			action: 'keep',
 			keepMask,
-			reasoning: `Going for Yahtzee! Need ${5 - bestCount} more ${bestValue}s`,
+			reasoning: `Going for Dicee! Need ${5 - bestCount} more ${bestValue}s`,
 			confidence: 0.7,
 		};
 	}

@@ -25,7 +25,7 @@
 
 ## Abstract
 
-This ADR documents the decision to implement a memoized backward induction dynamic programming solver for computing optimal Yahtzee turn strategy. The solver uses the transition probability table from Layer 1 to evaluate expected values for all possible keep decisions.
+This ADR documents the decision to implement a memoized backward induction dynamic programming solver for computing optimal Dicee turn strategy. The solver uses the transition probability table from Layer 1 to evaluate expected values for all possible keep decisions.
 
 ---
 
@@ -302,31 +302,31 @@ impl TurnSolver {
 
 ### Known Position Tests
 
-Reference positions from Yahtzee strategy literature:
+Reference positions from Dicee strategy literature:
 
 ```rust
 #[test]
-fn test_yahtzee_keep_all_fives() {
-    // [5,5,5,5,5] with Yahtzee available: score immediately
+fn test_dicee_keep_all_fives() {
+    // [5,5,5,5,5] with Dicee available: score immediately
     let state = TurnState {
         config: config_from_dice([5,5,5,5,5]).to_index(),
         rolls_remaining: 2,
-        available: CategorySet::from_slice(&[Category::Yahtzee]),
+        available: CategorySet::from_slice(&[Category::Dicee]),
     };
 
     let analysis = solver.analyze(state);
     assert_eq!(analysis.action, Action::Stop);
-    assert_eq!(analysis.category, Some(Category::Yahtzee));
+    assert_eq!(analysis.category, Some(Category::Dicee));
     assert_eq!(analysis.category_score, Some(50));
 }
 
 #[test]
 fn test_four_of_a_kind_reroll_one() {
-    // [3,3,3,3,1] with Yahtzee available: keep 3s, reroll the 1
+    // [3,3,3,3,1] with Dicee available: keep 3s, reroll the 1
     let state = TurnState {
         config: config_from_dice([3,3,3,3,1]).to_index(),
         rolls_remaining: 2,
-        available: CategorySet::from_slice(&[Category::Yahtzee]),
+        available: CategorySet::from_slice(&[Category::Dicee]),
     };
 
     let analysis = solver.analyze(state);
@@ -357,7 +357,7 @@ fn prop_ev_bounded(state: TurnState) {
     let ev = solver.evaluate(state);
     // EV must be in valid score range for available categories
     let min_possible = 0.0;  // Scoring zero in a category
-    let max_possible = 50.0; // Yahtzee
+    let max_possible = 50.0; // Dicee
     prop_assert!(ev >= min_possible && ev <= max_possible);
 }
 
@@ -496,7 +496,7 @@ pub fn analyze_turn(
 
 ## References
 
-1. **Yahtzee Optimal Strategy**: Woodward, "The Mathematics of Yahtzee" (2009)
+1. **Dicee Optimal Strategy**: Woodward, "The Mathematics of Dicee" (2009)
 2. **Dynamic Programming**: Bellman, "Dynamic Programming" (1957)
 3. **Memoization**: Michie, "Memo Functions and Machine Learning" (1968)
 4. **Source Implementation**: `/Users/verlyn13/00_inbox/dicee-engine-extracted/dicee-engine/src/core/solver.rs`

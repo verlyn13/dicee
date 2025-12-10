@@ -16,8 +16,8 @@ This simulation validates the `category_type_consistency` invariant, which enfor
 
 | File | Category Type | Case Style |
 |------|---------------|------------|
-| `$lib/types.ts` | `(typeof ALL_CATEGORIES)[number]` | **PascalCase** (`'Ones'`, `'Yahtzee'`) |
-| `$lib/types/multiplayer.ts` | Literal union type | **camelCase** (`'ones'`, `'yahtzee'`) |
+| `$lib/types.ts` | `(typeof ALL_CATEGORIES)[number]` | **PascalCase** (`'Ones'`, `'Dicee'`) |
+| `$lib/types/multiplayer.ts` | Literal union type | **camelCase** (`'ones'`, `'dicee'`) |
 
 This divergence will cause runtime bugs when converting between single-player and multiplayer game states.
 
@@ -34,7 +34,7 @@ TypeScript's `as const` assertion enables deriving types from runtime values:
 export const ALL_CATEGORIES = [
   'Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes',
   'ThreeOfAKind', 'FourOfAKind', 'FullHouse',
-  'SmallStraight', 'LargeStraight', 'Yahtzee', 'Chance'
+  'SmallStraight', 'LargeStraight', 'Dicee', 'Chance'
 ] as const;
 
 // Type derived from the const array
@@ -55,7 +55,7 @@ export type Category = (typeof ALL_CATEGORIES)[number];
 export type Category =
   | 'ones' | 'twos' | 'threes' | 'fours' | 'fives' | 'sixes'
   | 'threeOfAKind' | 'fourOfAKind' | 'fullHouse'
-  | 'smallStraight' | 'largeStraight' | 'yahtzee' | 'chance';
+  | 'smallStraight' | 'largeStraight' | 'dicee' | 'chance';
 ```
 
 **Problems**:
@@ -70,11 +70,11 @@ export type Category =
 
 ```typescript
 // $lib/types.ts (single-player)
-const ALL_CATEGORIES = ['Ones', 'Twos', ..., 'Yahtzee', 'Chance'] as const;
+const ALL_CATEGORIES = ['Ones', 'Twos', ..., 'Dicee', 'Chance'] as const;
 type Category = (typeof ALL_CATEGORIES)[number];
 
 // $lib/types/multiplayer.ts (multiplayer)
-type Category = 'ones' | 'twos' | ... | 'yahtzee' | 'chance';
+type Category = 'ones' | 'twos' | ... | 'dicee' | 'chance';
 ```
 
 **Runtime Bug Example**:
@@ -82,12 +82,12 @@ type Category = 'ones' | 'twos' | ... | 'yahtzee' | 'chance';
 ```typescript
 // In multiplayerGame store
 function scoreCategory(category: MultiplayerCategory) {
-  // category = 'yahtzee' (camelCase from server)
+  // category = 'dicee' (camelCase from server)
 
   // If we try to use this with single-player scoring...
   const analysis = getAnalysis(category);
   // TypeScript: OK (both are strings)
-  // Runtime: Fails because engine expects 'Yahtzee' not 'yahtzee'
+  // Runtime: Fails because engine expects 'Dicee' not 'dicee'
 }
 ```
 
@@ -109,7 +109,7 @@ export const UPPER_CATEGORIES = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Si
 
 export const LOWER_CATEGORIES = [
   'ThreeOfAKind', 'FourOfAKind', 'FullHouse',
-  'SmallStraight', 'LargeStraight', 'Yahtzee', 'Chance',
+  'SmallStraight', 'LargeStraight', 'Dicee', 'Chance',
 ] as const;
 
 export const ALL_CATEGORIES = [...UPPER_CATEGORIES, ...LOWER_CATEGORIES] as const;
@@ -132,7 +132,7 @@ export type Category = (typeof ALL_CATEGORIES)[number];
 export type Category =
   | 'ones' | 'twos' | 'threes' | 'fours' | 'fives' | 'sixes'
   | 'threeOfAKind' | 'fourOfAKind' | 'fullHouse'
-  | 'smallStraight' | 'largeStraight' | 'yahtzee' | 'chance';
+  | 'smallStraight' | 'largeStraight' | 'dicee' | 'chance';
 
 export interface Scorecard {
   ones: number | null;
@@ -160,14 +160,14 @@ export interface Scorecard {
 
 **Bug Scenario**:
 ```typescript
-// In multiplayer game, player scores 'yahtzee' (camelCase)
-// Store sends to server: { type: 'category.score', category: 'yahtzee' }
-// Server processes, sends back: { type: 'category.scored', category: 'yahtzee' }
+// In multiplayer game, player scores 'dicee' (camelCase)
+// Store sends to server: { type: 'category.score', category: 'dicee' }
+// Server processes, sends back: { type: 'category.scored', category: 'dicee' }
 
 // If we ever need to show analysis using the engine:
 import { analyzeTurn } from '$lib/services/engine';
-const analysis = await analyzeTurn(dice, 0, ['yahtzee']);
-// ⚠️ Engine expects 'Yahtzee' (PascalCase)
+const analysis = await analyzeTurn(dice, 0, ['dicee']);
+// ⚠️ Engine expects 'Dicee' (PascalCase)
 // Result: Category not found or wrong category scored
 ```
 
@@ -193,7 +193,7 @@ const analysis = await analyzeTurn(dice, 0, ['yahtzee']);
         "isCanonical": true,
         "values": ["Ones", "Twos", "Threes", "Fours", "Fives", "Sixes",
                    "ThreeOfAKind", "FourOfAKind", "FullHouse",
-                   "SmallStraight", "LargeStraight", "Yahtzee", "Chance"]
+                   "SmallStraight", "LargeStraight", "Dicee", "Chance"]
       }
     },
     {
@@ -209,7 +209,7 @@ const analysis = await analyzeTurn(dice, 0, ['yahtzee']);
         "isCanonical": false,
         "values": ["ones", "twos", "threes", "fours", "fives", "sixes",
                    "threeOfAKind", "fourOfAKind", "fullHouse",
-                   "smallStraight", "largeStraight", "yahtzee", "chance"]
+                   "smallStraight", "largeStraight", "dicee", "chance"]
       }
     },
     {
@@ -324,7 +324,7 @@ import type { AKGNode } from '../../schema/graph.schema';
 const CANONICAL_CATEGORIES = [
   'Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes',
   'ThreeOfAKind', 'FourOfAKind', 'FullHouse',
-  'SmallStraight', 'LargeStraight', 'Yahtzee', 'Chance'
+  'SmallStraight', 'LargeStraight', 'Dicee', 'Chance'
 ] as const;
 
 const CANONICAL_FILE = 'packages/web/src/lib/types.ts';
@@ -335,8 +335,8 @@ const CANONICAL_FILE = 'packages/web/src/lib/types.ts';
 const CATEGORY_PATTERNS = [
   /type\s+Category\s*=/,
   /type\s+\w*Category\w*\s*=/,
-  /'ones'\s*\|.*'yahtzee'/i,  // Literal union with category values
-  /'Ones'\s*\|.*'Yahtzee'/,
+  /'ones'\s*\|.*'dicee'/i,  // Literal union with category values
+  /'Ones'\s*\|.*'Dicee'/,
 ];
 
 /**
@@ -632,7 +632,7 @@ pnpm akg:check
    │ export type Category =
    │   | 'ones' | 'twos' | 'threes' | 'fours' | 'fives' | 'sixes'
    │   | 'threeOfAKind' | 'fourOfAKind' | 'fullHouse'
-   │   | 'smallStraight' | 'largeStraight' | 'yahtzee' | 'chance';
+   │   | 'smallStraight' | 'largeStraight' | 'dicee' | 'chance';
 
    Divergences found:
 
@@ -747,7 +747,7 @@ export function fromServerCategory(serverCategory: string): Category {
   const validCategories: Category[] = [
     'Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes',
     'ThreeOfAKind', 'FourOfAKind', 'FullHouse',
-    'SmallStraight', 'LargeStraight', 'Yahtzee', 'Chance'
+    'SmallStraight', 'LargeStraight', 'Dicee', 'Chance'
   ];
 
   if (!validCategories.includes(canonical as Category)) {
@@ -772,7 +772,7 @@ export const CATEGORY_KEY_MAP: Record<Category, string> = {
   FullHouse: 'fullHouse',
   SmallStraight: 'smallStraight',
   LargeStraight: 'largeStraight',
-  Yahtzee: 'yahtzee',
+  Dicee: 'dicee',
   Chance: 'chance',
 };
 ```
@@ -785,11 +785,11 @@ export const CATEGORY_KEY_MAP: Record<Category, string> = {
 import type { Category } from '$lib/types';
 
 // Server scorecard uses camelCase keys, but we can type it properly
-export type ServerScorecardKey = Lowercase<Category> | 'yahtzeeBonus' | 'upperBonus';
+export type ServerScorecardKey = Lowercase<Category> | 'diceeBonus' | 'upperBonus';
 
 export interface ServerScorecard {
   [key: string]: number | null;
-  yahtzeeBonus: number;
+  diceeBonus: number;
   upperBonus: number;
 }
 
@@ -835,7 +835,7 @@ If you control the PartyKit server, the cleaner solution is to align it with the
 type Category =
   | 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes'
   | 'ThreeOfAKind' | 'FourOfAKind' | 'FullHouse'
-  | 'SmallStraight' | 'LargeStraight' | 'Yahtzee' | 'Chance';
+  | 'SmallStraight' | 'LargeStraight' | 'Dicee' | 'Chance';
 ```
 
 This eliminates conversion entirely.
@@ -863,7 +863,7 @@ export const validCategoryGraph: AKGGraph = {
         isCanonicalSource: true,
         values: ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes',
                  'ThreeOfAKind', 'FourOfAKind', 'FullHouse',
-                 'SmallStraight', 'LargeStraight', 'Yahtzee', 'Chance']
+                 'SmallStraight', 'LargeStraight', 'Dicee', 'Chance']
       },
       metadata: { discoveredAt: new Date().toISOString(), confidence: 'high' }
     },
@@ -914,7 +914,7 @@ export const violationCategoryGraph: AKGGraph = {
         isCanonicalSource: true,
         values: ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes',
                  'ThreeOfAKind', 'FourOfAKind', 'FullHouse',
-                 'SmallStraight', 'LargeStraight', 'Yahtzee', 'Chance']
+                 'SmallStraight', 'LargeStraight', 'Dicee', 'Chance']
       },
       metadata: { discoveredAt: new Date().toISOString(), confidence: 'high' }
     },
@@ -927,7 +927,7 @@ export const violationCategoryGraph: AKGGraph = {
         definitionStyle: 'literal_union',
         sourceArray: null,
         isCanonical: false,
-        content: `type Category = 'ones' | 'twos' | 'threes' | 'fours' | 'fives' | 'sixes' | 'threeOfAKind' | 'fourOfAKind' | 'fullHouse' | 'smallStraight' | 'largeStraight' | 'yahtzee' | 'chance';`,
+        content: `type Category = 'ones' | 'twos' | 'threes' | 'fours' | 'fives' | 'sixes' | 'threeOfAKind' | 'fourOfAKind' | 'fullHouse' | 'smallStraight' | 'largeStraight' | 'dicee' | 'chance';`,
         line: 31
       },
       metadata: { discoveredAt: new Date().toISOString(), confidence: 'high' }
@@ -1069,7 +1069,7 @@ describe('category_type_consistency invariant', () => {
             ...violationCategoryGraph.nodes[1],
             attributes: {
               ...violationCategoryGraph.nodes[1].attributes,
-              content: `type Category = 'ones' | 'twos' | 'yahtzee';`  // Missing most categories
+              content: `type Category = 'ones' | 'twos' | 'dicee';`  // Missing most categories
             }
           }
         ]
@@ -1227,7 +1227,7 @@ tsc --noEmit
 | `FullHouse` | `fullHouse` | 8 |
 | `SmallStraight` | `smallStraight` | 9 |
 | `LargeStraight` | `largeStraight` | 10 |
-| `Yahtzee` | `yahtzee` | 11 |
+| `Dicee` | `dicee` | 11 |
 | `Chance` | `chance` | 12 |
 
 ---
@@ -1300,7 +1300,7 @@ The Category type divergence was addressed by **accepting dual representation wi
 import { toCoreCategory } from '$lib/types/category-convert';
 
 function handleServerEvent(event: CategoryScoredEvent) {
-  const category = toCoreCategory(event.category); // 'yahtzee' → 'Yahtzee'
+  const category = toCoreCategory(event.category); // 'dicee' → 'Dicee'
   updateScorecard(category);
 }
 
@@ -1308,7 +1308,7 @@ function handleServerEvent(event: CategoryScoredEvent) {
 import { toWireCategory } from '$lib/types/category-convert';
 
 function scoreCategory(category: CoreCategory) {
-  send({ category: toWireCategory(category) }); // 'Yahtzee' → 'yahtzee'
+  send({ category: toWireCategory(category) }); // 'Dicee' → 'dicee'
 }
 ```
 

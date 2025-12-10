@@ -155,7 +155,7 @@ Bit 7:  FourOfAKind    (0x0080)
 Bit 8:  FullHouse      (0x0100)
 Bit 9:  SmallStraight  (0x0200)
 Bit 10: LargeStraight  (0x0400)
-Bit 11: Yahtzee        (0x0800)
+Bit 11: Dicee        (0x0800)
 Bit 12: Chance         (0x1000)
 
 All categories: 0x1FFF (8191)
@@ -371,18 +371,18 @@ function categoriesToBitmask(categories: Category[]): number {
 ```rust
 #[test]
 fn test_analyze_turn_wasm_export() {
-    // Yahtzee with all categories available
+    // Dicee with all categories available
     let result = analyze_turn(&[5,5,5,5,5], 2, 0x1FFF);
     assert!(result.is_ok());
 
-    // Parse and validate recommendation is to score Yahtzee
+    // Parse and validate recommendation is to score Dicee
 }
 
 #[test]
 fn test_available_categories_bitmask() {
-    // Only Yahtzee available
+    // Only Dicee available
     let result = analyze_turn(&[3,3,3,3,1], 2, 0x0800);
-    // Should recommend rerolling for Yahtzee
+    // Should recommend rerolling for Dicee
 }
 
 #[test]
@@ -399,10 +399,10 @@ fn test_invalid_inputs() {
 
 ```typescript
 describe('analyzeTurn', () => {
-    it('recommends scoring Yahtzee when available', async () => {
+    it('recommends scoring Dicee when available', async () => {
         const analysis = await analyzeTurn([5,5,5,5,5], 2, ALL_CATEGORIES);
         expect(analysis.action).toBe('score');
-        expect(analysis.recommendedCategory).toBe('Yahtzee');
+        expect(analysis.recommendedCategory).toBe('Dicee');
     });
 
     it('recommends rerolling with partial straight', async () => {

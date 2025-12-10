@@ -988,7 +988,7 @@ These files can be copied directly with only import path changes:
 # From packages/partykit/src/game/ to packages/cloudflare-do/src/game/
 cp handlers.ts   # Command handlers
 cp machine.ts    # State machine
-cp scoring.ts    # Yahtzee rules
+cp scoring.ts    # Dicee rules
 cp schemas.ts    # Zod schemas
 cp types.ts      # Type definitions
 ```

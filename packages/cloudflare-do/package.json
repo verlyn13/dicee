@@ -16,14 +16,15 @@
     "test:all": "vitest run && vitest run --config vitest.integration.config.ts"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241205.0",
+    "@types/node": "^22.10.2",
     "typescript": "^5.9.3",
-    "vitest": "^2.1.8",
+    "vitest": "^4.0.14",
     "wrangler": "^4.51.0"
   },
   "dependencies": {
+    "@dicee/shared": "workspace:*",
     "jose": "^5.9.6",
     "nanoid": "^5.1.6",
-    "zod": "^3.24.1"
+    "zod": "^4.1.13"
   }
 }

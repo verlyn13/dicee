@@ -1,7 +1,7 @@
 # Dicee Codebase Conventions
 
-**Version**: 1.2.0
-**Last Updated**: 2025-12-07
+**Version**: 1.3.0
+**Last Updated**: 2025-12-09
 **Scope**: All agents (Claude Code, Windsurf, Codex, Gemini)
 **Architecture**: Unified Cloudflare stack (Pages + Workers via Service Bindings)
 
@@ -197,7 +197,7 @@ $effect(() => {
 export const CATEGORIES = [
     'Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes',
     'ThreeOfAKind', 'FourOfAKind', 'FullHouse',
-    'SmallStraight', 'LargeStraight', 'Yahtzee', 'Chance'
+    'SmallStraight', 'LargeStraight', 'Dicee', 'Chance'
 ] as const;
 export type Category = typeof CATEGORIES[number];
 
@@ -443,7 +443,95 @@ Check for:
 
 ---
 
-## 10. Verification Commands
+## 10. WebSocket Commands & Events
+
+### The Naming Contract
+
+| Layer | Format | Example |
+|-------|--------|---------|
+| **Server Commands** (client → server) | UPPER_SNAKE_CASE | `DICE_ROLL`, `DICE_KEEP`, `CATEGORY_SCORE` |
+| **Server Events** (server → client) | UPPER_SNAKE_CASE | `DICE_ROLLED`, `CATEGORY_SCORED`, `GAME_STARTED` |
+| **Client Normalized Events** (after normalization) | lowercase.dot | `dice.rolled`, `category.scored`, `game.started` |
+
+### Why This Matters
+
+The server (GameRoom Durable Object) uses a switch statement that expects **UPPERCASE** command types. If the client sends lowercase.dot format commands, the server silently drops them (no match in the switch).
+
+**Root cause of bugs**: Stores sending raw commands with wrong format.
+
+```typescript
+// ❌ WRONG: Store sending raw command with lowercase type
+roomService.send({ type: 'dice.roll', kept: [false, false, false, false, false] });
+// Server switch never matches 'dice.roll' → command silently dropped
+
+// ✅ CORRECT: Use dedicated roomService methods
+roomService.sendRollDice([false, false, false, false, false]);
+// Method sends { type: 'DICE_ROLL', kept: [...] } → server handles it
+```
+
+### Command Reference
+
+| Command | roomService Method | Server Handler |
+|---------|-------------------|----------------|
+| `DICE_ROLL` | `sendRollDice(kept)` | `handleDiceRoll()` |
+| `DICE_KEEP` | `sendKeepDice(indices)` | `handleDiceKeep()` |
+| `CATEGORY_SCORE` | `sendScoreCategory(category)` | `handleCategoryScore()` |
+| `CHAT_MESSAGE` | `sendChat(content)` | `handleChatMessage()` |
+| `START_GAME` | `sendStartGame()` | `handleStartGame()` |
+| `QUICK_PLAY_START` | `startQuickPlay(aiProfiles)` | `handleQuickPlayStart()` |
+
+### Event Normalization
+
+The client's `normalizeServerEvent()` function converts server UPPERCASE events to lowercase.dot format for store consumption:
+
+```typescript
+// Server broadcasts:
+{ type: 'DICE_ROLLED', payload: { playerId, dice, rollNumber, rollsRemaining } }
+
+// Client normalizes to:
+{ type: 'dice.rolled', playerId, dice, rollNumber, rollsRemaining }
+```
+
+### Store Pattern
+
+Stores should **never** construct raw commands. Always use the dedicated roomService methods:
+
+```typescript
+// In multiplayerGame.svelte.ts
+function rollDice(kept: KeptMask): void {
+    if (!canRoll) return;
+    uiPhase = 'ROLLING';
+    pending = true;
+    error = null;
+
+    // ✅ Use dedicated method (sends correct UPPERCASE type)
+    roomService.sendRollDice(kept);
+
+    // ❌ Never do this (wrong format)
+    // roomService.send({ type: 'dice.roll', kept });
+}
+```
+
+### Adding New Commands
+
+When adding new WebSocket commands:
+
+1. **Server (GameRoom.ts)**: Add case to `handleMessage()` switch with UPPERCASE type
+2. **roomService**: Add dedicated `send[CommandName]()` method that sends UPPERCASE type
+3. **Store**: Call the dedicated method, never raw `send()`
+4. **Types**: Add to `Command` union type in `multiplayer.ts`
+
+### Technical Debt Note
+
+The `Command` type definitions in `multiplayer.ts` currently use mixed formats:
+- Game commands: lowercase.dot (`dice.roll`, `category.score`)
+- Chat commands: UPPERCASE (`CHAT`, `REACTION`)
+
+The server expects UPPERCASE. The dedicated `roomService.send*()` methods work around this by hardcoding the correct format. A future cleanup could align all type definitions to UPPERCASE, but using dedicated methods is the recommended pattern regardless.
+
+---
+
+## 11. Verification Commands
 
 ```bash
 # Check for naming violations
@@ -461,7 +549,7 @@ pnpm web:sync && pnpm --filter @dicee/web exec svelte-check
 
 ---
 
-## References
+## 12. References
 
 ### Architecture
 - [Unified Cloudflare Stack](../docs/unified-cloudflare-stack.md) - CF Pages migration

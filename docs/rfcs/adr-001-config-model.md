@@ -124,7 +124,7 @@ impl DiceConfig {
 
 1. **Migration complexity**: Existing code uses ordered arrays
 2. **Type conversion overhead**: Must convert user input to canonical form
-3. **Loss of die identity**: Cannot track "which physical die" (acceptable for Yahtzee)
+3. **Loss of die identity**: Cannot track "which physical die" (acceptable for Dicee)
 
 ### Neutral
 
@@ -247,7 +247,7 @@ const fn generate_all_configs() -> [DiceConfig; 252] {
 
 1. **Stars and Bars**: [Combinatorics, Wikipedia](https://en.wikipedia.org/wiki/Stars_and_bars_(combinatorics))
 2. **Multinomial Coefficients**: [Multinomial Theorem](https://en.wikipedia.org/wiki/Multinomial_theorem)
-3. **Yahtzee Mathematics**: Woodward, "The Mathematics of Yahtzee" (2009)
+3. **Dicee Mathematics**: Woodward, "The Mathematics of Dicee" (2009)
 4. **Source Implementation**: `/Users/verlyn13/00_inbox/dicee-engine-extracted/dicee-engine/src/core/config.rs`
 
 ---

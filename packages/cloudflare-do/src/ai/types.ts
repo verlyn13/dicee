@@ -34,8 +34,8 @@ export interface AITraits {
 	/** Willingness to take risks for higher rewards (0 = conservative, 1 = aggressive) */
 	riskTolerance: number;
 
-	/** Tendency to chase Yahtzee even when suboptimal (0 = pragmatic, 1 = obsessive) */
-	yahtzeeChaser: number;
+	/** Tendency to chase Dicee even when suboptimal (0 = pragmatic, 1 = obsessive) */
+	diceeChaser: number;
 
 	/** Focus on completing upper section bonus (0 = balanced, 1 = upper-focused) */
 	upperSectionFocus: number;

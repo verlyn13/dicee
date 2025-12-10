@@ -48,7 +48,7 @@ PUBLIC_SUPABASE_URL = "https://duhsbuyxyppgbkwbbtqg.supabase.co"
 [[env.production.services]]
 binding = "GAME_WORKER"
 service = "gamelobby"
-environment = "production"
+# Note: No environment specified - binds to the default (non-environment) deployment
 
 # ─────────────────────────────────────────────────────────────
 # Build Configuration (for wrangler pages deploy)

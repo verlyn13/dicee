@@ -143,7 +143,7 @@ interface PlayerStatistics {
   gamesWon: number;
   averageScore: number;
   highScore: number;
-  totalYahtzees: number;
+  totalDicees: number;
   
   // Advanced stats
   averageTurnsToComplete: number;
@@ -921,7 +921,7 @@ class ProfileService {
         gameResult.score
       ),
       highScore: Math.max(profile.stats.highScore, gameResult.score),
-      totalYahtzees: profile.stats.totalYahtzees + gameResult.yahtzees,
+      totalDicees: profile.stats.totalDicees + gameResult.dicees,
       lastPlayedAt: new Date(),
     };
     

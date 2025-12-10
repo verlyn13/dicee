@@ -124,12 +124,22 @@ export class GameStateManager {
 			avatarSeed: string;
 			isHost: boolean;
 			connectionId: string;
+			type?: 'human' | 'ai';
+			aiProfileId?: string;
 		}>,
 		config: MultiplayerGameState['config'],
 	): Promise<MultiplayerGameState> {
 		const playerRecords: Record<string, PlayerGameState> = {};
 		for (const p of players) {
-			playerRecords[p.id] = createPlayerGameState(p.id, p.displayName, p.avatarSeed, p.isHost, p.connectionId);
+			playerRecords[p.id] = createPlayerGameState(
+				p.id,
+				p.displayName,
+				p.avatarSeed,
+				p.isHost,
+				p.connectionId,
+				p.type ?? 'human',
+				p.aiProfileId,
+			);
 		}
 
 		this.state = {
@@ -194,6 +204,54 @@ export class GameStateManager {
 
 		return {
 			playerOrder: randomized,
+			currentPlayerId,
+			turnNumber: 1,
+		};
+	}
+
+	/**
+	 * Start the game with a specific player order (for Quick Play).
+	 * Unlike startGame(), this does not randomize - uses the provided order.
+	 */
+	async startGameWithOrder(playerOrder: string[]): Promise<{
+		playerOrder: string[];
+		currentPlayerId: string;
+		turnNumber: number;
+	}> {
+		const state = await this.getState();
+		if (!state) throw new Error('No game state');
+		if (state.phase !== 'waiting' && state.phase !== 'starting') {
+			throw new Error('Game already in progress');
+		}
+
+		// Validate all players exist
+		for (const playerId of playerOrder) {
+			if (!state.players[playerId]) {
+				throw new Error(`Player not found: ${playerId}`);
+			}
+		}
+
+		state.phase = 'turn_roll';
+		state.playerOrder = playerOrder; // Use provided order, no randomization
+		state.currentPlayerIndex = 0;
+		state.turnNumber = 1;
+		state.roundNumber = 1;
+		state.gameStartedAt = new Date().toISOString();
+		state.turnStartedAt = new Date().toISOString();
+
+		// Initialize current player's turn state
+		const currentPlayerId = playerOrder[0];
+		const currentPlayer = state.players[currentPlayerId];
+		if (currentPlayer) {
+			currentPlayer.rollsRemaining = MAX_ROLLS_PER_TURN;
+			currentPlayer.currentDice = null;
+			currentPlayer.keptDice = null;
+		}
+
+		await this.saveState();
+
+		return {
+			playerOrder,
 			currentPlayerId,
 			turnNumber: 1,
 		};
@@ -277,7 +335,7 @@ export class GameStateManager {
 	): Promise<{
 		score: number;
 		totalScore: number;
-		isYahtzeeBonus: boolean;
+		isDiceeBonus: boolean;
 		nextPhase: GamePhase;
 		nextPlayerId: string | null;
 		nextTurnNumber: number;
@@ -348,7 +406,7 @@ export class GameStateManager {
 		return {
 			score: result.score,
 			totalScore: player.totalScore,
-			isYahtzeeBonus: result.isYahtzeeBonus,
+			isDiceeBonus: result.isDiceeBonus,
 			nextPhase,
 			nextPlayerId,
 			nextTurnNumber,
@@ -643,11 +701,11 @@ export class GameStateManager {
 	private calculateRankings(state: MultiplayerGameState): PlayerRanking[] {
 		const players = Object.values(state.players);
 
-		// Count Yahtzees
-		const countYahtzees = (p: PlayerGameState): number => {
+		// Count Dicees
+		const countDicees = (p: PlayerGameState): number => {
 			let count = 0;
-			if (p.scorecard.yahtzee !== null && p.scorecard.yahtzee > 0) count = 1;
-			count += Math.floor(p.scorecard.yahtzeeBonus / 100);
+			if (p.scorecard.dicee !== null && p.scorecard.dicee > 0) count = 1;
+			count += Math.floor(p.scorecard.diceeBonus / 100);
 			return count;
 		};
 
@@ -670,7 +728,7 @@ export class GameStateManager {
 				displayName: player.displayName,
 				rank,
 				score: player.totalScore,
-				yahtzeeCount: countYahtzees(player),
+				diceeCount: countDicees(player),
 			});
 		}
 

@@ -416,10 +416,10 @@ export class DiceeAudioEngine {
   }
   
   /**
-   * Yahtzee! - Full celebration
+   * Dicee! - Full celebration
    * Impact + ascending arpeggio + shimmer
    */
-  yahtzee(): void {
+  dicee(): void {
     if (!this.enabled) return;
     this.init();
     
@@ -559,10 +559,10 @@ export const audio = new DiceeAudioEngine();
   animation: score-punch 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* === YAHTZEE SPECIAL === */
+/* === DICEE SPECIAL === */
 
 /* Full screen flash overlay */
-.yahtzee-flash {
+.dicee-flash {
   position: fixed;
   inset: 0;
   background: white;
@@ -577,7 +577,7 @@ export const audio = new DiceeAudioEngine();
 }
 
 /* All borders invert */
-@keyframes yahtzee-invert {
+@keyframes dicee-invert {
   0%, 100% {
     filter: none;
   }
@@ -586,12 +586,12 @@ export const audio = new DiceeAudioEngine();
   }
 }
 
-.yahtzee-celebration {
-  animation: yahtzee-invert 400ms ease-out;
+.dicee-celebration {
+  animation: dicee-invert 400ms ease-out;
 }
 
 /* Gold text on black background */
-.yahtzee-highlight {
+.dicee-highlight {
   background: var(--color-border) !important;
   color: var(--color-accent) !important;
   transition: all 300ms ease;
@@ -606,13 +606,13 @@ export const audio = new DiceeAudioEngine();
   import { audio } from '$lib/audio/DiceeAudioEngine';
   import { fade } from 'svelte/transition';
   
-  export let trigger: 'none' | 'optimal' | 'yahtzee' = 'none';
+  export let trigger: 'none' | 'optimal' | 'dicee' = 'none';
   
   let showFlash = false;
   
-  $: if (trigger === 'yahtzee') {
+  $: if (trigger === 'dicee') {
     showFlash = true;
-    audio.yahtzee();
+    audio.dicee();
     setTimeout(() => showFlash = false, 300);
   } else if (trigger === 'optimal') {
     audio.quickening();
@@ -620,7 +620,7 @@ export const audio = new DiceeAudioEngine();
 </script>
 
 {#if showFlash}
-  <div class="yahtzee-flash" transition:fade={{ duration: 300 }}></div>
+  <div class="dicee-flash" transition:fade={{ duration: 300 }}></div>
 {/if}
 ```
 
@@ -655,7 +655,7 @@ The profile page is your **statistical identity**—a visual representation of h
 │  │  High Score         │  │  "Against All Odds"         │  │
 │  │  ▓▓▓▓▓▓▓▓░░ 312     │  │  Hit 5% probability 10x    │  │
 │  │                     │  │                             │  │
-│  │  Yahtzees           │  │  "The Streak"               │  │
+│  │  Dicees           │  │  "The Streak"               │  │
 │  │  ▓▓▓▓░░░░░░ 23      │  │  12 optimal moves in a row │  │
 │  │                     │  │                             │  │
 │  └─────────────────────┘  └─────────────────────────────┘  │
@@ -676,7 +676,7 @@ The profile page is your **statistical identity**—a visual representation of h
 │  │  │ TWOS        ███████░░░ 71%                 │     │   │
 │  │  │ THREES      █████████░ 89%                 │     │   │
 │  │  │ ...                                        │     │   │
-│  │  │ YAHTZEE     ██████████ 94%                 │     │   │
+│  │  │ DICEE     ██████████ 94%                 │     │   │
 │  │  └────────────────────────────────────────────┘     │   │
 │  │                                                      │   │
 │  └─────────────────────────────────────────────────────┘   │
@@ -791,7 +791,7 @@ function getAvatarUrl(userId: string): string {
 | Badge | Name | Requirement |
 |-------|------|-------------|
 | 🎯 | "The Calculator" | 50 Full Houses scored |
-| 🎲 | "Yahtzee Master" | 10 Yahtzees |
+| 🎲 | "Dicee Master" | 10 Dicees |
 | 📊 | "Statistician" | 80%+ optimal rate over 50 games |
 | 🔥 | "Hot Streak" | 10+ optimal moves in a row |
 | 🎰 | "Against All Odds" | Hit <10% probability 10 times |
@@ -1350,7 +1350,7 @@ Lightweight chat with predefined quick reactions:
   color: var(--color-text-muted);
 }
 
-/* System reactions (Quickening, Yahtzee) */
+/* System reactions (Quickening, Dicee) */
 .reaction.system {
   background: var(--color-accent);
   border: 2px solid var(--color-border);

@@ -33,6 +33,9 @@
     "akg:mermaid": "bun run packages/web/src/tools/akg/cli/mermaid.ts",
     "akg:all": "pnpm akg:discover && pnpm akg:mermaid",
     "akg:test": "bun run packages/web/src/tools/akg/mcp/test-server.ts",
+    "audio:list": "bun run packages/web/src/tools/audio-gen/cli/generate.ts --list",
+    "audio:status": "bun run packages/web/src/tools/audio-gen/cli/generate.ts --status",
+    "audio:gen": "bun run packages/web/src/tools/audio-gen/cli/generate.ts",
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {

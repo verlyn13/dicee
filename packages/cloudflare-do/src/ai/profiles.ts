@@ -63,7 +63,7 @@ export const RILEY: AIProfile = {
 	skillLevel: 0.35,
 	traits: {
 		riskTolerance: 0.3, // Conservative, plays it safe
-		yahtzeeChaser: 0.7, // Loves trying for Yahtzee (even when wrong)
+		diceeChaser: 0.7, // Loves trying for Dicee (even when wrong)
 		upperSectionFocus: 0.3, // Neglects upper section bonus
 		usesAllRolls: 0.8, // Often uses all rolls even when unnecessary
 		thinkingTime: 0.4, // Reasonably quick decisions
@@ -88,7 +88,7 @@ export const CARMEN: AIProfile = {
 	skillLevel: 0.6,
 	traits: {
 		riskTolerance: 0.5, // Balanced risk assessment
-		yahtzeeChaser: 0.4, // Realistic about Yahtzee chances
+		diceeChaser: 0.4, // Realistic about Dicee chances
 		upperSectionFocus: 0.5, // Balanced section strategy
 		usesAllRolls: 0.5, // Uses rolls appropriately
 		thinkingTime: 0.5, // Moderate pace
@@ -101,7 +101,7 @@ export const CARMEN: AIProfile = {
  * Liam - The Risk-Taker
  *
  * An aggressive player who goes for big scores.
- * Will chase Yahtzees and large straights even when risky.
+ * Will chase Dicees and large straights even when risky.
  * Can score big or crash spectacularly.
  */
 export const LIAM: AIProfile = {
@@ -113,7 +113,7 @@ export const LIAM: AIProfile = {
 	skillLevel: 0.7,
 	traits: {
 		riskTolerance: 0.9, // Very aggressive
-		yahtzeeChaser: 0.9, // Always chasing the dream
+		diceeChaser: 0.9, // Always chasing the dream
 		upperSectionFocus: 0.2, // Ignores safe upper section points
 		usesAllRolls: 0.9, // Always uses all rolls hoping for better
 		thinkingTime: 0.3, // Quick, impulsive decisions
@@ -138,7 +138,7 @@ export const PROFESSOR: AIProfile = {
 	skillLevel: 0.95,
 	traits: {
 		riskTolerance: 0.5, // Mathematically optimal risk
-		yahtzeeChaser: 0.3, // Only when EV positive
+		diceeChaser: 0.3, // Only when EV positive
 		upperSectionFocus: 0.6, // Prioritizes upper bonus appropriately
 		usesAllRolls: 0.4, // Knows when to stop early
 		thinkingTime: 0.8, // Takes time to calculate
@@ -163,7 +163,7 @@ export const CHARLIE: AIProfile = {
 	skillLevel: 0.2,
 	traits: {
 		riskTolerance: 0.5, // Varies wildly
-		yahtzeeChaser: 0.5, // Random pursuit
+		diceeChaser: 0.5, // Random pursuit
 		upperSectionFocus: 0.5, // No strategy
 		usesAllRolls: 0.7, // Usually rolls everything
 		thinkingTime: 0.6, // Medium paced chaos

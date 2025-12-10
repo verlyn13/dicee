@@ -17,7 +17,7 @@ import type {
 // Point values from spec
 const GALLERY_POINT_VALUES = {
 	PREDICTION_CORRECT_BASE: 10,
-	PREDICTION_YAHTZEE: 50,
+	PREDICTION_DICEE: 50,
 	PREDICTION_EXACT_SCORE: 100,
 	PREDICTION_STREAK_MULTIPLIER: 0.1,
 	REACTION_GIVEN: 1,
@@ -135,7 +135,7 @@ describe('Gallery Points Types', () => {
 			const achievement: GalleryAchievement = {
 				id: 'called_it',
 				name: 'Called It!',
-				description: 'Predicted a Yahtzee correctly',
+				description: 'Predicted a Dicee correctly',
 				emoji: '📢',
 				threshold: 1,
 				unlocked: true,
@@ -234,8 +234,8 @@ describe('Point Calculations', () => {
 			expect(GALLERY_POINT_VALUES.PREDICTION_CORRECT_BASE).toBe(10);
 		});
 
-		it('should award bonus for Yahtzee prediction', () => {
-			expect(GALLERY_POINT_VALUES.PREDICTION_YAHTZEE).toBe(50);
+		it('should award bonus for Dicee prediction', () => {
+			expect(GALLERY_POINT_VALUES.PREDICTION_DICEE).toBe(50);
 		});
 
 		it('should award bonus for exact score prediction', () => {
@@ -289,7 +289,7 @@ describe('Achievements', () => {
 			expect(ACHIEVEMENTS.oracle.threshold).toBe(5);
 		});
 
-		it('should have called_it achievement (predict Yahtzee)', () => {
+		it('should have called_it achievement (predict Dicee)', () => {
 			expect(ACHIEVEMENTS.called_it.threshold).toBe(1);
 		});
 
@@ -351,7 +351,7 @@ describe('Achievements', () => {
 			const newAchievement: GalleryAchievement = {
 				id: 'called_it',
 				name: 'Called It!',
-				description: 'Predicted a Yahtzee correctly',
+				description: 'Predicted a Dicee correctly',
 				emoji: '📢',
 				threshold: 1,
 				unlocked: true,

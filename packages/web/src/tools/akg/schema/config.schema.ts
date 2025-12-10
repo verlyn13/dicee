@@ -91,7 +91,8 @@ export const DiscoveryConfig = z.object({
 		.default([
 			'packages/web/src/**/*.ts',
 			'packages/web/src/**/*.svelte',
-			'packages/partykit/src/**/*.ts',
+			'packages/shared/src/**/*.ts',
+			'packages/cloudflare-do/src/**/*.ts',
 		]),
 
 	/** File patterns to exclude */
@@ -198,7 +199,8 @@ export const defaultConfig: AKGConfig = {
 		include: [
 			'packages/web/src/**/*.ts',
 			'packages/web/src/**/*.svelte',
-			'packages/partykit/src/**/*.ts',
+			'packages/shared/src/**/*.ts',
+			'packages/cloudflare-do/src/**/*.ts',
 		],
 		exclude: [
 			'**/*.test.ts',
@@ -211,50 +213,65 @@ export const defaultConfig: AKGConfig = {
 	},
 
 	layers: [
+		// Cross-package shared layer (foundation)
+		{
+			name: 'shared',
+			paths: ['packages/shared/src/**'],
+			mayImport: [], // Shared imports nothing external
+			description: 'Cross-package shared types and schemas (@dicee/shared)',
+		},
+		// Cloudflare Durable Objects package
+		{
+			name: 'cloudflare-do',
+			paths: ['packages/cloudflare-do/src/**'],
+			mayImport: ['shared'],
+			description: 'Cloudflare Durable Objects (GameRoom, GlobalLobby)',
+		},
+		// Web package layers
 		{
 			name: 'routes',
 			paths: ['packages/web/src/routes/**'],
-			mayImport: ['components', 'stores', 'services', 'types', 'lib'],
+			mayImport: ['components', 'stores', 'services', 'types', 'lib', 'shared'],
 			description: 'SvelteKit page routes and layouts',
 		},
 		{
 			name: 'components',
 			paths: ['packages/web/src/lib/components/**'],
-			mayImport: ['components', 'types', 'utils'],
+			mayImport: ['components', 'types', 'utils', 'shared'],
 			mayNotImport: ['stores', 'services'],
 			notes: 'Smart containers may import stores (exception)',
 		},
 		{
 			name: 'stores',
 			paths: ['packages/web/src/lib/stores/**'],
-			mayImport: ['services', 'types', 'supabase'],
+			mayImport: ['services', 'types', 'supabase', 'shared'],
 			mayNotImport: ['components', 'routes'],
 			description: 'Svelte 5 rune stores',
 		},
 		{
 			name: 'services',
 			paths: ['packages/web/src/lib/services/**'],
-			mayImport: ['types', 'supabase', 'wasm'],
+			mayImport: ['types', 'supabase', 'wasm', 'shared'],
 			mayNotImport: ['components', 'routes', 'stores'],
 			description: 'Business logic and external API wrappers',
 		},
 		{
 			name: 'types',
 			paths: ['packages/web/src/lib/types/**', 'packages/web/src/lib/types.ts'],
-			mayImport: ['types'],
+			mayImport: ['types', 'shared'],
 			description: 'TypeScript type definitions',
 		},
 		{
 			name: 'supabase',
 			paths: ['packages/web/src/lib/supabase/**'],
-			mayImport: ['types'],
+			mayImport: ['types', 'shared'],
 			mayNotImport: ['components', 'routes', 'stores', 'services'],
 			description: 'Supabase client and helpers',
 		},
 		{
 			name: 'wasm',
 			paths: ['packages/web/src/lib/wasm/**', 'packages/web/src/lib/engine.ts'],
-			mayImport: ['types'],
+			mayImport: ['types', 'shared'],
 			notes: 'Only engine.ts should be imported by other modules',
 			description: 'WASM bridge (generated + wrapper)',
 		},
@@ -299,7 +316,8 @@ export function mergeWithDefaults(userConfig: DeepPartial<AKGConfig>): AKGConfig
 		include: [
 			'packages/web/src/**/*.ts',
 			'packages/web/src/**/*.svelte',
-			'packages/partykit/src/**/*.ts',
+			'packages/shared/src/**/*.ts',
+			'packages/cloudflare-do/src/**/*.ts',
 		],
 		exclude: [
 			'**/*.test.ts',

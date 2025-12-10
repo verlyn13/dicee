@@ -138,20 +138,29 @@ function getJWKSKeyGetter(supabaseUrl: string): jose.JWTVerifyGetKey {
 /**
  * Verify a Supabase JWT token.
  *
+ * Supports both:
+ * - Asymmetric keys (ES256, RS256) via JWKS discovery endpoint
+ * - Legacy HS256 shared secret (fallback)
+ *
  * @param token - The JWT access token from the client
  * @param supabaseUrl - The Supabase project URL (e.g., https://xxx.supabase.co)
+ * @param jwtSecret - Optional legacy JWT secret for HS256 fallback
  * @returns AuthResult indicating success with claims or failure with error
  *
  * @example
  * ```typescript
- * const result = await verifySupabaseJWT(token, env.SUPABASE_URL);
+ * const result = await verifySupabaseJWT(token, env.SUPABASE_URL, env.SUPABASE_JWT_SECRET);
  * if (!result.success) {
  *   return new Response(result.error, { status: 401 });
  * }
  * const userId = result.claims.sub;
  * ```
  */
-export async function verifySupabaseJWT(token: string, supabaseUrl: string): Promise<AuthResult> {
+export async function verifySupabaseJWT(
+	token: string,
+	supabaseUrl: string,
+	jwtSecret?: string
+): Promise<AuthResult> {
 	// Validate inputs
 	if (!token || typeof token !== 'string') {
 		return {
@@ -170,33 +179,60 @@ export async function verifySupabaseJWT(token: string, supabaseUrl: string): Pro
 	}
 
 	try {
-		// Get JWKS key getter (cached)
+		// First, try JWKS-based verification (for asymmetric keys like ES256)
 		const getKey = getJWKSKeyGetter(supabaseUrl);
 
-		// Verify the JWT
-		const { payload } = await jose.jwtVerify(token, getKey, {
-			// Verify issuer matches Supabase auth
-			issuer: `${supabaseUrl}/auth/v1`,
-			// Verify audience is 'authenticated' (Supabase standard)
-			audience: 'authenticated',
-			// Allow 30 second clock skew
-			clockTolerance: 30,
-		});
+		try {
+			const { payload } = await jose.jwtVerify(token, getKey, {
+				// Verify issuer matches Supabase auth
+				issuer: `${supabaseUrl}/auth/v1`,
+				// Verify audience is 'authenticated' (Supabase standard)
+				audience: 'authenticated',
+				// Allow 30 second clock skew
+				clockTolerance: 30,
+			});
 
-		// Validate required claims
-		if (!payload.sub || typeof payload.sub !== 'string') {
+			// Validate required claims
+			if (!payload.sub || typeof payload.sub !== 'string') {
+				return {
+					success: false,
+					error: 'Token missing subject claim',
+					code: 'INVALID_CLAIMS',
+				};
+			}
+
 			return {
-				success: false,
-				error: 'Token missing subject claim',
-				code: 'INVALID_CLAIMS',
+				success: true,
+				claims: payload as unknown as JWTClaims,
 			};
-		}
+		} catch (jwksError) {
+			// If JWKS fails and we have a JWT secret, try HS256 fallback
+			if (jwtSecret && jwksError instanceof jose.errors.JWKSNoMatchingKey) {
+				console.log('[Auth] JWKS verification failed, trying HS256 fallback');
+				const secret = new TextEncoder().encode(jwtSecret);
 
-		// Return success with typed claims
-		return {
-			success: true,
-			claims: payload as unknown as JWTClaims,
-		};
+				const { payload } = await jose.jwtVerify(token, secret, {
+					audience: 'authenticated',
+					clockTolerance: 30,
+				});
+
+				if (!payload.sub || typeof payload.sub !== 'string') {
+					return {
+						success: false,
+						error: 'Token missing subject claim',
+						code: 'INVALID_CLAIMS',
+					};
+				}
+
+				return {
+					success: true,
+					claims: payload as unknown as JWTClaims,
+				};
+			}
+
+			// Re-throw if no fallback available
+			throw jwksError;
+		}
 	} catch (error) {
 		// Handle specific jose errors
 		if (error instanceof jose.errors.JWTExpired) {
@@ -226,7 +262,7 @@ export async function verifySupabaseJWT(token: string, supabaseUrl: string): Pro
 		if (error instanceof jose.errors.JWKSNoMatchingKey) {
 			return {
 				success: false,
-				error: 'No matching key found in JWKS',
+				error: 'No matching key found in JWKS (rotate to asymmetric key or provide JWT secret)',
 				code: 'INVALID_SIGNATURE',
 			};
 		}

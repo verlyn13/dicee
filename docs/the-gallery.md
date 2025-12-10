@@ -9,7 +9,7 @@ The goal: spectating should feel like sitting at the family table, kibitzing, ro
 
 **Spectators are participants, not observers.**
 
-In a family Yahtzee game, the people waiting for their turn (or not playing at all) are:
+In a family Dicee game, the people waiting for their turn (or not playing at all) are:
 - Offering unsolicited advice
 - Predicting what someone will roll
 - Groaning when someone "steals" the category they wanted
@@ -35,7 +35,7 @@ Before each roll, spectators can predict outcomes:
 │  @jane is about to roll. What happens?                              │
 │                                                                      │
 │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐    │
-│  │  YAHTZEE!  │  │  IMPROVES  │  │  BRICKS IT │  │  EXACT     │    │
+│  │  DICEE!  │  │  IMPROVES  │  │  BRICKS IT │  │  EXACT     │    │
 │  │    🎲🎲🎲   │  │     📈     │  │     💀     │  │   SCORE    │    │
 │  │            │  │            │  │            │  │   [___]    │    │
 │  │   +50 pts  │  │   +10 pts  │  │   +10 pts  │  │  +100 pts  │    │
@@ -46,7 +46,7 @@ Before each roll, spectators can predict outcomes:
 ```
 
 **Prediction types:**
-- **Yahtzee!** — They roll a Yahtzee (rare but huge points)
+- **Dicee!** — They roll a Dicee (rare but huge points)
 - **Improves** — Their best available score goes up
 - **Bricks It** — No improvement, forced to take a zero or low score
 - **Exact Score** — Predict the exact score they'll take (hardest)
@@ -58,7 +58,7 @@ Before each roll, spectators can predict outcomes:
 
 **Social visibility:**
 ```
-@mike predicted YAHTZEE! 🎲  •  @sarah predicted BRICKS IT 💀
+@mike predicted DICEE! 🎲  •  @sarah predicted BRICKS IT 💀
 ```
 
 ### 2.2 Rooting — "Pick Your Horse"
@@ -113,7 +113,7 @@ The classic family game experience: everyone has an opinion.
 │  What should they do?                                               │
 │                                                                      │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
-│  │ KEEP THE 4s │  │ GO FOR FULL  │  │ YOLO YAHTZEE │              │
+│  │ KEEP THE 4s │  │ GO FOR FULL  │  │ YOLO DICEE │              │
 │  │     🎯      │  │    HOUSE     │  │     🎲       │              │
 │  │             │  │              │  │              │              │
 │  │   12 votes  │  │   3 votes    │  │   1 vote     │              │
@@ -133,7 +133,7 @@ The classic family game experience: everyone has an opinion.
 
 **The tension:**
 ```
-@jane ignored the Gallery's advice and went for Yahtzee...
+@jane ignored the Gallery's advice and went for Dicee...
 
 [Dice rolling animation with extra tension]
 
@@ -181,7 +181,7 @@ System-generated prompts that encourage spectator engagement:
 │  💬 GALLERY PROMPT                                                   │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  "@mike just took a ZERO on Yahtzee. Thoughts?"                     │
+│  "@mike just took a ZERO on Dicee. Thoughts?"                     │
 │                                                                      │
 │  [😱 Brutal]  [🧠 Smart play]  [🤷 Whatever]  [Custom reply...]     │
 │                                                                      │
@@ -190,7 +190,7 @@ System-generated prompts that encourage spectator engagement:
 
 **Prompt triggers:**
 - Player takes a zero
-- Yahtzee rolled
+- Dicee rolled
 - Bonus threshold reached/missed
 - Huge score differential
 - Final round drama
@@ -220,7 +220,7 @@ System-generated prompts that encourage spectator engagement:
 │ │  │  Score:142│                                │  ...                   │ │ │
 │ │  │           │  ┌──────────────────────────┐  │                       │ │ │
 │ │  │  @sarah   │  │  🎯 CALL IT  [12s left]  │  │                       │ │ │
-│ │  │  Score:138│  │  [YAHTZEE][IMPROVE][BRICK]│  │                       │ │ │
+│ │  │  Score:138│  │  [DICEE][IMPROVE][BRICK]│  │                       │ │ │
 │ │  └───────────┘  └──────────────────────────┘  └───────────────────────┘ │ │
 │ └─────────────────────────────────────────────────────────────────────────┘ │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -259,7 +259,7 @@ System-generated prompts that encourage spectator engagement:
 ├────────────────────────────────┤
 │  💬 Gallery Chat               │
 │  ───────────────────────────── │
-│  @v1: Go for Yahtzee!         │
+│  @v1: Go for Dicee!         │
 │  @v2: 🔥🔥🔥                  │
 │  [...]                [React] │
 └────────────────────────────────┘
@@ -304,7 +304,7 @@ interface GalleryPoints {
 │  📣 Superfan        Backed the same player 5 times                  │
 │  🤡 Jinx            Your pick lost 5 times in a row                 │
 │  🧠 Analyst         Predicted exact score 3 times                   │
-│  📢 Called It!      Predicted a Yahtzee correctly                   │
+│  📢 Called It!      Predicted a Dicee correctly                   │
 │  👁 Voyeur          Watched 50 games total                          │
 │  🏠 Regular         Spectated in 20 different rooms                 │
 │                                                                      │
@@ -436,10 +436,10 @@ Instead of dry notifications, the system has personality:
 
 ```
 // Standard
-"@jane rolled a Yahtzee"
+"@jane rolled a Dicee"
 
 // With personality
-"🎲 YAHTZEE! @jane just rolled five 4s and the Gallery goes WILD!"
+"🎲 DICEE! @jane just rolled five 4s and the Gallery goes WILD!"
 
 // Standard
 "@mike scored 0 on Large Straight"
@@ -458,10 +458,10 @@ Instead of dry notifications, the system has personality:
 
 ```typescript
 const flavorText = {
-  yahtzee: [
+  dicee: [
     "The impossible dream becomes reality!",
     "Five of a kind! The Gallery erupts!",
-    "YAHTZEE! Someone check if that's legal!",
+    "DICEE! Someone check if that's legal!",
   ],
   
   zero: [
@@ -524,7 +524,7 @@ const flavorText = {
 
 **Before:** "I'm just waiting for a spot to open up."
 
-**After:** "I'm part of this game. I called that Yahtzee. I'm rooting for Jane. I told Mike to keep the 3s and he didn't listen and NOW LOOK. When's the next game? I'm staying."
+**After:** "I'm part of this game. I called that Dicee. I'm rooting for Jane. I told Mike to keep the 3s and he didn't listen and NOW LOOK. When's the next game? I'm staying."
 
 The Gallery transforms spectating from a waiting room into a **second game** that runs parallel to the main event. Spectators have their own goals, their own leaderboard, their own achievements—and most importantly, they feel like they're *at the table*, not watching through a window.
 

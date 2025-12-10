@@ -129,7 +129,7 @@ try {
 
 // ✅ GOOD: Bridge provides context
 try {
-  analyzeTurn([7, 7, 7, 7, 7], 0, ['Yahtzee']);
+  analyzeTurn([7, 7, 7, 7, 7], 0, ['Dicee']);
 } catch (e) {
   // Error: Invalid die value in: [7, 7, 7, 7, 7]
   // Clear, actionable error message
@@ -810,7 +810,7 @@ describe('dicee_engine WASM module', () => {
     const result = analyze_turn(
       new Uint8Array([5, 5, 5, 5, 5]),
       0,
-      0x0800 // Yahtzee bit
+      0x0800 // Dicee bit
     );
     expect(result.categories[0].immediate_score).toBe(50);
   });

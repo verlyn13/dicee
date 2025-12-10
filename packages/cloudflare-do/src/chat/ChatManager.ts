@@ -6,7 +6,6 @@
  */
 
 import { nanoid } from 'nanoid';
-import type { DurableObjectState } from '@cloudflare/workers-types';
 import {
 	type ChatMessage,
 	type MessageReactions,

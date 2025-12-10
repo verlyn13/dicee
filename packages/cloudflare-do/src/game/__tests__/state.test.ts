@@ -222,8 +222,8 @@ describe('GameStateManager', () => {
 
 			const p1 = state.players['player1'];
 			expect(p1.scorecard.ones).toBe(null);
-			expect(p1.scorecard.yahtzee).toBe(null);
-			expect(p1.scorecard.yahtzeeBonus).toBe(0);
+			expect(p1.scorecard.dicee).toBe(null);
+			expect(p1.scorecard.diceeBonus).toBe(0);
 		});
 
 		it('should save state after initialization', async () => {
@@ -459,7 +459,7 @@ describe('GameStateManager', () => {
 				'fullHouse',
 				'smallStraight',
 				'largeStraight',
-				'yahtzee',
+				'dicee',
 				'chance',
 			];
 
@@ -487,22 +487,22 @@ describe('GameStateManager', () => {
 			}
 		});
 
-		it('should calculate Yahtzee bonus correctly', async () => {
+		it('should calculate Dicee bonus correctly', async () => {
 			const state = await manager.getState();
 			const currentPlayerId = state!.playerOrder[0];
 			const player = state!.players[currentPlayerId];
 
-			// Score first yahtzee
-			player.scorecard.yahtzee = 50;
+			// Score first dicee
+			player.scorecard.dicee = 50;
 
-			// Roll another yahtzee
+			// Roll another dicee
 			await manager.rollDice(currentPlayerId, [false, false, false, false, false]);
 			player.currentDice = [5, 5, 5, 5, 5];
 
 			// Score on ones (will trigger bonus)
 			const result = await manager.scoreCategory(currentPlayerId, 'ones');
 
-			expect(result.isYahtzeeBonus).toBe(true);
+			expect(result.isDiceeBonus).toBe(true);
 		});
 	});
 
@@ -818,7 +818,7 @@ describe('GameStateManager', () => {
 				'fullHouse',
 				'smallStraight',
 				'largeStraight',
-				'yahtzee',
+				'dicee',
 				'chance',
 			];
 

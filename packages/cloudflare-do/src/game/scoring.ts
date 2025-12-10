@@ -1,14 +1,14 @@
 /**
  * Score Calculation
  *
- * Server-authoritative scoring for all Yahtzee categories.
+ * Server-authoritative scoring for all Dicee categories.
  * Uses crypto.getRandomValues for dice generation.
  *
  * Migrated from packages/partykit - no functional changes.
  */
 
 import type { Category, DiceArray, Scorecard } from './types';
-import { UPPER_BONUS_THRESHOLD, UPPER_BONUS_VALUE, YAHTZEE_BONUS_VALUE } from './types';
+import { UPPER_BONUS_THRESHOLD, UPPER_BONUS_VALUE, DICEE_BONUS_VALUE } from './types';
 
 // =============================================================================
 // Dice Generation (Server-Authoritative)
@@ -126,9 +126,9 @@ function isLargeStraight(dice: DiceArray): boolean {
 }
 
 /**
- * Check for Yahtzee (5 of a kind)
+ * Check for Dicee (5 of a kind)
  */
-function isYahtzee(dice: DiceArray): boolean {
+function isDicee(dice: DiceArray): boolean {
 	return new Set(dice).size === 1;
 }
 
@@ -166,8 +166,8 @@ export function calculateCategoryScore(dice: DiceArray, category: Category): num
 			return isSmallStraight(dice) ? 30 : 0;
 		case 'largeStraight':
 			return isLargeStraight(dice) ? 40 : 0;
-		case 'yahtzee':
-			return isYahtzee(dice) ? 50 : 0;
+		case 'dicee':
+			return isDicee(dice) ? 50 : 0;
 		case 'chance':
 			return sumAll(dice);
 	}
@@ -189,7 +189,7 @@ export function calculateAllPotentialScores(dice: DiceArray): Record<Category, n
 		fullHouse: calculateCategoryScore(dice, 'fullHouse'),
 		smallStraight: calculateCategoryScore(dice, 'smallStraight'),
 		largeStraight: calculateCategoryScore(dice, 'largeStraight'),
-		yahtzee: calculateCategoryScore(dice, 'yahtzee'),
+		dicee: calculateCategoryScore(dice, 'dicee'),
 		chance: calculateCategoryScore(dice, 'chance'),
 	};
 }
@@ -200,24 +200,24 @@ export function calculateAllPotentialScores(dice: DiceArray): Record<Category, n
 
 /**
  * Apply a score to a category and update bonuses
- * Returns updated scorecard and whether it was a Yahtzee bonus
+ * Returns updated scorecard and whether it was a Dicee bonus
  */
 export function applyScore(
 	scorecard: Scorecard,
 	category: Category,
 	dice: DiceArray,
-): { scorecard: Scorecard; score: number; isYahtzeeBonus: boolean } {
+): { scorecard: Scorecard; score: number; isDiceeBonus: boolean } {
 	const score = calculateCategoryScore(dice, category);
-	let isYahtzeeBonus = false;
+	let isDiceeBonus = false;
 
 	// Create new scorecard (immutable update)
 	const newScorecard: Scorecard = { ...scorecard };
 
-	// Check for Yahtzee bonus
-	// If scoring Yahtzee and already have a Yahtzee scored (non-zero), add bonus
-	if (isYahtzee(dice) && scorecard.yahtzee !== null && scorecard.yahtzee > 0) {
-		newScorecard.yahtzeeBonus = scorecard.yahtzeeBonus + YAHTZEE_BONUS_VALUE;
-		isYahtzeeBonus = true;
+	// Check for Dicee bonus
+	// If scoring Dicee and already have a Dicee scored (non-zero), add bonus
+	if (isDicee(dice) && scorecard.dicee !== null && scorecard.dicee > 0) {
+		newScorecard.diceeBonus = scorecard.diceeBonus + DICEE_BONUS_VALUE;
+		isDiceeBonus = true;
 	}
 
 	// Apply the score
@@ -236,7 +236,7 @@ export function applyScore(
 		newScorecard.upperBonus = UPPER_BONUS_VALUE;
 	}
 
-	return { scorecard: newScorecard, score, isYahtzeeBonus };
+	return { scorecard: newScorecard, score, isDiceeBonus };
 }
 
 /**
@@ -260,9 +260,9 @@ export function calculateTotal(scorecard: Scorecard): number {
 	total += scorecard.fullHouse ?? 0;
 	total += scorecard.smallStraight ?? 0;
 	total += scorecard.largeStraight ?? 0;
-	total += scorecard.yahtzee ?? 0;
+	total += scorecard.dicee ?? 0;
 	total += scorecard.chance ?? 0;
-	total += scorecard.yahtzeeBonus;
+	total += scorecard.diceeBonus;
 
 	return total;
 }

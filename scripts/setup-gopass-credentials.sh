@@ -80,6 +80,13 @@ echo "Setting up PartyKit structure..."
 echo "dicee-rooms" | gopass insert -f dicee/partykit/project-name
 
 # =============================================================================
+# ELEVENLABS CONFIGURATION (for audio generation)
+# =============================================================================
+
+echo "Setting up ElevenLabs structure..."
+echo "dicee-audio" | gopass insert -f dicee/elevenlabs/project-name
+
+# =============================================================================
 # SUMMARY
 # =============================================================================
 
@@ -95,6 +102,9 @@ echo "  gopass insert dicee/infisical/prod/client-secret"
 echo ""
 echo "  # Cloudflare API token"
 echo "  gopass insert dicee/cloudflare/api-token"
+echo ""
+echo "  # ElevenLabs API key (for audio generation)"
+echo "  gopass insert dicee/elevenlabs/api-key"
 echo ""
 echo "  # Google Cloud OAuth (for Supabase Google Sign-In)"
 echo "  gopass insert dicee/google/oauth-client-id      # OAuth 2.0 Client ID"

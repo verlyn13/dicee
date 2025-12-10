@@ -18,12 +18,12 @@ import type { Category, DiceArray } from '../game';
 export type ChatTrigger =
 	| 'game_start'
 	| 'my_turn_start'
-	| 'rolled_yahtzee'
-	| 'scored_yahtzee'
+	| 'rolled_dicee'
+	| 'scored_dicee'
 	| 'scored_zero'
 	| 'good_roll'
 	| 'bad_roll'
-	| 'opponent_yahtzee'
+	| 'opponent_dicee'
 	| 'taking_lead'
 	| 'falling_behind'
 	| 'final_round'
@@ -64,16 +64,16 @@ const RILEY_RESPONSES: Record<ChatTrigger, string[]> = {
 		"Fingers crossed!",
 		"Let's see what I get...",
 	],
-	rolled_yahtzee: [
-		"WAIT IS THAT A YAHTZEE?! 🎉",
+	rolled_dicee: [
+		"WAIT IS THAT A DICEE?! 🎉",
 		"OMG OMG OMG!!!",
 		"NO WAY! ALL THE SAME!",
 		"I can't believe it! 😱",
 	],
-	scored_yahtzee: [
+	scored_dicee: [
 		"50 POINTS! Best day ever!",
 		"I did it! I actually did it!",
-		"Yahtzee baby! 🎯",
+		"Dicee baby! 🎯",
 	],
 	scored_zero: [
 		"Oops... that didn't work out 😅",
@@ -93,7 +93,7 @@ const RILEY_RESPONSES: Record<ChatTrigger, string[]> = {
 		"Well, let's work with it",
 		"Uh oh...",
 	],
-	opponent_yahtzee: [
+	opponent_dicee: [
 		"Wow, nice roll!",
 		"Congrats! That's amazing!",
 		"So jealous right now 😄",
@@ -144,14 +144,14 @@ const CARMEN_RESPONSES: Record<ChatTrigger, string[]> = {
 		"My turn",
 		"Here we go",
 	],
-	rolled_yahtzee: [
-		"Yahtzee! 🎲",
+	rolled_dicee: [
+		"Dicee! 🎲",
 		"All five! Nice!",
 		"That's what I'm talking about!",
 	],
-	scored_yahtzee: [
+	scored_dicee: [
 		"50 points, thank you very much",
-		"I'll take that Yahtzee",
+		"I'll take that Dicee",
 		"Perfect! 🎯",
 	],
 	scored_zero: [
@@ -169,7 +169,7 @@ const CARMEN_RESPONSES: Record<ChatTrigger, string[]> = {
 		"Could be worse",
 		"Let's try again",
 	],
-	opponent_yahtzee: [
+	opponent_dicee: [
 		"Nice one!",
 		"Well played",
 		"Good roll!",
@@ -220,14 +220,14 @@ const LIAM_RESPONSES: Record<ChatTrigger, string[]> = {
 		"Big roll incoming!",
 		"Fortune favors the bold!",
 	],
-	rolled_yahtzee: [
-		"BOOM! YAHTZEE! 💥",
+	rolled_dicee: [
+		"BOOM! DICEE! 💥",
 		"THAT'S WHAT I'M TALKING ABOUT!",
 		"YESSSSS! 🎲🎲🎲🎲🎲",
 	],
-	scored_yahtzee: [
+	scored_dicee: [
 		"50 points! Let's GOOO!",
-		"Yahtzee secured! 🏆",
+		"Dicee secured! 🏆",
 		"That's how it's done!",
 	],
 	scored_zero: [
@@ -245,7 +245,7 @@ const LIAM_RESPONSES: Record<ChatTrigger, string[]> = {
 		"The comeback starts now!",
 		"Just need one good roll!",
 	],
-	opponent_yahtzee: [
+	opponent_dicee: [
 		"Nice! But I'm coming for you!",
 		"Game on!",
 		"Challenge accepted! 💪",
@@ -296,12 +296,12 @@ const PROFESSOR_RESPONSES: Record<ChatTrigger, string[]> = {
 		"Analyzing options...",
 		"Let me consider this.",
 	],
-	rolled_yahtzee: [
-		"Yahtzee. Probability: 0.046%.",
+	rolled_dicee: [
+		"Dicee. Probability: 0.046%.",
 		"Excellent. Five of a kind.",
 		"Statistically improbable, yet here we are.",
 	],
-	scored_yahtzee: [
+	scored_dicee: [
 		"50 points. Optimal outcome.",
 		"Maximum value achieved.",
 		"As calculated.",
@@ -321,7 +321,7 @@ const PROFESSOR_RESPONSES: Record<ChatTrigger, string[]> = {
 		"Variance is inevitable.",
 		"Adjusting strategy.",
 	],
-	opponent_yahtzee: [
+	opponent_dicee: [
 		"Well rolled.",
 		"Impressive probability.",
 		"Noted.",
@@ -374,13 +374,13 @@ const CHARLIE_RESPONSES: Record<ChatTrigger, string[]> = {
 		"Random strategy: ACTIVATE!",
 		"*rolls dice with eyes closed*",
 	],
-	rolled_yahtzee: [
+	rolled_dicee: [
 		"WAIT WHAT?! HOW?!",
-		"CHAOS YAHTZEE! 🌀🎲",
+		"CHAOS DICEE! 🌀🎲",
 		"I DIDN'T EVEN TRY FOR THAT!",
 		"The universe provides!",
 	],
-	scored_yahtzee: [
+	scored_dicee: [
 		"Accidental genius!",
 		"Chaos wins again!",
 		"I have no idea what I'm doing! 😂",
@@ -402,7 +402,7 @@ const CHARLIE_RESPONSES: Record<ChatTrigger, string[]> = {
 		"It's all part of the journey!",
 		"Plot twist! 📖",
 	],
-	opponent_yahtzee: [
+	opponent_dicee: [
 		"Ooooh fancy!",
 		"Show off! 😜",
 		"The chaos spreads!",
@@ -516,10 +516,10 @@ export function generateChatResponse(context: ChatContext): string | null {
 	const chatRoll = seededRandom(seed + 999);
 
 	// Higher chattiness = more likely to chat
-	// Always chat for major events (yahtzee, game end)
+	// Always chat for major events (dicee, game end)
 	const majorEvents: ChatTrigger[] = [
-		'rolled_yahtzee',
-		'scored_yahtzee',
+		'rolled_dicee',
+		'scored_dicee',
 		'game_won',
 		'game_lost',
 		'game_start',
@@ -550,8 +550,8 @@ export function generateChatResponse(context: ChatContext): string | null {
 export function shouldReact(profile: AIProfile, trigger: ChatTrigger): boolean {
 	const chattiness = profile.traits.chattiness;
 
-	// Always react to opponent yahtzees if somewhat chatty
-	if (trigger === 'opponent_yahtzee' && chattiness > 0.3) {
+	// Always react to opponent dicees if somewhat chatty
+	if (trigger === 'opponent_dicee' && chattiness > 0.3) {
 		return true;
 	}
 
@@ -612,24 +612,24 @@ export function analyzeRollQuality(
  *
  * @param category - Category scored
  * @param score - Points scored
- * @param isYahtzeeBonus - Whether this triggered a Yahtzee bonus
+ * @param isDiceeBonus - Whether this triggered a Dicee bonus
  * @param context - Game context
  * @returns Array of applicable triggers
  */
 export function getScoreTriggers(
 	category: Category,
 	score: number,
-	isYahtzeeBonus: boolean,
+	isDiceeBonus: boolean,
 	context: GameContext,
 ): ChatTrigger[] {
 	const triggers: ChatTrigger[] = [];
 
-	// Yahtzee events
-	if (category === 'yahtzee' && score === 50) {
-		triggers.push('scored_yahtzee');
+	// Dicee events
+	if (category === 'dicee' && score === 50) {
+		triggers.push('scored_dicee');
 	}
-	if (isYahtzeeBonus) {
-		triggers.push('scored_yahtzee');
+	if (isDiceeBonus) {
+		triggers.push('scored_dicee');
 	}
 
 	// Zero score

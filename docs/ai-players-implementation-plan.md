@@ -112,7 +112,7 @@ export interface AIProfile {
 
 export interface AITraits {
   riskTolerance: number;
-  yahtzeeChaser: number;
+  diceeChaser: number;
   upperSectionFocus: number;
   overvaluesFullHouse: boolean;
   avoidsEarlyZeros: boolean;
@@ -730,7 +730,7 @@ async handleStartGame(hostId: string): Promise<void> {
 | Task | Files | Effort |
 |------|-------|--------|
 | Deterministic chat responses | `ai/chat.ts` | M |
-| Chat triggers (Yahtzee, good roll, etc.) | `AIController` | M |
+| Chat triggers (Dicee, good roll, etc.) | `AIController` | M |
 | AI badge in player list | `PlayerCard.svelte` | S |
 | AI profile selector UI | `AIOpponentSelector.svelte` | M |
 | "Fill with AI" option in room creation | `CreateRoomModal.svelte` | M |

@@ -1,101 +1,22 @@
 /**
  * Chat System Type Definitions
  *
- * Shared types for lobby chat: text messages, quick chat, reactions,
- * typing indicators, and rate limiting.
+ * Re-exports common types from @dicee/shared and defines DO-specific
+ * types for lobby chat: client/server messages, rate limiting.
  */
 
 // =============================================================================
-// Chat Message Types
+// Re-export common types from @dicee/shared
 // =============================================================================
 
-/**
- * Chat message stored in history and broadcast to clients
- */
-export interface ChatMessage {
-	/** Unique message ID (nanoid) */
-	id: string;
-	/** Message type: text, quick preset, or system announcement */
-	type: 'text' | 'quick' | 'system';
-	/** User ID who sent the message */
-	userId: string;
-	/** Display name at time of message */
-	displayName: string;
-	/** Message content (text or formatted quick chat) */
-	content: string;
-	/** Unix timestamp in milliseconds */
-	timestamp: number;
-	/** Aggregated reactions from all users */
-	reactions: MessageReactions;
-}
-
-/**
- * Reactions on a message, keyed by emoji
- * Value is array of userIds who reacted
- */
-export interface MessageReactions {
-	'👍': string[];
-	'🎲': string[];
-	'😱': string[];
-	'💀': string[];
-	'🎉': string[];
-}
-
-/** Available reaction emojis */
-export type ReactionEmoji = keyof MessageReactions;
-
-/** All reaction emojis as array */
-export const REACTION_EMOJIS: ReactionEmoji[] = ['👍', '🎲', '😱', '💀', '🎉'];
-
-/**
- * Create empty reactions object
- */
-export function createEmptyReactions(): MessageReactions {
-	return {
-		'👍': [],
-		'🎲': [],
-		'😱': [],
-		'💀': [],
-		'🎉': [],
-	};
-}
+export type { ReactionEmoji, QuickChatKey, MessageReactions, ChatMessage, TypingState, ChatErrorCode } from '@dicee/shared';
+export { REACTION_EMOJIS, QUICK_CHAT_MESSAGES, QUICK_CHAT_KEYS, CHAT_RATE_LIMITS, createEmptyReactions } from '@dicee/shared';
 
 // =============================================================================
-// Quick Chat Definitions
+// Client → Server Messages (DO-specific)
 // =============================================================================
 
-/** Quick chat preset keys */
-export type QuickChatKey = 'nice_roll' | 'good_game' | 'your_turn' | 'yahtzee' | 'ouch' | 'thinking';
-
-/** Quick chat presets with emoji and text */
-export const QUICK_CHAT_MESSAGES: Record<QuickChatKey, { emoji: string; text: string }> = {
-	nice_roll: { emoji: '🎲', text: 'Nice roll!' },
-	good_game: { emoji: '👏', text: 'Good game!' },
-	your_turn: { emoji: '⏰', text: 'Your turn!' },
-	yahtzee: { emoji: '🎉', text: 'YAHTZEE!' },
-	ouch: { emoji: '💀', text: 'Ouch...' },
-	thinking: { emoji: '🤔', text: 'Hmm, let me think...' },
-};
-
-/** All quick chat keys as array */
-export const QUICK_CHAT_KEYS = Object.keys(QUICK_CHAT_MESSAGES) as QuickChatKey[];
-
-// =============================================================================
-// Typing Indicator
-// =============================================================================
-
-/**
- * Typing state for a user
- */
-export interface TypingState {
-	userId: string;
-	displayName: string;
-	startedAt: number;
-}
-
-// =============================================================================
-// Client → Server Messages
-// =============================================================================
+import type { QuickChatKey, ReactionEmoji } from '@dicee/shared';
 
 /**
  * Chat messages from client to server
@@ -108,8 +29,10 @@ export type ChatClientMessage =
 	| { type: 'TYPING_STOP' };
 
 // =============================================================================
-// Server → Client Messages
+// Server → Client Messages (DO-specific)
 // =============================================================================
+
+import type { ChatMessage, MessageReactions, TypingState } from '@dicee/shared';
 
 /**
  * Chat messages from server to client
@@ -122,11 +45,11 @@ export type ChatServerMessage =
 	| { type: 'CHAT_ERROR'; payload: { code: string; message: string } };
 
 // =============================================================================
-// Rate Limiting
+// Rate Limiting (DO-specific)
 // =============================================================================
 
 /**
- * Per-user rate limit tracking
+ * Per-user rate limit tracking (server-side)
  */
 export interface RateLimitState {
 	lastMessageAt: number;
@@ -136,7 +59,7 @@ export interface RateLimitState {
 }
 
 /**
- * Rate limit configuration
+ * Server-side rate limit configuration (extends shared CHAT_RATE_LIMITS)
  */
 export const RATE_LIMITS = {
 	/** Minimum interval between messages (ms) */
@@ -154,14 +77,3 @@ export const RATE_LIMITS = {
 	/** Auto-clear typing indicator after (ms) */
 	TYPING_TIMEOUT_MS: 3000,
 } as const;
-
-// =============================================================================
-// Chat Error Codes
-// =============================================================================
-
-export type ChatErrorCode =
-	| 'INVALID_MESSAGE'
-	| 'RATE_LIMITED'
-	| 'MESSAGE_TOO_LONG'
-	| 'REACTION_FAILED'
-	| 'MESSAGE_NOT_FOUND';

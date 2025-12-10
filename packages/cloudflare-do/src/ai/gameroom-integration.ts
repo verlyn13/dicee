@@ -125,13 +125,13 @@ export class AIRoomManager {
 	 * Execute an AI player's complete turn.
 	 *
 	 * @param playerId - The AI player ID
-	 * @param gameState - Current game state
+	 * @param getGameState - Function to get fresh game state (called each step)
 	 * @param executeCommand - Callback to execute game commands
 	 * @param broadcast - Callback to broadcast events
 	 */
 	async executeAITurn(
 		playerId: string,
-		gameState: MultiplayerGameState,
+		getGameState: () => Promise<MultiplayerGameState | null>,
 		executeCommand: GameCommandExecutor,
 		broadcast: EventBroadcaster,
 	): Promise<void> {
@@ -157,8 +157,8 @@ export class AIRoomManager {
 				this.handleAIEvent(event, broadcast);
 			};
 
-			// Execute the turn
-			await this.controller.executeTurn(playerId, gameState, executor, emitter);
+			// Execute the turn with state getter
+			await this.controller.executeTurn(playerId, getGameState, executor, emitter);
 		} finally {
 			this.turnInProgress = false;
 		}

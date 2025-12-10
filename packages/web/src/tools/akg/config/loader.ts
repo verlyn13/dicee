@@ -316,7 +316,8 @@ export function getDiscoveryPatterns(config: AKGConfig): {
 		include: [
 			'packages/web/src/**/*.ts',
 			'packages/web/src/**/*.svelte',
-			'packages/partykit/src/**/*.ts',
+			'packages/shared/src/**/*.ts',
+			'packages/cloudflare-do/src/**/*.ts',
 		],
 		exclude: [
 			'**/*.test.ts',

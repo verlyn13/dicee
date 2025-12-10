@@ -1,7 +1,7 @@
 /**
  * Scoring Module Unit Tests
  *
- * Tests for all Yahtzee scoring calculations.
+ * Tests for all Dicee scoring calculations.
  * Pure functions - no mocking required.
  */
 
@@ -191,7 +191,7 @@ describe('calculateCategoryScore - Lower Section', () => {
 		it('should score 0 without full house', () => {
 			expect(calculateCategoryScore(dice(1, 1, 1, 1, 2), 'fullHouse')).toBe(0);
 			expect(calculateCategoryScore(dice(1, 2, 3, 4, 5), 'fullHouse')).toBe(0);
-			// Yahtzee is NOT a full house in standard rules
+			// Dicee is NOT a full house in standard rules
 			expect(calculateCategoryScore(dice(5, 5, 5, 5, 5), 'fullHouse')).toBe(0);
 		});
 	});
@@ -228,15 +228,15 @@ describe('calculateCategoryScore - Lower Section', () => {
 		});
 	});
 
-	describe('Yahtzee', () => {
-		it('should score 50 for yahtzee', () => {
-			expect(calculateCategoryScore(dice(1, 1, 1, 1, 1), 'yahtzee')).toBe(50);
-			expect(calculateCategoryScore(dice(6, 6, 6, 6, 6), 'yahtzee')).toBe(50);
+	describe('Dicee', () => {
+		it('should score 50 for dicee', () => {
+			expect(calculateCategoryScore(dice(1, 1, 1, 1, 1), 'dicee')).toBe(50);
+			expect(calculateCategoryScore(dice(6, 6, 6, 6, 6), 'dicee')).toBe(50);
 		});
 
-		it('should score 0 without yahtzee', () => {
-			expect(calculateCategoryScore(dice(1, 1, 1, 1, 2), 'yahtzee')).toBe(0);
-			expect(calculateCategoryScore(dice(1, 2, 3, 4, 5), 'yahtzee')).toBe(0);
+		it('should score 0 without dicee', () => {
+			expect(calculateCategoryScore(dice(1, 1, 1, 1, 2), 'dicee')).toBe(0);
+			expect(calculateCategoryScore(dice(1, 2, 3, 4, 5), 'dicee')).toBe(0);
 		});
 	});
 
@@ -268,18 +268,18 @@ describe('calculateAllPotentialScores', () => {
 		expect(scores.fullHouse).toBe(25);
 		expect(scores.smallStraight).toBe(0);
 		expect(scores.largeStraight).toBe(0);
-		expect(scores.yahtzee).toBe(0);
+		expect(scores.dicee).toBe(0);
 		expect(scores.chance).toBe(13);
 	});
 
-	it('should calculate correctly for yahtzee', () => {
+	it('should calculate correctly for dicee', () => {
 		const scores = calculateAllPotentialScores(dice(5, 5, 5, 5, 5));
 
 		expect(scores.fives).toBe(25);
 		expect(scores.threeOfAKind).toBe(25);
 		expect(scores.fourOfAKind).toBe(25);
-		expect(scores.fullHouse).toBe(0); // Yahtzee is not a full house
-		expect(scores.yahtzee).toBe(50);
+		expect(scores.fullHouse).toBe(0); // Dicee is not a full house
+		expect(scores.dicee).toBe(50);
 		expect(scores.chance).toBe(25);
 	});
 });
@@ -295,7 +295,7 @@ describe('applyScore', () => {
 
 		expect(result.scorecard.threes).toBe(9);
 		expect(result.score).toBe(9);
-		expect(result.isYahtzeeBonus).toBe(false);
+		expect(result.isDiceeBonus).toBe(false);
 	});
 
 	it('should not modify original scorecard (immutable)', () => {
@@ -324,43 +324,43 @@ describe('applyScore', () => {
 		expect(result.scorecard.upperBonus).toBe(35);
 	});
 
-	it('should apply yahtzee bonus when already have yahtzee', () => {
+	it('should apply dicee bonus when already have dicee', () => {
 		const scorecard: Scorecard = {
 			...createEmptyScorecard(),
-			yahtzee: 50, // Already scored a yahtzee
+			dicee: 50, // Already scored a dicee
 		};
 
-		// Roll another yahtzee
+		// Roll another dicee
 		const result = applyScore(scorecard, 'fives', dice(5, 5, 5, 5, 5));
 
 		expect(result.scorecard.fives).toBe(25);
-		expect(result.scorecard.yahtzeeBonus).toBe(100);
-		expect(result.isYahtzeeBonus).toBe(true);
+		expect(result.scorecard.diceeBonus).toBe(100);
+		expect(result.isDiceeBonus).toBe(true);
 	});
 
-	it('should stack yahtzee bonuses', () => {
+	it('should stack dicee bonuses', () => {
 		const scorecard: Scorecard = {
 			...createEmptyScorecard(),
-			yahtzee: 50,
-			yahtzeeBonus: 100, // Already have one bonus
+			dicee: 50,
+			diceeBonus: 100, // Already have one bonus
 		};
 
 		const result = applyScore(scorecard, 'sixes', dice(6, 6, 6, 6, 6));
 
-		expect(result.scorecard.yahtzeeBonus).toBe(200);
-		expect(result.isYahtzeeBonus).toBe(true);
+		expect(result.scorecard.diceeBonus).toBe(200);
+		expect(result.isDiceeBonus).toBe(true);
 	});
 
-	it('should not give yahtzee bonus if yahtzee was scored as 0', () => {
+	it('should not give dicee bonus if dicee was scored as 0', () => {
 		const scorecard: Scorecard = {
 			...createEmptyScorecard(),
-			yahtzee: 0, // Scored yahtzee as 0 (no yahtzee)
+			dicee: 0, // Scored dicee as 0 (no dicee)
 		};
 
 		const result = applyScore(scorecard, 'fives', dice(5, 5, 5, 5, 5));
 
-		expect(result.scorecard.yahtzeeBonus).toBe(0);
-		expect(result.isYahtzeeBonus).toBe(false);
+		expect(result.scorecard.diceeBonus).toBe(0);
+		expect(result.isDiceeBonus).toBe(false);
 	});
 });
 
@@ -387,10 +387,10 @@ describe('calculateTotal', () => {
 			fullHouse: 25,
 			smallStraight: 30,
 			largeStraight: 40,
-			yahtzee: 50,
+			dicee: 50,
 			chance: 25,
 			upperBonus: 0,
-			yahtzeeBonus: 0,
+			diceeBonus: 0,
 		};
 
 		expect(calculateTotal(scorecard)).toBe(278);
@@ -411,11 +411,11 @@ describe('calculateTotal', () => {
 		expect(calculateTotal(scorecard)).toBe(110); // 75 + 35
 	});
 
-	it('should include yahtzee bonus', () => {
+	it('should include dicee bonus', () => {
 		const scorecard: Scorecard = {
 			...createEmptyScorecard(),
-			yahtzee: 50,
-			yahtzeeBonus: 200,
+			dicee: 50,
+			diceeBonus: 200,
 		};
 
 		expect(calculateTotal(scorecard)).toBe(250);

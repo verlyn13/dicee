@@ -328,12 +328,14 @@ describe('defaultConfig', () => {
 		expect(defaultConfig.project).toBe('dicee');
 	});
 
-	it('should have all 7 layers defined', () => {
-		expect(defaultConfig.layers).toHaveLength(7);
+	it('should have all 9 layers defined', () => {
+		expect(defaultConfig.layers).toHaveLength(9);
 	});
 
 	it('should have correct layer names', () => {
 		const layerNames = defaultConfig.layers?.map((l) => l.name) ?? [];
+		expect(layerNames).toContain('shared');
+		expect(layerNames).toContain('cloudflare-do');
 		expect(layerNames).toContain('routes');
 		expect(layerNames).toContain('components');
 		expect(layerNames).toContain('stores');

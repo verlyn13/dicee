@@ -36,15 +36,15 @@ pnpm test:watch
 
 ### Scoring (`src/game/__tests__/scoring.test.ts`)
 
-Tests dice generation and all Yahtzee scoring categories:
+Tests dice generation and all Dicee scoring categories:
 
 - `generateDice` - Random 5-dice generation
 - `rollWithKept` - Re-roll with kept dice mask
 - `calculateCategoryScore` - All 13 categories:
   - Upper section: ones, twos, threes, fours, fives, sixes
-  - Lower section: threeOfAKind, fourOfAKind, fullHouse, smallStraight, largeStraight, yahtzee, chance
+  - Lower section: threeOfAKind, fourOfAKind, fullHouse, smallStraight, largeStraight, dicee, chance
 - `calculateAllPotentialScores` - Full scorecard preview
-- `applyScore` - Score application with Yahtzee bonus
+- `applyScore` - Score application with Dicee bonus
 - `calculateTotal` - Total with upper bonus
 
 ### State Machine (`src/game/__tests__/machine.test.ts`)

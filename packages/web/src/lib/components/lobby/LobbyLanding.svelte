@@ -2,12 +2,15 @@
 /**
  * LobbyLanding - Main lobby landing page component
  *
- * Shows:
- * - Ticker bar at top
- * - Games/Chat tabs on mobile
- * - Room grid or empty state
- * - Chat panel
- * - Create room button (FAB on mobile)
+ * Redesigned UX with three clear entry points:
+ * 1. QUICK PLAY - Start immediately vs AI (default: Carmen)
+ * 2. PLAY WITH FRIENDS - Create/join private room
+ * 3. PRACTICE - Solo mode for learning (no opponent)
+ *
+ * Also shows:
+ * - Open games browser
+ * - Global chat
+ * - Online presence
  */
 
 import { onDestroy, onMount } from 'svelte';
@@ -17,10 +20,16 @@ import MagicLinkForm from '$lib/components/auth/MagicLinkForm.svelte';
 import { BottomSheet } from '$lib/components/ui';
 import { auth } from '$lib/stores/auth.svelte';
 import { lobby } from '$lib/stores/lobby.svelte';
+import AIOpponentSelector from './AIOpponentSelector.svelte';
 import ConnectionOverlay from './ConnectionOverlay.svelte';
 
 // Auth sheet state
 let authSheetOpen = $state(false);
+
+// Quick Play AI selector state
+let showAISelector = $state(false);
+let selectedAIProfile = $state<string>('carmen');
+let quickPlayLoading = $state(false);
 
 // Derive display name from user object
 const displayName = $derived(() => {
@@ -35,11 +44,16 @@ const displayName = $derived(() => {
 });
 
 import ChatPanel from './ChatPanel.svelte';
+import CreateRoomModal from './CreateRoomModal.svelte';
 import EmptyRooms from './EmptyRooms.svelte';
+import JoinRoomModal from './JoinRoomModal.svelte';
 import MobileTabToggle from './MobileTabToggle.svelte';
-import PlayVsAIButton from './PlayVsAIButton.svelte';
 import RoomCard from './RoomCard.svelte';
 import Ticker from './Ticker.svelte';
+
+// Friends modal state
+let showCreateModal = $state(false);
+let showJoinModal = $state(false);
 
 // Connect to lobby on mount
 onMount(() => {
@@ -65,33 +79,95 @@ onMount(() => {
 	return () => mediaQuery.removeEventListener('change', handler);
 });
 
-// Room creation
-async function handleCreateRoom() {
-	// Check if user is authenticated
+/**
+ * QUICK PLAY - Start a game vs AI immediately
+ * Creates room, adds AI, and starts game
+ */
+async function handleQuickPlay() {
 	if (!auth.isAuthenticated) {
-		// Could show a modal, but for now navigate to auth
-		// For MVP, just create with guest session
+		authSheetOpen = true;
+		return;
+	}
+	// Show AI selector for quick customization
+	showAISelector = true;
+}
+
+/**
+ * Start quick play with selected AI
+ */
+async function startQuickPlayWithAI() {
+	if (!auth.session?.access_token) {
+		authSheetOpen = true;
+		return;
 	}
 
-	// Generate room code and navigate
+	quickPlayLoading = true;
+	try {
+		// Generate room code
+		const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+		let code = '';
+		for (let i = 0; i < 6; i++) {
+			code += chars[Math.floor(Math.random() * chars.length)];
+		}
+
+		console.log('[QuickPlay] Starting with AI:', selectedAIProfile, 'Room:', code);
+
+		// Store AI profile to add after connecting
+		sessionStorage.setItem('quickplay_ai_profile', selectedAIProfile);
+		sessionStorage.setItem('quickplay_auto_start', 'true');
+
+		// Navigate to room - the room page will handle adding AI and starting
+		goto(`/games/dicee/room/${code}`);
+	} finally {
+		quickPlayLoading = false;
+		showAISelector = false;
+	}
+}
+
+/**
+ * PLAY WITH FRIENDS - Show create/join options
+ */
+function handlePlayWithFriends() {
+	if (!auth.isAuthenticated) {
+		authSheetOpen = true;
+		return;
+	}
+	showCreateModal = true;
+}
+
+/**
+ * Create a new room for friends
+ */
+function handleCreateRoom() {
 	const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 	let code = '';
 	for (let i = 0; i < 6; i++) {
 		code += chars[Math.floor(Math.random() * chars.length)];
 	}
-
-	// Navigate to game room
+	showCreateModal = false;
 	goto(`/games/dicee/room/${code}`);
 }
 
-// Play solo (no WebSocket needed) - skip mode selection gateway
-function handlePlaySolo() {
+/**
+ * Join an existing room
+ */
+function handleJoinRoom(code: string) {
+	showJoinModal = false;
+	goto(`/games/dicee/room/${code.toUpperCase()}`);
+}
+
+/**
+ * PRACTICE - Solo mode for learning
+ */
+function handlePractice() {
 	goto('/games/dicee?mode=solo');
 }
 
-// Handle AI game creation - navigate to the room
-function handleAIGameCreated(roomCode: string, _aiProfileId: string) {
-	goto(`/games/dicee/room/${roomCode}`);
+/**
+ * Handle AI profile selection in quick play
+ */
+function handleAISelect(profileId: string) {
+	selectedAIProfile = profileId;
 }
 </script>
 
@@ -119,6 +195,30 @@ function handleAIGameCreated(roomCode: string, _aiProfileId: string) {
 	<!-- Ticker -->
 	<Ticker />
 
+	<!-- Game Mode Cards -->
+	<section class="mode-cards">
+		<!-- Quick Play - Primary Action -->
+		<button class="mode-card mode-card--primary" onclick={handleQuickPlay}>
+			<span class="mode-icon">🎲</span>
+			<span class="mode-title">QUICK PLAY</span>
+			<span class="mode-subtitle">vs AI opponent</span>
+		</button>
+
+		<!-- Play with Friends -->
+		<button class="mode-card mode-card--secondary" onclick={handlePlayWithFriends}>
+			<span class="mode-icon">👥</span>
+			<span class="mode-title">FRIENDS</span>
+			<span class="mode-subtitle">Create or join room</span>
+		</button>
+
+		<!-- Practice Mode -->
+		<button class="mode-card mode-card--tertiary" onclick={handlePractice}>
+			<span class="mode-icon">📚</span>
+			<span class="mode-title">PRACTICE</span>
+			<span class="mode-subtitle">Learn the rules</span>
+		</button>
+	</section>
+
 	<!-- Main Content -->
 	<main class="lobby-main">
 		<!-- Mobile Tab Toggle -->
@@ -137,14 +237,6 @@ function handleAIGameCreated(roomCode: string, _aiProfileId: string) {
 			>
 				<div class="panel-header">
 					<h2>Open Games</h2>
-					<div class="header-actions">
-						<button class="solo-btn" onclick={handlePlaySolo}>
-							SOLO
-						</button>
-						<button class="ai-btn" onclick={() => goto('/games/dicee?mode=ai')}>
-							🤖 VS AI
-						</button>
-					</div>
 				</div>
 
 				{#if lobby.rooms.length === 0}
@@ -168,17 +260,6 @@ function handleAIGameCreated(roomCode: string, _aiProfileId: string) {
 			</section>
 		</div>
 	</main>
-
-	<!-- FAB for Create Room (hidden when chat is active on mobile) -->
-	<button
-		class="create-fab"
-		class:hidden={isMobile && lobby.activeTab === 'chat'}
-		onclick={handleCreateRoom}
-		aria-label="Create new room"
-	>
-		<span class="fab-icon">+</span>
-		<span class="fab-text">NEW GAME</span>
-	</button>
 </div>
 
 <!-- Auth Options Bottom Sheet -->
@@ -205,6 +286,78 @@ function handleAIGameCreated(roomCode: string, _aiProfileId: string) {
 		</div>
 	{/snippet}
 </BottomSheet>
+
+<!-- Quick Play AI Selector Modal -->
+{#if showAISelector}
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div
+		class="modal-backdrop"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="quickplay-modal-title"
+		tabindex="-1"
+		onclick={(e) => e.target === e.currentTarget && (showAISelector = false)}
+	>
+		<div class="modal-content">
+			<header class="modal-header">
+				<h2 id="quickplay-modal-title" class="modal-title">Quick Play</h2>
+				<button
+					type="button"
+					class="modal-close"
+					onclick={() => (showAISelector = false)}
+					aria-label="Close"
+				>
+					✕
+				</button>
+			</header>
+
+			<div class="modal-body">
+				<p class="modal-description">Choose your AI opponent:</p>
+				<AIOpponentSelector selected={selectedAIProfile} onSelect={handleAISelect} />
+			</div>
+
+			<footer class="modal-footer">
+				<button
+					type="button"
+					class="cancel-btn"
+					onclick={() => (showAISelector = false)}
+				>
+					Cancel
+				</button>
+				<button
+					type="button"
+					class="start-btn"
+					onclick={startQuickPlayWithAI}
+					disabled={quickPlayLoading}
+				>
+					{quickPlayLoading ? 'Starting...' : 'Start Game'}
+				</button>
+			</footer>
+		</div>
+	</div>
+{/if}
+
+<!-- Create/Join Room Modals -->
+<CreateRoomModal
+	open={showCreateModal}
+	onClose={() => (showCreateModal = false)}
+	onCreate={handleCreateRoom}
+	onSwitchToJoin={() => {
+		showCreateModal = false;
+		showJoinModal = true;
+	}}
+/>
+
+<JoinRoomModal
+	open={showJoinModal}
+	onClose={() => (showJoinModal = false)}
+	onJoin={handleJoinRoom}
+	onSwitchToCreate={() => {
+		showJoinModal = false;
+		showCreateModal = true;
+	}}
+/>
 
 <style>
 	.lobby-landing {
@@ -367,43 +520,6 @@ function handleAIGameCreated(roomCode: string, _aiProfileId: string) {
 		margin: 0;
 	}
 
-	.solo-btn {
-		padding: var(--space-1) var(--space-2);
-		background: var(--color-surface);
-		border: var(--border-medium);
-		font-family: var(--font-mono);
-		font-size: var(--text-small);
-		font-weight: var(--weight-bold);
-		cursor: pointer;
-		transition:
-			background var(--transition-fast),
-			transform var(--transition-fast);
-	}
-
-	.solo-btn:hover,
-	.ai-btn:hover {
-		background: var(--color-accent);
-		transform: translateY(-2px);
-	}
-
-	.header-actions {
-		display: flex;
-		gap: var(--space-1);
-	}
-
-	.ai-btn {
-		padding: var(--space-1) var(--space-2);
-		background: var(--color-surface);
-		border: var(--border-medium);
-		font-family: var(--font-mono);
-		font-size: var(--text-small);
-		font-weight: var(--weight-bold);
-		cursor: pointer;
-		transition:
-			background var(--transition-fast),
-			transform var(--transition-fast);
-	}
-
 	.room-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -425,75 +541,204 @@ function handleAIGameCreated(roomCode: string, _aiProfileId: string) {
 		display: none;
 	}
 
-	/* FAB */
-	.create-fab {
-		position: fixed;
-		bottom: var(--space-3);
-		right: var(--space-3);
-		min-width: 56px;
-		height: 56px;
-		border-radius: 28px;
-		background: var(--color-text);
-		color: var(--color-surface);
-		border: none;
-		font-weight: var(--weight-black);
-		cursor: pointer;
-		box-shadow: var(--shadow-brutal-lg);
+	/* Mode Cards */
+	.mode-cards {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--space-2);
+		padding: var(--space-2) var(--space-3);
+	}
+
+	.mode-card {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		gap: var(--space-1);
-		padding: 0 var(--space-3);
+		padding: var(--space-3) var(--space-2);
+		border: var(--border-thick);
+		cursor: pointer;
 		transition:
-			background var(--transition-fast),
-			transform var(--transition-fast);
-		z-index: var(--z-hud);
+			transform var(--transition-fast),
+			box-shadow var(--transition-fast);
 	}
 
-	.create-fab:hover {
-		background: var(--color-accent);
-		color: var(--color-text);
-		transform: scale(1.05);
+	.mode-card:hover {
+		transform: translate(-2px, -2px);
+		box-shadow: 4px 4px 0 var(--color-border);
 	}
 
-	.create-fab:active {
-		transform: scale(0.95);
+	.mode-card:active {
+		transform: translate(0, 0);
+		box-shadow: none;
 	}
 
-	.fab-icon {
-		font-size: 1.5rem;
-		line-height: 1;
+	.mode-card--primary {
+		background: var(--color-success);
 	}
 
-	.fab-text {
+	.mode-card--secondary {
+		background: var(--color-primary);
+		color: var(--color-text-on-primary, var(--color-text));
+	}
+
+	.mode-card--tertiary {
+		background: var(--color-surface);
+	}
+
+	.mode-icon {
+		font-size: var(--text-h2);
+	}
+
+	.mode-title {
 		font-family: var(--font-mono);
-		font-size: var(--text-small);
+		font-size: var(--text-body);
+		font-weight: var(--weight-bold);
+		text-transform: uppercase;
 		letter-spacing: var(--tracking-wide);
 	}
 
-	/* Mobile: Icon only */
-	@media (max-width: 767px) {
-		.create-fab {
-			width: 56px;
-			padding: 0;
-			border-radius: 50%;
+	.mode-subtitle {
+		font-size: var(--text-tiny);
+		color: var(--color-text-muted);
+		text-align: center;
+	}
+
+	.mode-card--secondary .mode-subtitle {
+		color: inherit;
+		opacity: 0.8;
+	}
+
+	/* Modal Styles */
+	.modal-backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: var(--z-modal);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: var(--space-3);
+		background: rgba(0, 0, 0, 0.7);
+	}
+
+	.modal-content {
+		width: 100%;
+		max-width: 600px;
+		max-height: 90vh;
+		overflow-y: auto;
+		background: var(--color-background);
+		border: var(--border-thick);
+		box-shadow: 8px 8px 0 var(--color-border);
+	}
+
+	.modal-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--space-2) var(--space-3);
+		border-bottom: var(--border-medium);
+		background: var(--color-surface);
+	}
+
+	.modal-title {
+		font-size: var(--text-h3);
+		font-weight: var(--weight-bold);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+		margin: 0;
+	}
+
+	.modal-close {
+		appearance: none;
+		background: none;
+		border: var(--border-thin);
+		padding: var(--space-1);
+		font-size: var(--text-body);
+		cursor: pointer;
+		line-height: 1;
+	}
+
+	.modal-close:hover {
+		background: var(--color-surface-alt);
+	}
+
+	.modal-body {
+		padding: var(--space-3);
+	}
+
+	.modal-description {
+		font-size: var(--text-body);
+		color: var(--color-text-muted);
+		text-align: center;
+		margin: 0 0 var(--space-2);
+	}
+
+	.modal-footer {
+		display: flex;
+		gap: var(--space-2);
+		justify-content: flex-end;
+		padding: var(--space-2) var(--space-3);
+		border-top: var(--border-medium);
+		background: var(--color-surface);
+	}
+
+	.cancel-btn,
+	.start-btn {
+		padding: var(--space-1) var(--space-3);
+		font-family: var(--font-sans);
+		font-weight: var(--weight-bold);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+		cursor: pointer;
+		transition:
+			transform var(--transition-fast),
+			box-shadow var(--transition-fast);
+	}
+
+	.cancel-btn {
+		background: var(--color-surface);
+		border: var(--border-medium);
+	}
+
+	.start-btn {
+		background: var(--color-success);
+		border: var(--border-medium);
+	}
+
+	.cancel-btn:hover,
+	.start-btn:hover:not(:disabled) {
+		transform: translate(-1px, -1px);
+		box-shadow: 2px 2px 0 var(--color-border);
+	}
+
+	.start-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	/* Mobile: Stack mode cards */
+	@media (max-width: 640px) {
+		.mode-cards {
+			grid-template-columns: 1fr;
 		}
 
-		.create-fab.hidden {
-			display: none;
+		.mode-card {
+			flex-direction: row;
+			justify-content: flex-start;
+			gap: var(--space-2);
+			padding: var(--space-2);
 		}
 
-		/* Hide FAB when keyboard is open (set by keyboard.ts) */
-		:global(html.keyboard-open) .create-fab {
-			display: none;
+		.mode-icon {
+			font-size: var(--text-h3);
 		}
 
-		.fab-text {
-			display: none;
+		.mode-card > :not(.mode-icon) {
+			text-align: left;
 		}
 
-		.fab-icon {
-			font-size: 2rem;
+		.mode-subtitle {
+			text-align: left;
 		}
 	}
 
@@ -510,11 +755,9 @@ function handleAIGameCreated(roomCode: string, _aiProfileId: string) {
 			min-height: 400px;
 		}
 
-		.create-fab {
-			bottom: var(--space-4);
-			right: var(--space-4);
-			width: 64px;
-			height: 64px;
+		.mode-cards {
+			max-width: 1200px;
+			margin: 0 auto;
 		}
 	}
 

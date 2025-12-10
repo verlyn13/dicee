@@ -67,7 +67,9 @@ new_sqlite_classes = ["GlobalLobby"]
 # Required secrets:
 # - SUPABASE_URL: https://xxx.supabase.co
 # - SUPABASE_ANON_KEY: Your Supabase anonymous key
+# - SUPABASE_JWT_SECRET: JWT secret from Supabase project settings
 #
 # Commands:
 #   wrangler secret put SUPABASE_URL
 #   wrangler secret put SUPABASE_ANON_KEY
+#   wrangler secret put SUPABASE_JWT_SECRET

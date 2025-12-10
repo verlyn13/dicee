@@ -932,7 +932,7 @@ pattern_suggested: "GlobalToastStore"
 Developer adds new scoring category without updating the canonical array.
 
 #### Scenario
-New type `type SpecialCategory = 'Yahtzee' | 'Chance' | 'Bonus';` created alongside existing `CATEGORIES` const array.
+New type `type SpecialCategory = 'Dicee' | 'Chance' | 'Bonus';` created alongside existing `CATEGORIES` const array.
 
 #### Step 1: Detection (Simulated)
 ```json
@@ -968,7 +968,7 @@ New type `type SpecialCategory = 'Yahtzee' | 'Chance' | 'Bonus';` created alongs
    🚫 BLOCKING
 
    💡 If these are a subset of existing categories:
-      type SpecialCategory = Extract<Category, 'Yahtzee' | 'Chance'>;
+      type SpecialCategory = Extract<Category, 'Dicee' | 'Chance'>;
 
    💡 If 'Bonus' is new, add to CATEGORIES first:
       1. Update CATEGORIES array in types.ts
@@ -978,7 +978,7 @@ New type `type SpecialCategory = 'Yahtzee' | 'Chance' | 'Bonus';` created alongs
 #### Step 3: Resolution
 Agent analyzes:
 - 'Bonus' is not a real category (it's calculated)
-- 'Yahtzee' and 'Chance' exist in CATEGORIES
+- 'Dicee' and 'Chance' exist in CATEGORIES
 - Refactors to use Extract<Category, ...>
 
 #### Design Implications

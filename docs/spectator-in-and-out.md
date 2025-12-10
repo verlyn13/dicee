@@ -42,7 +42,7 @@ There are **three ways** someone becomes a spectator:
 │  Receives from GameRooms:                                                   │
 │  • Room status updates (waiting → playing → finished)                       │
 │  • Spectator counts                                                         │
-│  • Live game highlights (Yahtzees, close finishes)                          │
+│  • Live game highlights (Dicees, close finishes)                          │
 │                                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
 │  │  ROOM DIRECTORY                                                      │   │
@@ -423,7 +423,7 @@ class LobbyStore {
         break;
         
       case 'room.highlight':
-        // Someone got a Yahtzee, close finish, etc.
+        // Someone got a Dicee, close finish, etc.
         this.showHighlight(msg.roomCode, msg.highlight);
         break;
     }

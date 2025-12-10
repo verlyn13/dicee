@@ -171,7 +171,8 @@ async function addSourceFiles(
 ): Promise<SourceFile[]> {
 	const includePatterns = config.discovery?.include ?? [
 		'packages/web/src/**/*.ts',
-		'packages/partykit/src/**/*.ts',
+		'packages/shared/src/**/*.ts',
+		'packages/cloudflare-do/src/**/*.ts',
 	];
 
 	const excludePatterns = config.discovery?.exclude ?? [

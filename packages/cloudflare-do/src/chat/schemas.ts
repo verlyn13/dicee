@@ -81,8 +81,9 @@ export type ValidatedChatMessage = z.infer<typeof chatClientMessageSchema>;
 
 /**
  * Validate a chat client message
+ * Returns a discriminated union: { success: true, data } | { success: false, error }
  */
-export function validateChatMessage(input: unknown): z.SafeParseReturnType<unknown, ValidatedChatMessage> {
+export function validateChatMessage(input: unknown) {
 	return chatClientMessageSchema.safeParse(input);
 }
 

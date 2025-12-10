@@ -27,7 +27,7 @@
 |---------|-------------|------------|
 | **Text Chat** | Free-form messages, 500 char max | 1 msg/sec |
 | **Typing Indicators** | Shows who's typing | 1 update/2sec |
-| **Quick Chat** | 6 preset Yahtzee-themed messages | 1 msg/sec (shared with text) |
+| **Quick Chat** | 6 preset Dicee-themed messages | 1 msg/sec (shared with text) |
 | **Reactions** | 5 emoji reactions on messages | 5 reactions/sec |
 | **Message History** | Last 20 messages on join | N/A |
 
@@ -111,7 +111,7 @@ export type QuickChatKey =
   | 'nice_roll'
   | 'good_game'
   | 'your_turn'
-  | 'yahtzee'
+  | 'dicee'
   | 'ouch'
   | 'thinking';
 
@@ -119,7 +119,7 @@ export const QUICK_CHAT_MESSAGES: Record<QuickChatKey, { emoji: string; text: st
   nice_roll:  { emoji: '🎲', text: 'Nice roll!' },
   good_game:  { emoji: '👏', text: 'Good game!' },
   your_turn:  { emoji: '⏰', text: 'Your turn!' },
-  yahtzee:    { emoji: '🎉', text: 'YAHTZEE!' },
+  dicee:    { emoji: '🎉', text: 'DICEE!' },
   ouch:       { emoji: '💀', text: 'Ouch...' },
   thinking:   { emoji: '🤔', text: 'Hmm, let me think...' },
 };
@@ -1975,9 +1975,9 @@ Hook chat events into game state:
 // In GameRoom.ts - auto-chat on game events
 private async handleGameEvent(event: GameEvent): Promise<void> {
   switch (event.type) {
-    case 'YAHTZEE_SCORED':
+    case 'DICEE_SCORED':
       const msg = await this.chatManager.createSystemMessage(
-        `🎉 ${event.playerName} scored a YAHTZEE!`
+        `🎉 ${event.playerName} scored a DICEE!`
       );
       this.broadcast({ type: 'CHAT_MESSAGE', payload: msg });
       break;

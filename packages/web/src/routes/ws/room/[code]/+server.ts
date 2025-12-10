@@ -62,16 +62,23 @@ export const GET: RequestHandler = async ({ request, params, platform, url }) =>
 	headers.set('Authorization', `Bearer ${token}`);
 
 	// Proxy to the GameRoom DO via service binding
-	const proxyRequest = new Request(
-		new URL(`/room/${code.toUpperCase()}`, 'https://internal').toString(),
-		{
-			method: request.method,
-			headers,
-			body: request.body,
-			// @ts-expect-error - duplex required for streaming bodies
-			duplex: 'half',
-		},
-	);
+	// Preserve the token query param for the DO to verify
+	const proxyUrl = new URL(`/room/${code.toUpperCase()}`, 'https://internal');
+	proxyUrl.searchParams.set('token', token);
+
+	// Forward role param if present
+	const role = url.searchParams.get('role');
+	if (role) {
+		proxyUrl.searchParams.set('role', role);
+	}
+
+	const proxyRequest = new Request(proxyUrl.toString(), {
+		method: request.method,
+		headers,
+		body: request.body,
+		// @ts-expect-error - duplex required for streaming bodies
+		duplex: 'half',
+	});
 
 	return gameWorker.fetch(proxyRequest);
 };

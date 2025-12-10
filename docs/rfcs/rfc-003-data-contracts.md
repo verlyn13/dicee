@@ -304,8 +304,8 @@ type RollType = "initial" | "reroll";
 // Event Source
 type EventSource = "client" | "server" | "engine" | "system";
 
-// Yahtzee Categories
-type YahtzeeCategory =
+// Dicee Categories
+type DiceeCategory =
   // Upper section
   | "ones"
   | "twos"
@@ -319,7 +319,7 @@ type YahtzeeCategory =
   | "full_house"
   | "small_straight"
   | "large_straight"
-  | "yahtzee"
+  | "dicee"
   | "chance";
 
 // Decision Quality
@@ -373,16 +373,16 @@ interface Scorecard {
   fullHouse?: number;        // 25 or 0
   smallStraight?: number;    // 30 or 0
   largeStraight?: number;    // 40 or 0
-  yahtzee?: number;          // 50 or 0
+  dicee?: number;          // 50 or 0
   chance?: number;
-  yahtzeeBonus: number;      // 100 per extra Yahtzee
+  diceeBonus: number;      // 100 per extra Dicee
   lowerTotal: number;        // Sum of lower section
   
   // Grand Total
   grandTotal: number;        // upperTotal + lowerTotal
   
   // Metadata
-  categoriesRemaining: YahtzeeCategory[];
+  categoriesRemaining: DiceeCategory[];
   turnsCompleted: number;    // 0-13
 }
 ```
@@ -392,10 +392,10 @@ interface Scorecard {
 ```typescript
 interface ProbabilityVector {
   // Per-category probabilities and values
-  categories: Record<YahtzeeCategory, CategoryStatistics>;
+  categories: Record<DiceeCategory, CategoryStatistics>;
   
   // Optimal recommendation
-  optimalCategory: YahtzeeCategory;
+  optimalCategory: DiceeCategory;
   optimalEV: number;
   
   // Metadata
@@ -435,12 +435,12 @@ interface DecisionRecommendation {
   expectedImprovement?: number;  // EV gain from reroll
   
   // If action is "score"
-  recommendedCategory?: YahtzeeCategory;
+  recommendedCategory?: DiceeCategory;
   expectedValue?: number;
   
   // Alternative options
   alternatives: Array<{
-    category: YahtzeeCategory;
+    category: DiceeCategory;
     ev: number;
     evDifference: number;     // Difference from optimal
     reasoning: string;
@@ -531,7 +531,7 @@ interface GameCreatedEvent extends BaseGameEvent {
   gameMode: "solo" | "multiplayer" | "tutorial";
   playerIds: UUID[];
   settings: {
-    rulesVariant?: "standard" | "forced_yahtzee" | "joker_rules";
+    rulesVariant?: "standard" | "forced_dicee" | "joker_rules";
     timeLimit?: number;       // Seconds per turn (optional)
     allowUndo?: boolean;
   };
@@ -660,12 +660,12 @@ interface ScoreDecisionEvent extends BaseGameEvent {
   eventVersion: "1.1.0";
   
   // Scoring decision
-  chosenCategory: YahtzeeCategory;
+  chosenCategory: DiceeCategory;
   pointsEarned: number;
   
   // Decision quality analysis
   expectedValue: number;
-  optimalCategory: YahtzeeCategory;
+  optimalCategory: DiceeCategory;
   optimalEV: number;
   evDifference: number;      // Optimal EV - Actual EV
   decisionQuality: DecisionQuality;
@@ -676,7 +676,7 @@ interface ScoreDecisionEvent extends BaseGameEvent {
   
   // Behavioral telemetry
   timeToDecision: number;    // ms from final roll to score
-  categoriesConsidered: YahtzeeCategory[];  // Hover sequence
+  categoriesConsidered: DiceeCategory[];  // Hover sequence
   backtrackCount: number;    // Number of category changes
   hintRequested: boolean;
   
@@ -781,7 +781,7 @@ interface HoverEvent extends BaseGameEvent {
   eventSource: "client";
   
   // Hover target
-  categoryHovered: YahtzeeCategory;
+  categoryHovered: DiceeCategory;
   hoverDuration: number;     // ms
   
   // Contextual calculation
@@ -804,7 +804,7 @@ interface PredictionEvent extends BaseGameEvent {
   eventSource: "client";
   
   // Player prediction
-  predictedCategory: YahtzeeCategory;
+  predictedCategory: DiceeCategory;
   predictedProbability: number;  // 0.0-1.0
   confidenceLevel: "low" | "medium" | "high";
   
@@ -828,7 +828,7 @@ interface HintRequestedEvent extends BaseGameEvent {
   
   // Hint context
   currentDice: DiceArray;
-  availableCategories: YahtzeeCategory[];
+  availableCategories: DiceeCategory[];
   
   // Hint delivered
   hintType: "optimal_category" | "reroll_strategy" | "probability_explanation";
@@ -882,7 +882,7 @@ interface ProbabilityRequest {
   rollsRemaining: number;    // 0-2
   
   // Game context
-  availableCategories: YahtzeeCategory[];
+  availableCategories: DiceeCategory[];
   currentScorecard: Scorecard;
   
   // Optional context
@@ -963,12 +963,12 @@ interface EvaluationRequest {
   gameState: {
     diceResult: DiceArray;
     rollNumber: number;
-    availableCategories: YahtzeeCategory[];
+    availableCategories: DiceeCategory[];
     scorecard: Scorecard;
   };
   
   // Player's choice
-  chosenCategory: YahtzeeCategory;
+  chosenCategory: DiceeCategory;
   
   // Context
   timeToDecision: number;    // ms
@@ -986,7 +986,7 @@ interface EvaluationResponse {
   expectedValue: number;
   
   // Optimal comparison
-  optimalCategory: YahtzeeCategory;
+  optimalCategory: DiceeCategory;
   optimalEV: number;
   evDifference: number;
   evPercentageLoss: number;  // (optimal - actual) / optimal
@@ -1097,7 +1097,7 @@ interface RollMessage {
 ```typescript
 interface ScoreMessage {
   type: "score";
-  category: YahtzeeCategory;
+  category: DiceeCategory;
 }
 ```
 
@@ -1115,7 +1115,7 @@ interface HintRequestMessage {
 ```typescript
 interface HoverMessage {
   type: "hover";
-  category: YahtzeeCategory;
+  category: DiceeCategory;
   hoverStartTime: Timestamp;
 }
 ```
@@ -1244,13 +1244,13 @@ function validateScorecard(scorecard: Scorecard): ValidationResult {
     errors.push(`Large straight must be 0 or 40`);
   }
   
-  if (scorecard.yahtzee !== undefined && ![0, 50].includes(scorecard.yahtzee)) {
-    errors.push(`Yahtzee must be 0 or 50`);
+  if (scorecard.dicee !== undefined && ![0, 50].includes(scorecard.dicee)) {
+    errors.push(`Dicee must be 0 or 50`);
   }
   
-  // Yahtzee bonus validation (must be multiple of 100)
-  if (scorecard.yahtzeeBonus % 100 !== 0) {
-    errors.push(`Yahtzee bonus must be multiple of 100`);
+  // Dicee bonus validation (must be multiple of 100)
+  if (scorecard.diceeBonus % 100 !== 0) {
+    errors.push(`Dicee bonus must be multiple of 100`);
   }
   
   return {
@@ -1405,7 +1405,7 @@ function validateTurnAdvancement(events: GameEvent[]): boolean {
 ```typescript
 function validateCategoryUniqueness(
   scorecard: Scorecard,
-  chosenCategory: YahtzeeCategory
+  chosenCategory: DiceeCategory
 ): boolean {
   return scorecard[chosenCategory] === undefined;
 }
@@ -1418,7 +1418,7 @@ function validateCategoryUniqueness(
 ```typescript
 function validateCategoryList(scorecard: Scorecard): boolean {
   const scoredCount = Object.keys(scorecard).filter(
-    k => scorecard[k as YahtzeeCategory] !== undefined
+    k => scorecard[k as DiceeCategory] !== undefined
   ).length;
   
   const remainingCount = scorecard.categoriesRemaining.length;
@@ -1459,7 +1459,7 @@ function validateReroll(
 
 ```typescript
 function validateScore(
-  category: YahtzeeCategory,
+  category: DiceeCategory,
   dice: DiceArray,
   pointsEarned: number
 ): boolean {
@@ -1564,7 +1564,7 @@ function checkProbabilityBounds(pv: ProbabilityVector): boolean {
 
 **Invariant 10.1.2: Probability Sum (Upper Bound)**
 
-For disjoint categories (all lower section categories except Yahtzee bonus):
+For disjoint categories (all lower section categories except Dicee bonus):
 
 ```
 Σ P(category) ≤ 1.0 + ε  (where ε accounts for floating point)
@@ -1600,7 +1600,7 @@ EV(four_of_kind) ∈ [0, 30]
 EV(full_house) ∈ {0, 25}      // Binary
 EV(small_straight) ∈ {0, 30}
 EV(large_straight) ∈ {0, 40}
-EV(yahtzee) ∈ {0, 50}
+EV(dicee) ∈ {0, 50}
 EV(chance) ∈ [5, 30]   // Sum of 5 dice
 ```
 
@@ -1649,7 +1649,7 @@ upperTotal = upperSubtotal + upperBonus
 **Invariant 10.3.3: Lower Section Arithmetic**
 
 ```
-lowerTotal = sum(all lower section categories) + yahtzeeBonus
+lowerTotal = sum(all lower section categories) + diceeBonus
 ```
 
 **Invariant 10.3.4: Grand Total**
@@ -1658,10 +1658,10 @@ lowerTotal = sum(all lower section categories) + yahtzeeBonus
 grandTotal = upperTotal + lowerTotal
 ```
 
-**Invariant 10.3.5: Yahtzee Bonus Multiplicity**
+**Invariant 10.3.5: Dicee Bonus Multiplicity**
 
 ```
-yahtzeeBonus % 100 === 0
+diceeBonus % 100 === 0
 ```
 
 (Bonus is earned in 100-point increments)
@@ -1672,7 +1672,7 @@ yahtzeeBonus % 100 === 0
 full_house ∈ {0, 25}
 small_straight ∈ {0, 30}
 large_straight ∈ {0, 40}
-yahtzee ∈ {0, 50}
+dicee ∈ {0, 50}
 ```
 
 ### 10.4 Game State Invariants
@@ -2057,12 +2057,12 @@ const SCORING_RULES = {
   fullHouse: (dice: DiceArray) => isFullHouse(dice) ? 25 : 0,
   smallStraight: (dice: DiceArray) => hasSmallStraight(dice) ? 30 : 0,
   largeStraight: (dice: DiceArray) => hasLargeStraight(dice) ? 40 : 0,
-  yahtzee: (dice: DiceArray) => hasNOfKind(dice, 5) ? 50 : 0,
+  dicee: (dice: DiceArray) => hasNOfKind(dice, 5) ? 50 : 0,
   chance: (dice: DiceArray) => sum(dice),
   
   // Bonuses
   upperBonus: (upperSum: number) => upperSum >= 63 ? 35 : 0,
-  yahtzeeBonus: () => 100,  // Per additional Yahtzee
+  diceeBonus: () => 100,  // Per additional Dicee
 };
 ```
 

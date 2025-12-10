@@ -24,6 +24,7 @@ import {
 	createMultiplayerGameStore,
 	setMultiplayerGameStore,
 } from '$lib/stores/multiplayerGame.svelte';
+import { createRoomStore, setRoomStore } from '$lib/stores/room.svelte';
 import { createSpectatorStore, setSpectatorStore } from '$lib/stores/spectator.svelte';
 
 // =============================================================================
@@ -41,11 +42,16 @@ let actualRole = $state<'player' | 'spectator'>('player');
 let gameStore = $state<ReturnType<typeof createMultiplayerGameStore> | null>(null);
 let spectatorStore = $state<ReturnType<typeof createSpectatorStore> | null>(null);
 let chatStore = $state<ReturnType<typeof createChatStore> | null>(null);
+let roomStore = $state<ReturnType<typeof createRoomStore> | null>(null);
 
 // Connection state
 let isConnecting = $state(true);
 let connectionError = $state<string | null>(null);
 let wasDowngraded = $state(false);
+
+// Quick play state (from LobbyLanding)
+let quickPlayAIProfile = $state<string | null>(null);
+let quickPlayAutoStart = $state(false);
 
 // =============================================================================
 // Connection Logic
@@ -79,6 +85,16 @@ $effect(() => {
 	chatStore = createChatStore(auth.userId, displayName);
 	setChatStore(chatStore);
 
+	// Check for quick play mode (from LobbyLanding)
+	quickPlayAIProfile = sessionStorage.getItem('quickplay_ai_profile');
+	quickPlayAutoStart = sessionStorage.getItem('quickplay_auto_start') === 'true';
+
+	console.log('[Room] Quick play check:', { quickPlayAIProfile, quickPlayAutoStart });
+
+	// Clear the flags so they don't persist
+	sessionStorage.removeItem('quickplay_ai_profile');
+	sessionStorage.removeItem('quickplay_auto_start');
+
 	// Connect based on role
 	connectToRoom(actualRole);
 });
@@ -102,17 +118,18 @@ async function connectToRoom(role: 'player' | 'spectator'): Promise<void> {
 			gameStore = createMultiplayerGameStore(auth.userId!);
 			setMultiplayerGameStore(gameStore);
 
+			// Create and set room store (needed by RoomLobby)
+			roomStore = createRoomStore(auth.userId!);
+			setRoomStore(roomStore);
+
+			// Set up quick play handler BEFORE connecting
+			if (quickPlayAIProfile && quickPlayAutoStart) {
+				setupQuickPlayHandler();
+			}
+
 			// TODO: roomService.connect should return role info if downgraded
 			// For now, connect as player - server will handle role assignment
 			await roomService.connect(roomCode, session.access_token);
-
-			// Check if we were downgraded (TODO: get this from connect response)
-			// const result = await roomService.connect(...)
-			// if (result.wasDowngraded) {
-			//   wasDowngraded = true;
-			//   actualRole = 'spectator';
-			//   // Switch to spectator mode
-			// }
 		}
 
 		isConnecting = false;
@@ -120,6 +137,31 @@ async function connectToRoom(role: 'player' | 'spectator'): Promise<void> {
 		connectionError = error instanceof Error ? error.message : 'Failed to connect';
 		isConnecting = false;
 	}
+}
+
+/**
+ * Set up event handler for quick play mode.
+ * Uses QUICK_PLAY_START command to skip waiting room entirely.
+ * Human always goes first, game starts immediately in playing phase.
+ */
+function setupQuickPlayHandler(): void {
+	let hasStarted = false;
+
+	const handler = (event: { type: string }) => {
+		const eventType = event.type as string;
+
+		// When we get room state, immediately start quick play
+		if (eventType === 'room.state' && !hasStarted) {
+			hasStarted = true;
+			console.log('[QuickPlay] Room ready, starting quick play with AI:', quickPlayAIProfile);
+			// Send quick play start command - this creates AI and starts game in one step
+			roomService.sendQuickPlayStart([quickPlayAIProfile!]);
+			// Clean up handler
+			roomService.removeEventHandler(handler);
+		}
+	};
+
+	roomService.addEventHandler(handler);
 }
 
 // =============================================================================
@@ -186,7 +228,7 @@ function handleLeave(): void {
 {:else if actualRole === 'spectator' && spectatorStore}
 	<SpectatorView store={spectatorStore} onLeave={handleLeave} />
 {:else if actualRole === 'player' && gameStore}
-	<MultiplayerGameView store={gameStore} onLeave={handleLeave} />
+	<MultiplayerGameView store={gameStore} onLeave={handleLeave} isQuickPlay={quickPlayAutoStart} />
 {:else}
 	<div class="error-state">
 		<div class="error-content">

@@ -23,9 +23,11 @@ interface Props {
 	store: MultiplayerGameStore;
 	/** Callback when player wants to leave the game */
 	onLeave?: () => void;
+	/** Whether this is a Quick Play session (skip waiting room) */
+	isQuickPlay?: boolean;
 }
 
-let { store, onLeave }: Props = $props();
+let { store, onLeave, isQuickPlay = false }: Props = $props();
 
 // Subscribe to store events
 let unsubscribe: (() => void) | null = null;
@@ -121,10 +123,18 @@ function handleCloseGameOver(): void {
 </script>
 
 <!-- Show Waiting Room or Game View based on phase -->
-{#if phase === 'waiting' || phase === 'starting'}
-	<!-- Full-screen Waiting Room -->
+{#if (phase === 'waiting' || phase === 'starting') && !isQuickPlay}
+	<!-- Full-screen Waiting Room (not shown for Quick Play) -->
 	<div class="waiting-room-container">
 		<RoomLobby onleave={handleLeave} />
+	</div>
+{:else if (phase === 'waiting' || phase === 'starting') && isQuickPlay}
+	<!-- Quick Play loading state - game is starting -->
+	<div class="quick-play-loading">
+		<div class="loading-content">
+			<div class="loading-spinner">🎲</div>
+			<p class="loading-text">Starting game...</p>
+		</div>
 	</div>
 {:else}
 	<div class="multiplayer-game-view" data-phase={phase} data-ui-phase={uiPhase}>
@@ -287,6 +297,36 @@ function handleCloseGameOver(): void {
 		min-height: 100vh;
 		min-height: 100svh;
 		background: var(--color-background);
+	}
+
+	/* Quick Play Loading */
+	.quick-play-loading {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		background: var(--color-background);
+	}
+
+	.quick-play-loading .loading-content {
+		text-align: center;
+		padding: var(--space-4);
+	}
+
+	.quick-play-loading .loading-spinner {
+		font-size: 4rem;
+		animation: spin 1s ease-in-out infinite;
+	}
+
+	.quick-play-loading .loading-text {
+		font-size: var(--text-h3);
+		font-weight: var(--weight-semibold);
+		margin-top: var(--space-2);
+	}
+
+	@keyframes spin {
+		0%, 100% { transform: rotate(0deg); }
+		50% { transform: rotate(180deg); }
 	}
 
 	/* Error Banner */

@@ -46,7 +46,7 @@ A persistent horizontal bar below the dice tray showing probability distribution
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│  YAHTZEE: 2.3%  │  FULL HOUSE: 18%  │  STRAIGHT: 12%  │  3-KIND: 45%  │
+│  DICEE: 2.3%  │  FULL HOUSE: 18%  │  STRAIGHT: 12%  │  3-KIND: 45%  │
 │  ▓░░░░░░░░░░░░  │  ▓▓▓▓░░░░░░░░░░░  │  ▓▓▓░░░░░░░░░░  │  ▓▓▓▓▓▓▓▓▓░  │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -136,7 +136,7 @@ interface PlayerStats {
   highScore: number;
   averageEfficiency: number;      // % of optimal decisions
   luckFactor: number;             // Actual vs expected dice outcomes
-  yahtzeeCount: number;
+  diceeCount: number;
   perfectGames: number;           // 100% optimal decisions
   currentStreak: number;
   bestStreak: number;
@@ -197,7 +197,7 @@ const hapticPatterns = {
     settle: { pattern: [30], intensity: 'medium' },
   },
   
-  yahtzee: {
+  dicee: {
     pattern: [100, 50, 100, 50, 200],
     intensity: 'heavy',
   },
@@ -233,7 +233,7 @@ const audioBank = {
   // Scoring sounds
   scoreConfirm: { src: '/audio/register-ding.mp3', volume: 0.4 },
   bonusAchieved: { src: '/audio/bell-triple.mp3', volume: 0.6 },
-  yahtzee: { src: '/audio/jackpot.mp3', volume: 0.8 },
+  dicee: { src: '/audio/jackpot.mp3', volume: 0.8 },
   
   // Ambient/system
   turnChange: { src: '/audio/soft-chime.mp3', volume: 0.3 },
@@ -290,7 +290,7 @@ A scrolling LED-matrix style ticker for lobby events:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- ▶ YAHTZEE! @player_jane scored 50 in Room ABC  •  @mike joined lobby  •  
+ ▶ DICEE! @player_jane scored 50 in Room ABC  •  @mike joined lobby  •  
    Room XYZ full (4/4)  •  @sarah won with 312 points  •  12 players online
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -301,7 +301,7 @@ A scrolling LED-matrix style ticker for lobby events:
   <div class="ticker-track" style="--duration: {events.length * 3}s">
     {#each [...events, ...events] as event}
       <span class="ticker-item {event.type}">
-        {#if event.type === 'yahtzee'}
+        {#if event.type === 'dicee'}
           <span class="icon">🎲</span>
         {:else if event.type === 'win'}
           <span class="icon">🏆</span>
@@ -335,7 +335,7 @@ A scrolling LED-matrix style ticker for lobby events:
     100% { transform: translateX(-50%); }
   }
   
-  .ticker-item.yahtzee {
+  .ticker-item.dicee {
     color: var(--color-accent);
     font-weight: bold;
   }
@@ -560,7 +560,7 @@ Dedicated practice with full statistical feedback:
 │  │  • 42% chance of Three of a Kind (avg 22)                      ││
 │  │  • 11% chance of Full House (25)                               ││
 │  │  • 2.8% chance of Four of a Kind (avg 21)                      ││
-│  │  • 0.08% chance of Yahtzee (50)                                ││
+│  │  • 0.08% chance of Dicee (50)                                ││
 │  │                                                                 ││
 │  │  Alternative: Keeping [4][5][6] for straight                   ││
 │  │  EV: 12.1 — Not recommended (worse by 14.6)                    ││
@@ -577,12 +577,12 @@ Pre-configured scenarios for skill development:
 ```typescript
 const challenges = [
   {
-    id: 'forced-yahtzee',
-    name: 'Yahtzee Hunter',
-    description: 'Start with [3][3][3][1][2]. Can you get the Yahtzee?',
+    id: 'forced-dicee',
+    name: 'Dicee Hunter',
+    description: 'Start with [3][3][3][1][2]. Can you get the Dicee?',
     initialDice: [3, 3, 3, 1, 2],
     rollsRemaining: 2,
-    target: 'yahtzee',
+    target: 'dicee',
     parScore: 50,  // Optimal play achieves this 1.2% of the time
   },
   {
@@ -619,7 +619,7 @@ Solo high score tracking:
 │   1   @dice_master    387      98%          Dec 3                   │
 │   2   @lucky_roll     374      96%          Dec 5                   │
 │   3   @you            362      94%          Dec 7                   │  ← Highlighted
-│   4   @yahtzee_king   358      91%          Dec 1                   │
+│   4   @dicee_king   358      91%          Dec 1                   │
 │   5   @probability    351      99%          Nov 28                  │
 │                                                                      │
 │  Your Best: 362 (Rank #3)    Avg: 287    Games: 47                  │

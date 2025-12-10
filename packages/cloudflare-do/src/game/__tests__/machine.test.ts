@@ -457,7 +457,7 @@ describe('getNextPhaseAfterScore', () => {
 			'fullHouse',
 			'smallStraight',
 			'largeStraight',
-			'yahtzee',
+			'dicee',
 			'chance',
 		] as const;
 
@@ -491,7 +491,7 @@ describe('getNextPhaseAfterScore', () => {
 			'fullHouse',
 			'smallStraight',
 			'largeStraight',
-			'yahtzee',
+			'dicee',
 			'chance',
 		] as const;
 
@@ -609,7 +609,7 @@ describe('getAutoScoreCategory', () => {
 			'fullHouse',
 			'smallStraight',
 			'largeStraight',
-			'yahtzee',
+			'dicee',
 			'chance',
 		] as const;
 

@@ -54,6 +54,20 @@ export class OptimalBrain implements AIBrain {
 	}
 
 	async decide(context: GameContext): Promise<TurnDecision> {
+		// CRITICAL: If no dice exist yet, must roll first
+		// Dice are null/undefined at turn start before first roll
+		const hasValidDice = context.dice && context.dice.length === 5 && context.dice.some((d) => d >= 1 && d <= 6);
+		console.log(`[OptimalBrain] decide() - dice: ${JSON.stringify(context.dice)}, hasValidDice: ${hasValidDice}, rollsRemaining: ${context.rollsRemaining}`);
+		
+		if (!hasValidDice) {
+			console.log('[OptimalBrain] No valid dice - returning roll action');
+			return {
+				action: 'roll',
+				reasoning: 'No dice yet - must roll first',
+				confidence: 1.0,
+			};
+		}
+
 		// If no rolls remaining, must score
 		if (context.rollsRemaining === 0) {
 			const scoreAnalysis = this.analyzeScore(context);
@@ -171,7 +185,7 @@ export class OptimalBrain implements AIBrain {
 		switch (category) {
 			case 'three_of_a_kind':
 			case 'four_of_a_kind':
-			case 'yahtzee':
+			case 'dicee':
 				return this.analyzeOfAKindKeep(dice, counts, category);
 			case 'full_house':
 				return this.analyzeFullHouseKeep(dice, counts);
@@ -243,17 +257,17 @@ export class OptimalBrain implements AIBrain {
 		}
 
 		// Calculate EV based on category requirements
-		const target = category === 'yahtzee' ? 5 : category === 'four_of_a_kind' ? 4 : 3;
+		const target = category === 'dicee' ? 5 : category === 'four_of_a_kind' ? 4 : 3;
 		let ev = 0;
 
 		if (bestCount >= target) {
 			// Already have it
-			ev = category === 'yahtzee' ? 50 : dice.reduce((a, b) => a + b, 0);
+			ev = category === 'dicee' ? 50 : dice.reduce((a, b) => a + b, 0);
 		} else {
 			// Probability of achieving target
 			const needed = target - bestCount;
 			const prob = Math.pow(1 / 6, needed);
-			ev = prob * (category === 'yahtzee' ? 50 : bestValue * 5);
+			ev = prob * (category === 'dicee' ? 50 : bestValue * 5);
 		}
 
 		return { keepMask, expectedValue: ev, targetCategory: category };

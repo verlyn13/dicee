@@ -47,7 +47,7 @@ export interface TurnAnalysis {
  * Bit positions:
  * 0: ones, 1: twos, 2: threes, 3: fours, 4: fives, 5: sixes,
  * 6: three_of_a_kind, 7: four_of_a_kind, 8: full_house,
- * 9: small_straight, 10: large_straight, 11: yahtzee, 12: chance
+ * 9: small_straight, 10: large_straight, 11: dicee, 12: chance
  */
 const CATEGORY_BITS: Record<string, number> = {
 	ones: 0x0001,
@@ -61,7 +61,7 @@ const CATEGORY_BITS: Record<string, number> = {
 	full_house: 0x0100,
 	small_straight: 0x0200,
 	large_straight: 0x0400,
-	yahtzee: 0x0800,
+	dicee: 0x0800,
 	chance: 0x1000,
 };
 
@@ -233,7 +233,7 @@ class TypeScriptEngine implements DiceeEngine {
 				return this.hasSmallStraight(dice) ? 30 : 0;
 			case 'large_straight':
 				return this.hasLargeStraight(dice) ? 40 : 0;
-			case 'yahtzee':
+			case 'dicee':
 				return this.hasNOfAKind(counts, 5) ? 50 : 0;
 			case 'chance':
 				return sum;
@@ -280,7 +280,7 @@ class TypeScriptEngine implements DiceeEngine {
 				return 30;
 			case 'large_straight':
 				return 40;
-			case 'yahtzee':
+			case 'dicee':
 				return 50;
 			case 'chance':
 				return 30;
@@ -339,7 +339,7 @@ class TypeScriptEngine implements DiceeEngine {
 		if (
 			targetCategory === 'three_of_a_kind' ||
 			targetCategory === 'four_of_a_kind' ||
-			targetCategory === 'yahtzee'
+			targetCategory === 'dicee'
 		) {
 			// Keep the most common value
 			let bestValue = 1;
@@ -443,7 +443,7 @@ class TypeScriptEngine implements DiceeEngine {
 	private isFullHouse(counts: number[]): boolean {
 		const has3 = counts.some((c) => c === 3);
 		const has2 = counts.some((c) => c === 2);
-		const has5 = counts.some((c) => c === 5); // Yahtzee counts as full house
+		const has5 = counts.some((c) => c === 5); // Dicee counts as full house
 
 		return (has3 && has2) || has5;
 	}

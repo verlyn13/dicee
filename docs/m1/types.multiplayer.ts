@@ -31,7 +31,7 @@ export interface PlayerStatistics {
   gamesWon: number;
   averageScore: number;
   highScore: number;
-  totalYahtzees: number;
+  totalDicees: number;
   averageTurnsToComplete: number;
   favoriteCategory: Category | null;
   winRate: number;

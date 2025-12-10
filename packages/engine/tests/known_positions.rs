@@ -4,7 +4,7 @@
 //! well-documented dice game positions from the literature.
 //!
 //! References:
-//! - Woodward, "The Mathematics of Yahtzee" (2009) - mathematical foundations
+//! - Woodward, "The Mathematics of Dicee" (2009) - mathematical foundations
 //! - Optimal strategy guides for 5-dice games
 
 use dicee_engine::core::category::{Category, CategorySet};

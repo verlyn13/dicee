@@ -576,7 +576,7 @@ export class GlobalLobby extends DurableObject<Env> {
 
 	/**
 	 * Send a game highlight to lobby clients.
-	 * Used for ticker events like Yahtzees, high scores, etc.
+	 * Used for ticker events like Dicees, high scores, etc.
 	 */
 	sendHighlight(highlight: GameHighlight): void {
 		this.broadcast({

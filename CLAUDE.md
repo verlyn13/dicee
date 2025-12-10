@@ -45,7 +45,7 @@ See `.claude/CONVENTIONS.md` for full documentation.
 ---
 
 ## Project Overview
-Dicee is a dice probability engine and web application for learning probability through Yahtzee-style gameplay. It's part of a unified Game Lobby platform.
+Dicee is a dice probability engine and web application for learning probability through Dicee-style gameplay. It's part of a unified Game Lobby platform.
 
 **Production URL**: https://gamelobby.jefahnierocks.com
 

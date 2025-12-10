@@ -285,7 +285,7 @@ Desktop (1440×900 baseline)
 
 | Level | Size | Weight | Use Case |
 |-------|------|--------|----------|
-| Display | 48px | 700 | Game over, Yahtzee celebration |
+| Display | 48px | 700 | Game over, Dicee celebration |
 | H1 | 38px | 700 | Section headers |
 | H2 | 30px | 600 | Category groups |
 | H3 | 24px | 600 | Zone titles |
@@ -1064,7 +1064,7 @@ Once player accounts + backend exist:
     <h3 class="section-header">Lower Section</h3>
     
     {#each ['three_of_kind', 'four_of_kind', 'full_house', 
-            'small_straight', 'large_straight', 'yahtzee', 'chance'] as cat}
+            'small_straight', 'large_straight', 'dicee', 'chance'] as cat}
       <CategoryRow
         category={cat}
         score={scorecard[cat]}
@@ -1174,7 +1174,7 @@ Once player accounts + backend exist:
     twos: 'Twos',
     // ... etc
     full_house: 'Full House',
-    yahtzee: 'Yahtzee'
+    dicee: 'Dicee'
   };
   
   const icons = {
@@ -1182,7 +1182,7 @@ Once player accounts + backend exist:
     twos: '⚁',
     // ... etc
     full_house: '🏠',
-    yahtzee: '🎲'
+    dicee: '🎲'
   };
 </script>
 
@@ -2112,7 +2112,7 @@ self.addEventListener('install', (event) => {
 - ✅ Performance: <3s load, 60fps gameplay
 
 **v1.0 Feature Set (Complete):**
-- Core Yahtzee gameplay
+- Core Dicee gameplay
 - Category Heat Map with P() and EV
 - Manual stats profile selection (3 levels)
 - Basic tutorial

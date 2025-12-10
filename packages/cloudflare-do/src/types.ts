@@ -20,11 +20,14 @@ export interface Env {
 	/** GlobalLobby Durable Object namespace binding (singleton) */
 	GLOBAL_LOBBY: DurableObjectNamespace;
 
-	/** Supabase project URL for JWT verification */
+	/** Supabase project URL */
 	SUPABASE_URL: string;
 
-	/** Supabase anonymous key (for JWKS endpoint access) */
+	/** Supabase anonymous key */
 	SUPABASE_ANON_KEY: string;
+
+	/** Supabase JWT secret for legacy HS256 token verification (optional if using asymmetric keys) */
+	SUPABASE_JWT_SECRET?: string;
 
 	/** Current environment (development, staging, production) */
 	ENVIRONMENT: 'development' | 'staging' | 'production';
@@ -268,7 +271,7 @@ export interface RoomStatusUpdate {
  */
 export interface GameHighlight {
 	roomCode: string;
-	type: 'yahtzee' | 'high_score' | 'close_finish' | 'game_complete';
+	type: 'dicee' | 'high_score' | 'close_finish' | 'game_complete';
 	message: string;
 	playerName?: string;
 	score?: number;
@@ -791,7 +794,7 @@ export type GalleryAchievementId =
 	| 'superfan'         // Backed the same player 5 times
 	| 'jinx'             // Your pick lost 5 times in a row
 	| 'analyst'          // Predicted exact score 3 times
-	| 'called_it'        // Predicted a Yahtzee correctly
+	| 'called_it'        // Predicted a Dicee correctly
 	| 'voyeur'           // Watched 50 games total
 	| 'regular';         // Spectated in 20 different rooms
 
@@ -855,7 +858,7 @@ export const GALLERY_ACHIEVEMENTS: Record<GalleryAchievementId, Omit<GalleryAchi
 	called_it: {
 		id: 'called_it',
 		name: 'Called It!',
-		description: 'Predicted a Yahtzee correctly',
+		description: 'Predicted a Dicee correctly',
 		emoji: '📢',
 		threshold: 1,
 	},
@@ -931,7 +934,7 @@ export interface GalleryLeaderboardEntry {
 export const GALLERY_POINT_VALUES = {
 	// Predictions
 	PREDICTION_CORRECT_BASE: 10,
-	PREDICTION_YAHTZEE: 50,
+	PREDICTION_DICEE: 50,
 	PREDICTION_EXACT_SCORE: 100,
 	PREDICTION_STREAK_MULTIPLIER: 0.1, // 10% bonus per streak
 

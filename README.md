@@ -1,6 +1,6 @@
 # Dicee
 
-Dice probability engine and web application for learning probability through Yahtzee-style gameplay. Part of the Game Lobby platform.
+Dice probability engine and web application for learning probability through Dicee-style gameplay. Part of the Game Lobby platform.
 
 **Production:** https://gamelobby.jefahnierocks.com
 

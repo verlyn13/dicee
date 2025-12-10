@@ -28,7 +28,7 @@ function formatEvent(event: TickerEvent): string {
 	// Add flair based on type
 	switch (event.type) {
 		case 'jackpot':
-			return `🎯 YAHTZEE! ${msg} 🎯`;
+			return `🎯 DICEE! ${msg} 🎯`;
 		case 'game_won':
 			return `🏆 ${msg}`;
 		case 'room_created':

@@ -53,6 +53,7 @@
 	"dependencies": {
 		"@dicebear/collection": "^9.2.4",
 		"@dicebear/core": "^9.2.4",
+		"@dicee/shared": "workspace:*",
 		"@supabase/ssr": "^0.8.0",
 		"@supabase/supabase-js": "^2.86.0",
 		"reconnecting-websocket": "^4.4.0",

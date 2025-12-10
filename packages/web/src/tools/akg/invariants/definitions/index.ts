@@ -10,6 +10,7 @@ import './wasm-single-entry.js';
 import './store-no-circular-deps.js';
 import './layer-component-isolation.js';
 import './service-layer-boundaries.js';
+import './shared-isolation.js';
 
 // Naming invariants
 import './store-file-naming.js';
@@ -21,6 +22,7 @@ export const BUILTIN_INVARIANTS = [
 	'store_no_circular_deps',
 	'layer_component_isolation',
 	'service_layer_boundaries',
+	'shared_isolation',
 	'store_file_naming',
 	'callback_prop_naming',
 ] as const;

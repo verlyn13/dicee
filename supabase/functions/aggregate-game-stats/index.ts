@@ -49,8 +49,8 @@ interface PlayerStats {
 	optimal_decisions: number;
 	total_decisions: number;
 	avg_ev_loss: number;
-	yahtzees_rolled: number;
-	bonus_yahtzees: number;
+	dicees_rolled: number;
+	bonus_dicees: number;
 	upper_bonuses: number;
 	category_stats: Record<string, { times_scored: number; total_score: number; avg_score: number }>;
 }
@@ -177,21 +177,21 @@ async function processPlayerStats(
 	}
 
 	// Count achievements
-	let yahtzees = 0;
-	let bonusYahtzees = 0;
+	let dicees = 0;
+	let bonusDicees = 0;
 	let upperBonus = 0;
 
 	if (player.scorecard) {
 		const scorecard = player.scorecard as Record<string, number | null>;
 
-		// Check for Yahtzee
-		if (scorecard.Yahtzee && scorecard.Yahtzee >= 50) {
-			yahtzees = 1;
+		// Check for Dicee
+		if (scorecard.Dicee && scorecard.Dicee >= 50) {
+			dicees = 1;
 		}
 
-		// Count bonus Yahtzees (from bonus_yahtzees field if present)
-		if ('bonus_yahtzees' in scorecard && typeof scorecard.bonus_yahtzees === 'number') {
-			bonusYahtzees = scorecard.bonus_yahtzees;
+		// Count bonus Dicees (from bonus_dicees field if present)
+		if ('bonus_dicees' in scorecard && typeof scorecard.bonus_dicees === 'number') {
+			bonusDicees = scorecard.bonus_dicees;
 		}
 
 		// Check upper section bonus
@@ -225,8 +225,8 @@ async function processPlayerStats(
 	const avgEvLoss =
 		newTotalDecisions > 0 ? ((existingStats?.avg_ev_loss ?? 0) * (existingStats?.total_decisions ?? 0) + totalEvLoss) / newTotalDecisions : 0;
 
-	const newYahtzees = (existingStats?.yahtzees_rolled ?? 0) + yahtzees;
-	const newBonusYahtzees = (existingStats?.bonus_yahtzees ?? 0) + bonusYahtzees;
+	const newDicees = (existingStats?.dicees_rolled ?? 0) + dicees;
+	const newBonusDicees = (existingStats?.bonus_dicees ?? 0) + bonusDicees;
 	const newUpperBonuses = (existingStats?.upper_bonuses ?? 0) + upperBonus;
 
 	// Merge category stats
@@ -261,8 +261,8 @@ async function processPlayerStats(
 			optimal_decisions: newOptimalDecisions,
 			total_decisions: newTotalDecisions,
 			avg_ev_loss: avgEvLoss,
-			yahtzees_rolled: newYahtzees,
-			bonus_yahtzees: newBonusYahtzees,
+			dicees_rolled: newDicees,
+			bonus_dicees: newBonusDicees,
 			upper_bonuses: newUpperBonuses,
 			category_stats: mergedCategoryStats,
 			updated_at: new Date().toISOString(),

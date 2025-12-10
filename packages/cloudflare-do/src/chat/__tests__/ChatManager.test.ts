@@ -260,7 +260,7 @@ describe('ChatManager', () => {
 				{ key: 'nice_roll', expected: '🎲 Nice roll!' },
 				{ key: 'good_game', expected: '👏 Good game!' },
 				{ key: 'your_turn', expected: '⏰ Your turn!' },
-				{ key: 'yahtzee', expected: '🎉 YAHTZEE!' },
+				{ key: 'dicee', expected: '🎉 DICEE!' },
 				{ key: 'ouch', expected: '💀 Ouch...' },
 				{ key: 'thinking', expected: '🤔 Hmm, let me think...' },
 			];
@@ -272,7 +272,7 @@ describe('ChatManager', () => {
 				const result = await chatManager.handleQuickChat(
 					'user1',
 					'Alice',
-					key as 'nice_roll' | 'good_game' | 'your_turn' | 'yahtzee' | 'ouch' | 'thinking',
+					key as 'nice_roll' | 'good_game' | 'your_turn' | 'dicee' | 'ouch' | 'thinking',
 				);
 
 				expect(result.success).toBe(true);

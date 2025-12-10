@@ -176,13 +176,13 @@ export class AIController {
 	 * with appropriate delays between actions.
 	 *
 	 * @param playerId - AI player ID
-	 * @param gameState - Current game state
+	 * @param getGameState - Function to get current game state (called each step for fresh state)
 	 * @param execute - Callback to execute commands
 	 * @param emit - Callback to emit events
 	 */
 	async executeTurn(
 		playerId: string,
-		gameState: MultiplayerGameState,
+		getGameState: () => Promise<MultiplayerGameState | null>,
 		execute: CommandExecutor,
 		emit: EventEmitter,
 	): Promise<void> {
@@ -202,6 +202,13 @@ export class AIController {
 		let maxSteps = 10; // Safety limit
 
 		while (!turnComplete && maxSteps > 0) {
+			// Get fresh game state for each step
+			const gameState = await getGameState();
+			if (!gameState) {
+				console.error('[AIController] No game state available');
+				return;
+			}
+
 			const decision = await this.executeTurnStep(
 				playerId,
 				gameState,
@@ -282,7 +289,7 @@ export class AIController {
 	 */
 	scheduleTurn(
 		playerId: string,
-		gameState: MultiplayerGameState,
+		getGameState: () => Promise<MultiplayerGameState | null>,
 		execute: CommandExecutor,
 		emit: EventEmitter,
 		delayMs: number,
@@ -291,7 +298,7 @@ export class AIController {
 
 		setTimeout(async () => {
 			if (!cancelled) {
-				await this.executeTurn(playerId, gameState, execute, emit);
+				await this.executeTurn(playerId, getGameState, execute, emit);
 			}
 		}, delayMs);
 
@@ -340,8 +347,9 @@ export class AIController {
 		const leaderTotal = Math.max(myTotal, ...opponentScores.map((o: { playerId: string; scorecard: Scorecard; totalScore: number }) => o.totalScore));
 		const scoreDifferential = myTotal - leaderTotal;
 
+		// Note: dice may be null/undefined at turn start - brain must handle this
 		return {
-			dice: player.currentDice ?? [1, 1, 1, 1, 1],
+			dice: player.currentDice as [number, number, number, number, number],
 			keptDice: player.keptDice ?? [false, false, false, false, false],
 			rollsRemaining: player.rollsRemaining,
 			scorecard: player.scorecard,
@@ -413,7 +421,7 @@ export class AIController {
 			'fullHouse',
 			'smallStraight',
 			'largeStraight',
-			'yahtzee',
+			'dicee',
 			'chance',
 		] as const;
 
@@ -424,9 +432,9 @@ export class AIController {
 			}
 		}
 
-		// Yahtzee bonus
-		if (scorecard.yahtzeeBonus !== null && scorecard.yahtzeeBonus !== undefined) {
-			total += scorecard.yahtzeeBonus;
+		// Dicee bonus
+		if (scorecard.diceeBonus !== null && scorecard.diceeBonus !== undefined) {
+			total += scorecard.diceeBonus;
 		}
 
 		return total;

@@ -25,7 +25,7 @@
 
 ## Abstract
 
-This RFC specifies the architecture, algorithms, and implementation plan for the **Dicee Statistical Engine**, the mathematical core that transforms Yahtzee from a casual dice game into an educational instrument for teaching probability, expected value, and optimal decision-making. The engine provides real-time probabilistic analysis with <100ms latency, adaptive complexity scaling for learners from middle school to advanced, and mathematically guaranteed correctness.
+This RFC specifies the architecture, algorithms, and implementation plan for the **Dicee Statistical Engine**, the mathematical core that transforms Dicee from a casual dice game into an educational instrument for teaching probability, expected value, and optimal decision-making. The engine provides real-time probabilistic analysis with <100ms latency, adaptive complexity scaling for learners from middle school to advanced, and mathematically guaranteed correctness.
 
 **Key Innovation:** Event-sourced statistical observability pipeline that captures every micro-decision, enabling unprecedented insight into probabilistic thinking development.
 
@@ -118,7 +118,7 @@ Existing probability education tools suffer from three critical weaknesses:
 2. **Passive Learning** — Students observe probabilities but don't make consequential decisions based on them
 3. **No Feedback Loop** — Learners cannot measure their probabilistic reasoning quality or track improvement
 
-**Dicee's Solution:** Transform Yahtzee (a familiar, engaging game) into a statistical laboratory where every decision generates immediate, measurable feedback on probabilistic thinking quality.
+**Dicee's Solution:** Transform Dicee (a familiar, engaging game) into a statistical laboratory where every decision generates immediate, measurable feedback on probabilistic thinking quality.
 
 ### 1.2 Design Principles
 
@@ -140,7 +140,7 @@ Every decision generates rich telemetry enabling unprecedented insight into prob
 ### 1.3 Non-Goals
 
 This system explicitly **does not**:
-- Teach Yahtzee rules (assumed prerequisite)
+- Teach Dicee rules (assumed prerequisite)
 - Provide general statistics education (focused on decision-making)
 - Support real-money gambling (educational only)
 - Replace human teachers (augmentation, not replacement)
@@ -535,7 +535,7 @@ The set of all possible dice outcomes for a 5-dice roll:
 ```
 
 **Events:**  
-Measurable subsets of Ω corresponding to Yahtzee categories
+Measurable subsets of Ω corresponding to Dicee categories
 
 **Probability Measure (P):**  
 For fair dice, uniform distribution over Ω:
@@ -597,10 +597,10 @@ LargeStraight(dice) = set(dice) ∈ {{1,2,3,4,5}, {2,3,4,5,6}}
 Score = 40 if condition holds, else 0
 ```
 
-**Yahtzee:**
+**Dicee:**
 
 ```
-Yahtzee(dice) = ∃v ∈ {1..6}: ∀i ∈ {1..5}: dᵢ = v
+Dicee(dice) = ∃v ∈ {1..6}: ∀i ∈ {1..5}: dᵢ = v
 Score = 50 if condition holds, else 0
 ```
 
@@ -644,7 +644,7 @@ Ways = 5! / (3! × 1! × 1!) = 120 / 6 = 20
 
 ### 4.4 Expected Value Recurrence Relation
 
-**Bellman Equation for Yahtzee:**
+**Bellman Equation for Dicee:**
 
 ```
 V*(state) = max(
@@ -711,7 +711,7 @@ Higher is better (closer to 0 means more optimal)
 2. `P(Ω) = 1` (something must happen)
 3. `P(A ∪ B) = P(A) + P(B)` if A and B are mutually exclusive
 
-**Yahtzee-Specific Invariants:**
+**Dicee-Specific Invariants:**
 1. All category scores are non-negative integers
 2. Upper section max: 5 × 6 = 30 per category
 3. Upper section bonus: 35 if total ≥ 63
@@ -1056,12 +1056,12 @@ interface RollEvent extends BaseGameEvent {
 // Score decision event
 interface ScoreDecisionEvent extends BaseGameEvent {
   eventType: "score";
-  chosenCategory: YahtzeeCategory;
+  chosenCategory: DiceeCategory;
   pointsEarned: number;
   
   // Decision quality
   expectedValue: number;
-  optimalCategory: YahtzeeCategory;
+  optimalCategory: DiceeCategory;
   optimalEV: number;
   evDifference: number;
   decisionQuality: "optimal" | "excellent" | "good" | "acceptable" | "suboptimal" | "poor";
@@ -1076,7 +1076,7 @@ interface ScoreDecisionEvent extends BaseGameEvent {
 // Hover event (UI telemetry)
 interface HoverEvent extends BaseGameEvent {
   eventType: "hover";
-  categoryHovered: YahtzeeCategory;
+  categoryHovered: DiceeCategory;
   hoverDuration: number;            // ms
   
   // Contextual calculation
@@ -1088,7 +1088,7 @@ interface HoverEvent extends BaseGameEvent {
 // Prediction event (engagement mechanic)
 interface PredictionEvent extends BaseGameEvent {
   eventType: "prediction";
-  predictedCategory: YahtzeeCategory;
+  predictedCategory: DiceeCategory;
   predictedProbability: number;
   actualProbability: number;
   accuracyDelta: number;            // For reward calculation
@@ -1140,9 +1140,9 @@ interface PlayerState {
     fullHouse?: number;
     smallStraight?: number;
     largeStraight?: number;
-    yahtzee?: number;
+    dicee?: number;
     chance?: number;
-    yahtzeeBonus?: number;          // 100 per additional Yahtzee
+    diceeBonus?: number;          // 100 per additional Dicee
   };
   
   // Computed totals
@@ -1151,7 +1151,7 @@ interface PlayerState {
   grandTotal: number;
   
   // Available categories (not yet scored)
-  availableCategories: Set<YahtzeeCategory>;
+  availableCategories: Set<DiceeCategory>;
 }
 ```
 
@@ -1160,7 +1160,7 @@ interface PlayerState {
 ```typescript
 interface ProbabilityVector {
   // Per-category probabilities
-  categories: Record<YahtzeeCategory, ProbabilityMetric>;
+  categories: Record<DiceeCategory, ProbabilityMetric>;
   
   // Metadata
   computationMethod: "exact" | "monte_carlo" | "hybrid" | "cached";
@@ -1206,7 +1206,7 @@ interface ProbabilityMetric {
 function calculateSingleRollProbability(
   currentDice: number[],
   keptMask: boolean[],
-  category: YahtzeeCategory
+  category: DiceeCategory
 ): Probability {
   const diceToRoll = keptMask.filter(k => !k).length;
   const totalOutcomes = Math.pow(6, diceToRoll);
@@ -1473,7 +1473,7 @@ function validateEVMonotonicity(
 ### 8.3 Score Range Validation
 
 ```typescript
-const CATEGORY_CONSTRAINTS: Record<YahtzeeCategory, [number, number]> = {
+const CATEGORY_CONSTRAINTS: Record<DiceeCategory, [number, number]> = {
   ones: [0, 5],              // Min 0, max 5×1
   twos: [0, 10],             // Min 0, max 5×2
   threes: [0, 15],
@@ -1485,12 +1485,12 @@ const CATEGORY_CONSTRAINTS: Record<YahtzeeCategory, [number, number]> = {
   fullHouse: [0, 25],        // 0 or 25 only
   smallStraight: [0, 30],    // 0 or 30 only
   largeStraight: [0, 40],    // 0 or 40 only
-  yahtzee: [0, 50],          // 0 or 50 only
+  dicee: [0, 50],          // 0 or 50 only
   chance: [5, 30]            // Min 5×1, max 5×6
 };
 
 function validateScore(
-  category: YahtzeeCategory,
+  category: DiceeCategory,
   score: number
 ): void {
   const [min, max] = CATEGORY_CONSTRAINTS[category];
@@ -1501,7 +1501,7 @@ function validateScore(
   }
   
   // Additional constraint: fixed-value categories
-  if (['full_house', 'small_straight', 'large_straight', 'yahtzee'].includes(category)) {
+  if (['full_house', 'small_straight', 'large_straight', 'dicee'].includes(category)) {
     if (score !== 0 && score !== max) {
       throw new ValidationError(
         `${category} must score 0 or ${max}, got ${score}`
@@ -1907,7 +1907,7 @@ async function deletePlayerData(playerId: string): Promise<void> {
 describe('Probability Calculations', () => {
   // Correctness tests
   test('known probability values', () => {
-    expect(P([1,1,1,1,1], 'yahtzee')).toBe(1.0);
+    expect(P([1,1,1,1,1], 'dicee')).toBe(1.0);
     expect(P([5,5,5,2,6], 'full_house')).toBeCloseTo(1/6);
     expect(P([1,2,3,4,6], 'large_straight')).toBe(0);
   });
@@ -1924,7 +1924,7 @@ describe('Probability Calculations', () => {
   
   // Edge cases
   test('handles all dice kept', () => {
-    const p = P([3,3,3,3,3], [T,T,T,T,T], 'yahtzee');
+    const p = P([3,3,3,3,3], [T,T,T,T,T], 'dicee');
     expect(p).toBe(1.0);  // Already achieved
   });
 });
@@ -1974,7 +1974,7 @@ describe('Statistical Engine Integration', () => {
 **Cross-Check with Known Solutions:**
 
 ```typescript
-// Published optimal Yahtzee strategies
+// Published optimal Dicee strategies
 import { optimalStrategyReference } from './reference-data';
 
 describe('Optimal Strategy Validation', () => {
@@ -2155,7 +2155,7 @@ describe('Failure Handling', () => {
   "availableCategories": [
     "ones", "twos", "fours", "sixes",
     "three_of_kind", "four_of_kind", "full_house",
-    "small_straight", "large_straight", "yahtzee", "chance"
+    "small_straight", "large_straight", "dicee", "chance"
   ]
 }
 ```
@@ -2216,7 +2216,7 @@ Result (13ms):
       "isAchievable": true,
       "recommendKeep": [0, 1, 2]
     },
-    "yahtzee": {
+    "dicee": {
       "value": 0.0278,
       "asPercentage": "2.8%",
       "asFraction": "1/36",
@@ -2431,16 +2431,16 @@ profile.category_mastery["fives"] -= 2  # Suboptimal use
 6. **Russell, S. & Norvig, P.** (2020). *Artificial Intelligence: A Modern Approach* (4th ed.). Pearson.
    - Chapter 17: Making simple decisions (MDPs)
 
-### 14.3 Yahtzee-Specific Research
+### 14.3 Dicee-Specific Research
 
-7. **Glenn, J.** (2006). "Optimal Strategy in Yahtzee." *College Mathematics Journal*, 37(5), 367-371.
+7. **Glenn, J.** (2006). "Optimal Strategy in Dicee." *College Mathematics Journal*, 37(5), 367-371.
    - Exhaustive dynamic programming solution
    - Expected value tables for optimal play
 
-8. **Verhoeff, T. & van den Boom, R.** (2004). "Yahtzee: A Large Stochastic Multiple-Choice Knapsack Problem." *TU Eindhoven Technical Report*.
+8. **Verhoeff, T. & van den Boom, R.** (2004). "Dicee: A Large Stochastic Multiple-Choice Knapsack Problem." *TU Eindhoven Technical Report*.
    - Computational complexity analysis
 
-9. **Woodward, J.** (2018). "Solving Yahtzee with Dynamic Programming and Memoization." *Journal of Computing Sciences in Colleges*, 33(4), 12-19.
+9. **Woodward, J.** (2018). "Solving Dicee with Dynamic Programming and Memoization." *Journal of Computing Sciences in Colleges*, 33(4), 12-19.
 
 ### 14.4 Educational Technology
 
@@ -2502,7 +2502,7 @@ P(Full House) = 6/36 = 1/6 ≈ 16.67%
 
 ---
 
-**Example 2: Yahtzee Continuation**
+**Example 2: Dicee Continuation**
 
 Given: `[3, 3, 3, 3, 4]`, keep `[T, T, T, T, F]`
 
@@ -2512,7 +2512,7 @@ Need: Roll a 3
 Total outcomes: 6
 Favorable outcomes: 1 (rolling a 3)
 
-P(Yahtzee) = 1/6 ≈ 16.67%
+P(Dicee) = 1/6 ≈ 16.67%
 ```
 
 ---

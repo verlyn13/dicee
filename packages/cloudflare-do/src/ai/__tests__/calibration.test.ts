@@ -197,10 +197,10 @@ describe('AI Brain Calibration', () => {
 			expect(decision.category).toBeDefined();
 		});
 
-		it('should recognize Yahtzee opportunity', async () => {
+		it('should recognize Dicee opportunity', async () => {
 			const scorecard = createEmptyScorecard();
 			const context = createTestContext(
-				[5, 5, 5, 5, 5], // Yahtzee!
+				[5, 5, 5, 5, 5], // Dicee!
 				scorecard,
 				0,
 				1,
@@ -209,8 +209,8 @@ describe('AI Brain Calibration', () => {
 			const decision = await brain.decide(context);
 
 			expect(decision.action).toBe('score');
-			// Should score Yahtzee for 50 points
-			expect(decision.category).toBe('yahtzee');
+			// Should score Dicee for 50 points
+			expect(decision.category).toBe('dicee');
 		});
 	});
 
@@ -368,13 +368,13 @@ describe('AI Profile Calibration', () => {
 // ============================================================================
 
 describe('AI Decision Quality', () => {
-	it('should prefer Yahtzee when available', async () => {
+	it('should prefer Dicee when available', async () => {
 		const brain = new OptimalBrain(false);
 		await brain.initialize(PROFESSOR);
 
 		const scorecard = createEmptyScorecard();
 		const context = createTestContext(
-			[3, 3, 3, 3, 3], // Yahtzee!
+			[3, 3, 3, 3, 3], // Dicee!
 			scorecard,
 			0,
 			1,
@@ -383,7 +383,7 @@ describe('AI Decision Quality', () => {
 		const decision = await brain.decide(context);
 
 		expect(decision.action).toBe('score');
-		expect(decision.category).toBe('yahtzee');
+		expect(decision.category).toBe('dicee');
 	});
 
 	it('should prefer large straight when available', async () => {
@@ -431,10 +431,10 @@ describe('AI Decision Quality', () => {
 		await brain.initialize(PROFESSOR);
 
 		const scorecard = createEmptyScorecard();
-		scorecard.yahtzee = 50; // Already scored
+		scorecard.dicee = 50; // Already scored
 
 		const context = createTestContext(
-			[4, 4, 4, 4, 4], // Another Yahtzee
+			[4, 4, 4, 4, 4], // Another Dicee
 			scorecard,
 			0,
 			1,
@@ -443,7 +443,7 @@ describe('AI Decision Quality', () => {
 		const decision = await brain.decide(context);
 
 		expect(decision.action).toBe('score');
-		// Should NOT try to score yahtzee again
-		expect(decision.category).not.toBe('yahtzee');
+		// Should NOT try to score dicee again
+		expect(decision.category).not.toBe('dicee');
 	});
 });

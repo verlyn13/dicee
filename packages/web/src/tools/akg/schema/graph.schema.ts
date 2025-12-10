@@ -76,7 +76,15 @@ export type ComponentClassification = z.infer<typeof ComponentClassification>;
 /**
  * Export kind
  */
-export const ExportKind = z.enum(['function', 'class', 'const', 'type', 'interface', 'default']);
+export const ExportKind = z.enum([
+	'function',
+	'class',
+	'const',
+	'type',
+	'interface',
+	'default',
+	'unknown',
+]);
 
 export type ExportKind = z.infer<typeof ExportKind>;
 

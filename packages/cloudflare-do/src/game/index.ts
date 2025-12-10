@@ -1,7 +1,7 @@
 /**
  * Game Module Exports
  *
- * All game-related types, state management, and logic for multiplayer Yahtzee.
+ * All game-related types, state management, and logic for multiplayer Dicee.
  */
 
 // Types
@@ -24,7 +24,7 @@ export {
 	ALL_CATEGORIES,
 	UPPER_BONUS_THRESHOLD,
 	UPPER_BONUS_VALUE,
-	YAHTZEE_BONUS_VALUE,
+	DICEE_BONUS_VALUE,
 	AFK_WARNING_SECONDS,
 	AFK_TIMEOUT_SECONDS,
 	ROOM_CLEANUP_MS,

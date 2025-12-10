@@ -189,7 +189,7 @@ class ProfileService {
       gamesWon: 0,
       averageScore: 0,
       highScore: 0,
-      totalYahtzees: 0,
+      totalDicees: 0,
       averageTurnsToComplete: 0,
       favoriteCategory: null,
       winRate: 0,
