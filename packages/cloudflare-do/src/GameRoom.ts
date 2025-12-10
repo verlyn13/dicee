@@ -1050,7 +1050,7 @@ export class GameRoom extends DurableObject<Env> {
 
 		const validation = canRematch(gameState, connState.userId);
 		if (!validation.success) {
-			this.sendError(ws, validation.error?.code ?? 'REMATCH_ERROR', validation.error?.message ?? 'Cannot rematch');
+			this.sendError(ws, validation.error ?? 'REMATCH_ERROR', validation.message ?? 'Cannot rematch');
 			return;
 		}
 
@@ -1061,7 +1061,7 @@ export class GameRoom extends DurableObject<Env> {
 		const roomState = await this.ctx.storage.get<RoomState>('room');
 		if (roomState) {
 			roomState.status = 'waiting';
-			roomState.startedAt = undefined;
+			roomState.startedAt = null;
 			await this.ctx.storage.put('room', roomState);
 		}
 
