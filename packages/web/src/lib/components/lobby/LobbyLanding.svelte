@@ -302,7 +302,17 @@ function handleDeclineInvite(inviteId: string) {
 				aria-label="Game Rooms"
 			>
 				<div class="panel-header">
-					<h2>Open Games</h2>
+					<h2>Games</h2>
+					{#if lobby.rooms.length > 0}
+						<span class="room-counts">
+							{#if lobby.openRooms.length > 0}
+								<span class="count open">{lobby.openRooms.length} open</span>
+							{/if}
+							{#if lobby.playingRooms.length > 0}
+								<span class="count live">{lobby.playingRooms.length} live</span>
+							{/if}
+						</span>
+					{/if}
 				</div>
 
 				{#if lobby.rooms.length === 0}
@@ -693,6 +703,30 @@ function handleDeclineInvite(inviteId: string) {
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-wide);
 		margin: 0;
+	}
+
+	.room-counts {
+		display: flex;
+		gap: var(--space-2);
+	}
+
+	.room-counts .count {
+		font-family: var(--font-mono);
+		font-size: var(--text-tiny);
+		font-weight: var(--weight-semibold);
+		padding: 0.125rem 0.5rem;
+		border: var(--border-thin);
+		text-transform: uppercase;
+	}
+
+	.room-counts .count.open {
+		background: var(--color-signal-live);
+		border-color: var(--color-signal-live);
+	}
+
+	.room-counts .count.live {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
 	}
 
 	.room-grid {

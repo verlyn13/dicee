@@ -21,16 +21,17 @@ interface StatusConfig {
 	bg: string;
 	text: string;
 	canJoin: boolean;
+	canSpectate: boolean;
 }
 
 function getStatusConfig(status: RoomInfo['status']): StatusConfig {
 	switch (status) {
 		case 'open':
-			return { bg: 'bg-live', text: 'OPEN', canJoin: true };
+			return { bg: 'bg-live', text: 'OPEN', canJoin: true, canSpectate: false };
 		case 'playing':
-			return { bg: 'bg-accent', text: 'LIVE', canJoin: false };
+			return { bg: 'bg-accent', text: 'LIVE', canJoin: false, canSpectate: true };
 		case 'full':
-			return { bg: 'bg-muted', text: 'FULL', canJoin: false };
+			return { bg: 'bg-muted', text: 'FULL', canJoin: false, canSpectate: false };
 	}
 }
 
@@ -48,8 +49,9 @@ function getModeEmoji(mode: RoomInfo['mode']): string {
 const statusConfig = $derived(getStatusConfig(room.status));
 const modeLabel = $derived(getModeEmoji(room.mode));
 
-async function handleJoin() {
-	if (!statusConfig.canJoin) {
+async function handleAction() {
+	// Can't do anything with full rooms
+	if (!statusConfig.canJoin && !statusConfig.canSpectate) {
 		// Trigger error animation
 		isFlashing = true;
 		isShaking = true;
@@ -71,12 +73,17 @@ async function handleJoin() {
 		navigator.vibrate(100);
 	}
 
-	goto(`/games/dicee/room/${room.code}`);
+	// Navigate to room - spectator mode if watching a live game
+	if (statusConfig.canSpectate) {
+		goto(`/games/dicee/room/${room.code}?mode=spectator`);
+	} else {
+		goto(`/games/dicee/room/${room.code}`);
+	}
 }
 
 function getButtonText(): string {
 	if (statusConfig.canJoin) return 'Join Game';
-	return room.status === 'playing' ? 'Spectate' : 'Full';
+	return room.status === 'playing' ? '👁 Watch' : 'Full';
 }
 </script>
 
@@ -93,7 +100,12 @@ function getButtonText(): string {
 		<span class="players">{room.playerCount}/{room.maxPlayers}</span>
 	</div>
 
-	<button class="join-button" onclick={handleJoin} disabled={!statusConfig.canJoin}>
+	<button
+		class="join-button"
+		class:spectate={statusConfig.canSpectate}
+		onclick={handleAction}
+		disabled={!statusConfig.canJoin && !statusConfig.canSpectate}
+	>
 		{getButtonText()}
 	</button>
 </article>
@@ -216,6 +228,15 @@ function getButtonText(): string {
 	.join-button:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
+	}
+
+	.join-button.spectate {
+		background: var(--color-accent);
+		color: var(--color-text);
+	}
+
+	.join-button.spectate:hover {
+		background: var(--color-primary);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
