@@ -6,7 +6,7 @@
  */
 
 import type { Category, KeptMask } from '../../game';
-import { ALL_CATEGORIES, getRemainingCategories } from '../../game';
+import { getRemainingCategories } from '../../game';
 import type { AIProfile, GameContext, TurnDecision } from '../types';
 import type { AIBrain } from './types';
 
@@ -15,7 +15,6 @@ import type { AIBrain } from './types';
  */
 export class RandomBrain implements AIBrain {
 	readonly type = 'random';
-	private profile: AIProfile | null = null;
 
 	async initialize(profile: AIProfile): Promise<void> {
 		this.profile = profile;
@@ -42,8 +41,7 @@ export class RandomBrain implements AIBrain {
 
 	estimateThinkingTime(context: GameContext, profile: AIProfile): number {
 		const { timing } = profile;
-		const base =
-			context.rollsRemaining === 0 ? timing.scoreDecisionMs : timing.rollDecisionMs;
+		const base = context.rollsRemaining === 0 ? timing.scoreDecisionMs : timing.rollDecisionMs;
 
 		// Add random variance
 		const variance = Math.random() * timing.varianceMs * 2 - timing.varianceMs;
@@ -59,7 +57,7 @@ export class RandomBrain implements AIBrain {
 	// Private Methods
 	// ========================================================================
 
-	private randomAction(context: GameContext): 'roll' | 'keep' | 'score' {
+	private randomAction(_context: GameContext): 'roll' | 'keep' | 'score' {
 		// Weight towards rolling more often
 		const roll = Math.random();
 
@@ -72,7 +70,7 @@ export class RandomBrain implements AIBrain {
 		return 'score';
 	}
 
-	private decideKeep(context: GameContext): TurnDecision {
+	private decideKeep(_context: GameContext): TurnDecision {
 		// Randomly keep 0-5 dice
 		const numToKeep = Math.floor(Math.random() * 6);
 		const keepMask: KeptMask = [false, false, false, false, false];

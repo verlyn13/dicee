@@ -13,8 +13,8 @@
  * in docs/testing/websocket-testing.md
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { unstable_dev, type UnstableDevWorker } from 'wrangler';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { type UnstableDevWorker, unstable_dev } from 'wrangler';
 
 describe('Worker Integration Tests', () => {
 	let worker: UnstableDevWorker;
@@ -138,16 +138,16 @@ describe('Worker Integration Tests', () => {
 	//
 	// See docs/testing/websocket-testing.md for detailed instructions.
 	//
-	describe.skip('WebSocket Upgrade (requires real WebSocket client)', () => {
-		it.skip('should reject WebSocket upgrade without token', async () => {
+	describe('WebSocket Upgrade (requires real WebSocket client)', () => {
+		it('should reject WebSocket upgrade without token', async () => {
 			// Test requires real WebSocket client
 		});
 
-		it.skip('should reject WebSocket upgrade with invalid token', async () => {
+		it('should reject WebSocket upgrade with invalid token', async () => {
 			// Test requires real WebSocket client
 		});
 
-		it.skip('should accept WebSocket upgrade with valid token', async () => {
+		it('should accept WebSocket upgrade with valid token', async () => {
 			// Test requires real WebSocket client with valid JWT
 		});
 	});

@@ -6,34 +6,80 @@
  */
 
 import { DurableObject } from 'cloudflare:workers';
-import type { Env, ConnectionState, RoomState, PlayerInfo, SpectatorInfo, AlarmData, ConnectionRole, RoomStatusUpdate, PlayerSummary, GameHighlight, Prediction, PredictionType, PredictionResult, SpectatorPredictionStats, RootingChoice, PlayerRootingInfo, RootingUpdate, KibitzVote, KibitzVoteType, KibitzOption, KibitzState, KibitzUpdate, SpectatorReactionEmoji, SpectatorReaction, SpectatorReactionEvent, ReactionRateLimit, ReactionCombo, JoinQueueEntry, JoinQueueState, JoinQueueUpdate, WarmSeatTransition, GalleryPoints, GalleryStats, GalleryAchievementId } from './types';
-import { REACTION_METADATA, STANDARD_REACTIONS, SPECTATOR_REACTIONS, ROOTING_REACTIONS, DEFAULT_REACTION_RATE_LIMIT, WARM_SEAT_COUNTDOWN_SECONDS, MAX_QUEUE_SIZE, GALLERY_POINT_VALUES, GALLERY_ACHIEVEMENTS, createEmptyGalleryPoints, calculateTotalPoints } from './types';
-import { createInitialRoomState } from './types';
-import { GlobalLobby } from './GlobalLobby';
+import { type AICommand, AIRoomManager, createAIPlayerState, getProfile } from './ai';
+import { extractAvatarUrl, extractDisplayName, verifySupabaseJWT } from './auth';
 import {
-	GameStateManager,
-	canRollDice,
-	canKeepDice,
-	canScoreCategory,
-	canRematch,
+	ChatManager,
+	createChatErrorResponse,
+	createChatHistoryResponse,
+	createChatMessageResponse,
+	createReactionUpdateResponse,
+	createTypingUpdateResponse,
+	isChatMessageType,
+	type QuickChatKey,
+	type ReactionEmoji,
+	validateChatMessage,
+} from './chat';
+import type { GlobalLobby } from './GlobalLobby';
+import {
 	type Category,
+	canKeepDice,
+	canRematch,
+	canRollDice,
+	canScoreCategory,
+	GameStateManager,
 	type KeptMask,
 	type MultiplayerGameState,
 } from './game';
+import type {
+	AlarmData,
+	ConnectionRole,
+	ConnectionState,
+	Env,
+	GalleryAchievementId,
+	GalleryPoints,
+	GameHighlight,
+	JoinQueueEntry,
+	JoinQueueState,
+	JoinQueueUpdate,
+	KibitzOption,
+	KibitzState,
+	KibitzUpdate,
+	KibitzVote,
+	KibitzVoteType,
+	PlayerInfo,
+	PlayerRootingInfo,
+	PlayerSummary,
+	Prediction,
+	PredictionResult,
+	PredictionType,
+	ReactionCombo,
+	ReactionRateLimit,
+	RoomState,
+	RoomStatusUpdate,
+	RootingChoice,
+	RootingUpdate,
+	SpectatorInfo,
+	SpectatorPredictionStats,
+	SpectatorReaction,
+	SpectatorReactionEmoji,
+	SpectatorReactionEvent,
+	WarmSeatTransition,
+} from './types';
 import {
-	ChatManager,
-	validateChatMessage,
-	isChatMessageType,
-	createChatMessageResponse,
-	createChatHistoryResponse,
-	createReactionUpdateResponse,
-	createTypingUpdateResponse,
-	createChatErrorResponse,
-	type QuickChatKey,
-	type ReactionEmoji,
-} from './chat';
-import { verifySupabaseJWT, extractDisplayName, extractAvatarUrl } from './auth';
-import { createAIPlayerState, getProfile, AIRoomManager, type AICommand } from './ai';
+	calculateTotalPoints,
+	createEmptyGalleryPoints,
+	createInitialRoomState,
+	DEFAULT_REACTION_RATE_LIMIT,
+	GALLERY_ACHIEVEMENTS,
+	GALLERY_POINT_VALUES,
+	MAX_QUEUE_SIZE,
+	REACTION_METADATA,
+	ROOTING_REACTIONS,
+	SPECTATOR_REACTIONS,
+	STANDARD_REACTIONS,
+	WARM_SEAT_COUNTDOWN_SECONDS,
+} from './types';
 
 /**
  * GameRoom Durable Object - manages a single multiplayer game room
@@ -73,7 +119,10 @@ export class GameRoom extends DurableObject<Env> {
 	private reactionRateLimits: Map<string, ReactionRateLimit> = new Map();
 
 	/** Recent reactions for combo tracking (key: emoji, value: timestamps and spectators) */
-	private recentReactions: Map<SpectatorReactionEmoji, { timestamp: number; spectatorId: string }[]> = new Map();
+	private recentReactions: Map<
+		SpectatorReactionEmoji,
+		{ timestamp: number; spectatorId: string }[]
+	> = new Map();
 
 	/** Combo window in milliseconds */
 	private static readonly REACTION_COMBO_WINDOW_MS = 3000;
@@ -101,10 +150,10 @@ export class GameRoom extends DurableObject<Env> {
 
 	/** Prediction points by type */
 	private static readonly PREDICTION_POINTS = {
-		dicee: 50,    // Highest risk/reward
-		exact: 25,    // Exact score match
+		dicee: 50, // Highest risk/reward
+		exact: 25, // Exact score match
 		improves: 10, // Player improves their position
-		bricks: 10,   // Player gets nothing/minimal
+		bricks: 10, // Player gets nothing/minimal
 	} as const;
 
 	constructor(ctx: DurableObjectState, env: Env) {
@@ -172,10 +221,15 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		// Verify JWT - tries JWKS first (ES256), falls back to HS256 if secret provided
-		const authResult = await verifySupabaseJWT(token, this.env.SUPABASE_URL, this.env.SUPABASE_JWT_SECRET);
+		const authResult = await verifySupabaseJWT(
+			token,
+			this.env.SUPABASE_URL,
+			this.env.SUPABASE_JWT_SECRET,
+		);
 		if (!authResult.success) {
 			// Return appropriate error based on failure reason
-			const statusCode = authResult.code === 'EXPIRED' ? 401 : authResult.code === 'JWKS_ERROR' ? 503 : 401;
+			const statusCode =
+				authResult.code === 'EXPIRED' ? 401 : authResult.code === 'JWKS_ERROR' ? 503 : 401;
 			return new Response(authResult.error, { status: statusCode });
 		}
 
@@ -244,7 +298,12 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Called when WebSocket closes (client disconnect or error).
 	 */
-	async webSocketClose(ws: WebSocket, code: number, reason: string, _wasClean: boolean): Promise<void> {
+	async webSocketClose(
+		ws: WebSocket,
+		code: number,
+		reason: string,
+		_wasClean: boolean,
+	): Promise<void> {
 		const connState = ws.deserializeAttachment() as ConnectionState;
 		await this.onDisconnect(connState, code, reason);
 	}
@@ -757,11 +816,15 @@ export class GameRoom extends DurableObject<Env> {
 				break;
 
 			case 'PREDICTION':
-				await this.handlePrediction(ws, connState, payload as {
-					playerId: string;
-					type: PredictionType;
-					exactScore?: number;
-				});
+				await this.handlePrediction(
+					ws,
+					connState,
+					payload as {
+						playerId: string;
+						type: PredictionType;
+						exactScore?: number;
+					},
+				);
 				break;
 
 			case 'CANCEL_PREDICTION':
@@ -789,13 +852,17 @@ export class GameRoom extends DurableObject<Env> {
 				break;
 
 			case 'KIBITZ':
-				this.handleKibitz(ws, connState, payload as {
-					playerId: string;
-					voteType: KibitzVoteType;
-					category?: string;
-					keepPattern?: number;
-					action?: 'roll' | 'score';
-				});
+				this.handleKibitz(
+					ws,
+					connState,
+					payload as {
+						playerId: string;
+						voteType: KibitzVoteType;
+						category?: string;
+						keepPattern?: number;
+						action?: 'roll' | 'score';
+					},
+				);
 				break;
 
 			case 'CLEAR_KIBITZ':
@@ -811,10 +878,14 @@ export class GameRoom extends DurableObject<Env> {
 			// ─────────────────────────────────────────────────────────────────────────
 
 			case 'SPECTATOR_REACTION':
-				this.handleSpectatorReaction(ws, connState, payload as {
-					emoji: SpectatorReactionEmoji;
-					targetPlayerId?: string;
-				});
+				this.handleSpectatorReaction(
+					ws,
+					connState,
+					payload as {
+						emoji: SpectatorReactionEmoji;
+						targetPlayerId?: string;
+					},
+				);
 				break;
 
 			// ─────────────────────────────────────────────────────────────────────────
@@ -854,7 +925,11 @@ export class GameRoom extends DurableObject<Env> {
 		}
 	}
 
-	private async onDisconnect(connState: ConnectionState, code: number, _reason: string): Promise<void> {
+	private async onDisconnect(
+		connState: ConnectionState,
+		code: number,
+		_reason: string,
+	): Promise<void> {
 		// Clear typing indicator for disconnected user
 		const wasTyping = this.chatManager.clearTyping(connState.userId);
 		if (wasTyping) {
@@ -1022,7 +1097,10 @@ export class GameRoom extends DurableObject<Env> {
 		});
 
 		// Schedule turn timeout if configured (only for human players)
-		if (roomState.settings.turnTimeoutSeconds > 0 && !this.aiManager.isAIPlayer(startResult.currentPlayerId)) {
+		if (
+			roomState.settings.turnTimeoutSeconds > 0 &&
+			!this.aiManager.isAIPlayer(startResult.currentPlayerId)
+		) {
 			await this.gameStateManager.scheduleAfkWarning(startResult.currentPlayerId);
 		}
 
@@ -1051,7 +1129,11 @@ export class GameRoom extends DurableObject<Env> {
 
 		const validation = canRematch(gameState, connState.userId);
 		if (!validation.success) {
-			this.sendError(ws, validation.error ?? 'REMATCH_ERROR', validation.message ?? 'Cannot rematch');
+			this.sendError(
+				ws,
+				validation.error ?? 'REMATCH_ERROR',
+				validation.message ?? 'Cannot rematch',
+			);
 			return;
 		}
 
@@ -1094,7 +1176,7 @@ export class GameRoom extends DurableObject<Env> {
 			return;
 		}
 
-		const roomCode = this.getRoomCode();
+		const _roomCode = this.getRoomCode();
 		const roomState = await this.ctx.storage.get<RoomState>('room');
 		if (!roomState) {
 			this.sendError(ws, 'ROOM_NOT_FOUND', 'Room not found');
@@ -1225,7 +1307,9 @@ export class GameRoom extends DurableObject<Env> {
 		// Notify lobby
 		await this.notifyLobbyOfUpdate();
 
-		console.log(`[GameRoom] Quick Play started: human=${connState.userId}, AI=${aiPlayers.map((p) => p.id).join(', ')}`);
+		console.log(
+			`[GameRoom] Quick Play started: human=${connState.userId}, AI=${aiPlayers.map((p) => p.id).join(', ')}`,
+		);
 
 		// Human always goes first in quick play, so no AI turn trigger needed here
 		// AI will play after human scores
@@ -1259,7 +1343,8 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		// Check if room is full
-		const currentPlayerCount = this.ctx.getWebSockets(`player:${roomCode}`).length + (roomState.aiPlayers?.length ?? 0);
+		const currentPlayerCount =
+			this.ctx.getWebSockets(`player:${roomCode}`).length + (roomState.aiPlayers?.length ?? 0);
 		if (currentPlayerCount >= roomState.settings.maxPlayers) {
 			this.sendError(ws, 'ROOM_FULL', 'Room is full');
 			return;
@@ -1491,7 +1576,12 @@ export class GameRoom extends DurableObject<Env> {
 		// Check for Dicee highlight
 		if (result.isDiceeBonus || (category === 'dicee' && result.score === 50)) {
 			const player = gameState.players[connState.userId];
-			this.sendLobbyHighlight('dicee', `${player?.displayName ?? 'Player'} rolled a Dicee!`, player?.displayName, result.score);
+			this.sendLobbyHighlight(
+				'dicee',
+				`${player?.displayName ?? 'Player'} rolled a Dicee!`,
+				player?.displayName,
+				result.score,
+			);
 		}
 
 		// Handle game completion or turn advancement
@@ -1549,7 +1639,15 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Handle game over - broadcast rankings and send highlights
 	 */
-	private handleGameOver(rankings: Array<{ playerId: string; displayName: string; rank: number; score: number; diceeCount: number }> | null): void {
+	private handleGameOver(
+		rankings: Array<{
+			playerId: string;
+			displayName: string;
+			rank: number;
+			score: number;
+			diceeCount: number;
+		}> | null,
+	): void {
 		if (!rankings) return;
 
 		// Broadcast game over
@@ -1577,16 +1675,29 @@ export class GameRoom extends DurableObject<Env> {
 		// Send lobby highlights
 		const winner = rankings[0];
 		if (winner) {
-			this.sendLobbyHighlight('game_complete', `${winner.displayName} wins with ${winner.score} points!`, winner.displayName, winner.score);
+			this.sendLobbyHighlight(
+				'game_complete',
+				`${winner.displayName} wins with ${winner.score} points!`,
+				winner.displayName,
+				winner.score,
+			);
 
 			// Check for close finish
 			if (rankings.length >= 2 && rankings[0].score - rankings[1].score <= 10) {
-				this.sendLobbyHighlight('close_finish', `Close game! ${rankings[0].displayName} beat ${rankings[1].displayName} by ${rankings[0].score - rankings[1].score} points!`);
+				this.sendLobbyHighlight(
+					'close_finish',
+					`Close game! ${rankings[0].displayName} beat ${rankings[1].displayName} by ${rankings[0].score - rankings[1].score} points!`,
+				);
 			}
 
 			// High score highlight (300+ is notable)
 			if (winner.score >= 300) {
-				this.sendLobbyHighlight('high_score', `${winner.displayName} scored ${winner.score}!`, winner.displayName, winner.score);
+				this.sendLobbyHighlight(
+					'high_score',
+					`${winner.displayName} scored ${winner.score}!`,
+					winner.displayName,
+					winner.score,
+				);
 			}
 		}
 
@@ -1624,11 +1735,16 @@ export class GameRoom extends DurableObject<Env> {
 
 		console.log(`[GameRoom] executeAICommand has game state, processing ${command.type}`);
 
-
 		switch (command.type) {
 			case 'roll': {
 				// Execute the roll
-				const keptMask = gameState.players[playerId]?.keptDice ?? [false, false, false, false, false];
+				const keptMask = gameState.players[playerId]?.keptDice ?? [
+					false,
+					false,
+					false,
+					false,
+					false,
+				];
 				const result = await this.gameStateManager.rollDice(playerId, keptMask);
 
 				// Broadcast dice rolled
@@ -1717,7 +1833,12 @@ export class GameRoom extends DurableObject<Env> {
 				// Check for Dicee highlight
 				if (result.isDiceeBonus || (command.category === 'dicee' && result.score === 50)) {
 					const player = gameState.players[playerId];
-					this.sendLobbyHighlight('dicee', `${player?.displayName ?? 'AI'} rolled a Dicee!`, player?.displayName, result.score);
+					this.sendLobbyHighlight(
+						'dicee',
+						`${player?.displayName ?? 'AI'} rolled a Dicee!`,
+						player?.displayName,
+						result.score,
+					);
 				}
 
 				// Handle game completion or turn advancement
@@ -1778,7 +1899,9 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Get initial game state for logging
 		const initialState = await this.gameStateManager.getState();
-		console.log(`[GameRoom] AI turn starting - phase: ${initialState?.phase}, currentPlayer: ${initialState?.playerOrder[initialState?.currentPlayerIndex ?? 0]}`);
+		console.log(
+			`[GameRoom] AI turn starting - phase: ${initialState?.phase}, currentPlayer: ${initialState?.playerOrder[initialState?.currentPlayerIndex ?? 0]}`,
+		);
 
 		// Execute AI turn in background (don't await to avoid blocking)
 		this.ctx.waitUntil(
@@ -1790,7 +1913,9 @@ export class GameRoom extends DurableObject<Env> {
 						// Pass a getter function so AI gets fresh state each step
 						async () => {
 							const state = await this.gameStateManager.getState();
-							console.log(`[GameRoom] AI getState called - player ${playerId} dice: ${JSON.stringify(state?.players[playerId]?.currentDice)}, rollsRemaining: ${state?.players[playerId]?.rollsRemaining}`);
+							console.log(
+								`[GameRoom] AI getState called - player ${playerId} dice: ${JSON.stringify(state?.players[playerId]?.currentDice)}, rollsRemaining: ${state?.players[playerId]?.rollsRemaining}`,
+							);
 							return state;
 						},
 						async (pid, cmd) => {
@@ -1821,7 +1946,9 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Evaluate spectator backings after game ends
 	 */
-	private evaluateSpectatorBackings(rankings: Array<{ playerId: string; displayName: string; rank: number; score: number }> | null): void {
+	private evaluateSpectatorBackings(
+		rankings: Array<{ playerId: string; displayName: string; rank: number; score: number }> | null,
+	): void {
 		if (!rankings || rankings.length === 0) return;
 
 		const winnerId = rankings[0].playerId;
@@ -1894,7 +2021,11 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Handle text chat message
 	 */
-	private async handleTextChat(ws: WebSocket, connState: ConnectionState, content: string): Promise<void> {
+	private async handleTextChat(
+		ws: WebSocket,
+		connState: ConnectionState,
+		content: string,
+	): Promise<void> {
 		const result = await this.chatManager.handleTextMessage(
 			connState.userId,
 			connState.displayName,
@@ -1916,7 +2047,11 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Handle quick chat message
 	 */
-	private async handleQuickChat(ws: WebSocket, connState: ConnectionState, key: QuickChatKey): Promise<void> {
+	private async handleQuickChat(
+		ws: WebSocket,
+		connState: ConnectionState,
+		key: QuickChatKey,
+	): Promise<void> {
 		const result = await this.chatManager.handleQuickChat(
 			connState.userId,
 			connState.displayName,
@@ -2097,7 +2232,10 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		// Validate exact score if provided
-		if (payload.type === 'exact' && (payload.exactScore === undefined || payload.exactScore < 0 || payload.exactScore > 50)) {
+		if (
+			payload.type === 'exact' &&
+			(payload.exactScore === undefined || payload.exactScore < 0 || payload.exactScore > 50)
+		) {
 			this.sendError(ws, 'INVALID_EXACT_SCORE', 'Exact score must be between 0 and 50');
 			return;
 		}
@@ -2111,15 +2249,23 @@ export class GameRoom extends DurableObject<Env> {
 		const turnPredictions = this.predictions.get(turnKey) ?? [];
 
 		// Check prediction limit per spectator
-		const spectatorPredictions = turnPredictions.filter(p => p.spectatorId === connState.userId);
+		const spectatorPredictions = turnPredictions.filter((p) => p.spectatorId === connState.userId);
 		if (spectatorPredictions.length >= GameRoom.MAX_PREDICTIONS_PER_TURN) {
-			this.sendError(ws, 'PREDICTION_LIMIT', `Maximum ${GameRoom.MAX_PREDICTIONS_PER_TURN} predictions per turn`);
+			this.sendError(
+				ws,
+				'PREDICTION_LIMIT',
+				`Maximum ${GameRoom.MAX_PREDICTIONS_PER_TURN} predictions per turn`,
+			);
 			return;
 		}
 
 		// Check for duplicate prediction type
-		if (spectatorPredictions.some(p => p.type === payload.type)) {
-			this.sendError(ws, 'DUPLICATE_PREDICTION', `Already made a ${payload.type} prediction this turn`);
+		if (spectatorPredictions.some((p) => p.type === payload.type)) {
+			this.sendError(
+				ws,
+				'DUPLICATE_PREDICTION',
+				`Already made a ${payload.type} prediction this turn`,
+			);
 			return;
 		}
 
@@ -2142,10 +2288,12 @@ export class GameRoom extends DurableObject<Env> {
 		this.predictions.set(turnKey, turnPredictions);
 
 		// Send confirmation to spectator
-		ws.send(JSON.stringify({
-			type: 'PREDICTION_CONFIRMED',
-			payload: prediction,
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'PREDICTION_CONFIRMED',
+				payload: prediction,
+			}),
+		);
 
 		// Broadcast to all spectators that a prediction was made (without revealing details)
 		this.broadcastToSpectators({
@@ -2158,7 +2306,9 @@ export class GameRoom extends DurableObject<Env> {
 			},
 		});
 
-		console.log(`[GameRoom] Prediction made by ${connState.displayName}: ${payload.type} for player ${payload.playerId}`);
+		console.log(
+			`[GameRoom] Prediction made by ${connState.displayName}: ${payload.type} for player ${payload.playerId}`,
+		);
 	}
 
 	/**
@@ -2177,16 +2327,18 @@ export class GameRoom extends DurableObject<Env> {
 		// Find and remove the prediction
 		for (const [key, predictions] of this.predictions) {
 			const index = predictions.findIndex(
-				p => p.id === payload.predictionId && p.spectatorId === connState.userId && !p.evaluated
+				(p) => p.id === payload.predictionId && p.spectatorId === connState.userId && !p.evaluated,
 			);
 			if (index !== -1) {
 				predictions.splice(index, 1);
 				this.predictions.set(key, predictions);
 
-				ws.send(JSON.stringify({
-					type: 'PREDICTION_CANCELLED',
-					payload: { predictionId: payload.predictionId },
-				}));
+				ws.send(
+					JSON.stringify({
+						type: 'PREDICTION_CANCELLED',
+						payload: { predictionId: payload.predictionId },
+					}),
+				);
 				return;
 			}
 		}
@@ -2204,27 +2356,32 @@ export class GameRoom extends DurableObject<Env> {
 			: null;
 
 		if (!turnKey) {
-			ws.send(JSON.stringify({
-				type: 'PREDICTIONS',
-				payload: { predictions: [], turnActive: false },
-			}));
+			ws.send(
+				JSON.stringify({
+					type: 'PREDICTIONS',
+					payload: { predictions: [], turnActive: false },
+				}),
+			);
 			return;
 		}
 
 		const turnPredictions = this.predictions.get(turnKey) ?? [];
-		const myPredictions = connState.role === 'spectator'
-			? turnPredictions.filter(p => p.spectatorId === connState.userId)
-			: [];
+		const myPredictions =
+			connState.role === 'spectator'
+				? turnPredictions.filter((p) => p.spectatorId === connState.userId)
+				: [];
 
-		ws.send(JSON.stringify({
-			type: 'PREDICTIONS',
-			payload: {
-				predictions: myPredictions,
-				turnActive: true,
-				currentPlayer: this.currentTurn?.playerId,
-				turnNumber: this.currentTurn?.turnNumber,
-			},
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'PREDICTIONS',
+				payload: {
+					predictions: myPredictions,
+					turnActive: true,
+					currentPlayer: this.currentTurn?.playerId,
+					turnNumber: this.currentTurn?.turnNumber,
+				},
+			}),
+		);
 	}
 
 	/**
@@ -2232,19 +2389,24 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	private handleGetPredictionStats(ws: WebSocket, connState: ConnectionState): void {
 		if (connState.role !== 'spectator') {
-			ws.send(JSON.stringify({
-				type: 'PREDICTION_STATS',
-				payload: null,
-			}));
+			ws.send(
+				JSON.stringify({
+					type: 'PREDICTION_STATS',
+					payload: null,
+				}),
+			);
 			return;
 		}
 
-		const stats = this.spectatorStats.get(connState.userId) ?? this.createInitialStats(connState.userId);
+		const stats =
+			this.spectatorStats.get(connState.userId) ?? this.createInitialStats(connState.userId);
 
-		ws.send(JSON.stringify({
-			type: 'PREDICTION_STATS',
-			payload: stats,
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'PREDICTION_STATS',
+				payload: stats,
+			}),
+		);
 	}
 
 	/**
@@ -2372,9 +2534,8 @@ export class GameRoom extends DurableObject<Env> {
 			stats.streak = 0;
 		}
 		stats.totalPoints += points;
-		stats.accuracy = stats.totalPredictions > 0
-			? stats.correctPredictions / stats.totalPredictions
-			: 0;
+		stats.accuracy =
+			stats.totalPredictions > 0 ? stats.correctPredictions / stats.totalPredictions : 0;
 
 		this.spectatorStats.set(spectatorId, stats);
 
@@ -2389,8 +2550,7 @@ export class GameRoom extends DurableObject<Env> {
 	 * Get all spectator stats (for leaderboard)
 	 */
 	public getSpectatorLeaderboard(): SpectatorPredictionStats[] {
-		return Array.from(this.spectatorStats.values())
-			.sort((a, b) => b.totalPoints - a.totalPoints);
+		return Array.from(this.spectatorStats.values()).sort((a, b) => b.totalPoints - a.totalPoints);
 	}
 
 	/**
@@ -2432,7 +2592,11 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Check rate limit
 		if (existing && existing.changeCount >= GameRoom.MAX_ROOTING_CHANGES) {
-			this.sendError(ws, 'ROOTING_LIMIT', `Maximum ${GameRoom.MAX_ROOTING_CHANGES} rooting changes per game`);
+			this.sendError(
+				ws,
+				'ROOTING_LIMIT',
+				`Maximum ${GameRoom.MAX_ROOTING_CHANGES} rooting changes per game`,
+			);
 			return;
 		}
 
@@ -2454,19 +2618,23 @@ export class GameRoom extends DurableObject<Env> {
 		this.rootingChoices.set(connState.userId, choice);
 
 		// Send confirmation to spectator
-		ws.send(JSON.stringify({
-			type: 'ROOTING_CONFIRMED',
-			payload: {
-				playerId: payload.playerId,
-				changeCount: choice.changeCount,
-				remainingChanges: GameRoom.MAX_ROOTING_CHANGES - choice.changeCount,
-			},
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'ROOTING_CONFIRMED',
+				payload: {
+					playerId: payload.playerId,
+					changeCount: choice.changeCount,
+					remainingChanges: GameRoom.MAX_ROOTING_CHANGES - choice.changeCount,
+				},
+			}),
+		);
 
 		// Broadcast rooting update to everyone
 		this.broadcastRootingUpdate();
 
-		console.log(`[GameRoom] ${connState.displayName} is now rooting for player ${payload.playerId}`);
+		console.log(
+			`[GameRoom] ${connState.displayName} is now rooting for player ${payload.playerId}`,
+		);
 	}
 
 	/**
@@ -2486,19 +2654,25 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Check rate limit (clearing counts as a change)
 		if (existing.changeCount >= GameRoom.MAX_ROOTING_CHANGES) {
-			this.sendError(ws, 'ROOTING_LIMIT', `Maximum ${GameRoom.MAX_ROOTING_CHANGES} rooting changes per game`);
+			this.sendError(
+				ws,
+				'ROOTING_LIMIT',
+				`Maximum ${GameRoom.MAX_ROOTING_CHANGES} rooting changes per game`,
+			);
 			return;
 		}
 
 		// Update change count but remove the choice
 		this.rootingChoices.delete(connState.userId);
 
-		ws.send(JSON.stringify({
-			type: 'ROOTING_CLEARED',
-			payload: {
-				previousPlayerId: existing.playerId,
-			},
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'ROOTING_CLEARED',
+				payload: {
+					previousPlayerId: existing.playerId,
+				},
+			}),
+		);
 
 		// Broadcast rooting update
 		this.broadcastRootingUpdate();
@@ -2514,21 +2688,24 @@ export class GameRoom extends DurableObject<Env> {
 		const update = this.buildRootingUpdate();
 
 		// Include spectator's own choice if they have one
-		const myChoice = connState.role === 'spectator'
-			? this.rootingChoices.get(connState.userId)
-			: null;
+		const myChoice =
+			connState.role === 'spectator' ? this.rootingChoices.get(connState.userId) : null;
 
-		ws.send(JSON.stringify({
-			type: 'ROOTING_STATE',
-			payload: {
-				...update,
-				myChoice: myChoice ? {
-					playerId: myChoice.playerId,
-					changeCount: myChoice.changeCount,
-					remainingChanges: GameRoom.MAX_ROOTING_CHANGES - myChoice.changeCount,
-				} : null,
-			},
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'ROOTING_STATE',
+				payload: {
+					...update,
+					myChoice: myChoice
+						? {
+								playerId: myChoice.playerId,
+								changeCount: myChoice.changeCount,
+								remainingChanges: GameRoom.MAX_ROOTING_CHANGES - myChoice.changeCount,
+							}
+						: null,
+				},
+			}),
+		);
 	}
 
 	/**
@@ -2697,20 +2874,24 @@ export class GameRoom extends DurableObject<Env> {
 		this.kibitzVotes.set(connState.userId, vote);
 
 		// Send confirmation
-		ws.send(JSON.stringify({
-			type: 'KIBITZ_CONFIRMED',
-			payload: {
-				voteType: payload.voteType,
-				category: payload.category,
-				keepPattern: payload.keepPattern,
-				action: payload.action,
-			},
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'KIBITZ_CONFIRMED',
+				payload: {
+					voteType: payload.voteType,
+					category: payload.category,
+					keepPattern: payload.keepPattern,
+					action: payload.action,
+				},
+			}),
+		);
 
 		// Broadcast updated kibitz state
 		this.broadcastKibitzUpdate(payload.voteType);
 
-		console.log(`[GameRoom] ${connState.displayName} kibitzes: ${payload.voteType} = ${payload.category ?? payload.keepPattern ?? payload.action}`);
+		console.log(
+			`[GameRoom] ${connState.displayName} kibitzes: ${payload.voteType} = ${payload.category ?? payload.keepPattern ?? payload.action}`,
+		);
 	}
 
 	/**
@@ -2731,10 +2912,12 @@ export class GameRoom extends DurableObject<Env> {
 		const voteType = existing.voteType;
 		this.kibitzVotes.delete(connState.userId);
 
-		ws.send(JSON.stringify({
-			type: 'KIBITZ_CLEARED',
-			payload: { voteType },
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'KIBITZ_CLEARED',
+				payload: { voteType },
+			}),
+		);
 
 		// Broadcast updated state
 		this.broadcastKibitzUpdate(voteType);
@@ -2746,10 +2929,12 @@ export class GameRoom extends DurableObject<Env> {
 	private handleGetKibitz(ws: WebSocket): void {
 		const state = this.buildKibitzState();
 
-		ws.send(JSON.stringify({
-			type: 'KIBITZ_STATE',
-			payload: state,
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'KIBITZ_STATE',
+				payload: state,
+			}),
+		);
 	}
 
 	/**
@@ -2879,7 +3064,7 @@ export class GameRoom extends DurableObject<Env> {
 		// Capitalize first letter of each word
 		return optionId
 			.split('_')
-			.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
 			.join(' ');
 	}
 
@@ -3012,7 +3197,11 @@ export class GameRoom extends DurableObject<Env> {
 			}
 			// For rooting reactions, target must be the rooted player
 			if (targetPlayerId && targetPlayerId !== rootingChoice.playerId) {
-				this.sendError(ws, 'WRONG_PLAYER', 'You can only use rooting reactions for your backed player');
+				this.sendError(
+					ws,
+					'WRONG_PLAYER',
+					'You can only use rooting reactions for your backed player',
+				);
 				return;
 			}
 		}
@@ -3044,14 +3233,16 @@ export class GameRoom extends DurableObject<Env> {
 		this.broadcastSpectatorReaction(reactionEvent);
 
 		// Send confirmation
-		ws.send(JSON.stringify({
-			type: 'REACTION_SENT',
-			payload: {
-				reactionId: reaction.id,
-				emoji,
-				comboCount,
-			},
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'REACTION_SENT',
+				payload: {
+					reactionId: reaction.id,
+					emoji,
+					comboCount,
+				},
+			}),
+		);
 	}
 
 	/**
@@ -3111,7 +3302,7 @@ export class GameRoom extends DurableObject<Env> {
 		let reactions = this.recentReactions.get(emoji) ?? [];
 
 		// Filter out old reactions
-		reactions = reactions.filter(r => r.timestamp > cutoff);
+		reactions = reactions.filter((r) => r.timestamp > cutoff);
 
 		// Add this reaction
 		reactions.push({ timestamp: now, spectatorId });
@@ -3120,7 +3311,7 @@ export class GameRoom extends DurableObject<Env> {
 		this.recentReactions.set(emoji, reactions);
 
 		// Return combo count (unique spectators in window)
-		const uniqueSpectators = new Set(reactions.map(r => r.spectatorId));
+		const uniqueSpectators = new Set(reactions.map((r) => r.spectatorId));
 		return uniqueSpectators.size;
 	}
 
@@ -3159,17 +3350,17 @@ export class GameRoom extends DurableObject<Env> {
 		if (!reactions || reactions.length === 0) return null;
 
 		// Filter to recent
-		const recent = reactions.filter(r => r.timestamp > cutoff);
+		const recent = reactions.filter((r) => r.timestamp > cutoff);
 		if (recent.length === 0) return null;
 
 		// Get unique spectator names (would need to look up, using IDs for now)
-		const uniqueSpectators = [...new Set(recent.map(r => r.spectatorId))];
+		const uniqueSpectators = [...new Set(recent.map((r) => r.spectatorId))];
 
 		return {
 			emoji,
 			count: recent.length,
 			spectatorNames: uniqueSpectators.slice(0, 3), // First 3 spectator IDs
-			lastTimestamp: Math.max(...recent.map(r => r.timestamp)),
+			lastTimestamp: Math.max(...recent.map((r) => r.timestamp)),
 		};
 	}
 
@@ -3188,7 +3379,7 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		// Check if already in queue
-		if (this.joinQueue.some(e => e.userId === connState.userId)) {
+		if (this.joinQueue.some((e) => e.userId === connState.userId)) {
 			this.sendError(ws, 'ALREADY_IN_QUEUE', 'Already in the join queue');
 			return;
 		}
@@ -3222,15 +3413,17 @@ export class GameRoom extends DurableObject<Env> {
 		const willGetSpot = entry.position <= availableSpots;
 
 		// Send confirmation
-		ws.send(JSON.stringify({
-			type: 'QUEUE_JOINED',
-			payload: {
-				position: entry.position,
-				willGetSpot,
-				totalQueued: this.joinQueue.length,
-				availableSpots: Math.max(0, availableSpots),
-			},
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'QUEUE_JOINED',
+				payload: {
+					position: entry.position,
+					willGetSpot,
+					totalQueued: this.joinQueue.length,
+					availableSpots: Math.max(0, availableSpots),
+				},
+			}),
+		);
 
 		// Broadcast queue update
 		this.broadcastQueueUpdate(roomState);
@@ -3242,7 +3435,7 @@ export class GameRoom extends DurableObject<Env> {
 	 * Handle a spectator leaving the queue
 	 */
 	private handleLeaveQueue(ws: WebSocket, connState: ConnectionState): void {
-		const index = this.joinQueue.findIndex(e => e.userId === connState.userId);
+		const index = this.joinQueue.findIndex((e) => e.userId === connState.userId);
 		if (index === -1) {
 			this.sendError(ws, 'NOT_IN_QUEUE', 'Not in the join queue');
 			return;
@@ -3255,13 +3448,15 @@ export class GameRoom extends DurableObject<Env> {
 		this.reorderQueue();
 
 		// Send confirmation
-		ws.send(JSON.stringify({
-			type: 'QUEUE_LEFT',
-			payload: { previousPosition: index + 1 },
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'QUEUE_LEFT',
+				payload: { previousPosition: index + 1 },
+			}),
+		);
 
 		// Broadcast queue update
-		this.ctx.storage.get<RoomState>('room').then(roomState => {
+		this.ctx.storage.get<RoomState>('room').then((roomState) => {
 			if (roomState) {
 				this.broadcastQueueUpdate(roomState);
 			}
@@ -3278,10 +3473,12 @@ export class GameRoom extends DurableObject<Env> {
 		const roomState = await this.ctx.storage.get<RoomState>('room');
 
 		if (!roomState) {
-			ws.send(JSON.stringify({
-				type: 'QUEUE_STATE',
-				payload: null,
-			}));
+			ws.send(
+				JSON.stringify({
+					type: 'QUEUE_STATE',
+					payload: null,
+				}),
+			);
 			return;
 		}
 
@@ -3289,7 +3486,7 @@ export class GameRoom extends DurableObject<Env> {
 		const availableSpots = roomState.settings.maxPlayers - currentPlayerCount;
 
 		// Find user's position in queue
-		const myEntry = this.joinQueue.find(e => e.userId === connState.userId);
+		const myEntry = this.joinQueue.find((e) => e.userId === connState.userId);
 
 		const state: JoinQueueState = {
 			queue: this.joinQueue,
@@ -3299,14 +3496,16 @@ export class GameRoom extends DurableObject<Env> {
 			queueOpen: roomState.status !== 'completed' && roomState.status !== 'abandoned',
 		};
 
-		ws.send(JSON.stringify({
-			type: 'QUEUE_STATE',
-			payload: {
-				...state,
-				myPosition: myEntry?.position ?? null,
-				willGetSpot: myEntry ? myEntry.position <= availableSpots : false,
-			},
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'QUEUE_STATE',
+				payload: {
+					...state,
+					myPosition: myEntry?.position ?? null,
+					willGetSpot: myEntry ? myEntry.position <= availableSpots : false,
+				},
+			}),
+		);
 	}
 
 	/**
@@ -3392,12 +3591,14 @@ export class GameRoom extends DurableObject<Env> {
 		this.reorderQueue();
 
 		// Build transition data
-		const transitioningUsers: WarmSeatTransition['transitioningUsers'] = transitioning.map(entry => ({
-			userId: entry.userId,
-			displayName: entry.displayName,
-			avatarSeed: entry.avatarSeed,
-			fromPosition: entry.position,
-		}));
+		const transitioningUsers: WarmSeatTransition['transitioningUsers'] = transitioning.map(
+			(entry) => ({
+				userId: entry.userId,
+				displayName: entry.displayName,
+				avatarSeed: entry.avatarSeed,
+				fromPosition: entry.position,
+			}),
+		);
 
 		this.warmSeatTransition = {
 			transitioningUsers,
@@ -3431,7 +3632,9 @@ export class GameRoom extends DurableObject<Env> {
 		await this.ctx.storage.put('alarm_data', alarmData);
 		await this.ctx.storage.setAlarm(Date.now() + WARM_SEAT_COUNTDOWN_SECONDS * 1000);
 
-		console.log(`[GameRoom] Warm seat transition: ${transitioningUsers.length} spectators becoming players`);
+		console.log(
+			`[GameRoom] Warm seat transition: ${transitioningUsers.length} spectators becoming players`,
+		);
 
 		return this.warmSeatTransition;
 	}
@@ -3457,13 +3660,15 @@ export class GameRoom extends DurableObject<Env> {
 				ws.serializeAttachment(state);
 
 				// Notify the user
-				ws.send(JSON.stringify({
-					type: 'TRANSITION_COMPLETE',
-					payload: {
-						newRole: 'player',
-						message: 'You are now a player!',
-					},
-				}));
+				ws.send(
+					JSON.stringify({
+						type: 'TRANSITION_COMPLETE',
+						payload: {
+							newRole: 'player',
+							message: 'You are now a player!',
+						},
+					}),
+				);
 			}
 		}
 
@@ -3488,7 +3693,7 @@ export class GameRoom extends DurableObject<Env> {
 		this.broadcast({
 			type: 'WARM_SEAT_COMPLETE',
 			payload: {
-				newPlayers: transition.transitioningUsers.map(u => ({
+				newPlayers: transition.transitioningUsers.map((u) => ({
 					userId: u.userId,
 					displayName: u.displayName,
 					avatarSeed: u.avatarSeed,
@@ -3507,13 +3712,13 @@ export class GameRoom extends DurableObject<Env> {
 	 * Remove a user from queue when they disconnect
 	 */
 	private removeFromQueueOnDisconnect(userId: string): void {
-		const index = this.joinQueue.findIndex(e => e.userId === userId);
+		const index = this.joinQueue.findIndex((e) => e.userId === userId);
 		if (index !== -1) {
 			this.joinQueue.splice(index, 1);
 			this.reorderQueue();
 
 			// Broadcast update
-			this.ctx.storage.get<RoomState>('room').then(roomState => {
+			this.ctx.storage.get<RoomState>('room').then((roomState) => {
 				if (roomState) {
 					this.broadcastQueueUpdate(roomState);
 				}
@@ -3547,14 +3752,16 @@ export class GameRoom extends DurableObject<Env> {
 		const points = this.getSpectatorGalleryPoints(connState.userId);
 		const total = calculateTotalPoints(points);
 
-		ws.send(JSON.stringify({
-			type: 'GALLERY_POINTS',
-			payload: {
-				points,
-				totalPoints: total,
-				spectatorId: connState.userId,
-			},
-		}));
+		ws.send(
+			JSON.stringify({
+				type: 'GALLERY_POINTS',
+				payload: {
+					points,
+					totalPoints: total,
+					spectatorId: connState.userId,
+				},
+			}),
+		);
 	}
 
 	/**
@@ -3609,7 +3816,9 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Streak bonus
 		if (streakBonus > 0) {
-			const bonus = Math.floor(awarded * GALLERY_POINT_VALUES.PREDICTION_STREAK_MULTIPLIER * streakBonus);
+			const bonus = Math.floor(
+				awarded * GALLERY_POINT_VALUES.PREDICTION_STREAK_MULTIPLIER * streakBonus,
+			);
 			points.predictions.streakBonus += bonus;
 			awarded += bonus;
 		}
@@ -3730,12 +3939,18 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		// Drama Magnet: 10 games with comeback
-		if (stats.gamesWithComeback && stats.gamesWithComeback >= GALLERY_ACHIEVEMENTS.drama_magnet.threshold) {
+		if (
+			stats.gamesWithComeback &&
+			stats.gamesWithComeback >= GALLERY_ACHIEVEMENTS.drama_magnet.threshold
+		) {
 			unlocked.push('drama_magnet');
 		}
 
 		// Superfan: Backed same player 5 times
-		if (stats.samePlayerBackings && stats.samePlayerBackings >= GALLERY_ACHIEVEMENTS.superfan.threshold) {
+		if (
+			stats.samePlayerBackings &&
+			stats.samePlayerBackings >= GALLERY_ACHIEVEMENTS.superfan.threshold
+		) {
 			unlocked.push('superfan');
 		}
 
@@ -3745,7 +3960,10 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		// Analyst: Predicted exact score 3 times
-		if (stats.exactPredictions && stats.exactPredictions >= GALLERY_ACHIEVEMENTS.analyst.threshold) {
+		if (
+			stats.exactPredictions &&
+			stats.exactPredictions >= GALLERY_ACHIEVEMENTS.analyst.threshold
+		) {
 			unlocked.push('analyst');
 		}
 
@@ -3769,7 +3987,7 @@ export class GameRoom extends DurableObject<Env> {
 			this.sendToUser(spectatorId, {
 				type: 'ACHIEVEMENTS_UNLOCKED',
 				payload: {
-					achievements: unlocked.map(id => ({
+					achievements: unlocked.map((id) => ({
 						...GALLERY_ACHIEVEMENTS[id],
 						unlocked: true,
 						unlockedAt: Date.now(),
@@ -3799,7 +4017,9 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Finalize gallery points at game end and prepare for persistence
 	 */
-	public async finalizeGalleryPoints(winnerId: string): Promise<Map<string, { points: GalleryPoints; total: number }>> {
+	public async finalizeGalleryPoints(
+		winnerId: string,
+	): Promise<Map<string, { points: GalleryPoints; total: number }>> {
 		const results = new Map<string, { points: GalleryPoints; total: number }>();
 
 		// Award backing winner points
@@ -3823,10 +4043,12 @@ export class GameRoom extends DurableObject<Env> {
 		this.broadcastToSpectators({
 			type: 'GALLERY_GAME_SUMMARY',
 			payload: {
-				results: Array.from(results.entries()).map(([id, data]) => ({
-					spectatorId: id,
-					...data,
-				})).sort((a, b) => b.total - a.total),
+				results: Array.from(results.entries())
+					.map(([id, data]) => ({
+						spectatorId: id,
+						...data,
+					}))
+					.sort((a, b) => b.total - a.total),
 			},
 		});
 

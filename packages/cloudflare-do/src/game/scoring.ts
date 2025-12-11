@@ -8,7 +8,7 @@
  */
 
 import type { Category, DiceArray, Scorecard } from './types';
-import { UPPER_BONUS_THRESHOLD, UPPER_BONUS_VALUE, DICEE_BONUS_VALUE } from './types';
+import { DICEE_BONUS_VALUE, UPPER_BONUS_THRESHOLD, UPPER_BONUS_VALUE } from './types';
 
 // =============================================================================
 // Dice Generation (Server-Authoritative)

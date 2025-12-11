@@ -5,8 +5,8 @@
  * Verifies connection handling, broadcasts, and state management for spectators.
  */
 
-import { describe, it, expect } from 'vitest';
-import type { ConnectionState, SpectatorInfo, ConnectionRole } from '../types';
+import { describe, expect, it } from 'vitest';
+import type { ConnectionRole, ConnectionState, SpectatorInfo } from '../types';
 
 describe('Spectator Types', () => {
 	describe('ConnectionRole', () => {
@@ -263,11 +263,46 @@ describe('Spectator Broadcast Logic', () => {
 	describe('spectator count', () => {
 		it('should count only spectators', () => {
 			const connections: ConnectionState[] = [
-				{ userId: 'p1', displayName: '', avatarSeed: '', connectedAt: 0, isHost: false, role: 'player' },
-				{ userId: 'p2', displayName: '', avatarSeed: '', connectedAt: 0, isHost: false, role: 'player' },
-				{ userId: 's1', displayName: '', avatarSeed: '', connectedAt: 0, isHost: false, role: 'spectator' },
-				{ userId: 's2', displayName: '', avatarSeed: '', connectedAt: 0, isHost: false, role: 'spectator' },
-				{ userId: 's3', displayName: '', avatarSeed: '', connectedAt: 0, isHost: false, role: 'spectator' },
+				{
+					userId: 'p1',
+					displayName: '',
+					avatarSeed: '',
+					connectedAt: 0,
+					isHost: false,
+					role: 'player',
+				},
+				{
+					userId: 'p2',
+					displayName: '',
+					avatarSeed: '',
+					connectedAt: 0,
+					isHost: false,
+					role: 'player',
+				},
+				{
+					userId: 's1',
+					displayName: '',
+					avatarSeed: '',
+					connectedAt: 0,
+					isHost: false,
+					role: 'spectator',
+				},
+				{
+					userId: 's2',
+					displayName: '',
+					avatarSeed: '',
+					connectedAt: 0,
+					isHost: false,
+					role: 'spectator',
+				},
+				{
+					userId: 's3',
+					displayName: '',
+					avatarSeed: '',
+					connectedAt: 0,
+					isHost: false,
+					role: 'spectator',
+				},
 			];
 
 			const spectatorCount = connections.filter((c) => c.role === 'spectator').length;

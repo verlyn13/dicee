@@ -9,8 +9,21 @@
 // Re-export common types from @dicee/shared
 // =============================================================================
 
-export type { ReactionEmoji, QuickChatKey, MessageReactions, ChatMessage, TypingState, ChatErrorCode } from '@dicee/shared';
-export { REACTION_EMOJIS, QUICK_CHAT_MESSAGES, QUICK_CHAT_KEYS, CHAT_RATE_LIMITS, createEmptyReactions } from '@dicee/shared';
+export type {
+	ChatErrorCode,
+	ChatMessage,
+	MessageReactions,
+	QuickChatKey,
+	ReactionEmoji,
+	TypingState,
+} from '@dicee/shared';
+export {
+	CHAT_RATE_LIMITS,
+	createEmptyReactions,
+	QUICK_CHAT_KEYS,
+	QUICK_CHAT_MESSAGES,
+	REACTION_EMOJIS,
+} from '@dicee/shared';
 
 // =============================================================================
 // Client → Server Messages (DO-specific)
@@ -24,7 +37,10 @@ import type { QuickChatKey, ReactionEmoji } from '@dicee/shared';
 export type ChatClientMessage =
 	| { type: 'CHAT'; payload: { content: string } }
 	| { type: 'QUICK_CHAT'; payload: { key: QuickChatKey } }
-	| { type: 'REACTION'; payload: { messageId: string; emoji: ReactionEmoji; action: 'add' | 'remove' } }
+	| {
+			type: 'REACTION';
+			payload: { messageId: string; emoji: ReactionEmoji; action: 'add' | 'remove' };
+	  }
 	| { type: 'TYPING_START' }
 	| { type: 'TYPING_STOP' };
 

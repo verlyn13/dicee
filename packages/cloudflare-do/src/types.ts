@@ -148,7 +148,11 @@ export interface RoomState {
 /**
  * Create initial room state for a new room
  */
-export function createInitialRoomState(roomCode: string, hostUserId: string, settings?: Partial<RoomSettings>): RoomState {
+export function createInitialRoomState(
+	roomCode: string,
+	hostUserId: string,
+	settings?: Partial<RoomSettings>,
+): RoomState {
 	return {
 		roomCode,
 		hostUserId,
@@ -580,8 +584,20 @@ export const REACTION_METADATA: Record<SpectatorReactionEmoji, ReactionMetadata>
 	'🤡': { emoji: '🤡', label: 'Clown play', sound: 'honk.mp3', category: 'spectator' },
 
 	// Rooting-specific (only for your picked player)
-	'📣': { emoji: '📣', label: "Let's GO!", sound: 'cheer.mp3', requiresRooting: true, category: 'rooting' },
-	'💪': { emoji: '💪', label: 'You got this', sound: 'pump-up.mp3', requiresRooting: true, category: 'rooting' },
+	'📣': {
+		emoji: '📣',
+		label: "Let's GO!",
+		sound: 'cheer.mp3',
+		requiresRooting: true,
+		category: 'rooting',
+	},
+	'💪': {
+		emoji: '💪',
+		label: 'You got this',
+		sound: 'pump-up.mp3',
+		requiresRooting: true,
+		category: 'rooting',
+	},
 };
 
 /**
@@ -789,14 +805,14 @@ export interface GalleryPoints {
  * Achievement IDs for spectators
  */
 export type GalleryAchievementId =
-	| 'oracle'           // 5 correct predictions in a row
-	| 'drama_magnet'     // Watched 10 games with a comeback
-	| 'superfan'         // Backed the same player 5 times
-	| 'jinx'             // Your pick lost 5 times in a row
-	| 'analyst'          // Predicted exact score 3 times
-	| 'called_it'        // Predicted a Dicee correctly
-	| 'voyeur'           // Watched 50 games total
-	| 'regular';         // Spectated in 20 different rooms
+	| 'oracle' // 5 correct predictions in a row
+	| 'drama_magnet' // Watched 10 games with a comeback
+	| 'superfan' // Backed the same player 5 times
+	| 'jinx' // Your pick lost 5 times in a row
+	| 'analyst' // Predicted exact score 3 times
+	| 'called_it' // Predicted a Dicee correctly
+	| 'voyeur' // Watched 50 games total
+	| 'regular'; // Spectated in 20 different rooms
 
 /**
  * Achievement metadata
@@ -819,7 +835,10 @@ export interface GalleryAchievement {
 /**
  * Complete achievement definitions
  */
-export const GALLERY_ACHIEVEMENTS: Record<GalleryAchievementId, Omit<GalleryAchievement, 'progress' | 'unlocked' | 'unlockedAt'>> = {
+export const GALLERY_ACHIEVEMENTS: Record<
+	GalleryAchievementId,
+	Omit<GalleryAchievement, 'progress' | 'unlocked' | 'unlockedAt'>
+> = {
 	oracle: {
 		id: 'oracle',
 		name: 'Oracle',

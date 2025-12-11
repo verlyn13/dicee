@@ -1,11 +1,13 @@
 <script lang="ts">
 import { audioStore } from '$lib/stores/audio.svelte';
+import { isCoreCategory, toCoreCategory, type WireCategory } from '$lib/types/category-convert.js';
 import type { Category, StatsProfile } from '$lib/types.js';
 import { CATEGORY_DISPLAY_NAMES } from '$lib/types.js';
 import { haptic } from '$lib/utils/haptics';
 
 interface Props {
-	category: Category;
+	/** Category identifier - accepts PascalCase (Core) or camelCase (Wire) format */
+	category: Category | WireCategory;
 	score: number | null;
 	potentialScore: number;
 	probability?: number;
@@ -14,6 +16,8 @@ interface Props {
 	statsEnabled?: boolean;
 	statsProfile?: StatsProfile;
 	available?: boolean;
+	/** Compact mode for multiplayer scorecard - smaller padding, no icons */
+	compact?: boolean;
 	onclick?: () => void;
 }
 
@@ -27,12 +31,18 @@ let {
 	statsEnabled = false,
 	statsProfile = 'intermediate',
 	available = true,
+	compact = false,
 	onclick,
 }: Props = $props();
 
+// Normalize category to Core format (PascalCase) for internal use
+const normalizedCategory = $derived<Category>(
+	isCoreCategory(category) ? category : toCoreCategory(category as WireCategory),
+);
+
 // Derived
 const isScored = $derived(score !== null);
-const displayName = $derived(CATEGORY_DISPLAY_NAMES[category]);
+const displayName = $derived(CATEGORY_DISPLAY_NAMES[normalizedCategory]);
 
 // Track score changes for animation
 let previousScore = $state<number | null>(null);
@@ -44,7 +54,7 @@ $effect(() => {
 		showScoreAnimation = true;
 		haptic('success');
 		// Play range-based scoring sound (Dicee handled specially)
-		const isDicee = category === 'Dicee' && score === 50;
+		const isDicee = normalizedCategory === 'Dicee' && score === 50;
 		audioStore.playScoreSound(score, isDicee);
 		const timeout = setTimeout(() => {
 			showScoreAnimation = false;
@@ -122,6 +132,7 @@ const categoryIcons: Record<Category, string> = {
 	class:scored={isScored}
 	class:optimal={isOptimal && available}
 	class:available
+	class:compact
 	disabled={!available || isScored}
 	{onclick}
 	aria-label="{displayName}: {isScored ? `scored ${score}` : `potential ${potentialScore}`}{isOptimal ? ', best choice' : ''}"
@@ -137,7 +148,9 @@ const categoryIcons: Record<Category, string> = {
 
 	<!-- Category Info -->
 	<div class="category-info">
-		<span class="icon">{categoryIcons[category]}</span>
+		{#if !compact}
+			<span class="icon">{categoryIcons[normalizedCategory]}</span>
+		{/if}
 		<span class="name">{displayName}</span>
 	</div>
 
@@ -247,14 +260,33 @@ const categoryIcons: Record<Category, string> = {
 		border-left-width: 4px;
 	}
 
-	/* Heat Bar */
+	/* Compact Mode */
+	.category-row.compact {
+		padding: var(--space-1) var(--space-2);
+		min-height: 36px;
+		gap: var(--space-1);
+	}
+
+	.category-row.compact .name {
+		font-size: var(--text-small);
+	}
+
+	.category-row.compact .score {
+		font-size: var(--text-small);
+	}
+
+	.category-row.compact .category-stats {
+		display: none;
+	}
+
+	/* Heat Bar - Enhanced visibility */
 	.heat-bar {
 		position: absolute;
 		left: 0;
 		top: 0;
 		height: 100%;
 		background: var(--color-accent);
-		opacity: 0.15;
+		opacity: 0.20;
 		pointer-events: none;
 		transition: width var(--transition-medium);
 		z-index: 0;
@@ -262,11 +294,11 @@ const categoryIcons: Record<Category, string> = {
 
 	.heat-bar.optimal {
 		background: var(--color-success);
-		opacity: 0.2;
+		opacity: 0.30;
 	}
 
 	.category-row:hover:not(:disabled) .heat-bar {
-		opacity: 0.25;
+		opacity: 0.40;
 	}
 
 	/* Category Info */
@@ -312,6 +344,33 @@ const categoryIcons: Record<Category, string> = {
 
 	.potential-value {
 		color: var(--color-text-muted);
+		font-style: italic;
+		font-weight: var(--weight-medium);
+	}
+
+	/* Subtle glow animation for available categories */
+	.category-row.available:not(.scored) .potential-value {
+		animation: potential-glow 2s ease-in-out infinite;
+	}
+
+	@keyframes potential-glow {
+		0%,
+		100% {
+			text-shadow: none;
+			opacity: 0.8;
+		}
+		50% {
+			text-shadow: 0 0 6px var(--color-accent);
+			opacity: 1;
+		}
+	}
+
+	/* Reduce animation for prefers-reduced-motion */
+	@media (prefers-reduced-motion: reduce) {
+		.category-row.available:not(.scored) .potential-value {
+			animation: none;
+			opacity: 1;
+		}
 	}
 
 	.check {

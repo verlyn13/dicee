@@ -1,0 +1,115 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": true,
+		"includes": [
+			"**/*.ts",
+			"**/*.js",
+			"**/*.json",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/.wrangler"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineWidth": 100
+	},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"correctness": {
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error",
+				"noUnusedPrivateClassMembers": "error",
+				"noUndeclaredVariables": "error",
+				"noUndeclaredDependencies": "off"
+			},
+			"style": {
+				"useConst": "error",
+				"noNonNullAssertion": "warn",
+				"noInferrableTypes": "off",
+				"useTemplate": "warn",
+				"noUselessElse": "warn",
+				"useDefaultParameterLast": "error"
+			},
+			"suspicious": {
+				"noExplicitAny": "error",
+				"noAssignInExpressions": "error",
+				"noDoubleEquals": "error",
+				"noImplicitAnyLet": "error",
+				"noConsole": "off",
+				"noFocusedTests": "error",
+				"noSkippedTests": "warn"
+			},
+			"complexity": {
+				"noExcessiveCognitiveComplexity": {
+					"level": "warn",
+					"options": {
+						"maxAllowedComplexity": 20
+					}
+				},
+				"noForEach": "off"
+			},
+			"performance": {
+				"noAccumulatingSpread": "warn",
+				"noDelete": "warn"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single",
+			"semicolons": "always",
+			"trailingCommas": "all",
+			"arrowParentheses": "always"
+		},
+		"globals": [
+			"WebSocketPair",
+			"WebSocketRequestResponsePair",
+			"DurableObject",
+			"DurableObjectState",
+			"DurableObjectId",
+			"DurableObjectNamespace"
+		]
+	},
+	"overrides": [
+		{
+			"includes": ["**/*.test.ts", "**/*.spec.ts", "**/tests/**/*.ts", "**/__tests__/**/*.ts"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noExplicitAny": "warn",
+						"noSkippedTests": "warn"
+					},
+					"style": {
+						"noNonNullAssertion": "off"
+					},
+					"correctness": {
+						"noUnusedVariables": "warn",
+						"noUnusedPrivateClassMembers": "warn"
+					},
+					"complexity": {
+						"noExcessiveCognitiveComplexity": "off"
+					}
+				}
+			}
+		}
+	]
+}

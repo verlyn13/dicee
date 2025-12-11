@@ -15,7 +15,7 @@
  */
 
 import type { Category, KeptMask, Scorecard } from '../game';
-import { ALL_CATEGORIES, getRemainingCategories } from '../game';
+import { getRemainingCategories } from '../game';
 
 // ============================================================================
 // WASM Types (from dicee_engine.d.ts)
@@ -76,11 +76,7 @@ export interface DiceeEngine {
 	/**
 	 * Analyze the current turn and return optimal strategy.
 	 */
-	analyzeTurn(
-		dice: readonly number[],
-		rollsRemaining: number,
-		scorecard: Scorecard,
-	): TurnAnalysis;
+	analyzeTurn(dice: readonly number[], rollsRemaining: number, scorecard: Scorecard): TurnAnalysis;
 
 	/**
 	 * Check if the engine is using WASM.
@@ -97,8 +93,9 @@ export interface DiceeEngine {
  *
  * TODO: Implement when WASM bundling is configured.
  * For now, this is a placeholder that throws.
+ * @internal Reserved for future WASM implementation
  */
-class WasmEngine implements DiceeEngine {
+class _WasmEngine implements DiceeEngine {
 	private initialized = false;
 
 	async initialize(): Promise<void> {
@@ -110,9 +107,9 @@ class WasmEngine implements DiceeEngine {
 	}
 
 	analyzeTurn(
-		dice: readonly number[],
-		rollsRemaining: number,
-		scorecard: Scorecard,
+		_dice: readonly number[],
+		_rollsRemaining: number,
+		_scorecard: Scorecard,
 	): TurnAnalysis {
 		if (!this.initialized) {
 			throw new Error('WASM engine not initialized');
@@ -138,13 +135,9 @@ class WasmEngine implements DiceeEngine {
  * Used as fallback when WASM isn't available.
  */
 class TypeScriptEngine implements DiceeEngine {
-	analyzeTurn(
-		dice: readonly number[],
-		rollsRemaining: number,
-		scorecard: Scorecard,
-	): TurnAnalysis {
+	analyzeTurn(dice: readonly number[], rollsRemaining: number, scorecard: Scorecard): TurnAnalysis {
 		const remaining = getRemainingCategories(scorecard);
-		const availableMask = this.scorecardToBitmask(scorecard);
+		const _availableMask = this.scorecardToBitmask(scorecard);
 
 		// Calculate EV for each remaining category
 		const categoryEVs: Record<string, number> = {};
@@ -293,10 +286,7 @@ class TypeScriptEngine implements DiceeEngine {
 	// Reroll Analysis
 	// ========================================================================
 
-	private estimateRerollEV(
-		dice: readonly number[],
-		remaining: string[],
-	): number {
+	private estimateRerollEV(dice: readonly number[], remaining: string[]): number {
 		// Estimate EV of best possible outcome after reroll
 		let maxEV = 0;
 
@@ -315,7 +305,7 @@ class TypeScriptEngine implements DiceeEngine {
 
 	private calculateKeepPattern(
 		dice: readonly number[],
-		remaining: string[],
+		_remaining: string[],
 		targetCategory: string,
 	): KeptMask {
 		const counts = this.countDice(dice);

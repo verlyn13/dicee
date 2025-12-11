@@ -2,9 +2,13 @@
 /**
  * MultiplayerScorecard Component
  *
- * Simplified scorecard for multiplayer games.
- * Shows scores and available categories for scoring.
+ * Enhanced scorecard for multiplayer games with WASM analysis integration.
+ * Shows scores, potential values, and statistical indicators (EV, optimal).
  */
+import CategoryRow from '$lib/components/scorecard/CategoryRow.svelte';
+import ScorecardLegend from '$lib/components/scorecard/ScorecardLegend.svelte';
+import type { StatsProfile, TurnAnalysis } from '$lib/types';
+import { toWireCategory } from '$lib/types/category-convert';
 import type { Category, DiceArray, Scorecard } from '$lib/types/multiplayer';
 
 interface Props {
@@ -16,9 +20,30 @@ interface Props {
 	canScore: boolean;
 	/** Callback when a category is selected */
 	onScore: (category: Category) => void;
+	/** WASM analysis data for statistical display */
+	analysis?: TurnAnalysis | null;
+	/** Whether to show statistical information */
+	statsEnabled?: boolean;
+	/** Stats profile level (beginner, intermediate, expert) */
+	statsProfile?: StatsProfile;
 }
 
-let { scorecard, currentDice, canScore, onScore }: Props = $props();
+let {
+	scorecard,
+	currentDice,
+	canScore,
+	onScore,
+	analysis = null,
+	statsEnabled: initialStatsEnabled = true,
+	statsProfile = 'intermediate',
+}: Props = $props();
+
+// Local state for stats toggle (user can show/hide stats)
+let statsEnabled = $state(initialStatsEnabled);
+
+function toggleStats() {
+	statsEnabled = !statsEnabled;
+}
 
 // Category definitions
 const UPPER_CATEGORIES: { key: Category; label: string; value: number }[] = [
@@ -105,6 +130,19 @@ function getScore(category: Category): number | null {
 	return scorecard[category];
 }
 
+// Get analysis data for a specific category
+function getCategoryAnalysis(category: Category) {
+	if (!analysis?.categories) return null;
+	// Convert wire category to core format for comparison
+	return analysis.categories.find((c) => toWireCategory(c.category) === category) ?? null;
+}
+
+// Check if this category is the recommended optimal choice
+function isOptimalCategory(category: Category): boolean {
+	if (!analysis?.recommendedCategory) return false;
+	return toWireCategory(analysis.recommendedCategory) === category;
+}
+
 // Calculate upper section sum
 const upperSum = $derived(() => {
 	if (!scorecard) return 0;
@@ -140,41 +178,48 @@ const totalScore = $derived(() => {
 <div class="multiplayer-scorecard">
 	<header class="scorecard-header">
 		<h3 class="header-title">Scorecard</h3>
+		<div class="header-controls">
+			<button class="stats-toggle" onclick={toggleStats} aria-pressed={statsEnabled}>
+				{statsEnabled ? 'Hide Stats' : 'Show Stats'}
+			</button>
+			<ScorecardLegend />
+		</div>
 	</header>
 
 	<!-- Upper Section -->
-	<section class="section">
-		<div class="section-label">Upper</div>
+	<section class="section upper">
+		<div class="section-header">
+			<span class="section-label">Upper Section</span>
+			<span class="section-hint">Sum of matching dice</span>
+		</div>
 		<div class="categories">
 			{#each UPPER_CATEGORIES as cat (cat.key)}
 				{@const score = getScore(cat.key)}
 				{@const available = isAvailable(cat.key)}
-				{@const potential = available && currentDice ? calculatePotential(cat.key) : null}
-				<button
-					class="category-row"
-					class:available
-					class:scored={score !== null}
-					class:can-score={canScore && available}
-					disabled={!canScore || !available}
+				{@const catAnalysis = getCategoryAnalysis(cat.key)}
+				{@const potential = catAnalysis?.immediateScore ?? (available && currentDice ? calculatePotential(cat.key) : 0)}
+				<CategoryRow
+					category={cat.key}
+					{score}
+					potentialScore={potential}
+					expectedValue={catAnalysis?.expectedValue ?? 0}
+					probability={0}
+					isOptimal={isOptimalCategory(cat.key)}
+					{available}
+					{statsEnabled}
+					{statsProfile}
+					compact
 					onclick={() => available && canScore && onScore(cat.key)}
-				>
-					<span class="category-label">{cat.label}</span>
-					<span class="category-score">
-						{#if score !== null}
-							{score}
-						{:else if potential !== null}
-							<span class="potential">{potential}</span>
-						{:else}
-							—
-						{/if}
-					</span>
-				</button>
+				/>
 			{/each}
 		</div>
 
-		<!-- Upper Bonus -->
+		<!-- Upper Bonus Progress -->
 		<div class="bonus-row">
 			<span class="bonus-label">Bonus (63+)</span>
+			<div class="bonus-progress">
+				<div class="bonus-fill" style="width: {Math.min((upperSum() / 63) * 100, 100)}%"></div>
+			</div>
 			<span class="bonus-value" class:achieved={upperBonus > 0}>
 				{upperBonus > 0 ? '+35' : `${upperSum()}/63`}
 			</span>
@@ -182,32 +227,30 @@ const totalScore = $derived(() => {
 	</section>
 
 	<!-- Lower Section -->
-	<section class="section">
-		<div class="section-label">Lower</div>
+	<section class="section lower">
+		<div class="section-header">
+			<span class="section-label">Lower Section</span>
+			<span class="section-hint">Special combinations</span>
+		</div>
 		<div class="categories">
 			{#each LOWER_CATEGORIES as cat (cat.key)}
 				{@const score = getScore(cat.key)}
 				{@const available = isAvailable(cat.key)}
-				{@const potential = available && currentDice ? calculatePotential(cat.key) : null}
-				<button
-					class="category-row"
-					class:available
-					class:scored={score !== null}
-					class:can-score={canScore && available}
-					disabled={!canScore || !available}
+				{@const catAnalysis = getCategoryAnalysis(cat.key)}
+				{@const potential = catAnalysis?.immediateScore ?? (available && currentDice ? calculatePotential(cat.key) : 0)}
+				<CategoryRow
+					category={cat.key}
+					{score}
+					potentialScore={potential}
+					expectedValue={catAnalysis?.expectedValue ?? 0}
+					probability={0}
+					isOptimal={isOptimalCategory(cat.key)}
+					{available}
+					{statsEnabled}
+					{statsProfile}
+					compact
 					onclick={() => available && canScore && onScore(cat.key)}
-				>
-					<span class="category-label">{cat.label}</span>
-					<span class="category-score">
-						{#if score !== null}
-							{score}
-						{:else if potential !== null}
-							<span class="potential">{potential}</span>
-						{:else}
-							—
-						{/if}
-					</span>
-				</button>
+				/>
 			{/each}
 		</div>
 
@@ -236,6 +279,9 @@ const totalScore = $derived(() => {
 	}
 
 	.scorecard-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		padding: var(--space-1) var(--space-2);
 		border-bottom: var(--border-medium);
 		background: var(--color-background);
@@ -249,22 +295,83 @@ const totalScore = $derived(() => {
 		letter-spacing: var(--tracking-wider);
 	}
 
+	.header-controls {
+		display: flex;
+		align-items: center;
+		gap: var(--space-1);
+	}
+
+	.stats-toggle {
+		padding: var(--space-1) var(--space-2);
+		background: var(--color-surface);
+		border: var(--border-thin);
+		cursor: pointer;
+		font-family: inherit;
+		font-size: var(--text-tiny);
+		font-weight: var(--weight-medium);
+		transition:
+			background var(--transition-fast),
+			border-color var(--transition-fast);
+	}
+
+	.stats-toggle:hover {
+		background: var(--color-background);
+		border-color: var(--color-accent);
+	}
+
+	.stats-toggle[aria-pressed='true'] {
+		background: var(--color-accent-light);
+		border-color: var(--color-accent);
+	}
+
 	.section {
-		padding: var(--space-1);
 		border-bottom: var(--border-medium);
+		position: relative;
 	}
 
 	.section:last-of-type {
 		border-bottom: none;
 	}
 
+	/* Section Header with accent bar */
+	.section-header {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: var(--space-2);
+		background: var(--color-background);
+		border-bottom: var(--border-medium);
+		position: relative;
+	}
+
+	.section-header::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 4px;
+		background: var(--color-accent);
+	}
+
+	.section.upper .section-header::before {
+		background: var(--color-accent);
+	}
+
+	.section.lower .section-header::before {
+		background: var(--color-success);
+	}
+
 	.section-label {
-		font-size: var(--text-tiny);
+		font-size: var(--text-small);
 		font-weight: var(--weight-bold);
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-wider);
+	}
+
+	.section-hint {
+		font-size: var(--text-tiny);
 		color: var(--color-text-muted);
-		padding: var(--space-1);
 	}
 
 	.categories {
@@ -272,80 +379,43 @@ const totalScore = $derived(() => {
 		flex-direction: column;
 	}
 
-	.category-row {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--space-1) var(--space-2);
-		background: transparent;
-		border: none;
-		border-bottom: 1px solid var(--color-background);
-		cursor: default;
-		text-align: left;
-		font-family: inherit;
-		font-size: var(--text-small);
-		transition: background var(--transition-fast);
-	}
-
-	.category-row:last-child {
-		border-bottom: none;
-	}
-
-	.category-row.scored {
-		color: var(--color-text-muted);
-	}
-
-	.category-row.available {
-		cursor: pointer;
-	}
-
-	.category-row.can-score:hover {
-		background: var(--color-accent-light);
-	}
-
-	.category-row.can-score:active {
-		background: var(--color-accent);
-	}
-
-	.category-row:disabled {
-		cursor: not-allowed;
-	}
-
-	.category-label {
-		font-weight: var(--weight-medium);
-	}
-
-	.category-score {
-		font-family: var(--font-mono);
-		font-weight: var(--weight-bold);
-		font-variant-numeric: tabular-nums;
-		min-width: 32px;
-		text-align: right;
-	}
-
-	.potential {
-		color: var(--color-accent-dark);
-	}
-
 	.bonus-row {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
-		padding: var(--space-1) var(--space-2);
+		gap: var(--space-2);
+		padding: var(--space-2);
 		background: var(--color-background);
-		margin-top: var(--space-1);
+		border-top: var(--border-thin);
 	}
 
 	.bonus-label {
 		font-size: var(--text-tiny);
 		font-weight: var(--weight-semibold);
 		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	.bonus-progress {
+		flex: 1;
+		height: 12px;
+		background: var(--color-surface);
+		border: var(--border-thin);
+		position: relative;
+		max-width: 80px;
+	}
+
+	.bonus-fill {
+		height: 100%;
+		background: var(--color-accent);
+		transition: width var(--transition-medium);
 	}
 
 	.bonus-value {
 		font-family: var(--font-mono);
 		font-size: var(--text-small);
 		font-weight: var(--weight-bold);
+		min-width: 40px;
+		text-align: right;
 	}
 
 	.bonus-value.achieved {

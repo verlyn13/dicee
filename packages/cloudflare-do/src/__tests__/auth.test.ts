@@ -5,14 +5,14 @@
  * Uses mocked jose library since we can't make real JWKS requests in tests.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as jose from 'jose';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-	verifySupabaseJWT,
-	extractDisplayName,
-	extractAvatarUrl,
 	clearJWKSCache,
+	extractAvatarUrl,
+	extractDisplayName,
 	type JWTClaims,
+	verifySupabaseJWT,
 } from '../auth';
 
 // =============================================================================

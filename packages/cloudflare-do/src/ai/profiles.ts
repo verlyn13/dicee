@@ -5,7 +5,7 @@
  * Each profile has a unique play style for varied gameplay experiences.
  */
 
-import type { AIProfile, AITraits, AITiming } from './types';
+import type { AIProfile, AITiming } from './types';
 
 // ============================================================================
 // Default Timing Presets

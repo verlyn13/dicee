@@ -4,12 +4,16 @@
  * Tests the full AI turn execution flow from AIRoomManager through AIController.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { AIRoomManager } from '../gameroom-integration';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MultiplayerGameState, PlayerGameState } from '../../game';
 import { createPlayerGameState } from '../../game';
+import { AIRoomManager } from '../gameroom-integration';
 
-function createTestPlayer(id: string, displayName: string, type: 'human' | 'ai' = 'human'): PlayerGameState {
+function createTestPlayer(
+	id: string,
+	displayName: string,
+	type: 'human' | 'ai' = 'human',
+): PlayerGameState {
 	return createPlayerGameState(
 		id,
 		displayName,
@@ -21,7 +25,10 @@ function createTestPlayer(id: string, displayName: string, type: 'human' | 'ai' 
 	);
 }
 
-function createTestGameState(currentPlayerId: string, players: PlayerGameState[]): MultiplayerGameState {
+function createTestGameState(
+	currentPlayerId: string,
+	players: PlayerGameState[],
+): MultiplayerGameState {
 	const playerRecords: Record<string, PlayerGameState> = {};
 	for (const p of players) {
 		playerRecords[p.id] = p;
@@ -100,7 +107,13 @@ describe('AIRoomManager Integration', () => {
 							[playerId]: {
 								...gameState.players[playerId],
 								currentDice: [3, 3, 2, 5, 6] as [number, number, number, number, number],
-								keptDice: [false, false, false, false, false] as [boolean, boolean, boolean, boolean, boolean],
+								keptDice: [false, false, false, false, false] as [
+									boolean,
+									boolean,
+									boolean,
+									boolean,
+									boolean,
+								],
 								rollsRemaining: gameState.players[playerId].rollsRemaining - 1,
 							},
 						},
@@ -119,12 +132,7 @@ describe('AIRoomManager Integration', () => {
 			});
 
 			// Execute the AI turn
-			await aiManager.executeAITurn(
-				aiPlayerId,
-				async () => gameState,
-				executeCommand,
-				broadcast,
-			);
+			await aiManager.executeAITurn(aiPlayerId, async () => gameState, executeCommand, broadcast);
 
 			// Verify commands were executed
 			expect(commands.length).toBeGreaterThan(0);
@@ -148,11 +156,17 @@ describe('AIRoomManager Integration', () => {
 			const aiPlayer: PlayerGameState = {
 				...createTestPlayer(aiPlayerId, 'Carmen', 'ai'),
 				currentDice: [1, 1, 1, 1, 1] as [number, number, number, number, number], // Dicee!
-				keptDice: [false, false, false, false, false] as [boolean, boolean, boolean, boolean, boolean],
+				keptDice: [false, false, false, false, false] as [
+					boolean,
+					boolean,
+					boolean,
+					boolean,
+					boolean,
+				],
 				rollsRemaining: 2,
 			};
 
-			let gameState = createTestGameState(aiPlayerId, [humanPlayer, aiPlayer]);
+			const gameState = createTestGameState(aiPlayerId, [humanPlayer, aiPlayer]);
 			gameState.phase = 'turn_decide';
 
 			const commands: Array<{ playerId: string; type: string }> = [];
@@ -163,12 +177,7 @@ describe('AIRoomManager Integration', () => {
 
 			const broadcast = vi.fn();
 
-			await aiManager.executeAITurn(
-				aiPlayerId,
-				async () => gameState,
-				executeCommand,
-				broadcast,
-			);
+			await aiManager.executeAITurn(aiPlayerId, async () => gameState, executeCommand, broadcast);
 
 			// With a Dicee, AI should score immediately
 			expect(commands.some((c) => c.type === 'score')).toBe(true);
@@ -178,12 +187,7 @@ describe('AIRoomManager Integration', () => {
 			const humanPlayerId = 'human:player1';
 
 			await expect(
-				aiManager.executeAITurn(
-					humanPlayerId,
-					async () => null,
-					vi.fn(),
-					vi.fn(),
-				),
+				aiManager.executeAITurn(humanPlayerId, async () => null, vi.fn(), vi.fn()),
 			).rejects.toThrow('not an AI');
 		});
 	});

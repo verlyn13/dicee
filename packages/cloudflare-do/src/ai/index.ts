@@ -5,73 +5,68 @@
  * Runs entirely in Cloudflare Durable Objects.
  */
 
-// Types
-export type {
-	BrainType,
-	AITraits,
-	AITiming,
-	AIProfile,
-	GameContext,
-	TurnAction,
-	TurnDecision,
-	AIPlayerState,
-	AIEvent,
-	CreateAIPlayerOptions,
-} from './types';
-
-// Profiles
-export {
-	RILEY,
-	CARMEN,
-	LIAM,
-	PROFESSOR,
-	CHARLIE,
-	AI_PROFILES,
-	PROFILE_LIST,
-	getProfile,
-	getRandomProfile,
-	getProfilesByDifficulty,
-	getDefaultProfile,
-} from './profiles';
-
 // Brain types and factory
 export type { AIBrain, BrainOptions, CategoryEV, KeepAnalysis } from './brain';
 export {
-	createBrain,
-	registerBrain,
-	initializeBrainFactory,
 	checkWasmAvailability,
+	createBrain,
 	getAvailableBrainTypes,
+	initializeBrainFactory,
 	isBrainTypeAvailable,
 	isWasmEnabled,
 	OptimalBrain,
-	ProbabilisticBrain,
 	PersonalityBrain,
+	ProbabilisticBrain,
 	RandomBrain,
+	registerBrain,
 } from './brain';
-
+// Chat (AI chat responses)
+export type { ChatContext, ChatTrigger } from './chat';
+export {
+	analyzeRollQuality,
+	generateChatResponse,
+	getScoreTriggers,
+	shouldReact,
+} from './chat';
+// Controller (manages AI turns in game rooms)
+export type { AICommand, AIControllerConfig, CommandExecutor, EventEmitter } from './controller';
+export { AIController, getAIController, resetAIController } from './controller';
 // Engine (WASM/TypeScript probability calculations)
 export type { DiceeEngine, TurnAnalysis } from './engine';
 export { getEngine, resetEngine } from './engine';
 
-// Controller (manages AI turns in game rooms)
-export type { AICommand, CommandExecutor, EventEmitter, AIControllerConfig } from './controller';
-export { AIController, getAIController, resetAIController } from './controller';
-
 // GameRoom Integration
-export type { GameCommandExecutor, EventBroadcaster } from './gameroom-integration';
+export type { EventBroadcaster, GameCommandExecutor } from './gameroom-integration';
 export {
 	AIRoomManager,
 	createAIPlayerState,
-	isAIPlayerState,
 	getAIProfileForPlayer,
+	isAIPlayerState,
 } from './gameroom-integration';
-
-// Chat (AI chat responses)
-export type { ChatTrigger, ChatContext } from './chat';
+// Profiles
 export {
-	generateChatResponse,
-	shouldReact,
-	analyzeRollQuality,
-	getScoreTriggers,
-} from './chat';
+	AI_PROFILES,
+	CARMEN,
+	CHARLIE,
+	getDefaultProfile,
+	getProfile,
+	getProfilesByDifficulty,
+	getRandomProfile,
+	LIAM,
+	PROFESSOR,
+	PROFILE_LIST,
+	RILEY,
+} from './profiles';
+// Types
+export type {
+	AIEvent,
+	AIPlayerState,
+	AIProfile,
+	AITiming,
+	AITraits,
+	BrainType,
+	CreateAIPlayerOptions,
+	GameContext,
+	TurnAction,
+	TurnDecision,
+} from './types';

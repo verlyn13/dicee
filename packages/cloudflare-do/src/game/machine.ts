@@ -8,7 +8,7 @@
  */
 
 import type { Category, GamePhase, MultiplayerGameState, PlayerGameState } from './types';
-import { MAX_ROLLS_PER_TURN, getRemainingCategories, isValidTransition } from './types';
+import { getRemainingCategories, isValidTransition, MAX_ROLLS_PER_TURN } from './types';
 
 // =============================================================================
 // Transition Validators
@@ -252,7 +252,7 @@ export function getNextTurnNumber(state: MultiplayerGameState): number {
 /**
  * Reset player's turn state for a new turn
  */
-export function resetTurnState(player: PlayerGameState): Partial<PlayerGameState> {
+export function resetTurnState(_player: PlayerGameState): Partial<PlayerGameState> {
 	return {
 		currentDice: null,
 		keptDice: null,

@@ -6,10 +6,10 @@
  */
 
 import type { Category, KeptMask } from '../../game';
-import { getRemainingCategories, calculateAllPotentialScores } from '../../game';
+import { calculateAllPotentialScores, getRemainingCategories } from '../../game';
 import type { AIProfile, GameContext, TurnDecision } from '../types';
-import type { AIBrain } from './types';
 import { OptimalBrain } from './optimal';
+import type { AIBrain } from './types';
 
 /**
  * Probabilistic brain - optimal with variance.
@@ -97,10 +97,7 @@ export class ProbabilisticBrain implements AIBrain {
 		return optimalDecision;
 	}
 
-	private makeAlternativeKeep(
-		context: GameContext,
-		optimalKeep: KeptMask,
-	): TurnDecision {
+	private makeAlternativeKeep(_context: GameContext, optimalKeep: KeptMask): TurnDecision {
 		// Flip one random keep decision
 		const newKeep: KeptMask = [...optimalKeep];
 		const index = Math.floor(Math.random() * 5);
@@ -114,12 +111,11 @@ export class ProbabilisticBrain implements AIBrain {
 		};
 	}
 
-	private makeAlternativeScore(
-		context: GameContext,
-		optimalCategory?: Category,
-	): TurnDecision {
+	private makeAlternativeScore(context: GameContext, optimalCategory?: Category): TurnDecision {
 		const remaining = getRemainingCategories(context.scorecard);
-		const scores = calculateAllPotentialScores(context.dice as [number, number, number, number, number]);
+		const scores = calculateAllPotentialScores(
+			context.dice as [number, number, number, number, number],
+		);
 
 		// Find categories with non-zero scores
 		const nonZero = remaining.filter((cat) => {

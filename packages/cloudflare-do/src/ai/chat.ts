@@ -5,8 +5,8 @@
  * Uses seeded randomness for reproducible but varied responses.
  */
 
-import type { AIProfile, GameContext } from './types';
 import type { Category, DiceArray } from '../game';
+import type { AIProfile, GameContext } from './types';
 
 // ============================================================================
 // Chat Event Types
@@ -55,306 +55,137 @@ const RILEY_RESPONSES: Record<ChatTrigger, string[]> = {
 	game_start: [
 		"Let's do this! 🎲",
 		"I'm so excited to play!",
-		"Good luck everyone!",
-		"May the best roller win! 😊",
+		'Good luck everyone!',
+		'May the best roller win! 😊',
 	],
 	my_turn_start: [
-		"Okay, here we go!",
-		"My turn! 🎲",
-		"Fingers crossed!",
+		'Okay, here we go!',
+		'My turn! 🎲',
+		'Fingers crossed!',
 		"Let's see what I get...",
 	],
 	rolled_dicee: [
-		"WAIT IS THAT A DICEE?! 🎉",
-		"OMG OMG OMG!!!",
-		"NO WAY! ALL THE SAME!",
+		'WAIT IS THAT A DICEE?! 🎉',
+		'OMG OMG OMG!!!',
+		'NO WAY! ALL THE SAME!',
 		"I can't believe it! 😱",
 	],
-	scored_dicee: [
-		"50 POINTS! Best day ever!",
-		"I did it! I actually did it!",
-		"Dicee baby! 🎯",
-	],
+	scored_dicee: ['50 POINTS! Best day ever!', 'I did it! I actually did it!', 'Dicee baby! 🎯'],
 	scored_zero: [
 		"Oops... that didn't work out 😅",
 		"Well, that's unfortunate",
-		"Zero points? Really? 😭",
+		'Zero points? Really? 😭',
 		"I'll do better next time!",
 	],
 	good_roll: [
-		"Ooh, nice!",
+		'Ooh, nice!',
 		"That's pretty good!",
-		"I like this roll! 😊",
-		"Things are looking up!",
+		'I like this roll! 😊',
+		'Things are looking up!',
 	],
-	bad_roll: [
-		"Hmm, not great...",
-		"Could be better 😬",
-		"Well, let's work with it",
-		"Uh oh...",
-	],
-	opponent_dicee: [
-		"Wow, nice roll!",
-		"Congrats! That's amazing!",
-		"So jealous right now 😄",
-	],
-	taking_lead: [
-		"Wait, I'm winning?!",
-		"Look at me go! 🚀",
-		"This is exciting!",
-	],
-	falling_behind: [
-		"I can still catch up!",
-		"It's not over yet!",
-		"Come on dice, help me out!",
-	],
-	final_round: [
-		"Last round! So nervous!",
-		"Here goes nothing!",
-		"Final chance! 🤞",
-	],
-	game_won: [
-		"I WON?! Really?! 🎉",
-		"That was so fun! GG!",
-		"Yay! Great game everyone!",
-	],
-	game_lost: [
-		"Good game! You played great!",
-		"So close! Next time! 😊",
-		"That was fun anyway!",
-	],
-	close_game: [
-		"This is so intense!",
-		"Anyone could win!",
-		"What a game! 😱",
-	],
+	bad_roll: ['Hmm, not great...', 'Could be better 😬', "Well, let's work with it", 'Uh oh...'],
+	opponent_dicee: ['Wow, nice roll!', "Congrats! That's amazing!", 'So jealous right now 😄'],
+	taking_lead: ["Wait, I'm winning?!", 'Look at me go! 🚀', 'This is exciting!'],
+	falling_behind: ['I can still catch up!', "It's not over yet!", 'Come on dice, help me out!'],
+	final_round: ['Last round! So nervous!', 'Here goes nothing!', 'Final chance! 🤞'],
+	game_won: ['I WON?! Really?! 🎉', 'That was so fun! GG!', 'Yay! Great game everyone!'],
+	game_lost: ['Good game! You played great!', 'So close! Next time! 😊', 'That was fun anyway!'],
+	close_game: ['This is so intense!', 'Anyone could win!', 'What a game! 😱'],
 };
 
 /**
  * Chat responses for Carmen (intermediate, balanced).
  */
 const CARMEN_RESPONSES: Record<ChatTrigger, string[]> = {
-	game_start: [
-		"Good luck!",
-		"Let's have a good game",
-		"May the dice favor us all",
-	],
-	my_turn_start: [
-		"Alright, let's see...",
-		"My turn",
-		"Here we go",
-	],
-	rolled_dicee: [
-		"Dicee! 🎲",
-		"All five! Nice!",
-		"That's what I'm talking about!",
-	],
-	scored_dicee: [
-		"50 points, thank you very much",
-		"I'll take that Dicee",
-		"Perfect! 🎯",
-	],
-	scored_zero: [
-		"Had to sacrifice that one",
-		"Strategic zero",
-		"Not ideal, but necessary",
-	],
-	good_roll: [
-		"Not bad",
-		"I can work with this",
-		"Decent",
-	],
-	bad_roll: [
-		"Hmm",
-		"Could be worse",
-		"Let's try again",
-	],
-	opponent_dicee: [
-		"Nice one!",
-		"Well played",
-		"Good roll!",
-	],
-	taking_lead: [
-		"Looking good",
-		"I'll take the lead",
-		"Ahead for now",
-	],
-	falling_behind: [
-		"Still in this",
-		"Plenty of game left",
-		"Time to focus",
-	],
-	final_round: [
-		"Final round",
-		"Make it count",
-		"Last chance",
-	],
-	game_won: [
-		"Good game!",
-		"GG everyone",
-		"Thanks for playing!",
-	],
-	game_lost: [
-		"Well played!",
-		"Good game",
-		"You got me this time",
-	],
-	close_game: [
-		"Close one!",
-		"Tight game",
-		"This is interesting",
-	],
+	game_start: ['Good luck!', "Let's have a good game", 'May the dice favor us all'],
+	my_turn_start: ["Alright, let's see...", 'My turn', 'Here we go'],
+	rolled_dicee: ['Dicee! 🎲', 'All five! Nice!', "That's what I'm talking about!"],
+	scored_dicee: ['50 points, thank you very much', "I'll take that Dicee", 'Perfect! 🎯'],
+	scored_zero: ['Had to sacrifice that one', 'Strategic zero', 'Not ideal, but necessary'],
+	good_roll: ['Not bad', 'I can work with this', 'Decent'],
+	bad_roll: ['Hmm', 'Could be worse', "Let's try again"],
+	opponent_dicee: ['Nice one!', 'Well played', 'Good roll!'],
+	taking_lead: ['Looking good', "I'll take the lead", 'Ahead for now'],
+	falling_behind: ['Still in this', 'Plenty of game left', 'Time to focus'],
+	final_round: ['Final round', 'Make it count', 'Last chance'],
+	game_won: ['Good game!', 'GG everyone', 'Thanks for playing!'],
+	game_lost: ['Well played!', 'Good game', 'You got me this time'],
+	close_game: ['Close one!', 'Tight game', 'This is interesting'],
 };
 
 /**
  * Chat responses for Liam (risk-taker, expressive).
  */
 const LIAM_RESPONSES: Record<ChatTrigger, string[]> = {
-	game_start: [
-		"Let's GO! 🔥",
-		"Time to roll big!",
-		"No fear! All gas!",
-	],
-	my_turn_start: [
-		"Watch this!",
-		"Big roll incoming!",
-		"Fortune favors the bold!",
-	],
-	rolled_dicee: [
-		"BOOM! DICEE! 💥",
-		"THAT'S WHAT I'M TALKING ABOUT!",
-		"YESSSSS! 🎲🎲🎲🎲🎲",
-	],
-	scored_dicee: [
-		"50 points! Let's GOOO!",
-		"Dicee secured! 🏆",
-		"That's how it's done!",
-	],
+	game_start: ["Let's GO! 🔥", 'Time to roll big!', 'No fear! All gas!'],
+	my_turn_start: ['Watch this!', 'Big roll incoming!', 'Fortune favors the bold!'],
+	rolled_dicee: ['BOOM! DICEE! 💥', "THAT'S WHAT I'M TALKING ABOUT!", 'YESSSSS! 🎲🎲🎲🎲🎲'],
+	scored_dicee: ["50 points! Let's GOOO!", 'Dicee secured! 🏆', "That's how it's done!"],
 	scored_zero: [
-		"Worth the risk!",
-		"Swing and a miss, but no regrets!",
+		'Worth the risk!',
+		'Swing and a miss, but no regrets!',
 		"You miss 100% of the shots you don't take!",
 	],
-	good_roll: [
-		"Now we're cooking!",
-		"That's what I like to see!",
-		"Let's push it further!",
-	],
+	good_roll: ["Now we're cooking!", "That's what I like to see!", "Let's push it further!"],
 	bad_roll: [
 		"Doesn't matter, going for it anyway!",
-		"The comeback starts now!",
-		"Just need one good roll!",
+		'The comeback starts now!',
+		'Just need one good roll!',
 	],
-	opponent_dicee: [
-		"Nice! But I'm coming for you!",
-		"Game on!",
-		"Challenge accepted! 💪",
-	],
-	taking_lead: [
-		"That's right! 🔥",
-		"Top of the leaderboard!",
-		"Can't stop won't stop!",
-	],
-	falling_behind: [
-		"Just getting warmed up!",
-		"Watch the comeback!",
-		"This is where it gets fun!",
-	],
-	final_round: [
-		"ALL OR NOTHING!",
-		"Final round, maximum effort!",
-		"Let's end this with a bang!",
-	],
-	game_won: [
-		"VICTORY! 🏆",
-		"That's how you play!",
-		"GG! What a rush!",
-	],
-	game_lost: [
-		"Respect! You earned it!",
-		"Good game! Rematch?",
-		"Next time I'm going even bigger!",
-	],
-	close_game: [
-		"THIS IS INTENSE!",
-		"Love a close game!",
-		"Heart is POUNDING!",
-	],
+	opponent_dicee: ["Nice! But I'm coming for you!", 'Game on!', 'Challenge accepted! 💪'],
+	taking_lead: ["That's right! 🔥", 'Top of the leaderboard!', "Can't stop won't stop!"],
+	falling_behind: ['Just getting warmed up!', 'Watch the comeback!', 'This is where it gets fun!'],
+	final_round: ['ALL OR NOTHING!', 'Final round, maximum effort!', "Let's end this with a bang!"],
+	game_won: ['VICTORY! 🏆', "That's how you play!", 'GG! What a rush!'],
+	game_lost: ['Respect! You earned it!', 'Good game! Rematch?', "Next time I'm going even bigger!"],
+	close_game: ['THIS IS INTENSE!', 'Love a close game!', 'Heart is POUNDING!'],
 };
 
 /**
  * Chat responses for Professor (expert, analytical).
  */
 const PROFESSOR_RESPONSES: Record<ChatTrigger, string[]> = {
-	game_start: [
-		"Let's begin.",
-		"Good luck to all.",
-		"May probability be with you.",
-	],
-	my_turn_start: [
-		"Calculating...",
-		"Analyzing options...",
-		"Let me consider this.",
-	],
+	game_start: ["Let's begin.", 'Good luck to all.', 'May probability be with you.'],
+	my_turn_start: ['Calculating...', 'Analyzing options...', 'Let me consider this.'],
 	rolled_dicee: [
-		"Dicee. Probability: 0.046%.",
-		"Excellent. Five of a kind.",
-		"Statistically improbable, yet here we are.",
+		'Dicee. Probability: 0.046%.',
+		'Excellent. Five of a kind.',
+		'Statistically improbable, yet here we are.',
 	],
-	scored_dicee: [
-		"50 points. Optimal outcome.",
-		"Maximum value achieved.",
-		"As calculated.",
-	],
+	scored_dicee: ['50 points. Optimal outcome.', 'Maximum value achieved.', 'As calculated.'],
 	scored_zero: [
-		"Expected value optimization.",
-		"Necessary sacrifice for future gains.",
-		"The math supports this decision.",
+		'Expected value optimization.',
+		'Necessary sacrifice for future gains.',
+		'The math supports this decision.',
 	],
-	good_roll: [
-		"Favorable outcome.",
-		"Above expected value.",
-		"Acceptable.",
-	],
-	bad_roll: [
-		"Suboptimal, but manageable.",
-		"Variance is inevitable.",
-		"Adjusting strategy.",
-	],
-	opponent_dicee: [
-		"Well rolled.",
-		"Impressive probability.",
-		"Noted.",
-	],
-	taking_lead: [
-		"Currently optimal position.",
-		"Lead acquired.",
-		"Ahead by expected margins.",
-	],
+	good_roll: ['Favorable outcome.', 'Above expected value.', 'Acceptable.'],
+	bad_roll: ['Suboptimal, but manageable.', 'Variance is inevitable.', 'Adjusting strategy.'],
+	opponent_dicee: ['Well rolled.', 'Impressive probability.', 'Noted.'],
+	taking_lead: ['Currently optimal position.', 'Lead acquired.', 'Ahead by expected margins.'],
 	falling_behind: [
-		"Recalculating approach.",
-		"Still within recovery parameters.",
-		"Adjusting for deficit.",
+		'Recalculating approach.',
+		'Still within recovery parameters.',
+		'Adjusting for deficit.',
 	],
 	final_round: [
-		"Final optimization round.",
-		"Concluding calculations.",
-		"Terminal decision point.",
+		'Final optimization round.',
+		'Concluding calculations.',
+		'Terminal decision point.',
 	],
 	game_won: [
-		"Victory achieved. Well played.",
-		"Optimal outcome. Good game.",
-		"The math prevailed.",
+		'Victory achieved. Well played.',
+		'Optimal outcome. Good game.',
+		'The math prevailed.',
 	],
 	game_lost: [
-		"Variance favored you. Well played.",
-		"Congratulations on your victory.",
-		"A learning experience.",
+		'Variance favored you. Well played.',
+		'Congratulations on your victory.',
+		'A learning experience.',
 	],
 	close_game: [
-		"Margin within standard deviation.",
-		"Competitive equilibrium.",
-		"Interesting game state.",
+		'Margin within standard deviation.',
+		'Competitive equilibrium.',
+		'Interesting game state.',
 	],
 };
 
@@ -363,79 +194,71 @@ const PROFESSOR_RESPONSES: Record<ChatTrigger, string[]> = {
  */
 const CHARLIE_RESPONSES: Record<ChatTrigger, string[]> = {
 	game_start: [
-		"CHAOS TIME! 🌀",
-		"Let the randomness begin!",
+		'CHAOS TIME! 🌀',
+		'Let the randomness begin!',
 		"Who knows what'll happen?!",
-		"Buckle up! 🎢",
+		'Buckle up! 🎢',
 	],
 	my_turn_start: [
-		"Eeny meeny miny moe!",
+		'Eeny meeny miny moe!',
 		"Let's see what chaos brings!",
-		"Random strategy: ACTIVATE!",
-		"*rolls dice with eyes closed*",
+		'Random strategy: ACTIVATE!',
+		'*rolls dice with eyes closed*',
 	],
 	rolled_dicee: [
-		"WAIT WHAT?! HOW?!",
-		"CHAOS DICEE! 🌀🎲",
+		'WAIT WHAT?! HOW?!',
+		'CHAOS DICEE! 🌀🎲',
 		"I DIDN'T EVEN TRY FOR THAT!",
-		"The universe provides!",
+		'The universe provides!',
 	],
-	scored_dicee: [
-		"Accidental genius!",
-		"Chaos wins again!",
-		"I have no idea what I'm doing! 😂",
-	],
+	scored_dicee: ['Accidental genius!', 'Chaos wins again!', "I have no idea what I'm doing! 😂"],
 	scored_zero: [
-		"Zero is a number too!",
-		"Part of the plan! (There is no plan)",
-		"Embrace the void! 🕳️",
-		"Math is just a suggestion!",
+		'Zero is a number too!',
+		'Part of the plan! (There is no plan)',
+		'Embrace the void! 🕳️',
+		'Math is just a suggestion!',
 	],
 	good_roll: [
-		"Ooh shiny!",
-		"The dice gods smile upon me!",
-		"Was that good? I think that was good!",
+		'Ooh shiny!',
+		'The dice gods smile upon me!',
+		'Was that good? I think that was good!',
 	],
 	bad_roll: [
-		"The dice have spoken!",
-		"Chaos is chaos!",
+		'The dice have spoken!',
+		'Chaos is chaos!',
 		"It's all part of the journey!",
-		"Plot twist! 📖",
+		'Plot twist! 📖',
 	],
-	opponent_dicee: [
-		"Ooooh fancy!",
-		"Show off! 😜",
-		"The chaos spreads!",
-	],
+	opponent_dicee: ['Ooooh fancy!', 'Show off! 😜', 'The chaos spreads!'],
 	taking_lead: [
 		"Wait I'm winning?! HOW?!",
-		"Chaos strategy working?!",
+		'Chaos strategy working?!',
 		"This wasn't supposed to happen!",
 	],
 	falling_behind: [
-		"Points are just numbers!",
-		"Winning is overrated anyway!",
-		"The real treasure was the chaos we made!",
+		'Points are just numbers!',
+		'Winning is overrated anyway!',
+		'The real treasure was the chaos we made!',
 	],
 	final_round: [
-		"FINAL CHAOS ROUND!",
-		"One last dance with randomness!",
+		'FINAL CHAOS ROUND!',
+		'One last dance with randomness!',
 		"Let's see how this ends! 🎭",
 	],
 	game_won: [
-		"I WON?! THE CHAOS WON?! 🎉",
-		"Strategy is dead! Long live chaos!",
-		"I literally have no idea how!",
+		'I WON?! THE CHAOS WON?! 🎉',
+		'Strategy is dead! Long live chaos!',
+		'I literally have no idea how!',
 	],
 	game_lost: [
 		"Chaos doesn't care about winning!",
-		"The journey was the destination!",
-		"GG! That was wild! 🌀",
+		'The journey was the destination!',
+		'GG! That was wild! 🌀',
 	],
 	close_game: [
-		"MAXIMUM CHAOS ACHIEVED!",
+		'MAXIMUM CHAOS ACHIEVED!',
 		"This is exactly what I wanted! (It wasn't)",
-		"The suspense! 😱",
+		'The suspense! 😱',
 	],
 };
 

@@ -5,15 +5,9 @@
  * Covers all game flow operations including initialization, turns, and scoring.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GameStateManager, type AlarmData, type AlarmType } from '../state';
-import {
-	createPlayerGameState,
-	type MultiplayerGameState,
-	type PlayerGameState,
-	type GamePhase,
-	type Category,
-} from '../types';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { type AlarmData, GameStateManager } from '../state';
+import type { Category, MultiplayerGameState } from '../types';
 
 // =============================================================================
 // Mock DurableObjectState
@@ -82,8 +76,20 @@ function createTestPlayers(): Array<{
 	connectionId: string;
 }> {
 	return [
-		{ id: 'player1', displayName: 'Alice', avatarSeed: 'seed1', isHost: true, connectionId: 'conn1' },
-		{ id: 'player2', displayName: 'Bob', avatarSeed: 'seed2', isHost: false, connectionId: 'conn2' },
+		{
+			id: 'player1',
+			displayName: 'Alice',
+			avatarSeed: 'seed1',
+			isHost: true,
+			connectionId: 'conn1',
+		},
+		{
+			id: 'player2',
+			displayName: 'Bob',
+			avatarSeed: 'seed2',
+			isHost: false,
+			connectionId: 'conn2',
+		},
 	];
 }
 
@@ -209,18 +215,18 @@ describe('GameStateManager', () => {
 			const players = createTestPlayers();
 			const state = await manager.initializeFromRoom(players, defaultConfig);
 
-			expect(state.players['player1']).toBeDefined();
-			expect(state.players['player1'].displayName).toBe('Alice');
-			expect(state.players['player1'].isHost).toBe(true);
-			expect(state.players['player2'].displayName).toBe('Bob');
-			expect(state.players['player2'].isHost).toBe(false);
+			expect(state.players.player1).toBeDefined();
+			expect(state.players.player1.displayName).toBe('Alice');
+			expect(state.players.player1.isHost).toBe(true);
+			expect(state.players.player2.displayName).toBe('Bob');
+			expect(state.players.player2.isHost).toBe(false);
 		});
 
 		it('should initialize empty scorecards', async () => {
 			const players = createTestPlayers();
 			const state = await manager.initializeFromRoom(players, defaultConfig);
 
-			const p1 = state.players['player1'];
+			const p1 = state.players.player1;
 			expect(p1.scorecard.ones).toBe(null);
 			expect(p1.scorecard.dicee).toBe(null);
 			expect(p1.scorecard.diceeBonus).toBe(0);
@@ -338,9 +344,9 @@ describe('GameStateManager', () => {
 		});
 
 		it('should throw if player not found', async () => {
-			await expect(manager.rollDice('unknown', [false, false, false, false, false])).rejects.toThrow(
-				'Player not found',
-			);
+			await expect(
+				manager.rollDice('unknown', [false, false, false, false, false]),
+			).rejects.toThrow('Player not found');
 		});
 	});
 
@@ -608,7 +614,7 @@ describe('GameStateManager', () => {
 			await manager.updatePlayerConnection('player1', false);
 
 			const state = await manager.getState();
-			const player = state!.players['player1'];
+			const player = state!.players.player1;
 
 			expect(player.isConnected).toBe(false);
 			expect(player.connectionId).toBe(null);
@@ -620,7 +626,7 @@ describe('GameStateManager', () => {
 			await manager.updatePlayerConnection('player1', true, 'new-conn');
 
 			const state = await manager.getState();
-			const player = state!.players['player1'];
+			const player = state!.players.player1;
 
 			expect(player.isConnected).toBe(true);
 			expect(player.connectionId).toBe('new-conn');
@@ -646,12 +652,14 @@ describe('GameStateManager', () => {
 			expect(player.isHost).toBe(false);
 
 			const state = await manager.getState();
-			expect(state!.players['player3']).toBeDefined();
+			expect(state!.players.player3).toBeDefined();
 		});
 
 		it('should throw if no state', async () => {
 			const emptyManager = new GameStateManager(createMockCtx(createMockStorage()), 'EMPTY');
-			await expect(emptyManager.addPlayer('p', 'name', 'seed', false, 'conn')).rejects.toThrow('No game state');
+			await expect(emptyManager.addPlayer('p', 'name', 'seed', false, 'conn')).rejects.toThrow(
+				'No game state',
+			);
 		});
 	});
 
@@ -664,7 +672,7 @@ describe('GameStateManager', () => {
 			await manager.removePlayer('player2');
 
 			const state = await manager.getState();
-			expect(state!.players['player2']).toBeUndefined();
+			expect(state!.players.player2).toBeUndefined();
 		});
 
 		it('should remove player from order if in game', async () => {
@@ -701,7 +709,10 @@ describe('GameStateManager', () => {
 		it('should store alarm in storage', async () => {
 			await manager.scheduleAfkWarning('player1');
 
-			expect(storage.put).toHaveBeenCalledWith('alarm_data', expect.objectContaining({ type: 'afk_warning' }));
+			expect(storage.put).toHaveBeenCalledWith(
+				'alarm_data',
+				expect.objectContaining({ type: 'afk_warning' }),
+			);
 			expect(storage.setAlarm).toHaveBeenCalled();
 		});
 	});
@@ -823,8 +834,8 @@ describe('GameStateManager', () => {
 			];
 
 			// Give player1 higher scores
-			const p1 = state!.players['player1'];
-			const p2 = state!.players['player2'];
+			const p1 = state!.players.player1;
+			const p2 = state!.players.player2;
 
 			for (const cat of categories) {
 				p1.scorecard[cat] = 20;
@@ -861,9 +872,9 @@ describe('GameStateManager', () => {
 			}
 
 			// Access private method via prototype to test
-			const rankings = (manager as unknown as { calculateRankings(s: MultiplayerGameState): unknown[] }).calculateRankings(
-				state,
-			);
+			const rankings = (
+				manager as unknown as { calculateRankings(s: MultiplayerGameState): unknown[] }
+			).calculateRankings(state);
 
 			// Both should have rank 1 if tied
 			expect(rankings).toBeDefined();

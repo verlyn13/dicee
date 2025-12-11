@@ -4,81 +4,77 @@
  * All game-related types, state management, and logic for multiplayer Dicee.
  */
 
-// Types
-export type {
-	DiceArray,
-	KeptMask,
-	Category,
-	GamePhase,
-	ConnectionStatus,
-	PlayerType,
-	Scorecard,
-	PlayerGameState,
-	PlayerRanking,
-	MultiplayerGameState,
-} from './types';
-
-export {
-	UPPER_CATEGORIES,
-	LOWER_CATEGORIES,
-	ALL_CATEGORIES,
-	UPPER_BONUS_THRESHOLD,
-	UPPER_BONUS_VALUE,
-	DICEE_BONUS_VALUE,
-	AFK_WARNING_SECONDS,
-	AFK_TIMEOUT_SECONDS,
-	ROOM_CLEANUP_MS,
-	MAX_ROLLS_PER_TURN,
-	MAX_TURNS,
-	MIN_PLAYERS,
-	MAX_PLAYERS,
-	STARTING_COUNTDOWN_SECONDS,
-	isValidTransition,
-	createEmptyScorecard,
-	calculateUpperSum,
-	calculateTotalScore,
-	getRemainingCategories,
-	isScorecardComplete,
-	createPlayerGameState,
-	getCurrentPlayerId,
-	getCurrentPlayer,
-	isPlayerTurn,
-} from './types';
-
 // State Machine
 export type { TransitionError, TransitionResult } from './machine';
 export {
-	canStartGame,
-	canRollDice,
 	canKeepDice,
-	canScoreCategory,
 	canRematch,
+	canRollDice,
+	canScoreCategory,
+	canStartGame,
+	canStillRoll,
+	getAutoScoreCategory,
 	getNextPhaseAfterScore,
 	getNextPlayerIndex,
-	isNewRound,
-	getAutoScoreCategory,
-	validateTransition,
 	getNextRoundNumber,
 	getNextTurnNumber,
-	resetTurnState,
 	hasDice,
-	canStillRoll,
 	isGameActive,
-	isWaiting,
 	isGameOver,
+	isNewRound,
 	isPlayerTurnInMachine,
+	isWaiting,
+	resetTurnState,
+	validateTransition,
 } from './machine';
-
 // Scoring
 export {
+	applyScore,
+	calculateAllPotentialScores,
+	calculateCategoryScore,
+	calculateTotal,
 	generateDice,
 	rollWithKept,
-	calculateCategoryScore,
-	calculateAllPotentialScores,
-	applyScore,
-	calculateTotal,
 } from './scoring';
-
 // State Manager
-export type { AlarmType, AlarmData } from './state';
+export type { AlarmData, AlarmType } from './state';
 export { GameStateManager } from './state';
+// Types
+export type {
+	Category,
+	ConnectionStatus,
+	DiceArray,
+	GamePhase,
+	KeptMask,
+	MultiplayerGameState,
+	PlayerGameState,
+	PlayerRanking,
+	PlayerType,
+	Scorecard,
+} from './types';
+export {
+	AFK_TIMEOUT_SECONDS,
+	AFK_WARNING_SECONDS,
+	ALL_CATEGORIES,
+	calculateTotalScore,
+	calculateUpperSum,
+	createEmptyScorecard,
+	createPlayerGameState,
+	DICEE_BONUS_VALUE,
+	getCurrentPlayer,
+	getCurrentPlayerId,
+	getRemainingCategories,
+	isPlayerTurn,
+	isScorecardComplete,
+	isValidTransition,
+	LOWER_CATEGORIES,
+	MAX_PLAYERS,
+	MAX_ROLLS_PER_TURN,
+	MAX_TURNS,
+	MIN_PLAYERS,
+	ROOM_CLEANUP_MS,
+	STARTING_COUNTDOWN_SECONDS,
+	UPPER_BONUS_THRESHOLD,
+	UPPER_BONUS_VALUE,
+	UPPER_CATEGORIES,
+} from './types';

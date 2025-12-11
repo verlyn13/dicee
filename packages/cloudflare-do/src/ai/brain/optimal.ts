@@ -5,18 +5,14 @@
  * Can use WASM engine for precise EV or TypeScript heuristics as fallback.
  */
 
-import type { Category, KeptMask } from '../../game';
-import {
-	ALL_CATEGORIES,
-	calculateAllPotentialScores,
-	getRemainingCategories,
-} from '../../game';
+import type { Category, KeptMask, Scorecard } from '../../game';
+import { calculateAllPotentialScores, getRemainingCategories } from '../../game';
 import type { AIProfile, GameContext, TurnDecision } from '../types';
 import type { AIBrain, CategoryEV, KeepAnalysis } from './types';
 
 // Upper section bonus threshold
 const UPPER_BONUS_THRESHOLD = 63;
-const UPPER_BONUS_VALUE = 35;
+const _UPPER_BONUS_VALUE = 35;
 
 // Category to dice value mapping for upper section
 const UPPER_CATEGORY_VALUES: Record<string, number> = {
@@ -36,7 +32,6 @@ const UPPER_CATEGORY_VALUES: Record<string, number> = {
  */
 export class OptimalBrain implements AIBrain {
 	readonly type = 'optimal';
-	private profile: AIProfile | null = null;
 	private useWasm: boolean;
 
 	constructor(useWasm = false) {
@@ -56,9 +51,12 @@ export class OptimalBrain implements AIBrain {
 	async decide(context: GameContext): Promise<TurnDecision> {
 		// CRITICAL: If no dice exist yet, must roll first
 		// Dice are null/undefined at turn start before first roll
-		const hasValidDice = context.dice && context.dice.length === 5 && context.dice.some((d) => d >= 1 && d <= 6);
-		console.log(`[OptimalBrain] decide() - dice: ${JSON.stringify(context.dice)}, hasValidDice: ${hasValidDice}, rollsRemaining: ${context.rollsRemaining}`);
-		
+		const hasValidDice =
+			context.dice && context.dice.length === 5 && context.dice.some((d) => d >= 1 && d <= 6);
+		console.log(
+			`[OptimalBrain] decide() - dice: ${JSON.stringify(context.dice)}, hasValidDice: ${hasValidDice}, rollsRemaining: ${context.rollsRemaining}`,
+		);
+
 		if (!hasValidDice) {
 			console.log('[OptimalBrain] No valid dice - returning roll action');
 			return {
@@ -121,8 +119,7 @@ export class OptimalBrain implements AIBrain {
 		const remaining = getRemainingCategories(context.scorecard).length;
 
 		// Base time depends on action type
-		let base =
-			context.rollsRemaining === 0 ? timing.scoreDecisionMs : timing.keepDecisionMs;
+		let base = context.rollsRemaining === 0 ? timing.scoreDecisionMs : timing.keepDecisionMs;
 
 		// Longer thinking for more complex decisions (many categories remaining)
 		if (remaining > 8) {
@@ -266,17 +263,14 @@ export class OptimalBrain implements AIBrain {
 		} else {
 			// Probability of achieving target
 			const needed = target - bestCount;
-			const prob = Math.pow(1 / 6, needed);
+			const prob = (1 / 6) ** needed;
 			ev = prob * (category === 'dicee' ? 50 : bestValue * 5);
 		}
 
 		return { keepMask, expectedValue: ev, targetCategory: category };
 	}
 
-	private analyzeFullHouseKeep(
-		dice: readonly number[],
-		counts: number[],
-	): KeepAnalysis {
+	private analyzeFullHouseKeep(dice: readonly number[], counts: number[]): KeepAnalysis {
 		// Look for pairs and triples
 		let tripleValue = 0;
 		let pairValue = 0;
@@ -326,10 +320,7 @@ export class OptimalBrain implements AIBrain {
 		return { keepMask, expectedValue: 4, targetCategory: 'full_house' };
 	}
 
-	private analyzeStraightKeep(
-		dice: readonly number[],
-		category: string,
-	): KeepAnalysis {
+	private analyzeStraightKeep(dice: readonly number[], category: string): KeepAnalysis {
 		const unique = new Set(dice);
 		const sorted = [...unique].sort((a, b) => a - b);
 
@@ -376,13 +367,13 @@ export class OptimalBrain implements AIBrain {
 		} else {
 			// Rough probability estimate
 			const needed = target - bestRunLength;
-			ev = (isLarge ? 40 : 30) * Math.pow(0.3, needed);
+			ev = (isLarge ? 40 : 30) * 0.3 ** needed;
 		}
 
 		return { keepMask, expectedValue: ev, targetCategory: category };
 	}
 
-	private analyzeChanceKeep(dice: readonly number[], counts: number[]): KeepAnalysis {
+	private analyzeChanceKeep(dice: readonly number[], _counts: number[]): KeepAnalysis {
 		// For chance, keep high dice (5s and 6s)
 		const keepMask: KeptMask = [false, false, false, false, false];
 
@@ -416,7 +407,9 @@ export class OptimalBrain implements AIBrain {
 	// ========================================================================
 
 	private analyzeScore(context: GameContext): CategoryEV {
-		const scores = calculateAllPotentialScores(context.dice as [number, number, number, number, number]);
+		const scores = calculateAllPotentialScores(
+			context.dice as [number, number, number, number, number],
+		);
 		const remaining = getRemainingCategories(context.scorecard);
 
 		let bestCategory = remaining[0];
@@ -429,11 +422,7 @@ export class OptimalBrain implements AIBrain {
 			// Factor in upper bonus progress
 			let adjustedScore = score;
 			if (category in UPPER_CATEGORY_VALUES) {
-				adjustedScore = this.adjustForUpperBonus(
-					score,
-					category,
-					context.scorecard,
-				);
+				adjustedScore = this.adjustForUpperBonus(score, category, context.scorecard);
 			}
 
 			if (adjustedScore > bestScore) {
@@ -451,11 +440,7 @@ export class OptimalBrain implements AIBrain {
 		};
 	}
 
-	private adjustForUpperBonus(
-		score: number,
-		category: string,
-		scorecard: any,
-	): number {
+	private adjustForUpperBonus(score: number, category: string, scorecard: Scorecard): number {
 		// If we're close to upper bonus, value upper section scores more
 		const upperCats = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
 		let upperSum = 0;

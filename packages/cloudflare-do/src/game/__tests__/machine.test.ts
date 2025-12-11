@@ -5,34 +5,33 @@
  * Server-authoritative - validates all game actions.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-	canStartGame,
-	canRollDice,
 	canKeepDice,
-	canScoreCategory,
 	canRematch,
+	canRollDice,
+	canScoreCategory,
+	canStartGame,
+	canStillRoll,
+	getAutoScoreCategory,
 	getNextPhaseAfterScore,
 	getNextPlayerIndex,
-	isNewRound,
-	getAutoScoreCategory,
-	validateTransition,
 	getNextRoundNumber,
 	getNextTurnNumber,
-	resetTurnState,
 	hasDice,
-	canStillRoll,
 	isGameActive,
-	isWaiting,
 	isGameOver,
+	isNewRound,
 	isPlayerTurnInMachine,
+	isWaiting,
+	resetTurnState,
+	validateTransition,
 } from '../machine';
 import {
-	createEmptyScorecard,
 	createPlayerGameState,
+	type GamePhase,
 	type MultiplayerGameState,
 	type PlayerGameState,
-	type GamePhase,
 } from '../types';
 
 // =============================================================================
@@ -48,7 +47,13 @@ function createTestPlayer(
 		currentDice?: [number, number, number, number, number] | null;
 	} = {},
 ): PlayerGameState {
-	const player = createPlayerGameState(id, `Player ${id}`, `seed-${id}`, options.isHost ?? false, `conn-${id}`);
+	const player = createPlayerGameState(
+		id,
+		`Player ${id}`,
+		`seed-${id}`,
+		options.isHost ?? false,
+		`conn-${id}`,
+	);
 	player.isConnected = options.isConnected ?? true;
 	player.rollsRemaining = options.rollsRemaining ?? 3;
 	player.currentDice = options.currentDice ?? null;

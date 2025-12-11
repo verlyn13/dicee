@@ -7,20 +7,19 @@
 
 import { nanoid } from 'nanoid';
 import {
-	type ChatMessage,
-	type MessageReactions,
-	type TypingState,
-	type RateLimitState,
-	type QuickChatKey,
-	type ReactionEmoji,
-	type ChatServerMessage,
 	type ChatErrorCode,
-	QUICK_CHAT_MESSAGES,
-	RATE_LIMITS,
-	REACTION_EMOJIS,
+	type ChatMessage,
+	type ChatServerMessage,
 	createEmptyReactions,
+	type MessageReactions,
+	QUICK_CHAT_MESSAGES,
+	type QuickChatKey,
+	RATE_LIMITS,
+	type RateLimitState,
+	REACTION_EMOJIS,
+	type ReactionEmoji,
+	type TypingState,
 } from './types';
-import { validateChatMessage, isChatMessageType } from './schemas';
 
 // =============================================================================
 // Storage Keys
@@ -202,8 +201,11 @@ export class ChatManager {
 	async handleTextMessage(
 		userId: string,
 		displayName: string,
-		content: string
-	): Promise<{ success: true; message: ChatMessage } | { success: false; error: ChatErrorCode; errorMessage: string }> {
+		content: string,
+	): Promise<
+		| { success: true; message: ChatMessage }
+		| { success: false; error: ChatErrorCode; errorMessage: string }
+	> {
 		// Rate limit check
 		const rateLimitError = this.checkMessageRateLimit(userId);
 		if (rateLimitError) {
@@ -212,7 +214,11 @@ export class ChatManager {
 
 		// Content length already validated by schema, but double-check
 		if (content.length > RATE_LIMITS.MAX_MESSAGE_LENGTH) {
-			return { success: false, error: 'MESSAGE_TOO_LONG', errorMessage: `Message exceeds ${RATE_LIMITS.MAX_MESSAGE_LENGTH} characters` };
+			return {
+				success: false,
+				error: 'MESSAGE_TOO_LONG',
+				errorMessage: `Message exceeds ${RATE_LIMITS.MAX_MESSAGE_LENGTH} characters`,
+			};
 		}
 
 		// Create message
@@ -246,8 +252,11 @@ export class ChatManager {
 	async handleQuickChat(
 		userId: string,
 		displayName: string,
-		key: QuickChatKey
-	): Promise<{ success: true; message: ChatMessage } | { success: false; error: ChatErrorCode; errorMessage: string }> {
+		key: QuickChatKey,
+	): Promise<
+		| { success: true; message: ChatMessage }
+		| { success: false; error: ChatErrorCode; errorMessage: string }
+	> {
 		// Rate limit check (same as regular messages)
 		const rateLimitError = this.checkMessageRateLimit(userId);
 		if (rateLimitError) {
@@ -288,7 +297,7 @@ export class ChatManager {
 		userId: string,
 		messageId: string,
 		emoji: ReactionEmoji,
-		action: 'add' | 'remove'
+		action: 'add' | 'remove',
 	): Promise<
 		| { success: true; messageId: string; reactions: MessageReactions }
 		| { success: false; error: ChatErrorCode; errorMessage: string }
@@ -467,7 +476,10 @@ export function createChatHistoryResponse(messages: ChatMessage[]): ChatServerMe
 /**
  * Create REACTION_UPDATE server message
  */
-export function createReactionUpdateResponse(messageId: string, reactions: MessageReactions): ChatServerMessage {
+export function createReactionUpdateResponse(
+	messageId: string,
+	reactions: MessageReactions,
+): ChatServerMessage {
 	return { type: 'REACTION_UPDATE', payload: { messageId, reactions } };
 }
 

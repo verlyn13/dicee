@@ -19,7 +19,7 @@
  */
 
 import { DurableObject } from 'cloudflare:workers';
-import type { Env, RoomStatusUpdate, GameHighlight, PlayerSummary } from './types';
+import type { Env, GameHighlight, PlayerSummary, RoomStatusUpdate } from './types';
 
 // =============================================================================
 // Types
@@ -36,7 +36,15 @@ interface UserPresence {
 
 /** Message sent/received through the lobby */
 interface LobbyMessage {
-	type: 'chat' | 'presence' | 'room_update' | 'rooms_list' | 'online_users' | 'highlight' | 'error' | 'pong';
+	type:
+		| 'chat'
+		| 'presence'
+		| 'room_update'
+		| 'rooms_list'
+		| 'online_users'
+		| 'highlight'
+		| 'error'
+		| 'pong';
 	payload: unknown;
 	timestamp: number;
 }
@@ -71,7 +79,14 @@ interface RoomInfo {
 
 /** Client command structure */
 interface LobbyCommand {
-	type: 'chat' | 'ping' | 'get_rooms' | 'get_online_users' | 'room_created' | 'room_updated' | 'room_closed';
+	type:
+		| 'chat'
+		| 'ping'
+		| 'get_rooms'
+		| 'get_online_users'
+		| 'room_created'
+		| 'room_updated'
+		| 'room_closed';
 	content?: string;
 	room?: RoomInfo;
 	code?: string;
@@ -154,9 +169,14 @@ export class GlobalLobby extends DurableObject<Env> {
 
 		// Extract user info from headers (set by auth middleware or query params)
 		const url = new URL(request.url);
-		const userId = url.searchParams.get('userId') || request.headers.get('X-User-Id') || crypto.randomUUID();
-		const displayName = url.searchParams.get('displayName') || request.headers.get('X-Display-Name') || `Guest-${userId.slice(0, 4)}`;
-		const avatarSeed = url.searchParams.get('avatarSeed') || request.headers.get('X-Avatar-Seed') || userId;
+		const userId =
+			url.searchParams.get('userId') || request.headers.get('X-User-Id') || crypto.randomUUID();
+		const displayName =
+			url.searchParams.get('displayName') ||
+			request.headers.get('X-Display-Name') ||
+			`Guest-${userId.slice(0, 4)}`;
+		const avatarSeed =
+			url.searchParams.get('avatarSeed') || request.headers.get('X-Avatar-Seed') || userId;
 
 		// Accept with hibernation support and tags for efficient querying
 		// Tags survive hibernation and allow: getWebSockets('user:xyz')
@@ -594,7 +614,9 @@ export class GlobalLobby extends DurableObject<Env> {
 			timestamp: Date.now(),
 		});
 
-		console.log(`[GlobalLobby] Room ${update.roomCode} updated: ${update.status}, ${update.playerCount} players, ${update.spectatorCount} spectators`);
+		console.log(
+			`[GlobalLobby] Room ${update.roomCode} updated: ${update.status}, ${update.playerCount} players, ${update.spectatorCount} spectators`,
+		);
 	}
 
 	/**

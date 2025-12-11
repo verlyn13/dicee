@@ -68,7 +68,13 @@ export interface AuthSuccess {
 export interface AuthFailure {
 	success: false;
 	error: string;
-	code: 'MISSING_TOKEN' | 'EXPIRED' | 'INVALID_CLAIMS' | 'INVALID_SIGNATURE' | 'JWKS_ERROR' | 'UNKNOWN';
+	code:
+		| 'MISSING_TOKEN'
+		| 'EXPIRED'
+		| 'INVALID_CLAIMS'
+		| 'INVALID_SIGNATURE'
+		| 'JWKS_ERROR'
+		| 'UNKNOWN';
 }
 
 /**
@@ -107,7 +113,11 @@ function getJWKSKeyGetter(supabaseUrl: string): jose.JWTVerifyGetKey {
 	const now = Date.now();
 
 	// Return cached getter if valid and same URL
-	if (jwksCache && jwksCache.supabaseUrl === supabaseUrl && now - jwksCache.createdAt < JWKS_CACHE_TTL_MS) {
+	if (
+		jwksCache &&
+		jwksCache.supabaseUrl === supabaseUrl &&
+		now - jwksCache.createdAt < JWKS_CACHE_TTL_MS
+	) {
 		return jwksCache.getKey;
 	}
 
@@ -159,7 +169,7 @@ function getJWKSKeyGetter(supabaseUrl: string): jose.JWTVerifyGetKey {
 export async function verifySupabaseJWT(
 	token: string,
 	supabaseUrl: string,
-	jwtSecret?: string
+	jwtSecret?: string,
 ): Promise<AuthResult> {
 	// Validate inputs
 	if (!token || typeof token !== 'string') {
@@ -268,7 +278,10 @@ export async function verifySupabaseJWT(
 		}
 
 		// Network errors fetching JWKS
-		if (error instanceof Error && (error.message.includes('fetch') || error.message.includes('network'))) {
+		if (
+			error instanceof Error &&
+			(error.message.includes('fetch') || error.message.includes('network'))
+		) {
 			console.error('JWKS fetch error:', error);
 			return {
 				success: false,

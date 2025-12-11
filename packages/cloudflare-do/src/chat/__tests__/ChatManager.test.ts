@@ -10,9 +10,9 @@
  * - State persistence
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ChatManager } from '../ChatManager';
-import { RATE_LIMITS, type ChatMessage, type RateLimitState } from '../types';
+import { type ChatMessage, RATE_LIMITS, type RateLimitState } from '../types';
 
 // =============================================================================
 // Mock DurableObjectState
@@ -463,12 +463,7 @@ describe('ChatManager', () => {
 		});
 
 		it('should reject invalid emoji', async () => {
-			const result = await chatManager.handleReaction(
-				'user2',
-				messageId,
-				'❌' as '👍',
-				'add',
-			);
+			const result = await chatManager.handleReaction('user2', messageId, '❌' as '👍', 'add');
 
 			expect(result.success).toBe(false);
 			if (!result.success) {

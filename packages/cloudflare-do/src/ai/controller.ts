@@ -11,17 +11,11 @@
  * - Emit events for UI updates
  */
 
-import type { Category, KeptMask, Scorecard, MultiplayerGameState } from '../game';
-import type {
-	AIProfile,
-	AIPlayerState,
-	AIEvent,
-	GameContext,
-	TurnDecision,
-} from './types';
+import type { Category, KeptMask, MultiplayerGameState, Scorecard } from '../game';
 import type { AIBrain } from './brain';
 import { createBrain, initializeBrainFactory } from './brain';
 import { getProfile } from './profiles';
+import type { AIEvent, AIPlayerState, AIProfile, GameContext, TurnDecision } from './types';
 
 // ============================================================================
 // Types
@@ -120,8 +114,7 @@ export class AIController {
 			await this.initialize();
 		}
 
-		const profile =
-			typeof profileId === 'string' ? getProfile(profileId) : profileId;
+		const profile = typeof profileId === 'string' ? getProfile(profileId) : profileId;
 
 		if (!profile) {
 			throw new Error(`Unknown AI profile: ${profileId}`);
@@ -187,12 +180,14 @@ export class AIController {
 		emit: EventEmitter,
 	): Promise<void> {
 		console.log(`[AIController] executeTurn starting for ${playerId}`);
-		
+
 		const playerState = this.players.get(playerId);
 		const brain = this.brains.get(playerId);
 
 		if (!playerState || !brain) {
-			console.error(`[AIController] AI player not found: ${playerId}, registered players: ${Array.from(this.players.keys()).join(', ')}`);
+			console.error(
+				`[AIController] AI player not found: ${playerId}, registered players: ${Array.from(this.players.keys()).join(', ')}`,
+			);
 			throw new Error(`AI player not found: ${playerId}`);
 		}
 
@@ -210,7 +205,7 @@ export class AIController {
 		while (!turnComplete && maxSteps > 0) {
 			stepCount++;
 			console.log(`[AIController] Turn step ${stepCount} for ${playerId}`);
-			
+
 			// Get fresh game state for each step
 			const gameState = await getGameState();
 			if (!gameState) {
@@ -219,12 +214,7 @@ export class AIController {
 			}
 
 			console.log(`[AIController] Got game state, executing step ${stepCount}`);
-			const decision = await this.executeTurnStep(
-				playerId,
-				gameState,
-				execute,
-				emit,
-			);
+			const decision = await this.executeTurnStep(playerId, gameState, execute, emit);
 			console.log(`[AIController] Step ${stepCount} decision: ${decision.action}`);
 
 			if (decision.action === 'score') {
@@ -236,7 +226,9 @@ export class AIController {
 		}
 
 		if (!turnComplete) {
-			console.error(`[AIController] Turn did not complete after ${stepCount} steps (maxSteps reached)`);
+			console.error(
+				`[AIController] Turn did not complete after ${stepCount} steps (maxSteps reached)`,
+			);
 		}
 	}
 
@@ -339,10 +331,7 @@ export class AIController {
 	// Private Methods
 	// ========================================================================
 
-	private buildGameContext(
-		playerId: string,
-		gameState: MultiplayerGameState,
-	): GameContext {
+	private buildGameContext(playerId: string, gameState: MultiplayerGameState): GameContext {
 		const player = gameState.players[playerId];
 
 		if (!player) {
@@ -360,7 +349,12 @@ export class AIController {
 
 		// Calculate score differential
 		const myTotal = this.calculateTotal(player.scorecard);
-		const leaderTotal = Math.max(myTotal, ...opponentScores.map((o: { playerId: string; scorecard: Scorecard; totalScore: number }) => o.totalScore));
+		const leaderTotal = Math.max(
+			myTotal,
+			...opponentScores.map(
+				(o: { playerId: string; scorecard: Scorecard; totalScore: number }) => o.totalScore,
+			),
+		);
 		const scoreDifferential = myTotal - leaderTotal;
 
 		// Note: dice may be null/undefined at turn start - brain must handle this

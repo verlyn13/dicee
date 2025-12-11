@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "component_dependencies",
-	"generatedAt": "2025-12-11T00:27:52.072Z",
-	"graphHash": "sha256:167d48390dcecfb557512c6a2fd9f63bfdbed6e6663bfd523398e7a722a18a66",
-	"sourceCommit": "6765a89",
+	"generatedAt": "2025-12-11T01:34:29.545Z",
+	"graphHash": "sha256:810c13f6958c18829b8e476aaf11b8e734915eade6ce26725b062912d2d6df85",
+	"sourceCommit": "2a2a82d64dc8ee2784c6c59caf58a428b69e2c0b",
 	"nodes": [
 		{
 			"id": "component::Avatar::nts_ui_Avatar_svelte",
@@ -157,6 +157,12 @@
 			"layer": "components"
 		},
 		{
+			"id": "component::ScorecardLegend::orecardLegend_svelte",
+			"label": "ScorecardLegend",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
 			"id": "component::HeroGame::_hub_HeroGame_svelte",
 			"label": "HeroGame",
 			"type": "Component",
@@ -177,12 +183,6 @@
 		{
 			"id": "component::LobbyGate::hub_LobbyGate_svelte",
 			"label": "LobbyGate",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::StatsToggle::d_StatsToggle_svelte",
-			"label": "StatsToggle",
 			"type": "Component",
 			"layer": "components"
 		}

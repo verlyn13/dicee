@@ -4,49 +4,44 @@
  * Lobby chat system: messages, reactions, typing indicators, rate limiting.
  */
 
-// Types
-export type {
-	ChatMessage,
-	MessageReactions,
-	ReactionEmoji,
-	QuickChatKey,
-	TypingState,
-	ChatClientMessage,
-	ChatServerMessage,
-	RateLimitState,
-	ChatErrorCode,
-} from './types';
-
+// Manager
+// Server Message Helpers
 export {
-	REACTION_EMOJIS,
-	QUICK_CHAT_KEYS,
-	QUICK_CHAT_MESSAGES,
-	RATE_LIMITS,
-	createEmptyReactions,
-} from './types';
-
+	ChatManager,
+	createChatErrorResponse,
+	createChatHistoryResponse,
+	createChatMessageResponse,
+	createReactionUpdateResponse,
+	createTypingUpdateResponse,
+} from './ChatManager';
+export type { ValidatedChatMessage } from './schemas';
 // Schemas
 export {
+	chatClientMessageSchema,
 	chatMessageSchema,
+	isChatMessageType,
 	quickChatSchema,
 	reactionSchema,
 	typingStartSchema,
 	typingStopSchema,
-	chatClientMessageSchema,
 	validateChatMessage,
-	isChatMessageType,
 } from './schemas';
-
-export type { ValidatedChatMessage } from './schemas';
-
-// Manager
-export { ChatManager } from './ChatManager';
-
-// Server Message Helpers
+// Types
+export type {
+	ChatClientMessage,
+	ChatErrorCode,
+	ChatMessage,
+	ChatServerMessage,
+	MessageReactions,
+	QuickChatKey,
+	RateLimitState,
+	ReactionEmoji,
+	TypingState,
+} from './types';
 export {
-	createChatMessageResponse,
-	createChatHistoryResponse,
-	createReactionUpdateResponse,
-	createTypingUpdateResponse,
-	createChatErrorResponse,
-} from './ChatManager';
+	createEmptyReactions,
+	QUICK_CHAT_KEYS,
+	QUICK_CHAT_MESSAGES,
+	RATE_LIMITS,
+	REACTION_EMOJIS,
+} from './types';

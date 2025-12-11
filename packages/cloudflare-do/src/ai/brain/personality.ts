@@ -6,10 +6,10 @@
  */
 
 import type { Category, KeptMask } from '../../game';
-import { getRemainingCategories, calculateAllPotentialScores } from '../../game';
+import { calculateAllPotentialScores, getRemainingCategories } from '../../game';
 import type { AIProfile, AITraits, GameContext, TurnDecision } from '../types';
-import type { AIBrain } from './types';
 import { OptimalBrain } from './optimal';
+import type { AIBrain } from './types';
 
 /**
  * Personality brain - trait-influenced decisions.
@@ -67,11 +67,8 @@ export class PersonalityBrain implements AIBrain {
 	// Trait Application
 	// ========================================================================
 
-	private applyTraits(
-		context: GameContext,
-		decision: TurnDecision,
-	): TurnDecision {
-		const traits = this.traits!;
+	private applyTraits(context: GameContext, decision: TurnDecision): TurnDecision {
+		const _traits = this.traits!;
 
 		// Check for Dicee chasing behavior
 		if (this.shouldChaseDicee(context, decision)) {
@@ -100,7 +97,7 @@ export class PersonalityBrain implements AIBrain {
 		return decision;
 	}
 
-	private shouldChaseDicee(context: GameContext, decision: TurnDecision): boolean {
+	private shouldChaseDicee(context: GameContext, _decision: TurnDecision): boolean {
 		const traits = this.traits!;
 
 		// Already scored dicee
@@ -171,7 +168,9 @@ export class PersonalityBrain implements AIBrain {
 		// Risk tolerance affects willingness to re-roll good hands
 		if (decision.action === 'score' && context.rollsRemaining > 0) {
 			// Check if current score is "good enough" for the category
-			const scores = calculateAllPotentialScores(context.dice as [number, number, number, number, number]);
+			const scores = calculateAllPotentialScores(
+				context.dice as [number, number, number, number, number],
+			);
 			const score = scores[decision.category as keyof typeof scores] || 0;
 
 			// Risk-takers will re-roll anything below max score
@@ -183,7 +182,7 @@ export class PersonalityBrain implements AIBrain {
 		return false;
 	}
 
-	private takeRiskyAction(context: GameContext, decision: TurnDecision): TurnDecision {
+	private takeRiskyAction(_context: GameContext, _decision: TurnDecision): TurnDecision {
 		// Risk-takers often just roll everything
 		return {
 			action: 'roll',
@@ -192,7 +191,7 @@ export class PersonalityBrain implements AIBrain {
 		};
 	}
 
-	private shouldFocusUpper(context: GameContext, decision: TurnDecision): boolean {
+	private shouldFocusUpper(context: GameContext, _decision: TurnDecision): boolean {
 		const traits = this.traits!;
 
 		// Check upper section progress
@@ -220,7 +219,9 @@ export class PersonalityBrain implements AIBrain {
 
 	private focusUpperSection(context: GameContext, decision: TurnDecision): TurnDecision {
 		const remaining = getRemainingCategories(context.scorecard);
-		const scores = calculateAllPotentialScores(context.dice as [number, number, number, number, number]);
+		const scores = calculateAllPotentialScores(
+			context.dice as [number, number, number, number, number],
+		);
 		const upperCats: Category[] = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
 
 		// Find best upper section category
@@ -266,7 +267,7 @@ export class PersonalityBrain implements AIBrain {
 	// ========================================================================
 
 	private applySkillNoise(decision: TurnDecision): TurnDecision {
-		const skillLevel = this.profile!.skillLevel;
+		const skillLevel = this.profile?.skillLevel;
 
 		// Higher skill = less noise
 		if (Math.random() > skillLevel) {

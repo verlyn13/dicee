@@ -7,6 +7,14 @@
  * Adapted from packages/partykit - replaces Party.Room with DurableObjectState.
  */
 
+import {
+	getAutoScoreCategory,
+	getNextPhaseAfterScore,
+	getNextPlayerIndex,
+	getNextRoundNumber,
+	getNextTurnNumber,
+} from './machine';
+import { applyScore, calculateTotal, rollWithKept } from './scoring';
 import type {
 	Category,
 	DiceArray,
@@ -19,20 +27,12 @@ import type {
 import {
 	AFK_TIMEOUT_SECONDS,
 	AFK_WARNING_SECONDS,
+	createEmptyScorecard,
+	createPlayerGameState,
 	MAX_ROLLS_PER_TURN,
 	ROOM_CLEANUP_MS,
 	STARTING_COUNTDOWN_SECONDS,
-	createEmptyScorecard,
-	createPlayerGameState,
 } from './types';
-import { applyScore, calculateTotal, rollWithKept } from './scoring';
-import {
-	getAutoScoreCategory,
-	getNextPhaseAfterScore,
-	getNextPlayerIndex,
-	getNextRoundNumber,
-	getNextTurnNumber,
-} from './machine';
 
 // =============================================================================
 // Storage Keys
@@ -421,7 +421,7 @@ export class GameStateManager {
 	 */
 	async skipTurn(
 		playerId: string,
-		reason: 'timeout' | 'disconnect',
+		_reason: 'timeout' | 'disconnect',
 	): Promise<{
 		categoryScored: Category;
 		score: number;

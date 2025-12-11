@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { QUICK_CHAT_KEYS, REACTION_EMOJIS, RATE_LIMITS } from './types';
+import { QUICK_CHAT_KEYS, RATE_LIMITS, REACTION_EMOJIS } from './types';
 
 // =============================================================================
 // Individual Message Schemas
@@ -20,7 +20,10 @@ export const chatMessageSchema = z.object({
 		content: z
 			.string()
 			.min(1, 'Message cannot be empty')
-			.max(RATE_LIMITS.MAX_MESSAGE_LENGTH, `Message cannot exceed ${RATE_LIMITS.MAX_MESSAGE_LENGTH} characters`)
+			.max(
+				RATE_LIMITS.MAX_MESSAGE_LENGTH,
+				`Message cannot exceed ${RATE_LIMITS.MAX_MESSAGE_LENGTH} characters`,
+			)
 			.transform((s) => s.trim()),
 	}),
 });

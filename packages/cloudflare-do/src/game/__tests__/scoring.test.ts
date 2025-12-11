@@ -5,17 +5,17 @@
  * Pure functions - no mocking required.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
+	applyScore,
+	calculateAllPotentialScores,
+	calculateCategoryScore,
+	calculateTotal,
 	generateDice,
 	rollWithKept,
-	calculateCategoryScore,
-	calculateAllPotentialScores,
-	applyScore,
-	calculateTotal,
 } from '../scoring';
-import { createEmptyScorecard } from '../types';
 import type { DiceArray, Scorecard } from '../types';
+import { createEmptyScorecard } from '../types';
 
 // =============================================================================
 // Test Helpers

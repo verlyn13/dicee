@@ -12,66 +12,78 @@
 // =============================================================================
 
 // Dice types
-export type { DiceArray, KeptMask, DiceValue, DiceIndex, RollNumber, RollsRemaining } from '@dicee/shared';
-export { DICE_COUNT, MAX_ROLLS_PER_TURN } from '@dicee/shared';
-
 // Category types
-export type { Category } from '@dicee/shared';
+// Scorecard types
+// Player types
+// Game types
+// Room types
+export type {
+	AIRoomPlayer,
+	Category,
+	ConnectionStatus,
+	DiceArray,
+	DiceIndex,
+	DiceValue,
+	GameConfig,
+	GamePhase,
+	GameRoom,
+	GameState,
+	KeptMask,
+	PlayerGameState,
+	PlayerRanking,
+	PlayerType,
+	RollNumber,
+	RollsRemaining,
+	RoomCode,
+	RoomConfig,
+	RoomPlayer,
+	RoomState,
+	Scorecard,
+} from '@dicee/shared';
 export {
-	UPPER_CATEGORIES,
-	LOWER_CATEGORIES,
+	AFK_TIMEOUT_SECONDS,
+	AFK_WARNING_SECONDS,
 	ALL_CATEGORIES,
 	CATEGORY_COUNT,
-	UPPER_BONUS_THRESHOLD,
-	UPPER_BONUS_VALUE,
+	calculateTotalScore,
+	calculateUpperSum,
+	createEmptyScorecard,
+	createPlayerGameState,
+	DEFAULT_ROOM_CONFIG,
+	DICE_COUNT,
 	DICEE_BONUS_VALUE,
 	FIXED_SCORES,
-	isValidCategory,
-	isUpperCategory,
-	isLowerCategory,
-} from '@dicee/shared';
-
-// Scorecard types
-export type { Scorecard } from '@dicee/shared';
-export {
-	createEmptyScorecard,
-	calculateUpperSum,
-	calculateTotalScore,
-	getRemainingCategories,
-	isScorecardComplete,
-	isCategoryScored,
-	getScoredCategoryCount,
-} from '@dicee/shared';
-
-// Player types
-export type { ConnectionStatus, PlayerType, PlayerGameState, PlayerRanking, RoomPlayer, AIRoomPlayer } from '@dicee/shared';
-export { createPlayerGameState } from '@dicee/shared';
-
-// Game types
-export type { GamePhase, GameConfig, GameState } from '@dicee/shared';
-export {
-	isValidTransition,
-	isPlayingPhase,
-	getCurrentPlayerId,
 	getCurrentPlayer,
+	getCurrentPlayerId,
+	getRemainingCategories,
+	getScoredCategoryCount,
+	isCategoryScored,
+	isLowerCategory,
 	isPlayerTurn,
+	isPlayingPhase,
+	isScorecardComplete,
+	isUpperCategory,
+	isValidCategory,
+	isValidTransition,
+	LOWER_CATEGORIES,
+	MAX_PLAYERS,
+	MAX_ROLLS_PER_TURN,
 	MAX_TURNS,
 	MIN_PLAYERS,
-	MAX_PLAYERS,
+	ROOM_CLEANUP_MS,
+	ROOM_CODE_CHARS,
+	ROOM_CODE_LENGTH,
 	STARTING_COUNTDOWN_SECONDS,
-	AFK_WARNING_SECONDS,
-	AFK_TIMEOUT_SECONDS,
+	UPPER_BONUS_THRESHOLD,
+	UPPER_BONUS_VALUE,
+	UPPER_CATEGORIES,
 } from '@dicee/shared';
-
-// Room types
-export type { RoomCode, RoomState, RoomConfig, GameRoom } from '@dicee/shared';
-export { DEFAULT_ROOM_CONFIG, ROOM_CLEANUP_MS, ROOM_CODE_CHARS, ROOM_CODE_LENGTH } from '@dicee/shared';
 
 // =============================================================================
 // Backward Compatibility Aliases
 // =============================================================================
 
-import type { GameState, GameConfig } from '@dicee/shared';
+import type { GameConfig, GameState } from '@dicee/shared';
 
 /**
  * @deprecated Use GameState from @dicee/shared instead

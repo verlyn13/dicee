@@ -4,16 +4,19 @@
  *
  * Smart container for multiplayer game.
  * Subscribes to multiplayerGame store and orchestrates child components.
+ * Computes WASM analysis for scorecard statistical display.
  */
 import { onDestroy, onMount } from 'svelte';
 import { ChatPanel } from '$lib/components/chat';
 import { DiceTray } from '$lib/components/dice';
 import { RoomLobby } from '$lib/components/lobby';
 import { KEY_BINDINGS, useKeyboardNavigation } from '$lib/hooks/useKeyboardNavigation.svelte';
+import { analyzeTurnOptimal, isEngineReady, preloadEngine } from '$lib/services/engine';
 import type { ChatStore } from '$lib/stores/chat.svelte';
 import type { MultiplayerGameStore } from '$lib/stores/multiplayerGame.svelte';
-import type { DiceArray, DieValue } from '$lib/types';
-import type { Category, KeptMask } from '$lib/types/multiplayer';
+import type { Category as CoreCategory, DiceArray, DieValue, TurnAnalysis } from '$lib/types';
+import { isWireCategory, toCoreCategory, type WireCategory } from '$lib/types/category-convert';
+import type { Category, KeptMask, Scorecard } from '$lib/types/multiplayer';
 import { isPlayingPhase } from '$lib/types/multiplayer';
 import MultiplayerGameOverModal from './MultiplayerGameOverModal.svelte';
 import MultiplayerScorecard from './MultiplayerScorecard.svelte';
@@ -38,6 +41,8 @@ let unsubscribe: (() => void) | null = null;
 
 onMount(() => {
 	unsubscribe = store.subscribe();
+	// Preload WASM engine for scorecard statistics
+	preloadEngine();
 });
 
 onDestroy(() => {
@@ -91,6 +96,50 @@ const activeRollsRemaining = $derived(
 const spectatorLabel = $derived(
 	!isMyTurn && currentPlayer ? `Watching ${currentPlayer.displayName}...` : undefined,
 );
+
+// WASM Analysis for scorecard statistics
+let turnAnalysis = $state<TurnAnalysis | null>(null);
+let analysisLoading = $state(false);
+
+// Compute analysis when dice or scorecard changes
+$effect(() => {
+	// Only compute when it's my turn and I have dice
+	if (!isMyTurn || !currentDice || !myScorecard) {
+		turnAnalysis = null;
+		return;
+	}
+
+	// Get available categories (convert from wire to core format)
+	const available: CoreCategory[] = [];
+	const scorecard = myScorecard as Scorecard;
+	for (const key of Object.keys(scorecard)) {
+		if (isWireCategory(key) && scorecard[key as Category] === null) {
+			available.push(toCoreCategory(key as WireCategory));
+		}
+	}
+
+	if (available.length === 0) {
+		turnAnalysis = null;
+		return;
+	}
+
+	// Convert dice to DiceArray
+	const diceArray = currentDice as DiceArray;
+
+	// Fetch analysis (async)
+	analysisLoading = true;
+	analyzeTurnOptimal(diceArray, rollsRemaining ?? 0, available)
+		.then((result) => {
+			turnAnalysis = result;
+		})
+		.catch((err) => {
+			console.warn('WASM analysis failed:', err);
+			turnAnalysis = null;
+		})
+		.finally(() => {
+			analysisLoading = false;
+		});
+});
 
 // Chat state
 let chatCollapsed = $state(true);
@@ -326,6 +375,7 @@ function handleCloseGameOver(): void {
 					scorecard={myScorecard}
 					{currentDice}
 					{canScore}
+					analysis={turnAnalysis}
 					onScore={handleScore}
 				/>
 			</aside>

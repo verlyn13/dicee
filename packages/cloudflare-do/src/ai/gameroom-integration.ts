@@ -18,15 +18,10 @@
  * ```
  */
 
-import type {
-	Category,
-	KeptMask,
-	MultiplayerGameState,
-	PlayerGameState,
-} from '../game';
-import type { AIEvent } from './types';
-import { AIController, type AICommand } from './controller';
+import type { MultiplayerGameState, PlayerGameState } from '../game';
+import { type AICommand, AIController } from './controller';
 import { getProfile } from './profiles';
+import type { AIEvent } from './types';
 
 // ============================================================================
 // Types
@@ -35,18 +30,12 @@ import { getProfile } from './profiles';
 /**
  * Callback to execute game commands (roll, keep, score).
  */
-export type GameCommandExecutor = (
-	playerId: string,
-	command: AICommand,
-) => Promise<void>;
+export type GameCommandExecutor = (playerId: string, command: AICommand) => Promise<void>;
 
 /**
  * Callback to broadcast events to clients.
  */
-export type EventBroadcaster = (event: {
-	type: string;
-	payload: Record<string, unknown>;
-}) => void;
+export type EventBroadcaster = (event: { type: string; payload: Record<string, unknown> }) => void;
 
 // ============================================================================
 // AI Room Manager
@@ -137,7 +126,7 @@ export class AIRoomManager {
 	): Promise<void> {
 		console.log(`[AIRoomManager] executeAITurn called for ${playerId}`);
 		console.log(`[AIRoomManager] AI players registered: ${Array.from(this.aiPlayers).join(', ')}`);
-		
+
 		if (!this.isAIPlayer(playerId)) {
 			console.error(`[AIRoomManager] Player ${playerId} is not registered as AI`);
 			throw new Error(`Player ${playerId} is not an AI`);
@@ -272,10 +261,7 @@ export class AIRoomManager {
 /**
  * Create a PlayerGameState for an AI player.
  */
-export function createAIPlayerState(
-	playerId: string,
-	profileId: string,
-): Partial<PlayerGameState> {
+export function createAIPlayerState(playerId: string, profileId: string): Partial<PlayerGameState> {
 	const profile = getProfile(profileId);
 
 	if (!profile) {

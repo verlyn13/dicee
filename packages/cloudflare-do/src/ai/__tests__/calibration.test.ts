@@ -8,16 +8,16 @@
  * - Different profiles have distinct play patterns
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import { OptimalBrain } from '../brain/optimal';
-import { ProbabilisticBrain } from '../brain/probabilistic';
-import { PersonalityBrain } from '../brain/personality';
-import { RandomBrain } from '../brain/random';
-import { RILEY, CARMEN, LIAM, PROFESSOR, CHARLIE } from '../profiles';
-import type { AIProfile, GameContext, TurnDecision } from '../types';
-import type { Category, Scorecard, DiceArray, KeptMask } from '../../game';
+import { beforeEach, describe, expect, it } from 'vitest';
+import type { Category, DiceArray, KeptMask, Scorecard } from '../../game';
 import { createEmptyScorecard, getRemainingCategories } from '../../game';
 import { calculateCategoryScore, rollWithKept } from '../../game/scoring';
+import { OptimalBrain } from '../brain/optimal';
+import { PersonalityBrain } from '../brain/personality';
+import { ProbabilisticBrain } from '../brain/probabilistic';
+import { RandomBrain } from '../brain/random';
+import { CARMEN, CHARLIE, LIAM, PROFESSOR, RILEY } from '../profiles';
+import type { GameContext, TurnDecision } from '../types';
 
 // ============================================================================
 // Test Helpers
@@ -105,9 +105,9 @@ async function simulateTurn(
 /**
  * Simulate a full 13-turn game and return total score
  */
-async function simulateGame(
-	brain: { decide: (ctx: GameContext) => Promise<TurnDecision> },
-): Promise<number> {
+async function simulateGame(brain: {
+	decide: (ctx: GameContext) => Promise<TurnDecision>;
+}): Promise<number> {
 	let scorecard = createEmptyScorecard();
 	let totalScore = 0;
 
@@ -170,12 +170,7 @@ describe('AI Brain Calibration', () => {
 		});
 
 		it('should make valid decisions', async () => {
-			const context = createTestContext(
-				[1, 2, 3, 4, 5],
-				createEmptyScorecard(),
-				2,
-				1,
-			);
+			const context = createTestContext([1, 2, 3, 4, 5], createEmptyScorecard(), 2, 1);
 
 			const decision = await brain.decide(context);
 
@@ -223,12 +218,7 @@ describe('AI Brain Calibration', () => {
 		});
 
 		it('should make valid decisions with variance', async () => {
-			const context = createTestContext(
-				[3, 3, 3, 2, 1],
-				createEmptyScorecard(),
-				2,
-				1,
-			);
+			const context = createTestContext([3, 3, 3, 2, 1], createEmptyScorecard(), 2, 1);
 
 			const decision = await brain.decide(context);
 
@@ -246,12 +236,7 @@ describe('AI Brain Calibration', () => {
 		});
 
 		it('should make decisions influenced by traits', async () => {
-			const context = createTestContext(
-				[4, 4, 4, 2, 1],
-				createEmptyScorecard(),
-				2,
-				1,
-			);
+			const context = createTestContext([4, 4, 4, 2, 1], createEmptyScorecard(), 2, 1);
 
 			const decision = await brain.decide(context);
 
@@ -269,12 +254,7 @@ describe('AI Brain Calibration', () => {
 		});
 
 		it('should make valid random decisions', async () => {
-			const context = createTestContext(
-				[1, 2, 3, 4, 5],
-				createEmptyScorecard(),
-				2,
-				1,
-			);
+			const context = createTestContext([1, 2, 3, 4, 5], createEmptyScorecard(), 2, 1);
 
 			const decision = await brain.decide(context);
 
@@ -283,12 +263,7 @@ describe('AI Brain Calibration', () => {
 		});
 
 		it('should always score when no rolls remaining', async () => {
-			const context = createTestContext(
-				[1, 1, 1, 1, 1],
-				createEmptyScorecard(),
-				0,
-				1,
-			);
+			const context = createTestContext([1, 1, 1, 1, 1], createEmptyScorecard(), 0, 1);
 
 			const decision = await brain.decide(context);
 

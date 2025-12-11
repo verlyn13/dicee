@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 6765a89
-> Generated: 2025-12-11T00:27:52.072Z
+> Commit: 2a2a82d64dc8ee2784c6c59caf58a428b69e2c0b
+> Generated: 2025-12-11T01:34:29.545Z
 
 ## Component Dependency Diagram
 
@@ -37,15 +37,15 @@ flowchart LR
     component__ProfileForm__e_ProfileForm_sv["ProfileForm"]
     component__AllScorecards__AllScorecards_["AllScorecards"]
     component__SpectatorHeader__ectatorHeade["SpectatorHeader"]
+    component__ScorecardLegend__orecardLegen["ScorecardLegend"]
     component__HeroGame___hub_HeroGame_svelt["HeroGame"]
     component__NewsDev__s_hub_NewsDev_svelte["NewsDev"]
     component__Hub__nents_hub_Hub_svelte["Hub"]
     component__LobbyGate__hub_LobbyGate_svel["LobbyGate"]
-    component__StatsToggle__d_StatsToggle_sv["StatsToggle"]
 
 ```
 
-## Component List (showing 30 of 33)
+## Component List (showing 30 of 34)
 
 - **Avatar**: `packages/web/src/lib/components/ui/Avatar.svelte`
 - **BottomSheet**: `packages/web/src/lib/components/ui/BottomSheet.svelte`
@@ -72,8 +72,8 @@ flowchart LR
 - **ProfileForm**: `packages/web/src/lib/components/profile/ProfileForm.svelte`
 - **AllScorecards**: `packages/web/src/lib/components/spectator/AllScorecards.svelte`
 - **SpectatorHeader**: `packages/web/src/lib/components/spectator/SpectatorHeader.svelte`
+- **ScorecardLegend**: `packages/web/src/lib/components/scorecard/ScorecardLegend.svelte`
 - **HeroGame**: `packages/web/src/lib/components/hub/HeroGame.svelte`
 - **NewsDev**: `packages/web/src/lib/components/hub/NewsDev.svelte`
 - **Hub**: `packages/web/src/lib/components/hub/Hub.svelte`
 - **LobbyGate**: `packages/web/src/lib/components/hub/LobbyGate.svelte`
-- **StatsToggle**: `packages/web/src/lib/components/hud/StatsToggle.svelte`
