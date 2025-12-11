@@ -134,9 +134,8 @@ async function connectToRoom(role: 'player' | 'spectator'): Promise<void> {
 				setupQuickPlayHandler();
 			}
 
-			// TODO: roomService.connect should return role info if downgraded
-			// For now, connect as player - server will handle role assignment
-			await roomService.connect(roomCode, session.access_token);
+			// Use store's joinRoom method to ensure roomCode is synced properly
+			await roomStore.joinRoom(roomCode, session.access_token);
 		}
 
 		isConnecting = false;

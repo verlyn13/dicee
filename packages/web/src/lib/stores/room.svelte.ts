@@ -116,6 +116,9 @@ export function createRoomStore(userId: string): RoomStore {
 		error = state.error;
 	}
 
+	// Initial sync in case service already has state
+	syncFromService();
+
 	// Set up status listener
 	roomService.addStatusListener((newStatus) => {
 		status = newStatus;
@@ -125,6 +128,7 @@ export function createRoomStore(userId: string): RoomStore {
 	roomService.addEventHandler(() => {
 		// Sync room state from service on any event
 		room = roomService.room;
+		roomCode = roomService.roomCode;
 		error = roomService.error;
 	});
 
