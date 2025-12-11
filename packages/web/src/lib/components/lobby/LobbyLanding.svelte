@@ -51,6 +51,7 @@ const displayName = $derived(() => {
 import ChatPanel from './ChatPanel.svelte';
 import CreateRoomModal from './CreateRoomModal.svelte';
 import EmptyRooms from './EmptyRooms.svelte';
+import InvitePopup from './InvitePopup.svelte';
 import JoinRoomModal from './JoinRoomModal.svelte';
 import MobileTabToggle from './MobileTabToggle.svelte';
 import RoomCard from './RoomCard.svelte';
@@ -173,6 +174,21 @@ function handlePractice() {
  */
 function handleAISelect(profileId: string) {
 	selectedAIProfile = profileId;
+}
+
+/**
+ * Handle accepting an invite - navigate to the room
+ */
+function handleAcceptInvite(inviteId: string, roomCode: string) {
+	lobby.respondToInvite(inviteId, roomCode, 'accept');
+	goto(`/games/dicee/room/${roomCode}`);
+}
+
+/**
+ * Handle declining an invite
+ */
+function handleDeclineInvite(inviteId: string) {
+	lobby.dismissInvite(inviteId);
 }
 </script>
 
@@ -408,6 +424,15 @@ function handleAISelect(profileId: string) {
 		showCreateModal = true;
 	}}
 />
+
+<!-- Invite Popup - shown when receiving an invite from another user -->
+{#if lobby.currentInvite}
+	<InvitePopup
+		invite={lobby.currentInvite}
+		onAccept={handleAcceptInvite}
+		onDecline={handleDeclineInvite}
+	/>
+{/if}
 
 <style>
 	.lobby-landing {

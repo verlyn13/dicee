@@ -19,7 +19,14 @@
  */
 
 import { DurableObject } from 'cloudflare:workers';
-import type { Env, GameHighlight, PlayerSummary, RoomStatusUpdate } from './types';
+import type {
+	Env,
+	GameHighlight,
+	InviteCancellationRequest,
+	InviteDeliveryRequest,
+	PlayerSummary,
+	RoomStatusUpdate,
+} from './types';
 
 // =============================================================================
 // Types
@@ -44,7 +51,9 @@ interface LobbyMessage {
 		| 'online_users'
 		| 'highlight'
 		| 'error'
-		| 'pong';
+		| 'pong'
+		| 'invite_received'
+		| 'invite_cancelled';
 	payload: unknown;
 	timestamp: number;
 }
@@ -661,6 +670,139 @@ export class GlobalLobby extends DurableObject<Env> {
 				this.removeRoom(roomCode);
 			}
 		}, delayMs);
+	}
+
+	// =========================================================================
+	// Invite System RPC Methods
+	// =========================================================================
+
+	/**
+	 * Check if a user is currently online in the lobby.
+	 * Called by GameRoom to validate invite targets.
+	 */
+	isUserOnline(userId: string): boolean {
+		const connections = this.ctx.getWebSockets(`user:${userId}`);
+		return connections.length > 0;
+	}
+
+	/**
+	 * Get online user info for display.
+	 * Returns null if user is not online.
+	 */
+	getOnlineUserInfo(userId: string): { displayName: string; avatarSeed: string } | null {
+		const connections = this.ctx.getWebSockets(`user:${userId}`);
+		if (connections.length === 0) {
+			return null;
+		}
+
+		// Get info from first connection's attachment
+		const attachment = connections[0].deserializeAttachment() as UserPresence | null;
+		if (!attachment) {
+			return null;
+		}
+
+		return {
+			displayName: attachment.displayName,
+			avatarSeed: attachment.avatarSeed,
+		};
+	}
+
+	/**
+	 * Deliver a game invite to a specific online user.
+	 * Called by GameRoom when host sends an invite.
+	 *
+	 * @returns true if the invite was delivered, false if user is offline
+	 */
+	deliverInvite(request: InviteDeliveryRequest): boolean {
+		const connections = this.ctx.getWebSockets(`user:${request.targetUserId}`);
+
+		if (connections.length === 0) {
+			console.log(
+				`[GlobalLobby] Cannot deliver invite - user ${request.targetUserId} is offline`,
+			);
+			return false;
+		}
+
+		// Build INVITE_RECEIVED event payload
+		const inviteEvent = {
+			type: 'invite_received',
+			payload: {
+				inviteId: request.inviteId,
+				roomCode: request.roomCode,
+				hostUserId: request.hostUserId,
+				hostDisplayName: request.hostDisplayName,
+				hostAvatarSeed: request.hostAvatarSeed,
+				game: request.game,
+				playerCount: request.playerCount,
+				maxPlayers: request.maxPlayers,
+				expiresAt: request.expiresAt,
+			},
+			timestamp: Date.now(),
+		};
+
+		// Send to all of user's connections (they might have multiple tabs)
+		const payload = JSON.stringify(inviteEvent);
+		let delivered = false;
+
+		for (const ws of connections) {
+			if (ws.readyState === WebSocket.OPEN) {
+				try {
+					ws.send(payload);
+					delivered = true;
+				} catch (e) {
+					console.error('[GlobalLobby] Failed to deliver invite:', e);
+				}
+			}
+		}
+
+		if (delivered) {
+			console.log(
+				`[GlobalLobby] Invite ${request.inviteId} delivered to user ${request.targetUserId}`,
+			);
+		}
+
+		return delivered;
+	}
+
+	/**
+	 * Cancel a pending invite for a user.
+	 * Called by GameRoom when invite is cancelled, expired, or room becomes full.
+	 */
+	cancelInvite(request: InviteCancellationRequest): void {
+		const connections = this.ctx.getWebSockets(`user:${request.targetUserId}`);
+
+		if (connections.length === 0) {
+			console.log(`[GlobalLobby] Cannot cancel invite - user ${request.targetUserId} is offline`);
+			return;
+		}
+
+		// Build INVITE_CANCELLED event payload
+		const cancelEvent = {
+			type: 'invite_cancelled',
+			payload: {
+				inviteId: request.inviteId,
+				roomCode: request.roomCode,
+				reason: request.reason,
+			},
+			timestamp: Date.now(),
+		};
+
+		// Send to all of user's connections
+		const payload = JSON.stringify(cancelEvent);
+
+		for (const ws of connections) {
+			if (ws.readyState === WebSocket.OPEN) {
+				try {
+					ws.send(payload);
+				} catch (e) {
+					console.error('[GlobalLobby] Failed to cancel invite:', e);
+				}
+			}
+		}
+
+		console.log(
+			`[GlobalLobby] Invite ${request.inviteId} cancelled for user ${request.targetUserId}: ${request.reason}`,
+		);
 	}
 
 	// =========================================================================

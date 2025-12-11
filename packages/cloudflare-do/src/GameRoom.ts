@@ -39,6 +39,9 @@ import type {
 	GalleryAchievementId,
 	GalleryPoints,
 	GameHighlight,
+	InviteCancellationRequest,
+	InviteDeliveryRequest,
+	InviteResponsePayload,
 	JoinQueueEntry,
 	JoinQueueState,
 	JoinQueueUpdate,
@@ -47,6 +50,7 @@ import type {
 	KibitzUpdate,
 	KibitzVote,
 	KibitzVoteType,
+	PendingInvite,
 	PlayerInfo,
 	PlayerRootingInfo,
 	PlayerSummary,
@@ -73,6 +77,7 @@ import {
 	DEFAULT_REACTION_RATE_LIMIT,
 	GALLERY_ACHIEVEMENTS,
 	GALLERY_POINT_VALUES,
+	INVITE_EXPIRATION_MS,
 	MAX_QUEUE_SIZE,
 	REACTION_METADATA,
 	ROOTING_REACTIONS,
@@ -141,6 +146,9 @@ export class GameRoom extends DurableObject<Env> {
 
 	/** AI Room Manager for handling AI player turns */
 	private aiManager: AIRoomManager;
+
+	/** Pending invites (key: targetUserId, value: PendingInvite) */
+	private pendingInvites: Map<string, PendingInvite> = new Map();
 
 	/** Maximum predictions per spectator per turn */
 	private static readonly MAX_PREDICTIONS_PER_TURN = 3;
@@ -768,6 +776,15 @@ export class GameRoom extends DurableObject<Env> {
 			ws,
 		);
 
+		// Check if room is now full and cancel pending invites
+		const playerCount = this.getConnectedPlayerCount() + (roomState.aiPlayers?.length ?? 0);
+		if (
+			playerCount >= roomState.settings.maxPlayers &&
+			this.pendingInvites.size > 0
+		) {
+			await this.cancelAllInvites('room_full');
+		}
+
 		// Notify GlobalLobby of player count change
 		await this.notifyLobbyOfUpdate();
 	}
@@ -912,6 +929,18 @@ export class GameRoom extends DurableObject<Env> {
 				this.handleGetGalleryPoints(ws, connState);
 				break;
 
+			// ─────────────────────────────────────────────────────────────────────────
+			// Invite System Messages
+			// ─────────────────────────────────────────────────────────────────────────
+
+			case 'SEND_INVITE':
+				await this.handleSendInvite(ws, connState, payload as { targetUserId: string });
+				break;
+
+			case 'CANCEL_INVITE':
+				await this.handleCancelInvite(ws, connState, payload as { targetUserId: string });
+				break;
+
 			case 'PING':
 				ws.send(JSON.stringify({ type: 'PONG', payload: Date.now() }));
 				break;
@@ -979,6 +1008,11 @@ export class GameRoom extends DurableObject<Env> {
 			},
 		});
 
+		// If host left, cancel all pending invites
+		if (connState.isHost && this.pendingInvites.size > 0) {
+			await this.cancelAllInvites('host_left');
+		}
+
 		// Notify GlobalLobby of player count change
 		await this.notifyLobbyOfUpdate();
 
@@ -986,6 +1020,303 @@ export class GameRoom extends DurableObject<Env> {
 		const alarmData: AlarmData = { type: 'AFK_CHECK', userId: connState.userId };
 		await this.ctx.storage.put('alarm_data', alarmData);
 		await this.ctx.storage.setAlarm(Date.now() + 60_000); // 60 second reconnect window
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────────
+	// Invite System Handlers
+	// ─────────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * Handle host sending an invite to an online user.
+	 */
+	private async handleSendInvite(
+		ws: WebSocket,
+		connState: ConnectionState,
+		payload: { targetUserId: string },
+	): Promise<void> {
+		// Only host can send invites
+		if (!connState.isHost) {
+			this.sendError(ws, 'NOT_HOST', 'Only the host can send invites');
+			return;
+		}
+
+		const { targetUserId } = payload;
+
+		// Cannot invite yourself
+		if (targetUserId === connState.userId) {
+			this.sendError(ws, 'CANNOT_INVITE_SELF', 'Cannot invite yourself');
+			return;
+		}
+
+		// Check if room is in waiting status
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (!roomState || roomState.status !== 'waiting') {
+			this.sendError(ws, 'ROOM_NOT_WAITING', 'Room is not accepting new players');
+			return;
+		}
+
+		// Check if room is full
+		const playerCount = this.getConnectedPlayerCount() + (roomState.aiPlayers?.length ?? 0);
+		if (playerCount >= roomState.settings.maxPlayers) {
+			this.sendError(ws, 'ROOM_FULL', 'Room is full');
+			return;
+		}
+
+		// Check if already invited this user
+		if (this.pendingInvites.has(targetUserId)) {
+			this.sendError(ws, 'ALREADY_INVITED', 'User already has a pending invite');
+			return;
+		}
+
+		// Check if user is already in the room
+		const roomCode = this.getRoomCode();
+		const existingPlayerConnections = this.ctx.getWebSockets(`user:${targetUserId}`);
+		for (const pws of existingPlayerConnections) {
+			const state = pws.deserializeAttachment() as ConnectionState | null;
+			if (state?.role === 'player') {
+				this.sendError(ws, 'USER_IN_ROOM', 'User is already in this room');
+				return;
+			}
+		}
+
+		// Check if target user is online via GlobalLobby
+		const isOnline = await this.lobbyStub.isUserOnline(targetUserId);
+		if (!isOnline) {
+			this.sendError(ws, 'USER_OFFLINE', 'User is not online');
+			return;
+		}
+
+		// Get target user info from GlobalLobby
+		const targetInfo = await this.lobbyStub.getOnlineUserInfo(targetUserId);
+		if (!targetInfo) {
+			this.sendError(ws, 'USER_NOT_FOUND', 'Could not find user info');
+			return;
+		}
+
+		// Create the invite
+		const inviteId = crypto.randomUUID();
+		const now = Date.now();
+		const expiresAt = now + INVITE_EXPIRATION_MS;
+
+		const invite: PendingInvite = {
+			id: inviteId,
+			roomCode,
+			targetUserId,
+			targetDisplayName: targetInfo.displayName,
+			hostUserId: connState.userId,
+			hostDisplayName: connState.displayName,
+			hostAvatarSeed: connState.avatarSeed,
+			createdAt: now,
+			expiresAt,
+		};
+
+		// Store the invite
+		this.pendingInvites.set(targetUserId, invite);
+
+		// Deliver via GlobalLobby
+		const deliveryRequest: InviteDeliveryRequest = {
+			inviteId,
+			roomCode,
+			targetUserId,
+			hostUserId: connState.userId,
+			hostDisplayName: connState.displayName,
+			hostAvatarSeed: connState.avatarSeed,
+			game: 'dicee',
+			playerCount,
+			maxPlayers: roomState.settings.maxPlayers,
+			expiresAt,
+		};
+
+		const delivered = await this.lobbyStub.deliverInvite(deliveryRequest);
+
+		if (!delivered) {
+			// User went offline between checks
+			this.pendingInvites.delete(targetUserId);
+			this.sendError(ws, 'DELIVERY_FAILED', 'User is no longer online');
+			return;
+		}
+
+		// Send confirmation to host
+		ws.send(
+			JSON.stringify({
+				type: 'INVITE_SENT',
+				payload: {
+					inviteId,
+					targetUserId,
+					targetDisplayName: targetInfo.displayName,
+					expiresAt,
+				},
+				timestamp: now,
+			}),
+		);
+
+		// Schedule expiration
+		this.scheduleInviteExpiration(inviteId, targetUserId, INVITE_EXPIRATION_MS);
+
+		console.log(`[GameRoom] Invite ${inviteId} sent to ${targetUserId} for room ${roomCode}`);
+	}
+
+	/**
+	 * Handle host cancelling a pending invite.
+	 */
+	private async handleCancelInvite(
+		ws: WebSocket,
+		connState: ConnectionState,
+		payload: { targetUserId: string },
+	): Promise<void> {
+		// Only host can cancel invites
+		if (!connState.isHost) {
+			this.sendError(ws, 'NOT_HOST', 'Only the host can cancel invites');
+			return;
+		}
+
+		const { targetUserId } = payload;
+		const invite = this.pendingInvites.get(targetUserId);
+
+		if (!invite) {
+			this.sendError(ws, 'INVITE_NOT_FOUND', 'No pending invite for this user');
+			return;
+		}
+
+		// Remove the invite
+		this.pendingInvites.delete(targetUserId);
+
+		// Notify target via GlobalLobby
+		const cancellationRequest: InviteCancellationRequest = {
+			inviteId: invite.id,
+			targetUserId,
+			roomCode: invite.roomCode,
+			reason: 'cancelled',
+		};
+		await this.lobbyStub.cancelInvite(cancellationRequest);
+
+		console.log(`[GameRoom] Invite ${invite.id} cancelled for ${targetUserId}`);
+	}
+
+	/**
+	 * Handle invite response from GlobalLobby (RPC).
+	 * This is called via RPC from GlobalLobby when a user responds to an invite.
+	 */
+	async handleInviteResponse(response: InviteResponsePayload): Promise<void> {
+		const invite = this.pendingInvites.get(response.targetUserId);
+
+		if (!invite || invite.id !== response.inviteId) {
+			console.log(`[GameRoom] Invite response for unknown invite: ${response.inviteId}`);
+			return;
+		}
+
+		// Remove the invite
+		this.pendingInvites.delete(response.targetUserId);
+
+		// Find host's WebSocket to notify
+		const roomCode = this.getRoomCode();
+		const hostWs = this.ctx
+			.getWebSockets(`player:${roomCode}`)
+			.find((ws) => {
+				const state = ws.deserializeAttachment() as ConnectionState | null;
+				return state?.isHost === true;
+			});
+
+		if (!hostWs) {
+			console.log(`[GameRoom] Host not found to notify of invite response`);
+			return;
+		}
+
+		// Notify host of response
+		const eventType = response.action === 'accept' ? 'INVITE_ACCEPTED' : 'INVITE_DECLINED';
+		hostWs.send(
+			JSON.stringify({
+				type: eventType,
+				payload: {
+					inviteId: response.inviteId,
+					targetUserId: response.targetUserId,
+					targetDisplayName: response.targetDisplayName,
+				},
+				timestamp: Date.now(),
+			}),
+		);
+
+		console.log(`[GameRoom] Invite ${response.inviteId} ${response.action}ed by ${response.targetUserId}`);
+	}
+
+	/**
+	 * Cancel all pending invites (called when host disconnects, room fills, or game starts).
+	 */
+	private async cancelAllInvites(reason: InviteCancellationRequest['reason']): Promise<void> {
+		if (this.pendingInvites.size === 0) return;
+
+		const roomCode = this.getRoomCode();
+
+		for (const [targetUserId, invite] of this.pendingInvites) {
+			const cancellationRequest: InviteCancellationRequest = {
+				inviteId: invite.id,
+				targetUserId,
+				roomCode,
+				reason,
+			};
+			await this.lobbyStub.cancelInvite(cancellationRequest);
+		}
+
+		console.log(`[GameRoom] Cancelled ${this.pendingInvites.size} pending invites: ${reason}`);
+		this.pendingInvites.clear();
+	}
+
+	/**
+	 * Schedule invite expiration.
+	 */
+	private scheduleInviteExpiration(
+		inviteId: string,
+		targetUserId: string,
+		delayMs: number,
+	): void {
+		setTimeout(async () => {
+			const invite = this.pendingInvites.get(targetUserId);
+			if (invite && invite.id === inviteId) {
+				// Invite expired
+				this.pendingInvites.delete(targetUserId);
+
+				// Notify target
+				const cancellationRequest: InviteCancellationRequest = {
+					inviteId,
+					targetUserId,
+					roomCode: invite.roomCode,
+					reason: 'expired',
+				};
+				await this.lobbyStub.cancelInvite(cancellationRequest);
+
+				// Notify host
+				const roomCode = this.getRoomCode();
+				const hostWs = this.ctx
+					.getWebSockets(`player:${roomCode}`)
+					.find((ws) => {
+						const state = ws.deserializeAttachment() as ConnectionState | null;
+						return state?.isHost === true;
+					});
+
+				if (hostWs) {
+					hostWs.send(
+						JSON.stringify({
+							type: 'INVITE_EXPIRED',
+							payload: {
+								inviteId,
+								targetUserId,
+							},
+							timestamp: Date.now(),
+						}),
+					);
+				}
+
+				console.log(`[GameRoom] Invite ${inviteId} expired for ${targetUserId}`);
+			}
+		}, delayMs);
+	}
+
+	/**
+	 * Get count of connected human players.
+	 */
+	private getConnectedPlayerCount(): number {
+		const roomCode = this.getRoomCode();
+		return this.ctx.getWebSockets(`player:${roomCode}`).length;
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -1064,6 +1395,9 @@ export class GameRoom extends DurableObject<Env> {
 				await this.aiManager.addAIPlayer(player.id, player.aiProfileId);
 			}
 		}
+
+		// Cancel all pending invites since game is starting
+		await this.cancelAllInvites('room_closed');
 
 		// Update room status
 		roomState.status = 'starting';

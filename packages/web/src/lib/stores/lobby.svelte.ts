@@ -45,6 +45,22 @@ export interface OnlineUser {
 	avatarSeed: string;
 }
 
+/**
+ * Pending invite received from another user.
+ * Displayed in InvitePopup for accept/decline.
+ */
+export interface PendingInvite {
+	inviteId: string;
+	roomCode: string;
+	hostUserId: string;
+	hostDisplayName: string;
+	hostAvatarSeed: string;
+	game: 'dicee';
+	playerCount: number;
+	maxPlayers: number;
+	expiresAt: number;
+}
+
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
 
 // Reactive state with Svelte 5 runes
@@ -66,8 +82,17 @@ class LobbyState {
 	isCreateDrawerOpen = $state(false);
 	showOnlineUsers = $state(false);
 
+	// Invite system
+	pendingInvites = $state<PendingInvite[]>([]);
+
 	// Derived
 	openRooms = $derived(this.rooms.filter((r) => r.status === 'open'));
+
+	/** The current invite to display (first in queue, or null) */
+	currentInvite = $derived(this.pendingInvites[0] ?? null);
+
+	/** Whether there are any pending invites */
+	hasInvites = $derived(this.pendingInvites.length > 0);
 	playingRooms = $derived(this.rooms.filter((r) => r.status === 'playing'));
 
 	// Show online count with appropriate label
@@ -237,6 +262,53 @@ class LobbyState {
 				this.onlineUsers = usersPayload.users;
 				break;
 			}
+
+			case 'invite_received': {
+				const invitePayload = data.payload as {
+					inviteId: string;
+					roomCode: string;
+					hostUserId: string;
+					hostDisplayName: string;
+					hostAvatarSeed: string;
+					game: 'dicee';
+					playerCount: number;
+					maxPlayers: number;
+					expiresAt: number;
+				};
+				const invite: PendingInvite = {
+					inviteId: invitePayload.inviteId,
+					roomCode: invitePayload.roomCode,
+					hostUserId: invitePayload.hostUserId,
+					hostDisplayName: invitePayload.hostDisplayName,
+					hostAvatarSeed: invitePayload.hostAvatarSeed,
+					game: invitePayload.game,
+					playerCount: invitePayload.playerCount,
+					maxPlayers: invitePayload.maxPlayers,
+					expiresAt: invitePayload.expiresAt,
+				};
+				// Add to beginning of queue
+				this.pendingInvites = [invite, ...this.pendingInvites];
+
+				// Add to ticker
+				this.addTickerEvent({
+					type: 'join',
+					message: `${invite.hostDisplayName} invited you to play`,
+				});
+				break;
+			}
+
+			case 'invite_cancelled': {
+				const cancelPayload = data.payload as {
+					inviteId: string;
+					roomCode: string;
+					reason: string;
+				};
+				// Remove the invite from pending list
+				this.pendingInvites = this.pendingInvites.filter(
+					(inv) => inv.inviteId !== cancelPayload.inviteId,
+				);
+				break;
+			}
 		}
 	}
 
@@ -339,6 +411,66 @@ class LobbyState {
 	 */
 	closeOnlineUsers() {
 		this.showOnlineUsers = false;
+	}
+
+	// =========================================================================
+	// Invite Actions
+	// =========================================================================
+
+	/**
+	 * Respond to an invite (accept or decline).
+	 * If accepting, the user will navigate to the room after this.
+	 */
+	respondToInvite(inviteId: string, roomCode: string, action: 'accept' | 'decline') {
+		// Remove from local state immediately
+		this.pendingInvites = this.pendingInvites.filter((inv) => inv.inviteId !== inviteId);
+
+		// Send response to server via WebSocket
+		// Note: The invite response goes through GlobalLobby which forwards to GameRoom
+		if (this.ws?.readyState === WebSocket.OPEN) {
+			this.ws.send(
+				JSON.stringify({
+					type: 'invite_response',
+					payload: {
+						inviteId,
+						roomCode,
+						action,
+					},
+				}),
+			);
+		}
+	}
+
+	/**
+	 * Dismiss an invite (convenience method that declines).
+	 */
+	dismissInvite(inviteId: string) {
+		const invite = this.pendingInvites.find((inv) => inv.inviteId === inviteId);
+		if (invite) {
+			this.respondToInvite(inviteId, invite.roomCode, 'decline');
+		}
+	}
+
+	/**
+	 * Clear all pending invites (e.g., when navigating away).
+	 */
+	clearInvites() {
+		// Decline all pending invites
+		for (const invite of this.pendingInvites) {
+			if (this.ws?.readyState === WebSocket.OPEN) {
+				this.ws.send(
+					JSON.stringify({
+						type: 'invite_response',
+						payload: {
+							inviteId: invite.inviteId,
+							roomCode: invite.roomCode,
+							action: 'decline',
+						},
+					}),
+				);
+			}
+		}
+		this.pendingInvites = [];
 	}
 }
 

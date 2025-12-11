@@ -6,12 +6,15 @@
  * Host can start the game when 2+ players are present.
  * Supports adding AI opponents for practice games.
  */
+import { onMount } from 'svelte';
 import { ChatPanel } from '$lib/components/chat';
 import { Avatar } from '$lib/components/ui';
 import { auth } from '$lib/stores/auth.svelte';
 import type { ChatStore } from '$lib/stores/chat.svelte';
+import { lobby } from '$lib/stores/lobby.svelte';
 import { getRoomStore } from '$lib/stores/room.svelte';
 import AIOpponentSelector from './AIOpponentSelector.svelte';
+import OnlineUserItem from './OnlineUserItem.svelte';
 import PlayerListItem from './PlayerListItem.svelte';
 
 interface Props {
@@ -38,6 +41,31 @@ let copiedCode = $state(false);
 function handleChatToggle(): void {
 	chatCollapsed = !chatCollapsed;
 }
+
+// Keyboard shortcuts: 'C' to toggle chat, 'Escape' to close chat
+onMount(() => {
+	function handleKeydown(e: KeyboardEvent): void {
+		// Skip if typing in input
+		if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+			return;
+		}
+
+		// 'C' toggles chat panel
+		if (e.key.toLowerCase() === 'c' && chatStore) {
+			e.preventDefault();
+			handleChatToggle();
+		}
+
+		// 'Escape' closes chat if open
+		if (e.key === 'Escape' && !chatCollapsed) {
+			e.preventDefault();
+			handleChatToggle();
+		}
+	}
+
+	document.addEventListener('keydown', handleKeydown);
+	return () => document.removeEventListener('keydown', handleKeydown);
+});
 
 // Subscribe to game starting events
 $effect(() => {
@@ -115,6 +143,22 @@ const waitingMessage = $derived.by(() => {
 	}
 	return null;
 });
+
+// Filter online users for invite section (exclude players already in room and self)
+const invitableUsers = $derived.by(() => {
+	const playerIds = new Set(room.room?.players.map((p) => p.id) ?? []);
+	return lobby.onlineUsers.filter((u) => !playerIds.has(u.userId) && u.userId !== auth.userId);
+});
+
+// Check if a user has a pending invite
+function hasPendingInvite(userId: string): boolean {
+	return room.sentInvites.some((inv) => inv.targetUserId === userId && inv.status === 'pending');
+}
+
+// Send invite to a user
+function handleInviteUser(userId: string) {
+	room.sendInvite(userId);
+}
 </script>
 
 <div class="room-lobby {className}">
@@ -199,6 +243,24 @@ const waitingMessage = $derived.by(() => {
 		{/if}
 	</section>
 
+	<!-- Invite Online Players (Host only, when room not full) -->
+	{#if room.isHost && !room.isFull && invitableUsers.length > 0}
+		<section class="invite-section">
+			<h2 class="section-title">Invite Players ({invitableUsers.length} online)</h2>
+			<div class="online-users-list">
+				{#each invitableUsers as user (user.userId)}
+					<OnlineUserItem
+						{user}
+						canInvite={true}
+						hasPendingInvite={hasPendingInvite(user.userId)}
+						isSelf={false}
+						onInvite={handleInviteUser}
+					/>
+				{/each}
+			</div>
+		</section>
+	{/if}
+
 	<!-- Game Controls -->
 	<footer class="lobby-footer">
 		{#if countdown !== null}
@@ -219,6 +281,15 @@ const waitingMessage = $derived.by(() => {
 
 		{#if room.error}
 			<p class="error-message" role="alert">{room.error}</p>
+		{/if}
+
+		<!-- Keyboard Shortcuts Hint (desktop only) -->
+		{#if chatStore}
+			<div class="keyboard-hints">
+				<span class="hint-label">Keys:</span>
+				<span class="hint-key">C</span> chat
+				<span class="hint-key">ESC</span> close
+			</div>
 		{/if}
 	</footer>
 
@@ -711,5 +782,57 @@ const waitingMessage = $derived.by(() => {
 	.add-btn:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
+	}
+
+	/* Invite section */
+	.invite-section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		padding: var(--space-3);
+		background: var(--color-surface);
+		border: var(--border-thick);
+	}
+
+	.online-users-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		max-height: 200px;
+		overflow-y: auto;
+	}
+
+	/* Keyboard Hints */
+	.keyboard-hints {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-2);
+		padding: var(--space-1) var(--space-2);
+		font-size: var(--text-tiny);
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+	}
+
+	.hint-label {
+		font-weight: var(--weight-semibold);
+	}
+
+	.hint-key {
+		display: inline-block;
+		padding: 0 var(--space-1);
+		font-family: var(--font-mono);
+		font-size: var(--text-tiny);
+		font-weight: var(--weight-bold);
+		background: var(--color-surface);
+		border: var(--border-thin);
+	}
+
+	/* Hide keyboard hints on mobile (no physical keyboard) */
+	@media (max-width: 768px) {
+		.keyboard-hints {
+			display: none;
+		}
 	}
 </style>

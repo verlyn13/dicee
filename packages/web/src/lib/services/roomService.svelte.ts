@@ -279,6 +279,24 @@ class RoomService {
 	}
 
 	// =========================================================================
+	// Invite Commands
+	// =========================================================================
+
+	/**
+	 * Send invite to online user (host only)
+	 */
+	sendInvite(targetUserId: string): void {
+		this.send({ type: 'SEND_INVITE', payload: { targetUserId } });
+	}
+
+	/**
+	 * Cancel a pending invite (host only)
+	 */
+	cancelInvite(targetUserId: string): void {
+		this.send({ type: 'CANCEL_INVITE', payload: { targetUserId } });
+	}
+
+	// =========================================================================
 	// Chat Commands
 	// =========================================================================
 

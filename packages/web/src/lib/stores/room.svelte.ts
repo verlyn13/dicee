@@ -17,6 +17,17 @@ import type { GameRoom, RoomCode, RoomPlayer } from '$lib/types/multiplayer';
 // Store Types
 // =============================================================================
 
+/**
+ * Invite sent by the host, tracked locally for UI display.
+ */
+export interface SentInvite {
+	inviteId: string;
+	targetUserId: string;
+	targetDisplayName: string;
+	expiresAt: number;
+	status: 'pending' | 'accepted' | 'declined' | 'expired';
+}
+
 export interface RoomStore {
 	/** Current connection status */
 	readonly status: ConnectionStatus;
@@ -41,12 +52,21 @@ export interface RoomStore {
 	/** Whether game can start (enough players, user is host) */
 	readonly canStart: boolean;
 
+	/** Invites sent by the host (host only) */
+	readonly sentInvites: SentInvite[];
+	/** Whether there are any pending invites */
+	readonly hasPendingInvites: boolean;
+
 	// Actions
 	createRoom: (accessToken: string) => Promise<RoomCode>;
 	joinRoom: (roomCode: RoomCode, accessToken: string) => Promise<void>;
 	leaveRoom: () => void;
 	startGame: () => void;
 	addAIPlayer: (profileId: string) => void;
+
+	// Invite actions (host only)
+	sendInvite: (targetUserId: string) => void;
+	cancelInvite: (targetUserId: string) => void;
 
 	// Event subscription
 	subscribe: (handler: ServerEventHandler) => () => void;
@@ -73,6 +93,7 @@ export function createRoomStore(userId: string): RoomStore {
 	let room = $state<GameRoom | null>(null);
 	let roomCode = $state<RoomCode | null>(null);
 	let error = $state<string | null>(null);
+	let sentInvites = $state<SentInvite[]>([]);
 
 	// Derived state
 	const isConnected = $derived(status === 'connected');
@@ -84,6 +105,7 @@ export function createRoomStore(userId: string): RoomStore {
 	const playerCount = $derived(humanPlayerCount + aiPlayerCount);
 	const isFull = $derived(room ? playerCount >= room.config.maxPlayers : false);
 	const canStart = $derived(isHost && playerCount >= 2 && room?.state === 'waiting');
+	const hasPendingInvites = $derived(sentInvites.some((inv) => inv.status === 'pending'));
 
 	// Sync with roomService
 	function syncFromService(): void {
@@ -104,6 +126,52 @@ export function createRoomStore(userId: string): RoomStore {
 		// Sync room state from service on any event
 		room = roomService.room;
 		error = roomService.error;
+	});
+
+	// Set up event handler for invite events
+	roomService.addEventHandler((event) => {
+		switch (event.type) {
+			case 'INVITE_SENT': {
+				const payload = event.payload as {
+					inviteId: string;
+					targetUserId: string;
+					targetDisplayName: string;
+					expiresAt: number;
+				};
+				sentInvites = [
+					...sentInvites,
+					{
+						inviteId: payload.inviteId,
+						targetUserId: payload.targetUserId,
+						targetDisplayName: payload.targetDisplayName,
+						expiresAt: payload.expiresAt,
+						status: 'pending',
+					},
+				];
+				break;
+			}
+			case 'INVITE_ACCEPTED': {
+				const payload = event.payload as { inviteId: string; targetUserId: string };
+				sentInvites = sentInvites.map((inv) =>
+					inv.inviteId === payload.inviteId ? { ...inv, status: 'accepted' as const } : inv,
+				);
+				break;
+			}
+			case 'INVITE_DECLINED': {
+				const payload = event.payload as { inviteId: string; targetUserId: string };
+				sentInvites = sentInvites.map((inv) =>
+					inv.inviteId === payload.inviteId ? { ...inv, status: 'declined' as const } : inv,
+				);
+				break;
+			}
+			case 'INVITE_EXPIRED': {
+				const payload = event.payload as { inviteId: string; targetUserId: string };
+				sentInvites = sentInvites.map((inv) =>
+					inv.inviteId === payload.inviteId ? { ...inv, status: 'expired' as const } : inv,
+				);
+				break;
+			}
+		}
 	});
 
 	// Actions
@@ -156,6 +224,36 @@ export function createRoomStore(userId: string): RoomStore {
 		roomService.sendAddAIPlayer(profileId);
 	}
 
+	function sendInvite(targetUserId: string): void {
+		if (!isHost) {
+			error = 'Only the host can send invites';
+			return;
+		}
+		if (isFull) {
+			error = 'Room is full';
+			return;
+		}
+		// Check if already invited
+		const existingInvite = sentInvites.find(
+			(inv) => inv.targetUserId === targetUserId && inv.status === 'pending',
+		);
+		if (existingInvite) {
+			error = 'User already has a pending invite';
+			return;
+		}
+		roomService.sendInvite(targetUserId);
+	}
+
+	function cancelInvite(targetUserId: string): void {
+		if (!isHost) {
+			error = 'Only the host can cancel invites';
+			return;
+		}
+		// Remove from local state immediately (optimistic)
+		sentInvites = sentInvites.filter((inv) => inv.targetUserId !== targetUserId);
+		roomService.cancelInvite(targetUserId);
+	}
+
 	function subscribe(handler: ServerEventHandler): () => void {
 		roomService.addEventHandler(handler);
 		return () => roomService.removeEventHandler(handler);
@@ -195,11 +293,19 @@ export function createRoomStore(userId: string): RoomStore {
 		get canStart() {
 			return canStart;
 		},
+		get sentInvites() {
+			return sentInvites;
+		},
+		get hasPendingInvites() {
+			return hasPendingInvites;
+		},
 		createRoom,
 		joinRoom,
 		leaveRoom,
 		startGame,
 		addAIPlayer,
+		sendInvite,
+		cancelInvite,
 		subscribe,
 	};
 }

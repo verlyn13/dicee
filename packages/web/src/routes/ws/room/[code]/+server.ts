@@ -51,14 +51,23 @@ export const GET: RequestHandler = async ({ request, params, platform, url }) =>
 	const headers = new Headers(request.headers);
 	headers.set('X-User-Id', user.id);
 
-	// Use display name from metadata, or email prefix, or Guest
+	// Fetch profile from database for display name (prefer over Google metadata)
+	const { data: profile } = await supabase
+		.from('profiles')
+		.select('display_name, avatar_seed')
+		.eq('id', user.id)
+		.single();
+
+	// Use profile display_name first, then fall back to metadata, email, or Guest
 	const displayName =
-		(user.user_metadata?.display_name as string) ||
+		profile?.display_name ||
 		(user.user_metadata?.full_name as string) ||
 		user.email?.split('@')[0] ||
 		'Guest';
 	headers.set('X-Display-Name', displayName);
-	headers.set('X-Avatar-Seed', user.id);
+
+	// Use profile avatar_seed if available, otherwise user id
+	headers.set('X-Avatar-Seed', profile?.avatar_seed || user.id);
 	headers.set('Authorization', `Bearer ${token}`);
 
 	// Proxy to the GameRoom DO via service binding

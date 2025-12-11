@@ -1025,6 +1025,120 @@ export function calculateTotalPoints(points: GalleryPoints): number {
 }
 
 // =============================================================================
+// Invite System Types
+// =============================================================================
+
+/**
+ * Pending invite stored in GameRoom memory.
+ * Invites expire after 5 minutes.
+ */
+export interface PendingInvite {
+	/** Unique invite ID (UUID) */
+	id: string;
+
+	/** Room code (6-char) */
+	roomCode: string;
+
+	/** Target user ID (who's being invited) */
+	targetUserId: string;
+
+	/** Target's display name */
+	targetDisplayName: string;
+
+	/** Host user ID (who sent the invite) */
+	hostUserId: string;
+
+	/** Host's display name */
+	hostDisplayName: string;
+
+	/** Host's avatar seed */
+	hostAvatarSeed: string;
+
+	/** When invite was created (Unix ms) */
+	createdAt: number;
+
+	/** When invite expires (Unix ms) */
+	expiresAt: number;
+}
+
+/**
+ * Invite expiration time (5 minutes)
+ */
+export const INVITE_EXPIRATION_MS = 5 * 60 * 1000;
+
+/**
+ * RPC payload for delivering invite from GameRoom to GlobalLobby
+ */
+export interface InviteDeliveryRequest {
+	/** Unique invite ID */
+	inviteId: string;
+
+	/** Room code */
+	roomCode: string;
+
+	/** Target user ID */
+	targetUserId: string;
+
+	/** Host user ID */
+	hostUserId: string;
+
+	/** Host display name */
+	hostDisplayName: string;
+
+	/** Host avatar seed */
+	hostAvatarSeed: string;
+
+	/** Game type */
+	game: 'dicee';
+
+	/** Current player count in room */
+	playerCount: number;
+
+	/** Maximum players allowed */
+	maxPlayers: number;
+
+	/** When invite expires (Unix ms) */
+	expiresAt: number;
+}
+
+/**
+ * RPC payload for invite response from GlobalLobby to GameRoom
+ */
+export interface InviteResponsePayload {
+	/** Invite ID */
+	inviteId: string;
+
+	/** Room code */
+	roomCode: string;
+
+	/** Target user ID who responded */
+	targetUserId: string;
+
+	/** Target's display name */
+	targetDisplayName: string;
+
+	/** Response action */
+	action: 'accept' | 'decline';
+}
+
+/**
+ * RPC payload for cancelling invite
+ */
+export interface InviteCancellationRequest {
+	/** Invite ID */
+	inviteId: string;
+
+	/** Target user ID */
+	targetUserId: string;
+
+	/** Room code */
+	roomCode: string;
+
+	/** Reason for cancellation */
+	reason: 'cancelled' | 'host_left' | 'room_closed' | 'room_full' | 'expired';
+}
+
+// =============================================================================
 // Re-export game types (will be populated in do-4)
 // =============================================================================
 
