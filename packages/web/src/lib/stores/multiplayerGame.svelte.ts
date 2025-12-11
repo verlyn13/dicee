@@ -5,6 +5,7 @@
  * Manages game state sync, optimistic UI, and derived states.
  */
 
+import { preferencesService } from '$lib/services/preferences.svelte';
 import { roomService } from '$lib/services/roomService.svelte';
 import type {
 	Category,
@@ -318,6 +319,26 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		if (gameState) {
 			const player = gameState.players[playerId];
 			if (player) {
+				// Determine whether to preserve kept dice after roll:
+				// - For local player: Use the "keep dice by default" preference
+				// - For remote players (including AI): Always preserve (they explicitly issued keep command)
+				const isLocalPlayer = playerId === myPlayerId;
+				const previousKeptDice = player.keptDice;
+				const hadKeptDice = previousKeptDice?.some((k) => k) ?? false;
+
+				let shouldPreserveKept = false;
+				if (hadKeptDice) {
+					if (isLocalPlayer) {
+						// Local player: respect their preference setting
+						const keepDiceByDefault =
+							preferencesService.preferences.gameplay?.keepDiceByDefault ?? true;
+						shouldPreserveKept = keepDiceByDefault;
+					} else {
+						// Remote player (including AI): always preserve their kept dice
+						shouldPreserveKept = true;
+					}
+				}
+
 				gameState = {
 					...gameState,
 					phase: 'turn_decide',
@@ -326,7 +347,7 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 						[playerId]: {
 							...player,
 							currentDice: dice,
-							keptDice: [false, false, false, false, false],
+							keptDice: shouldPreserveKept ? previousKeptDice : [false, false, false, false, false],
 							rollsRemaining,
 						},
 					},

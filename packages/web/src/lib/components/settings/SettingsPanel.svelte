@@ -2,8 +2,8 @@
 /**
  * SettingsPanel
  *
- * Main settings panel for audio and haptic preferences.
- * v1 scope: Master volume, mute toggle, haptics toggle, reset to defaults.
+ * Main settings panel for audio, haptic, and gameplay preferences.
+ * v1 scope: Master volume, mute toggle, haptics toggle, gameplay options, reset to defaults.
  *
  * Uses prop injection pattern to avoid layer violations.
  */
@@ -17,12 +17,16 @@ interface Props {
 	muted: boolean;
 	/** Whether haptics are enabled */
 	hapticsEnabled: boolean;
+	/** Whether kept dice persist after rolling */
+	keepDiceByDefault?: boolean;
 	/** Callback when master volume changes */
 	onVolumeChange: (volume: number) => void;
 	/** Callback when mute state changes */
 	onMuteChange: (muted: boolean) => void;
 	/** Callback when haptics state changes */
 	onHapticsChange: (enabled: boolean) => void;
+	/** Callback when keep dice by default changes */
+	onKeepDiceChange?: (enabled: boolean) => void;
 	/** Callback to reset to defaults */
 	onReset: () => void;
 	/** Callback when panel is closed */
@@ -33,9 +37,11 @@ let {
 	masterVolume,
 	muted,
 	hapticsEnabled,
+	keepDiceByDefault = true,
 	onVolumeChange,
 	onMuteChange,
 	onHapticsChange,
+	onKeepDiceChange,
 	onReset,
 	onClose,
 }: Props = $props();
@@ -55,6 +61,10 @@ function handleMuteToggle() {
 
 function handleHapticsToggle() {
 	onHapticsChange(!hapticsEnabled);
+}
+
+function handleKeepDiceToggle() {
+	onKeepDiceChange?.(!keepDiceByDefault);
 }
 
 function handleReset() {
@@ -134,6 +144,29 @@ function handleKeydown(e: KeyboardEvent) {
 				<span class="support-note">Not supported on this device</span>
 			{/if}
 		</div>
+
+		<!-- Gameplay Section -->
+		{#if onKeepDiceChange}
+			<div class="control-group">
+				<h4 class="group-title">🎲 Gameplay</h4>
+
+				<button
+					class="toggle-btn"
+					class:active={keepDiceByDefault}
+					onclick={handleKeepDiceToggle}
+					aria-pressed={keepDiceByDefault}
+				>
+					<span class="toggle-icon">🔒</span>
+					<span class="toggle-label">{keepDiceByDefault ? 'Keep dice after roll' : 'Clear dice after roll'}</span>
+				</button>
+
+				<span class="setting-description">
+					{keepDiceByDefault
+						? 'Held dice stay selected after rolling'
+						: 'All dice unselected after each roll'}
+				</span>
+			</div>
+		{/if}
 
 		<!-- Reset Section -->
 		<div class="control-group reset-section">
@@ -314,6 +347,13 @@ function handleKeydown(e: KeyboardEvent) {
 		font-size: var(--text-tiny);
 		color: var(--color-text-muted);
 		font-style: italic;
+	}
+
+	/* Setting Description */
+	.setting-description {
+		font-size: var(--text-tiny);
+		color: var(--color-text-muted);
+		line-height: 1.4;
 	}
 
 	/* Reset Section */

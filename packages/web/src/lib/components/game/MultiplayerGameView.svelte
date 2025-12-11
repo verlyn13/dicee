@@ -13,6 +13,7 @@ import { RoomLobby } from '$lib/components/lobby';
 import { SettingsButton, SettingsPanel } from '$lib/components/settings';
 import { KEY_BINDINGS, useKeyboardNavigation } from '$lib/hooks/useKeyboardNavigation.svelte';
 import { analyzeTurnOptimal, isEngineReady, preloadEngine } from '$lib/services/engine';
+import { preferencesService } from '$lib/services/preferences.svelte';
 import { audioStore } from '$lib/stores/audio.svelte';
 import type { ChatStore } from '$lib/stores/chat.svelte';
 import type {
@@ -179,8 +180,13 @@ function handleHapticsChange(enabled: boolean): void {
 	audioStore.setHapticsEnabled(enabled);
 }
 
+function handleKeepDiceChange(enabled: boolean): void {
+	preferencesService.setKeepDiceByDefault(enabled);
+}
+
 function handleResetSettings(): void {
 	audioStore.resetToDefaults();
+	preferencesService.reset();
 }
 
 // Keyboard navigation for game controls (only active when it's my turn and game is in playing phase)
@@ -502,9 +508,11 @@ function handleCloseGameOver(): void {
 						masterVolume={Math.round(audioStore.masterVolume * 100)}
 						muted={audioStore.isMuted}
 						hapticsEnabled={audioStore.hapticsEnabled}
+						keepDiceByDefault={preferencesService.preferences.gameplay?.keepDiceByDefault ?? true}
 						onVolumeChange={handleVolumeChange}
 						onMuteChange={handleMuteChange}
 						onHapticsChange={handleHapticsChange}
+						onKeepDiceChange={handleKeepDiceChange}
 						onReset={handleResetSettings}
 						onClose={handleCloseSettings}
 					/>

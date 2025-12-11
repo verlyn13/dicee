@@ -143,7 +143,11 @@ class PreferencesService {
 	 * Update preferences.
 	 * Saves to localStorage immediately, debounces Supabase sync.
 	 */
-	update(updates: Partial<UserPreferences['audio']> & Partial<UserPreferences['haptics']>): void {
+	update(
+		updates: Partial<UserPreferences['audio']> &
+			Partial<UserPreferences['haptics']> &
+			Partial<UserPreferences['gameplay']>,
+	): void {
 		// Merge updates into current preferences
 		const newPrefs: UserPreferences = {
 			...this.#preferences,
@@ -155,6 +159,12 @@ class PreferencesService {
 			haptics: {
 				...this.#preferences.haptics,
 				...(updates.enabled !== undefined && { enabled: updates.enabled }),
+			},
+			gameplay: {
+				...this.#preferences.gameplay,
+				...(updates.keepDiceByDefault !== undefined && {
+					keepDiceByDefault: updates.keepDiceByDefault,
+				}),
 			},
 		};
 
@@ -188,6 +198,13 @@ class PreferencesService {
 	 */
 	setHapticsEnabled(enabled: boolean): void {
 		this.update({ enabled });
+	}
+
+	/**
+	 * Toggle keep dice by default
+	 */
+	setKeepDiceByDefault(keepDiceByDefault: boolean): void {
+		this.update({ keepDiceByDefault });
 	}
 
 	/**
