@@ -493,9 +493,109 @@ The human prefers to be interrupted early rather than have an agent spin in circ
 
 ---
 
+## Debugging Protocol
+
+> **Key Insight**: Reading code tells you what SHOULD happen, not what DOES happen. Use execution tracing.
+
+### Anti-Pattern: Code Reading Loop
+
+```
+❌ WRONG:
+1. Read code that "looks fine"
+2. Read more code
+3. Still can't find bug
+4. Read even more code
+5. Infinite loop...
+```
+
+### Pattern: Execution Tracing
+
+```
+✅ RIGHT:
+1. Map the event/data chain (A → B → C → D)
+2. Add ONE log at the suspected break point
+3. Deploy and test
+4. Read the logs
+5. Binary search to exact failure
+```
+
+### Debugging Steps
+
+1. **Map the chain**: Identify all steps from trigger to expected outcome
+2. **Hypothesize break point**: Where is the most likely failure?
+3. **Add ONE log**: At the suspected break point
+4. **Test and observe**: Run the scenario, check logs
+5. **Binary search**: If log fires, break is downstream; if not, upstream
+6. **Repeat**: Until you find the exact failure point
+
+### Common Break Points
+
+| Symptom | Likely Cause | Check |
+|---------|--------------|-------|
+| Event not received | Type mismatch | Server sends `CONNECTED`, client expects `room.state` |
+| WebSocket silent | Connection lost | `wrangler tail` shows `→ 0/0 sockets` |
+| Handler not called | Switch case miss | Log at switch entry, check event type |
+| State not updated | Async timing | Add log before/after state mutation |
+
+### Cloudflare Worker Debugging
+
+```bash
+# Watch production logs in real-time
+cd packages/cloudflare-do
+npx wrangler tail --format pretty
+
+# Filter for specific patterns
+npx wrangler tail --format pretty | grep -E "\[GameRoom\]|\[AI"
+```
+
+### Example: Quick Play Bug (2025-12-10)
+
+**Problem**: Game hangs at "Starting game..."
+
+**Discovery** (10 minutes with tracing):
+1. Added log at server message entry
+2. Observed: `CONNECTED` received, but handler expected `room.state`
+3. Fixed: Check both event types
+
+**Without tracing** (infinite time): Reading code that "looked fine"
+
+---
+
+## AI Turn Execution Monitoring
+
+When debugging AI turn issues:
+
+```bash
+# Watch AI turn execution
+npx wrangler tail --format pretty | grep -E "\[AIController\]|\[AIRoomManager\]|\[GameRoom\].*AI"
+```
+
+### AI Turn Flow
+
+```
+triggerAITurnIfNeeded(playerId)
+  → AIRoomManager.executeAITurn(playerId, getState, execute, emit)
+    → AIController.executeTurn(playerId, getState, execute, emit)
+      → Brain.decide(context) → TurnDecision
+      → executeDecision(decision) → roll/keep/score
+    → Loop until action === 'score'
+  → turnInProgress = false
+```
+
+### Common AI Issues
+
+| Symptom | Check | Fix |
+|---------|-------|-----|
+| AI never starts | `isAIPlayer(playerId)` returns false | Verify AI registered in `addAIPlayer` |
+| AI freezes mid-turn | `turnInProgress` stuck true | Check for unhandled exceptions |
+| AI actions not visible | Events not broadcast | Check `broadcast()` calls in `executeAICommand` |
+
+---
+
 ## References
 
 - [Unified Cloudflare Stack](../docs/unified-cloudflare-stack.md) - Architecture migration guide
 - [Lobby UX/UI Refactor](../docs/lobby-ux-ui-refactor.md) - UI implementation
 - [TypeScript/Biome Strategy](./typescript-biome-strategy.md) - Code patterns
 - [CLI Reference](./cli-reference.yaml) - Wrangler commands
+- [Debugging Protocol](../docs/debugging-protocol.md) - Full debugging methodology
