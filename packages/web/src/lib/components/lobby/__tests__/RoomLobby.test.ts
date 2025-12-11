@@ -98,11 +98,18 @@ describe('RoomLobby', () => {
 		mockRoomStore.error = null;
 	});
 
-	it('renders room code', () => {
+	it('renders room code in collapsed external share section (host only)', async () => {
 		render(RoomLobby);
 
+		// Room code is in collapsed section by default
+		expect(screen.queryByText('ABC234')).not.toBeInTheDocument();
+
+		// Expand the external share section
+		const toggleButton = screen.getByRole('button', { name: /share externally/i });
+		await fireEvent.click(toggleButton);
+
+		// Now room code should be visible
 		expect(screen.getByText('ABC234')).toBeInTheDocument();
-		expect(screen.getByText('ROOM CODE')).toBeInTheDocument();
 	});
 
 	it('renders player count', () => {
@@ -169,31 +176,35 @@ describe('RoomLobby', () => {
 		expect(screen.getByText('Waiting for more players...')).toBeInTheDocument();
 	});
 
-	it('shows invite hint when room not full and less than 2 players', () => {
+	it('shows action buttons for host when room not full', () => {
 		mockRoomStore.isFull = false;
-		mockRoomStore.playerCount = 1;
+		mockRoomStore.isHost = true;
 
 		render(RoomLobby);
 
-		expect(screen.getByText('Share the room code to invite friends!')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /invite player/i })).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /add ai/i })).toBeInTheDocument();
 	});
 
-	it('hides invite hint when room has 2+ players', () => {
+	it('hides action buttons for non-host', () => {
 		mockRoomStore.isFull = false;
-		mockRoomStore.playerCount = 2;
+		mockRoomStore.isHost = false;
+		mockRoomStore.canStart = false;
 
 		render(RoomLobby);
 
-		expect(screen.queryByText('Share the room code to invite friends!')).not.toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: /invite player/i })).not.toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: /add ai/i })).not.toBeInTheDocument();
 	});
 
-	it('hides invite hint when room is full', () => {
+	it('hides action buttons when room is full', () => {
 		mockRoomStore.isFull = true;
-		mockRoomStore.playerCount = 4;
+		mockRoomStore.isHost = true;
 
 		render(RoomLobby);
 
-		expect(screen.queryByText('Share the room code to invite friends!')).not.toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: /invite player/i })).not.toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: /add ai/i })).not.toBeInTheDocument();
 	});
 
 	it('shows error message when error exists', () => {
@@ -204,11 +215,16 @@ describe('RoomLobby', () => {
 		expect(screen.getByRole('alert')).toHaveTextContent('Connection lost');
 	});
 
-	it('room code button has copy title', () => {
+	it('external share section has copy buttons', async () => {
 		render(RoomLobby);
 
-		const codeButton = screen.getByText('ABC234');
-		expect(codeButton).toHaveAttribute('title', 'Click to copy');
+		// Expand the external share section
+		const toggleButton = screen.getByRole('button', { name: /share externally/i });
+		await fireEvent.click(toggleButton);
+
+		// Should have copy buttons for code and link
+		expect(screen.getByTitle('Copy room code')).toBeInTheDocument();
+		expect(screen.getByTitle('Copy invite link')).toBeInTheDocument();
 	});
 
 	it('applies custom class', () => {
