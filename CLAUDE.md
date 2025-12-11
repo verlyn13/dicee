@@ -76,7 +76,7 @@ docs/
 .claude/
   AGENT-GUARDRAILS.md       # CRITICAL: Mandatory rules for all agents
   CONVENTIONS.md            # Naming conventions and code patterns
-  cli-reference.yaml          # CLI tool reference (Supabase/Vercel/Wrangler/Infisical)
+  cli-reference.yaml          # CLI tool reference (Supabase/Wrangler/Infisical)
   environment-strategy.yaml   # Environment, secrets, and agent guardrails
   gopass-structure.yaml       # Local credential storage architecture
   typescript-biome-strategy.md # TypeScript patterns and Biome 2.3 config
@@ -109,11 +109,10 @@ scripts/
 
 ## CLI Tools Reference
 
-**CRITICAL**: For Supabase, Vercel, Wrangler, and Infisical CLI commands, always consult `.claude/cli-reference.yaml` first. This file contains accurate, version-specific command documentation generated from actual `--help` output. Do NOT rely on training data for these CLIs as they evolve rapidly.
+**CRITICAL**: For Supabase, Wrangler, and Infisical CLI commands, always consult `.claude/cli-reference.yaml` first. This file contains accurate, version-specific command documentation generated from actual `--help` output. Do NOT rely on training data for these CLIs as they evolve rapidly.
 
 ### Current CLI Versions
 - Supabase CLI: 2.62.10
-- Vercel CLI: 48.12.1
 - Wrangler CLI: 4.51.0
 - Infisical CLI: 0.43.35
 
@@ -138,16 +137,7 @@ scripts/
 - **Console**: https://console.cloud.google.com/welcome?project=dicee-480100
 - **Credentials**: https://console.cloud.google.com/apis/credentials?project=dicee-480100
 
-### Vercel Project Configuration (DEPRECATED)
-> **Status**: Being migrated to Cloudflare Pages. See `docs/unified-cloudflare-stack.md`.
-> Keep as fallback until migration is complete.
-
-- **Project**: dicee
-- **Team**: jeffrey-johnsons-projects-4efd9acb
-- **Legacy URL**: https://dicee.jefahnierocks.com (will redirect to gamelobby)
-- **Dashboard**: https://vercel.com/jeffrey-johnsons-projects-4efd9acb/dicee
-
-### Cloudflare Configuration (PRIMARY)
+### Cloudflare Configuration
 - **Account ID**: 13eb584192d9cefb730fde0cfd271328
 - **Zone ID**: 8d5f44e67ab4b37e47b034ff48b03099
 - **Domain**: jefahnierocks.com
@@ -206,17 +196,7 @@ supabase functions deploy           # Deploy edge functions
 supabase secrets set KEY=VALUE      # Set secrets
 ```
 
-#### Vercel - Deployment (DEPRECATED)
-> Use Cloudflare Pages instead. Vercel kept as temporary fallback.
-
-```bash
-vercel link           # Link to Vercel project
-vercel pull           # Pull env vars and settings
-vercel               # Deploy to preview
-vercel --prod        # Deploy to production
-```
-
-#### Cloudflare Pages - Deployment (PRIMARY)
+#### Cloudflare Pages - Deployment
 ```bash
 # Build and deploy
 pnpm build                                      # Build SvelteKit
