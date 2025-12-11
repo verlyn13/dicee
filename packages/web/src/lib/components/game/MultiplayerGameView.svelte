@@ -549,12 +549,25 @@ function handleCloseGameOver(): void {
 	.multiplayer-game-view {
 		display: flex;
 		flex-direction: column;
-		/* Use svh for stable height (accounts for browser chrome) */
 		min-height: 100vh;
 		min-height: 100svh;
-		max-height: 100svh;
-		overflow: hidden;
 		background: var(--color-background);
+	}
+
+	/* Desktop: Fixed viewport, internal scrolling */
+	@media (min-width: 768px) {
+		.multiplayer-game-view {
+			max-height: 100svh;
+			overflow: hidden;
+		}
+	}
+
+	/* Mobile: Natural scrolling for entire view */
+	@media (max-width: 767px) {
+		.multiplayer-game-view {
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+		}
 	}
 
 	/* Quick Play Loading */
@@ -736,8 +749,13 @@ function handleCloseGameOver(): void {
 		grid-template-columns: 1fr;
 		gap: var(--space-2);
 		padding: var(--space-2);
-		flex: 1;
-		min-height: 0; /* Allow grid to shrink below content size */
+	}
+
+	/* Mobile: Natural flow, no constraints */
+	@media (max-width: 767px) {
+		.game-layout {
+			padding-bottom: var(--space-4); /* Extra space at bottom for comfortable scrolling */
+		}
 	}
 
 	/* Desktop Layout */
@@ -746,6 +764,8 @@ function handleCloseGameOver(): void {
 			grid-template-columns: 240px 1fr 280px;
 			gap: var(--space-3);
 			padding: var(--space-3);
+			flex: 1;
+			min-height: 0; /* Allow grid to shrink below content size */
 			/* Ensure grid fits in available space */
 			max-height: 100%;
 			overflow: hidden;
@@ -924,8 +944,6 @@ function handleCloseGameOver(): void {
 	.scorecard-area {
 		display: flex;
 		flex-direction: column;
-		overflow-y: auto;
-		min-height: 0;
 	}
 
 	/* Desktop: Constrain scorecard to available height */
@@ -933,6 +951,7 @@ function handleCloseGameOver(): void {
 		.scorecard-area {
 			max-height: 100%;
 			overflow-y: auto;
+			min-height: 0;
 			/* Custom scrollbar for desktop */
 			scrollbar-width: thin;
 			scrollbar-color: var(--color-border) transparent;
@@ -952,7 +971,7 @@ function handleCloseGameOver(): void {
 		}
 	}
 
-	/* Mobile: Scorecard below dice */
+	/* Mobile: Scorecard below dice, full natural height */
 	@media (max-width: 767px) {
 		.scorecard-area {
 			order: 2;
