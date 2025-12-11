@@ -15,6 +15,7 @@ import type { AIBrain } from './types';
  */
 export class RandomBrain implements AIBrain {
 	readonly type = 'random';
+	private profile: AIProfile | null = null;
 
 	async initialize(profile: AIProfile): Promise<void> {
 		this.profile = profile;

@@ -267,7 +267,7 @@ export class PersonalityBrain implements AIBrain {
 	// ========================================================================
 
 	private applySkillNoise(decision: TurnDecision): TurnDecision {
-		const skillLevel = this.profile?.skillLevel;
+		const skillLevel = this.profile?.skillLevel ?? 1.0;
 
 		// Higher skill = less noise
 		if (Math.random() > skillLevel) {

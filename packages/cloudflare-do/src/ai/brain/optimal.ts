@@ -32,6 +32,7 @@ const UPPER_CATEGORY_VALUES: Record<string, number> = {
  */
 export class OptimalBrain implements AIBrain {
 	readonly type = 'optimal';
+	private profile: AIProfile | null = null;
 	private useWasm: boolean;
 
 	constructor(useWasm = false) {
@@ -442,12 +443,12 @@ export class OptimalBrain implements AIBrain {
 
 	private adjustForUpperBonus(score: number, category: string, scorecard: Scorecard): number {
 		// If we're close to upper bonus, value upper section scores more
-		const upperCats = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
+		const upperCats = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'] as const;
 		let upperSum = 0;
 
 		for (const cat of upperCats) {
-			const val = scorecard[cat];
-			if (val !== null && val !== undefined) {
+			const val = scorecard[cat as keyof Scorecard];
+			if (typeof val === 'number') {
 				upperSum += val;
 			}
 		}
@@ -455,7 +456,8 @@ export class OptimalBrain implements AIBrain {
 		const remaining = UPPER_BONUS_THRESHOLD - upperSum;
 
 		// If this category would help reach bonus, boost its value
-		if (remaining > 0 && upperCats.includes(category)) {
+		const isUpperCategory = (upperCats as readonly string[]).includes(category);
+		if (remaining > 0 && isUpperCategory) {
 			const targetValue = UPPER_CATEGORY_VALUES[category];
 			const idealScore = targetValue * 3; // 3x is break-even for bonus
 
