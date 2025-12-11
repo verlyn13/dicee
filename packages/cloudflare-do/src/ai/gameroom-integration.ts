@@ -132,8 +132,26 @@ export class AIRoomManager {
 			throw new Error(`Player ${playerId} is not an AI`);
 		}
 
+		// Wait for any in-progress turn to complete (handles AI-to-AI transitions)
+		// This fixes a race condition where the previous AI's turn triggers the next
+		// AI's turn while still holding the turnInProgress flag
+		const MAX_WAIT_ATTEMPTS = 20;
+		const WAIT_INTERVAL_MS = 100;
+
+		for (let attempt = 0; attempt < MAX_WAIT_ATTEMPTS; attempt++) {
+			if (!this.turnInProgress) {
+				break;
+			}
+			console.log(
+				`[AIRoomManager] Waiting for previous turn to complete (attempt ${attempt + 1}/${MAX_WAIT_ATTEMPTS})`,
+			);
+			await new Promise((resolve) => setTimeout(resolve, WAIT_INTERVAL_MS));
+		}
+
 		if (this.turnInProgress) {
-			console.warn(`[AIRoomManager] AI turn already in progress, skipping turn for ${playerId}`);
+			console.error(
+				`[AIRoomManager] Timeout waiting for previous turn to complete, skipping turn for ${playerId}`,
+			);
 			return;
 		}
 
