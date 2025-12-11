@@ -1,10 +1,23 @@
 # AKG Architecture Diagrams
 
-> Auto-generated. Run `pnpm akg:all` to regenerate.
+> Auto-generated diagrams from the Architectural Knowledge Graph.
+> Do not edit directly. Run `pnpm akg:mermaid` to regenerate.
 
-- [layer architecture](./LAYER_ARCHITECTURE.md)
-- [store dependencies](./STORE_DEPENDENCIES.md)
-- [component dependencies](./COMPONENT_DEPENDENCIES.md)
-- [dataflow](./DATAFLOW.md)
+## Available Diagrams
 
-Graph hash: `sha256:deb3e06545d87...`
+- [Layer Architecture](./LAYER_ARCHITECTURE.md)
+- [Store Dependencies](./STORE_DEPENDENCIES.md)
+- [Component Dependencies](./COMPONENT_DEPENDENCIES.md)
+- [Dataflow](./DATAFLOW.md)
+
+## Verification
+
+To verify diagrams are current:
+```bash
+pnpm akg:mermaid --check
+```
+
+To regenerate all diagrams:
+```bash
+pnpm akg:mermaid
+```

@@ -82,6 +82,11 @@ export async function initializeBrainFactory(forceTypescript = false): Promise<v
 		return new PersonalityBrain();
 	});
 
+	registerBrain('adaptive', async () => {
+		const { AdaptivePersonalityBrain } = await import('./adaptive');
+		return new AdaptivePersonalityBrain();
+	});
+
 	registerBrain('random', async () => {
 		const { RandomBrain } = await import('./random');
 		return new RandomBrain();

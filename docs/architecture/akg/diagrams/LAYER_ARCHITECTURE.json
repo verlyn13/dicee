@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "layer_architecture",
-	"generatedAt": "2025-12-11T04:36:38.405Z",
-	"graphHash": "sha256:deb3e06545d87a3c42e8a044b4d26c3868217bcd7238da86843b1878529bd566",
-	"sourceCommit": "d7d5b12cd4784131cfc30bbbc46d8d633f9664d9",
+	"generatedAt": "2025-12-11T16:04:04.697Z",
+	"graphHash": "sha256:131c6da10ce42217717a01a47639cf423b38225ebd3752f7ed01233c2aca3d36",
+	"sourceCommit": "7992be5",
 	"nodes": [
 		{
 			"id": "layer::shared",
@@ -14,7 +14,7 @@
 		{
 			"id": "layer::cloudflare-do",
 			"label": "cloudflare-do",
-			"nodeCount": 28
+			"nodeCount": 30
 		},
 		{
 			"id": "layer::routes",

@@ -4,6 +4,8 @@
  * Exports all brain implementations and factory functions.
  */
 
+// Brain implementations
+export { AdaptivePersonalityBrain } from './adaptive';
 // Factory
 export {
 	checkWasmAvailability,
@@ -14,7 +16,6 @@ export {
 	isWasmEnabled,
 	registerBrain,
 } from './factory';
-// Brain implementations
 export { OptimalBrain } from './optimal';
 export { PersonalityBrain } from './personality';
 export { ProbabilisticBrain } from './probabilistic';

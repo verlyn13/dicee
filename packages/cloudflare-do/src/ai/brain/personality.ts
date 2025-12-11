@@ -68,8 +68,6 @@ export class PersonalityBrain implements AIBrain {
 	// ========================================================================
 
 	private applyTraits(context: GameContext, decision: TurnDecision): TurnDecision {
-		const _traits = this.traits!;
-
 		// Check for Dicee chasing behavior
 		if (this.shouldChaseDicee(context, decision)) {
 			return this.chaseDicee(context);
@@ -98,6 +96,7 @@ export class PersonalityBrain implements AIBrain {
 	}
 
 	private shouldChaseDicee(context: GameContext, _decision: TurnDecision): boolean {
+		// biome-ignore lint/style/noNonNullAssertion: Guarded by decide() initialization check
 		const traits = this.traits!;
 
 		// Already scored dicee
@@ -163,6 +162,7 @@ export class PersonalityBrain implements AIBrain {
 	}
 
 	private shouldTakeRisk(context: GameContext, decision: TurnDecision): boolean {
+		// biome-ignore lint/style/noNonNullAssertion: Guarded by decide() initialization check
 		const traits = this.traits!;
 
 		// Risk tolerance affects willingness to re-roll good hands
@@ -192,6 +192,7 @@ export class PersonalityBrain implements AIBrain {
 	}
 
 	private shouldFocusUpper(context: GameContext, _decision: TurnDecision): boolean {
+		// biome-ignore lint/style/noNonNullAssertion: Guarded by decide() initialization check
 		const traits = this.traits!;
 
 		// Check upper section progress
@@ -252,6 +253,7 @@ export class PersonalityBrain implements AIBrain {
 	}
 
 	private shouldKeepRolling(context: GameContext, decision: TurnDecision): boolean {
+		// biome-ignore lint/style/noNonNullAssertion: Guarded by decide() initialization check
 		const traits = this.traits!;
 
 		if (decision.action === 'score' && context.rollsRemaining > 0) {

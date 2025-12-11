@@ -51,7 +51,8 @@ const SLOW_TIMING: AITiming = {
  * Riley - The Beginner
  *
  * A friendly newcomer who's still learning the game.
- * Makes suboptimal choices but plays with enthusiasm.
+ * Uses adaptive brain for situation-aware play, but with
+ * beginner-level skill that introduces mistakes.
  * Good for new players to beat and build confidence.
  */
 export const RILEY: AIProfile = {
@@ -59,7 +60,7 @@ export const RILEY: AIProfile = {
 	name: 'Riley',
 	avatarSeed: 'riley-beginner-dice',
 	tagline: 'Still learning the ropes!',
-	brain: 'personality',
+	brain: 'adaptive', // Adaptive helps make smarter decisions at low skill
 	skillLevel: 0.35,
 	traits: {
 		riskTolerance: 0.3, // Conservative, plays it safe
@@ -101,7 +102,8 @@ export const CARMEN: AIProfile = {
  * Liam - The Risk-Taker
  *
  * An aggressive player who goes for big scores.
- * Will chase Dicees and large straights even when risky.
+ * Uses adaptive brain to become even MORE aggressive when behind,
+ * and moderately dial back when leading (but never fully conservative).
  * Can score big or crash spectacularly.
  */
 export const LIAM: AIProfile = {
@@ -109,13 +111,13 @@ export const LIAM: AIProfile = {
 	name: 'Liam',
 	avatarSeed: 'liam-risktaker-dice',
 	tagline: 'Go big or go home!',
-	brain: 'personality',
+	brain: 'adaptive', // Adaptive amplifies risk-taking when behind
 	skillLevel: 0.7,
 	traits: {
-		riskTolerance: 0.9, // Very aggressive
-		diceeChaser: 0.9, // Always chasing the dream
-		upperSectionFocus: 0.2, // Ignores safe upper section points
-		usesAllRolls: 0.9, // Always uses all rolls hoping for better
+		riskTolerance: 0.85, // Very aggressive (slightly reduced for adaptive boost)
+		diceeChaser: 0.8, // Always chasing the dream (adaptive adds context)
+		upperSectionFocus: 0.25, // Still ignores safe upper section points
+		usesAllRolls: 0.85, // Uses rolls hoping for better
 		thinkingTime: 0.3, // Quick, impulsive decisions
 		chattiness: 0.7, // Expressive about big rolls
 	},
@@ -143,6 +145,32 @@ export const PROFESSOR: AIProfile = {
 		usesAllRolls: 0.4, // Knows when to stop early
 		thinkingTime: 0.8, // Takes time to calculate
 		chattiness: 0.3, // Occasional analytical comments
+	},
+	timing: DELIBERATE_TIMING,
+};
+
+/**
+ * Sage - The Adaptive Strategist
+ *
+ * A situation-aware player who adjusts strategy based on game state.
+ * Plays conservatively when ahead, takes calculated risks when behind.
+ * Balances upper and lower sections, protects Chance for endgame.
+ * Second-toughest opponent after Professor.
+ */
+export const SAGE: AIProfile = {
+	id: 'sage',
+	name: 'Sage',
+	avatarSeed: 'sage-adaptive-dice',
+	tagline: 'Adapt, overcome, conquer.',
+	brain: 'adaptive',
+	skillLevel: 0.85,
+	traits: {
+		riskTolerance: 0.5, // Balanced baseline (adaptive adjusts dynamically)
+		diceeChaser: 0.4, // Conservative baseline (adaptive raises when appropriate)
+		upperSectionFocus: 0.55, // Slight upper focus (adaptive optimizes bonus pursuit)
+		usesAllRolls: 0.5, // Balanced (adaptive decides when to stop)
+		thinkingTime: 0.7, // Takes time to assess situation
+		chattiness: 0.4, // Focused, occasional strategic comments
 	},
 	timing: DELIBERATE_TIMING,
 };
@@ -183,6 +211,7 @@ export const AI_PROFILES: Record<string, AIProfile> = {
 	riley: RILEY,
 	carmen: CARMEN,
 	liam: LIAM,
+	sage: SAGE,
 	professor: PROFESSOR,
 	charlie: CHARLIE,
 };
@@ -191,7 +220,7 @@ export const AI_PROFILES: Record<string, AIProfile> = {
  * Ordered list of profiles for UI display.
  * Sorted by approximate difficulty.
  */
-export const PROFILE_LIST: AIProfile[] = [RILEY, CARMEN, LIAM, PROFESSOR, CHARLIE];
+export const PROFILE_LIST: AIProfile[] = [RILEY, CARMEN, LIAM, SAGE, PROFESSOR, CHARLIE];
 
 /**
  * Get a profile by ID.

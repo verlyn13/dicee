@@ -32,16 +32,13 @@ const UPPER_CATEGORY_VALUES: Record<string, number> = {
  */
 export class OptimalBrain implements AIBrain {
 	readonly type = 'optimal';
-	private profile: AIProfile | null = null;
 	private useWasm: boolean;
 
 	constructor(useWasm = false) {
 		this.useWasm = useWasm;
 	}
 
-	async initialize(profile: AIProfile): Promise<void> {
-		this.profile = profile;
-
+	async initialize(_profile: AIProfile): Promise<void> {
 		if (this.useWasm) {
 			// TODO: Initialize WASM engine (ai-3 spike)
 			// For now, fall back to TypeScript
@@ -134,7 +131,7 @@ export class OptimalBrain implements AIBrain {
 	}
 
 	dispose(): void {
-		this.profile = null;
+		// No resources to clean up
 	}
 
 	// ========================================================================

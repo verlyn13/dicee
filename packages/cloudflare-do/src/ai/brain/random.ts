@@ -15,10 +15,9 @@ import type { AIBrain } from './types';
  */
 export class RandomBrain implements AIBrain {
 	readonly type = 'random';
-	private profile: AIProfile | null = null;
 
-	async initialize(profile: AIProfile): Promise<void> {
-		this.profile = profile;
+	async initialize(_profile: AIProfile): Promise<void> {
+		// Profile stored for potential future use
 	}
 
 	async decide(context: GameContext): Promise<TurnDecision> {
@@ -51,7 +50,7 @@ export class RandomBrain implements AIBrain {
 	}
 
 	dispose(): void {
-		this.profile = null;
+		// No resources to clean up
 	}
 
 	// ========================================================================

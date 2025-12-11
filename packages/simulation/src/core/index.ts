@@ -63,3 +63,11 @@ export {
 	runSingleGame,
 	type GameSimulatorConfig,
 } from './game-simulator.js';
+
+// Phase-shifting brains
+export {
+	PhaseShiftingBrain,
+	createPhaseShiftingBrain,
+	type PhaseShiftingConfig,
+	type PhaseShiftingVariant,
+} from './phase-shifting-brain.js';

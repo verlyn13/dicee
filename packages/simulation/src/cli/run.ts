@@ -31,8 +31,13 @@ const VALID_PROFILES = [
 	'riley',
 	'carmen',
 	'liam',
+	'sage',
 	'professor',
 	'charlie',
+	'phase-greedy',
+	'phase-conservative',
+	'phase-upper',
+	'phase-lower',
 ] as const;
 
 interface RunOptions {

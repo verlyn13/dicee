@@ -85,6 +85,7 @@ export class ProbabilisticBrain implements AIBrain {
 
 		if (mistakeType < 0.6 && optimalDecision.action === 'keep') {
 			// Keep different dice
+			// biome-ignore lint/style/noNonNullAssertion: keepMask exists when action is 'keep'
 			return this.makeAlternativeKeep(context, optimalDecision.keepMask!);
 		}
 

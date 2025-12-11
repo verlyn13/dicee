@@ -17,10 +17,11 @@ import type { Category, DiceArray, KeptMask, Scorecard } from '../game';
  * - optimal: Pure EV maximization using WASM engine
  * - probabilistic: EV-based with configurable variance
  * - personality: Trait-influenced decisions (risk tolerance, etc.)
+ * - adaptive: Situation-aware personality (phase + position aware)
  * - random: Uniform random choices (chaos mode)
  * - llm: Future LLM-based reasoning (not implemented)
  */
-export type BrainType = 'optimal' | 'probabilistic' | 'personality' | 'random' | 'llm';
+export type BrainType = 'optimal' | 'probabilistic' | 'personality' | 'adaptive' | 'random' | 'llm';
 
 // ============================================================================
 // AI Traits

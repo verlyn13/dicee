@@ -22,14 +22,21 @@ import { z } from 'zod';
 /**
  * AI profile identifiers - matches profiles defined in cloudflare-do
  * Custom allows for ad-hoc profile configuration
+ * Phase-shifting profiles use adaptive strategies based on game phase
  */
 export const ProfileIdSchema = z.enum([
 	'riley',
 	'carmen',
 	'liam',
+	'sage',
 	'professor',
 	'charlie',
 	'custom',
+	// Phase-shifting strategy variants
+	'phase-greedy',       // Greedy early, strategic mid/late
+	'phase-conservative', // Safe early, aggressive if behind
+	'phase-upper',        // Upper section priority
+	'phase-lower',        // Lower section priority
 ]);
 
 /**
@@ -40,7 +47,7 @@ export const ProfileIdSchema = z.enum([
  * - random: Uniform random decisions (baseline)
  * - llm: LLM-powered decisions (future enhancement)
  */
-export const BrainTypeSchema = z.enum(['optimal', 'probabilistic', 'personality', 'random', 'llm']);
+export const BrainTypeSchema = z.enum(['optimal', 'probabilistic', 'personality', 'adaptive', 'random', 'llm']);
 
 /**
  * Metrics tracked during simulations
