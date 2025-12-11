@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: afeaf2b777760fb288822fd96909739213f78232
-> Generated: 2025-12-10T22:23:30.252Z
+> Commit: 6765a89
+> Generated: 2025-12-11T00:27:52.072Z
 
 ## Data Flow Diagram
 
@@ -27,10 +27,10 @@ flowchart TB
 
     subgraph components["🧩 COMPONENTS"]
         module__index__mponents_ui_index_ts["index"]
+        module__index__ts_settings_index_ts["index"]
         module__index__onents_chat_index_ts["index"]
         module__index__onents_auth_index_ts["index"]
         module__index__ts_skeleton_index_ts["index"]
-        module__index__nts_gallery_index_ts["index"]
     end
 
     subgraph stores["🗄️ STORES"]
@@ -43,10 +43,10 @@ flowchart TB
 
     subgraph services["⚙️ SERVICES"]
         service__audio__ib_services_audio_ts{{"audio"}}
+        store__preferences_svelte__references_sv{{"preferences"}}
         service__engine__b_services_engine_ts{{"engine"}}
         store__spectatorService_svelte__torServi{{"spectatorService"}}
         service__telemetry__ervices_telemetry_ts{{"telemetry"}}
-        service__index__ib_services_index_ts{{"index"}}
     end
 
     subgraph supabase["🔌 SUPABASE"]

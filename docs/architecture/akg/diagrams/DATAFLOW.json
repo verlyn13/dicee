@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "dataflow",
-	"generatedAt": "2025-12-10T22:23:30.252Z",
-	"graphHash": "sha256:ab5142d0ee57a3ef559c90f9348bb7116f0113507f7faa639b5a8aebe21a820f",
-	"sourceCommit": "afeaf2b777760fb288822fd96909739213f78232",
+	"generatedAt": "2025-12-11T00:27:52.072Z",
+	"graphHash": "sha256:167d48390dcecfb557512c6a2fd9f63bfdbed6e6663bfd523398e7a722a18a66",
+	"sourceCommit": "6765a89",
 	"nodes": [
 		{
 			"id": "module::+layout::rc_routes__layout_ts",
@@ -43,6 +43,12 @@
 			"layer": "components"
 		},
 		{
+			"id": "module::index::ts_settings_index_ts",
+			"label": "index",
+			"type": "Module",
+			"layer": "components"
+		},
+		{
 			"id": "module::index::onents_chat_index_ts",
 			"label": "index",
 			"type": "Module",
@@ -56,12 +62,6 @@
 		},
 		{
 			"id": "module::index::ts_skeleton_index_ts",
-			"label": "index",
-			"type": "Module",
-			"layer": "components"
-		},
-		{
-			"id": "module::index::nts_gallery_index_ts",
 			"label": "index",
 			"type": "Module",
 			"layer": "components"
@@ -103,6 +103,12 @@
 			"layer": "services"
 		},
 		{
+			"id": "store::preferences.svelte::references_svelte_ts",
+			"label": "preferences",
+			"type": "Store",
+			"layer": "services"
+		},
+		{
 			"id": "service::engine::b_services_engine_ts",
 			"label": "engine",
 			"type": "Service",
@@ -117,12 +123,6 @@
 		{
 			"id": "service::telemetry::ervices_telemetry_ts",
 			"label": "telemetry",
-			"type": "Service",
-			"layer": "services"
-		},
-		{
-			"id": "service::index::ib_services_index_ts",
-			"label": "index",
 			"type": "Service",
 			"layer": "services"
 		},

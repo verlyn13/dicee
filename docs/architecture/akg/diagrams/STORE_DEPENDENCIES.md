@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: afeaf2b777760fb288822fd96909739213f78232
-> Generated: 2025-12-10T22:23:30.251Z
+> Commit: 6765a89
+> Generated: 2025-12-11T00:27:52.071Z
 
 ## Store Dependency Diagram
 
@@ -26,6 +26,7 @@ flowchart LR
     store__chat_svelte__tores_chat_svelte_ts[("chat.svelte")]
     store__audio_svelte__ores_audio_svelte_t[("audio.svelte")]
     store__useKeyboardNavigation_svelte__Nav[("useKeyboardNavigation.svelte")]
+    store__preferences_svelte__references_sv[("preferences.svelte")]
     store__spectatorService_svelte__torServi[("spectatorService.svelte")]
     store__roomService_svelte__oomService_sv[("roomService.svelte")]
 
@@ -63,5 +64,6 @@ flowchart LR
 - **chat.svelte**: `packages/web/src/lib/stores/chat.svelte.ts`
 - **audio.svelte**: `packages/web/src/lib/stores/audio.svelte.ts`
 - **useKeyboardNavigation.svelte**: `packages/web/src/lib/hooks/useKeyboardNavigation.svelte.ts`
+- **preferences.svelte**: `packages/web/src/lib/services/preferences.svelte.ts`
 - **spectatorService.svelte**: `packages/web/src/lib/services/spectatorService.svelte.ts`
 - **roomService.svelte**: `packages/web/src/lib/services/roomService.svelte.ts`

@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "component_dependencies",
-	"generatedAt": "2025-12-10T22:23:30.252Z",
-	"graphHash": "sha256:ab5142d0ee57a3ef559c90f9348bb7116f0113507f7faa639b5a8aebe21a820f",
-	"sourceCommit": "afeaf2b777760fb288822fd96909739213f78232",
+	"generatedAt": "2025-12-11T00:27:52.072Z",
+	"graphHash": "sha256:167d48390dcecfb557512c6a2fd9f63bfdbed6e6663bfd523398e7a722a18a66",
+	"sourceCommit": "6765a89",
 	"nodes": [
 		{
 			"id": "component::Avatar::nts_ui_Avatar_svelte",
@@ -15,6 +15,18 @@
 		{
 			"id": "component::BottomSheet::i_BottomSheet_svelte",
 			"label": "BottomSheet",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::SettingsPanel::SettingsPanel_svelte",
+			"label": "SettingsPanel",
+			"type": "Component",
+			"layer": "components"
+		},
+		{
+			"id": "component::SettingsButton::ettingsButton_svelte",
+			"label": "SettingsButton",
 			"type": "Component",
 			"layer": "components"
 		},
@@ -171,18 +183,6 @@
 		{
 			"id": "component::StatsToggle::d_StatsToggle_svelte",
 			"label": "StatsToggle",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::GameStatus::ud_GameStatus_svelte",
-			"label": "GameStatus",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::KeyboardHelp::_KeyboardHelp_svelte",
-			"label": "KeyboardHelp",
 			"type": "Component",
 			"layer": "components"
 		}

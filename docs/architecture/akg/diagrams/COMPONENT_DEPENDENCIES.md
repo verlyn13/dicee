@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: afeaf2b777760fb288822fd96909739213f78232
-> Generated: 2025-12-10T22:23:30.252Z
+> Commit: 6765a89
+> Generated: 2025-12-11T00:27:52.072Z
 
 ## Component Dependency Diagram
 
@@ -14,6 +14,8 @@ Shows how Svelte components use each other.
 flowchart LR
     component__Avatar__nts_ui_Avatar_svelte["Avatar"]
     component__BottomSheet__i_BottomSheet_sv["BottomSheet"]
+    component__SettingsPanel__SettingsPanel_["SettingsPanel"]
+    component__SettingsButton__ettingsButton["SettingsButton"]
     component__ReactionFloat__ReactionFloat_["ReactionFloat"]
     component__ScorecardSkeleton__ecardSkele["ScorecardSkeleton"]
     component__GameViewSkeleton__eViewSkelet["GameViewSkeleton"]
@@ -40,15 +42,15 @@ flowchart LR
     component__Hub__nents_hub_Hub_svelte["Hub"]
     component__LobbyGate__hub_LobbyGate_svel["LobbyGate"]
     component__StatsToggle__d_StatsToggle_sv["StatsToggle"]
-    component__GameStatus__ud_GameStatus_sve["GameStatus"]
-    component__KeyboardHelp___KeyboardHelp_s["KeyboardHelp"]
 
 ```
 
-## Component List (showing 30 of 31)
+## Component List (showing 30 of 33)
 
 - **Avatar**: `packages/web/src/lib/components/ui/Avatar.svelte`
 - **BottomSheet**: `packages/web/src/lib/components/ui/BottomSheet.svelte`
+- **SettingsPanel**: `packages/web/src/lib/components/settings/SettingsPanel.svelte`
+- **SettingsButton**: `packages/web/src/lib/components/settings/SettingsButton.svelte`
 - **ReactionFloat**: `packages/web/src/lib/components/chat/ReactionFloat.svelte`
 - **ScorecardSkeleton**: `packages/web/src/lib/components/skeleton/ScorecardSkeleton.svelte`
 - **GameViewSkeleton**: `packages/web/src/lib/components/skeleton/GameViewSkeleton.svelte`
@@ -75,5 +77,3 @@ flowchart LR
 - **Hub**: `packages/web/src/lib/components/hub/Hub.svelte`
 - **LobbyGate**: `packages/web/src/lib/components/hub/LobbyGate.svelte`
 - **StatsToggle**: `packages/web/src/lib/components/hud/StatsToggle.svelte`
-- **GameStatus**: `packages/web/src/lib/components/hud/GameStatus.svelte`
-- **KeyboardHelp**: `packages/web/src/lib/components/hud/KeyboardHelp.svelte`
