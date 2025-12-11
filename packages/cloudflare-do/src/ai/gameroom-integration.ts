@@ -135,32 +135,44 @@ export class AIRoomManager {
 		executeCommand: GameCommandExecutor,
 		broadcast: EventBroadcaster,
 	): Promise<void> {
+		console.log(`[AIRoomManager] executeAITurn called for ${playerId}`);
+		console.log(`[AIRoomManager] AI players registered: ${Array.from(this.aiPlayers).join(', ')}`);
+		
 		if (!this.isAIPlayer(playerId)) {
+			console.error(`[AIRoomManager] Player ${playerId} is not registered as AI`);
 			throw new Error(`Player ${playerId} is not an AI`);
 		}
 
 		if (this.turnInProgress) {
-			console.warn('AI turn already in progress');
+			console.warn(`[AIRoomManager] AI turn already in progress, skipping turn for ${playerId}`);
 			return;
 		}
 
 		this.turnInProgress = true;
+		console.log(`[AIRoomManager] Starting AI turn for ${playerId}`);
 
 		try {
 			// Create command executor wrapper
 			const executor = async (command: AICommand) => {
+				console.log(`[AIRoomManager] Executing command: ${command.type}`);
 				await executeCommand(playerId, command);
 			};
 
 			// Create event emitter wrapper
 			const emitter = (event: AIEvent) => {
+				console.log(`[AIRoomManager] Emitting event: ${event.type}`);
 				this.handleAIEvent(event, broadcast);
 			};
 
 			// Execute the turn with state getter
 			await this.controller.executeTurn(playerId, getGameState, executor, emitter);
+			console.log(`[AIRoomManager] AI turn completed for ${playerId}`);
+		} catch (error) {
+			console.error(`[AIRoomManager] AI turn failed for ${playerId}:`, error);
+			throw error;
 		} finally {
 			this.turnInProgress = false;
+			console.log(`[AIRoomManager] turnInProgress reset to false`);
 		}
 	}
 
