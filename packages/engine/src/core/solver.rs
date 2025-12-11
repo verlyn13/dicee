@@ -257,6 +257,7 @@ impl TurnSolver {
     }
 
     /// Finds the best keep pattern for a specific category.
+    #[allow(clippy::only_used_in_recursion)]
     fn best_keep_for_category(
         &self,
         config: &DiceConfig,
