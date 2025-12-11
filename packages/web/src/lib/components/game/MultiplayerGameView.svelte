@@ -15,7 +15,11 @@ import { KEY_BINDINGS, useKeyboardNavigation } from '$lib/hooks/useKeyboardNavig
 import { analyzeTurnOptimal, isEngineReady, preloadEngine } from '$lib/services/engine';
 import { audioStore } from '$lib/stores/audio.svelte';
 import type { ChatStore } from '$lib/stores/chat.svelte';
-import type { MultiplayerGameStore } from '$lib/stores/multiplayerGame.svelte';
+import type {
+	AIActivity,
+	MultiplayerGameStore,
+	ScoringNotification,
+} from '$lib/stores/multiplayerGame.svelte';
 import type { Category as CoreCategory, DiceArray, DieValue, TurnAnalysis } from '$lib/types';
 import { isWireCategory, toCoreCategory, type WireCategory } from '$lib/types/category-convert';
 import type { Category, KeptMask, Scorecard } from '$lib/types/multiplayer';
@@ -73,6 +77,8 @@ const turnNumber = $derived(store.turnNumber);
 const roundNumber = $derived(store.roundNumber);
 const afkWarning = $derived(store.afkWarning);
 const error = $derived(store.error);
+const aiActivity = $derived(store.aiActivity);
+const scoringNotifications = $derived(store.scoringNotifications);
 
 // Active player's dice (show opponent's dice when watching their turn)
 const activeDice = $derived(
@@ -234,6 +240,46 @@ const isRolling = $derived(uiPhase === 'ROLLING');
 // Total players including self
 const totalPlayers = $derived(opponents.length + 1);
 
+// Helper to format category names for display
+function formatCategory(category: string): string {
+	const names: Record<string, string> = {
+		ones: 'Ones',
+		twos: 'Twos',
+		threes: 'Threes',
+		fours: 'Fours',
+		fives: 'Fives',
+		sixes: 'Sixes',
+		threeOfAKind: '3 of a Kind',
+		fourOfAKind: '4 of a Kind',
+		fullHouse: 'Full House',
+		smallStraight: 'Small Straight',
+		largeStraight: 'Large Straight',
+		dicee: 'DICEE!',
+		chance: 'Chance',
+	};
+	return names[category] ?? category;
+}
+
+// Get AI activity description
+const aiActivityText = $derived.by(() => {
+	if (!aiActivity || !currentPlayer) return null;
+	const name = currentPlayer.displayName;
+	switch (aiActivity.action) {
+		case 'thinking':
+			return `${name} is thinking...`;
+		case 'rolling':
+			return `${name} is rolling...`;
+		case 'keeping':
+			return `${name} is selecting dice...`;
+		case 'scoring':
+			return aiActivity.category
+				? `${name} scored ${formatCategory(aiActivity.category)}`
+				: `${name} is scoring...`;
+		default:
+			return null;
+	}
+});
+
 // Handlers
 function handleRoll(): void {
 	store.rollDice(keptDice);
@@ -285,6 +331,20 @@ function handleCloseGameOver(): void {
 		{#if error}
 			<div class="error-banner" role="alert">
 				<span class="error-message">{error}</span>
+			</div>
+		{/if}
+
+		<!-- Scoring Notifications -->
+		{#if scoringNotifications.length > 0}
+			<div class="scoring-notifications" role="status" aria-live="polite">
+				{#each scoringNotifications as notification (notification.id)}
+					<div class="scoring-notification">
+						<span class="notification-player">{notification.playerName}</span>
+						<span class="notification-action">scored</span>
+						<span class="notification-category">{formatCategory(notification.category)}</span>
+						<span class="notification-score">+{notification.score}</span>
+					</div>
+				{/each}
 			</div>
 		{/if}
 
@@ -373,12 +433,19 @@ function handleCloseGameOver(): void {
 				</div>
 
 				<!-- Turn Status Message -->
-				<div class="turn-status" class:my-turn={isMyTurn} class:waiting={!isMyTurn}>
+				<div class="turn-status" class:my-turn={isMyTurn} class:waiting={!isMyTurn} class:ai-active={aiActivity !== null}>
 					{#if !isMyTurn}
-						<p class="status-text waiting-text">
-							<span class="waiting-icon">⏳</span>
-							{currentPlayer?.displayName ?? 'Opponent'}'s turn
-						</p>
+						{#if aiActivityText}
+							<p class="status-text ai-activity-text">
+								<span class="ai-icon" class:thinking={aiActivity?.action === 'thinking'} class:rolling={aiActivity?.action === 'rolling'}>🤖</span>
+								{aiActivityText}
+							</p>
+						{:else}
+							<p class="status-text waiting-text">
+								<span class="waiting-icon">⏳</span>
+								{currentPlayer?.displayName ?? 'Opponent'}'s turn
+							</p>
+						{/if}
 					{:else if uiPhase === 'ROLLING'}
 						<p class="status-text">Rolling...</p>
 					{:else if uiPhase === 'SCORING'}
@@ -716,6 +783,12 @@ function handleCloseGameOver(): void {
 		opacity: 0.8;
 	}
 
+	.turn-status.ai-active {
+		background: var(--color-accent-light);
+		border: var(--border-medium);
+		border-color: var(--color-accent);
+	}
+
 	.status-text {
 		margin: 0;
 		font-size: var(--text-body);
@@ -735,9 +808,93 @@ function handleCloseGameOver(): void {
 		font-size: var(--text-h4);
 	}
 
+	.ai-activity-text {
+		color: var(--color-accent);
+		font-weight: var(--weight-semibold);
+	}
+
 	.waiting-icon,
 	.turn-icon {
 		font-size: 1.2em;
+	}
+
+	.ai-icon {
+		font-size: 1.2em;
+		display: inline-block;
+	}
+
+	.ai-icon.thinking {
+		animation: pulse-think 1.5s ease-in-out infinite;
+	}
+
+	.ai-icon.rolling {
+		animation: shake-roll 0.3s ease-in-out infinite;
+	}
+
+	@keyframes pulse-think {
+		0%, 100% { opacity: 1; transform: scale(1); }
+		50% { opacity: 0.6; transform: scale(1.1); }
+	}
+
+	@keyframes shake-roll {
+		0%, 100% { transform: translateX(0) rotate(0deg); }
+		25% { transform: translateX(-2px) rotate(-5deg); }
+		75% { transform: translateX(2px) rotate(5deg); }
+	}
+
+	/* Scoring Notifications */
+	.scoring-notifications {
+		position: fixed;
+		top: 60px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 100;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		pointer-events: none;
+	}
+
+	.scoring-notification {
+		display: flex;
+		align-items: center;
+		gap: var(--space-1);
+		padding: var(--space-1) var(--space-2);
+		background: var(--color-surface);
+		border: var(--border-medium);
+		box-shadow: 2px 2px 0 var(--color-border);
+		font-size: var(--text-small);
+		animation: slide-in-notification 0.3s ease-out;
+	}
+
+	@keyframes slide-in-notification {
+		from {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.notification-player {
+		font-weight: var(--weight-bold);
+	}
+
+	.notification-action {
+		color: var(--color-text-muted);
+	}
+
+	.notification-category {
+		font-weight: var(--weight-semibold);
+		color: var(--color-primary);
+	}
+
+	.notification-score {
+		font-family: var(--font-mono);
+		font-weight: var(--weight-bold);
+		color: var(--color-success, var(--color-accent));
 	}
 
 	/* Scorecard Area */

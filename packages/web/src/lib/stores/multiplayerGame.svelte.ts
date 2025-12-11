@@ -23,6 +23,30 @@ import type {
 export type UIPhase = 'IDLE' | 'ROLLING' | 'RESOLVED' | 'SCORING' | 'WAITING';
 
 // =============================================================================
+// AI Activity State (for opponent turn visibility)
+// =============================================================================
+
+export interface AIActivity {
+	playerId: string;
+	action: 'thinking' | 'rolling' | 'keeping' | 'scoring';
+	category?: string;
+	estimatedMs?: number;
+}
+
+// =============================================================================
+// Scoring Notification (toast-style feedback)
+// =============================================================================
+
+export interface ScoringNotification {
+	id: string;
+	playerId: string;
+	playerName: string;
+	category: string;
+	score: number;
+	timestamp: number;
+}
+
+// =============================================================================
 // Store Factory
 // =============================================================================
 
@@ -36,6 +60,13 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 	let error = $state<string | null>(null);
 	let afkWarning = $state<number | null>(null);
 	let pending = $state(false);
+
+	// AI activity tracking (for opponent turn visibility)
+	let aiActivity = $state<AIActivity | null>(null);
+
+	// Scoring notifications (for opponent score announcements)
+	let scoringNotifications = $state<ScoringNotification[]>([]);
+	const NOTIFICATION_DURATION = 3000; // 3 seconds
 
 	// ==========================================================================
 	// Derived States
@@ -146,6 +177,23 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 				error = (event as { payload: { message: string } }).payload?.message ?? 'Unknown error';
 				pending = false;
 				break;
+
+			// AI Activity Events - for fluid opponent turn visualization
+			case 'AI_THINKING':
+				handleAIThinking(event as unknown as Parameters<typeof handleAIThinking>[0]);
+				break;
+
+			case 'AI_ROLLING':
+				handleAIRolling(event as unknown as Parameters<typeof handleAIRolling>[0]);
+				break;
+
+			case 'AI_KEEPING':
+				handleAIKeeping(event as unknown as Parameters<typeof handleAIKeeping>[0]);
+				break;
+
+			case 'AI_SCORING':
+				handleAIScoring(event as unknown as Parameters<typeof handleAIScoring>[0]);
+				break;
 		}
 	}
 
@@ -245,6 +293,8 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		}
 		uiPhase = playerId === myPlayerId ? 'IDLE' : 'WAITING';
 		afkWarning = null;
+		// Clear AI activity on turn change
+		aiActivity = null;
 	}
 
 	function handleDiceRolled(event: {
@@ -364,11 +414,18 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 						},
 					},
 				};
+
+				// Add notification for opponent scores (not self)
+				if (playerId !== myPlayerId) {
+					addScoringNotification(playerId, player.displayName, category, score);
+				}
 			}
 		}
 		if (playerId === myPlayerId) {
 			uiPhase = 'SCORING';
 		}
+		// Clear AI activity when scoring completes
+		aiActivity = null;
 		pending = false;
 	}
 
@@ -452,6 +509,110 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		}
 		uiPhase = 'IDLE';
 		afkWarning = null;
+	}
+
+	// ==========================================================================
+	// AI Activity Handlers (for fluid opponent turn visualization)
+	// ==========================================================================
+
+	function handleAIThinking(event: {
+		playerId?: string;
+		estimatedMs?: number;
+		payload?: { playerId?: string; estimatedMs?: number };
+	}): void {
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? '';
+		const estimatedMs = data.estimatedMs ?? 1000;
+
+		// Only track AI activity for opponents
+		if (playerId !== myPlayerId) {
+			aiActivity = {
+				playerId,
+				action: 'thinking',
+				estimatedMs,
+			};
+		}
+	}
+
+	function handleAIRolling(event: { playerId?: string; payload?: { playerId?: string } }): void {
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? '';
+
+		if (playerId !== myPlayerId) {
+			aiActivity = {
+				playerId,
+				action: 'rolling',
+			};
+		}
+	}
+
+	function handleAIKeeping(event: {
+		playerId?: string;
+		keptDice?: boolean[];
+		payload?: { playerId?: string; keptDice?: boolean[] };
+	}): void {
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? '';
+
+		if (playerId !== myPlayerId) {
+			aiActivity = {
+				playerId,
+				action: 'keeping',
+			};
+		}
+	}
+
+	function handleAIScoring(event: {
+		playerId?: string;
+		category?: string;
+		payload?: { playerId?: string; category?: string };
+	}): void {
+		const data = event.payload ?? event;
+		const playerId = data.playerId ?? '';
+		const category = data.category ?? '';
+
+		if (playerId !== myPlayerId) {
+			aiActivity = {
+				playerId,
+				action: 'scoring',
+				category,
+			};
+		}
+	}
+
+	// ==========================================================================
+	// Scoring Notification Helpers
+	// ==========================================================================
+
+	function addScoringNotification(
+		playerId: string,
+		playerName: string,
+		category: string,
+		score: number,
+	): void {
+		const notification: ScoringNotification = {
+			id: crypto.randomUUID(),
+			playerId,
+			playerName,
+			category,
+			score,
+			timestamp: Date.now(),
+		};
+
+		scoringNotifications = [...scoringNotifications, notification];
+
+		// Auto-remove after duration
+		setTimeout(() => {
+			scoringNotifications = scoringNotifications.filter((n) => n.id !== notification.id);
+		}, NOTIFICATION_DURATION);
+	}
+
+	function dismissNotification(id: string): void {
+		scoringNotifications = scoringNotifications.filter((n) => n.id !== id);
+	}
+
+	function clearAIActivity(): void {
+		aiActivity = null;
 	}
 
 	// ==========================================================================
@@ -601,12 +762,24 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 			return roundNumber;
 		},
 
+		// AI Activity State
+		get aiActivity() {
+			return aiActivity;
+		},
+		get scoringNotifications() {
+			return scoringNotifications;
+		},
+
 		// Commands
 		rollDice,
 		keepDice,
 		toggleKeep,
 		scoreCategory,
 		reset,
+
+		// Notification helpers
+		dismissNotification,
+		clearAIActivity,
 
 		// Subscription
 		subscribe,
