@@ -729,6 +729,7 @@ function handleCloseGameOver(): void {
 		gap: var(--space-2);
 		padding: var(--space-2);
 		flex: 1;
+		min-height: 0; /* Allow grid to shrink below content size */
 	}
 
 	/* Desktop Layout */
@@ -737,6 +738,9 @@ function handleCloseGameOver(): void {
 			grid-template-columns: 240px 1fr 280px;
 			gap: var(--space-3);
 			padding: var(--space-3);
+			/* Ensure grid fits in available space */
+			max-height: 100%;
+			overflow: hidden;
 		}
 	}
 
@@ -745,6 +749,17 @@ function handleCloseGameOver(): void {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-2);
+		min-height: 0; /* Allow flexbox to shrink */
+	}
+
+	/* Desktop: Constrain sidebar to available height */
+	@media (min-width: 768px) {
+		.sidebar {
+			max-height: 100%;
+			overflow-y: auto;
+			scrollbar-width: thin;
+			scrollbar-color: var(--color-border) transparent;
+		}
 	}
 
 	/* Mobile: Hide sidebar, show inline */
@@ -903,6 +918,30 @@ function handleCloseGameOver(): void {
 		flex-direction: column;
 		overflow-y: auto;
 		min-height: 0;
+	}
+
+	/* Desktop: Constrain scorecard to available height */
+	@media (min-width: 768px) {
+		.scorecard-area {
+			max-height: 100%;
+			overflow-y: auto;
+			/* Custom scrollbar for desktop */
+			scrollbar-width: thin;
+			scrollbar-color: var(--color-border) transparent;
+		}
+
+		.scorecard-area::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		.scorecard-area::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		.scorecard-area::-webkit-scrollbar-thumb {
+			background: var(--color-border);
+			border-radius: 3px;
+		}
 	}
 
 	/* Mobile: Scorecard below dice */
