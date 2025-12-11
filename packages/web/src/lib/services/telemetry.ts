@@ -11,6 +11,7 @@ import { browser } from '$app/environment';
 import type {
 	TelemetryConfig,
 	TelemetryEvent,
+	TelemetryEventInput,
 	TelemetryEventType,
 	TelemetryPayloadMap,
 } from '$lib/types/telemetry';
@@ -203,7 +204,7 @@ export function track<T extends TelemetryEventType>(
 		return;
 	}
 
-	const event: TelemetryEvent<T> = {
+	const event: TelemetryEventInput<T> = {
 		session_id: state.sessionId,
 		event_type: eventType,
 		payload,
@@ -213,7 +214,8 @@ export function track<T extends TelemetryEventType>(
 		timestamp: new Date().toISOString(),
 	};
 
-	eventQueue.push(event as TelemetryEvent);
+	// Cast to TelemetryEvent for queue - validated at API boundary
+	eventQueue.push(event as unknown as TelemetryEvent);
 
 	if (config.debug) {
 		console.log('[Telemetry] Tracked:', eventType, payload);
@@ -360,4 +362,5 @@ export function resetTelemetry(): void {
 // Convenience Exports
 // =============================================================================
 
-export { TelemetryEventType } from '$lib/types/telemetry';
+export type { TelemetryEventType } from '$lib/types/telemetry';
+export { TELEMETRY_EVENT_TYPES } from '$lib/types/telemetry';

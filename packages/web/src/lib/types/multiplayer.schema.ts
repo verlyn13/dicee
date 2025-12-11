@@ -38,10 +38,16 @@ export const RoomCodeSchema = z
 	.regex(/^[A-HJ-NP-Z2-9]+$/, { error: 'Invalid room code format' })
 	.transform((val) => val.toUpperCase());
 
+/** Validated room code type */
+export type RoomCode = z.output<typeof RoomCodeSchema>;
+
 /**
  * Player ID is a UUID (strict RFC 9562 validation in Zod 4)
  */
 export const PlayerIdSchema = z.uuid();
+
+/** Validated player ID type */
+export type PlayerId = z.output<typeof PlayerIdSchema>;
 
 /**
  * Display name validation
@@ -51,6 +57,9 @@ export const DisplayNameSchema = z
 	.min(1, { error: 'Display name is required' })
 	.max(30, { error: 'Display name must be 30 characters or less' })
 	.trim();
+
+/** Validated display name type */
+export type DisplayName = z.output<typeof DisplayNameSchema>;
 
 // =============================================================================
 // Room Configuration Schema
@@ -63,13 +72,20 @@ export const RoomConfigSchema = z.object({
 	maxPlayers: z.union([z.literal(2), z.literal(3), z.literal(4)]).default(2),
 });
 
+/** Room config input type (before defaults applied) */
 export type RoomConfigInput = z.input<typeof RoomConfigSchema>;
+
+/** Room config output type (after validation with defaults) */
+export type RoomConfig = z.output<typeof RoomConfigSchema>;
 
 // =============================================================================
 // Room State Schema
 // =============================================================================
 
 export const RoomStateSchema = z.enum(['waiting', 'starting', 'playing', 'completed', 'abandoned']);
+
+/** Room state type */
+export type RoomState = z.output<typeof RoomStateSchema>;
 
 // =============================================================================
 // Player Schema
@@ -83,6 +99,9 @@ export const RoomPlayerSchema = z.object({
 	isHost: z.boolean(),
 	joinedAt: z.string(),
 });
+
+/** Room player type */
+export type RoomPlayer = z.output<typeof RoomPlayerSchema>;
 
 // =============================================================================
 // Command Schemas (Client → Server) - UPPERCASE format
@@ -135,6 +154,82 @@ export const PingCommandSchema = z.object({
 	type: z.literal('PING'),
 });
 
+// =============================================================================
+// Chat Command Schemas (Client → Server)
+// =============================================================================
+
+/** Send a text chat message */
+export const ChatCommandSchema = z.object({
+	type: z.literal('CHAT'),
+	payload: z.object({
+		content: z.string().min(1).max(500),
+	}),
+});
+
+/** Send a quick chat message */
+export const QuickChatCommandSchema = z.object({
+	type: z.literal('QUICK_CHAT'),
+	payload: z.object({
+		key: z.string(),
+	}),
+});
+
+/** Add or remove a reaction */
+export const ReactionCommandSchema = z.object({
+	type: z.literal('REACTION'),
+	payload: z.object({
+		messageId: z.string(),
+		emoji: z.string(),
+		action: z.enum(['add', 'remove']),
+	}),
+});
+
+/** Start typing indicator */
+export const TypingStartCommandSchema = z.object({
+	type: z.literal('TYPING_START'),
+});
+
+/** Stop typing indicator */
+export const TypingStopCommandSchema = z.object({
+	type: z.literal('TYPING_STOP'),
+});
+
+// =============================================================================
+// Invite Command Schemas (Client → Server)
+// =============================================================================
+
+/**
+ * Send game invite to online user (host only)
+ */
+export const SendInviteCommandSchema = z.object({
+	type: z.literal('SEND_INVITE'),
+	payload: z.object({
+		targetUserId: z.uuid(),
+	}),
+});
+
+/**
+ * Cancel a pending invite (host only)
+ */
+export const CancelInviteCommandSchema = z.object({
+	type: z.literal('CANCEL_INVITE'),
+	payload: z.object({
+		targetUserId: z.uuid(),
+	}),
+});
+
+/**
+ * Respond to an invite (target user)
+ */
+export const InviteResponseCommandSchema = z.object({
+	type: z.literal('INVITE_RESPONSE'),
+	payload: z.object({
+		inviteId: z.uuid(),
+		roomCode: RoomCodeSchema,
+		action: z.enum(['accept', 'decline']),
+	}),
+});
+
 /**
  * All commands - discriminated union
  */
@@ -147,9 +242,23 @@ export const CommandSchema = z.discriminatedUnion('type', [
 	RematchCommandSchema,
 	AddAIPlayerCommandSchema,
 	PingCommandSchema,
+	// Chat commands
+	ChatCommandSchema,
+	QuickChatCommandSchema,
+	ReactionCommandSchema,
+	TypingStartCommandSchema,
+	TypingStopCommandSchema,
+	// Invite commands
+	SendInviteCommandSchema,
+	CancelInviteCommandSchema,
+	InviteResponseCommandSchema,
 ]);
 
+/** Command input type (before validation) */
 export type CommandInput = z.input<typeof CommandSchema>;
+
+/** Validated command type */
+export type Command = z.output<typeof CommandSchema>;
 
 // =============================================================================
 // Server Event Schemas (Server → Client) - UPPERCASE format
@@ -345,6 +454,205 @@ export const PongEventSchema = BaseEventSchema.extend({
 	payload: z.number(),
 });
 
+// =============================================================================
+// AI Event Schemas (Server → Client)
+// =============================================================================
+
+/** AI is thinking */
+export const AIThinkingEventSchema = BaseEventSchema.extend({
+	type: z.literal('AI_THINKING'),
+	payload: z.object({
+		playerId: z.string(),
+		displayName: z.string(),
+	}),
+});
+
+/** AI is rolling */
+export const AIRollingEventSchema = BaseEventSchema.extend({
+	type: z.literal('AI_ROLLING'),
+	payload: z.object({
+		playerId: z.string(),
+	}),
+});
+
+/** AI is keeping dice */
+export const AIKeepingEventSchema = BaseEventSchema.extend({
+	type: z.literal('AI_KEEPING'),
+	payload: z.object({
+		playerId: z.string(),
+		kept: KeptMaskSchema,
+	}),
+});
+
+/** AI is scoring */
+export const AIScoringEventSchema = BaseEventSchema.extend({
+	type: z.literal('AI_SCORING'),
+	payload: z.object({
+		playerId: z.string(),
+		category: CategorySchema,
+	}),
+});
+
+// =============================================================================
+// Chat Event Schemas (Server → Client)
+// =============================================================================
+
+/** Message reactions schema - matches MessageReactions from @dicee/shared */
+const MessageReactionsSchema = z.object({
+	'👍': z.array(z.string()),
+	'🎲': z.array(z.string()),
+	'😱': z.array(z.string()),
+	'💀': z.array(z.string()),
+	'🎉': z.array(z.string()),
+});
+
+/** Chat error code schema - matches ChatErrorCode from @dicee/shared */
+const ChatErrorCodeSchema = z.enum([
+	'INVALID_MESSAGE',
+	'RATE_LIMITED',
+	'MESSAGE_TOO_LONG',
+	'REACTION_FAILED',
+	'MESSAGE_NOT_FOUND',
+]);
+
+/** Chat message payload schema - matches ChatMessage from @dicee/shared */
+const ChatMessagePayloadSchema = z.object({
+	id: z.string(),
+	userId: z.string(),
+	displayName: z.string(),
+	content: z.string(),
+	timestamp: z.number(), // Unix timestamp in milliseconds
+	type: z.enum(['text', 'quick', 'system']),
+	reactions: MessageReactionsSchema,
+});
+
+/** Chat message received */
+export const ChatMessageEventSchema = BaseEventSchema.extend({
+	type: z.literal('CHAT_MESSAGE'),
+	payload: ChatMessagePayloadSchema,
+});
+
+/** Chat history (sent on connect) */
+export const ChatHistoryEventSchema = BaseEventSchema.extend({
+	type: z.literal('CHAT_HISTORY'),
+	payload: z.array(ChatMessagePayloadSchema),
+});
+
+/** Reaction updated on a message */
+export const ReactionUpdateEventSchema = BaseEventSchema.extend({
+	type: z.literal('REACTION_UPDATE'),
+	payload: z.object({
+		messageId: z.string(),
+		reactions: MessageReactionsSchema,
+	}),
+});
+
+/** Typing indicator state schema */
+const TypingStateSchema = z.object({
+	userId: z.string(),
+	displayName: z.string(),
+	startedAt: z.number(),
+});
+
+/** Typing indicator update */
+export const TypingUpdateEventSchema = BaseEventSchema.extend({
+	type: z.literal('TYPING_UPDATE'),
+	payload: z.object({
+		typing: z.array(TypingStateSchema),
+	}),
+});
+
+/** Chat error */
+export const ChatErrorEventSchema = BaseEventSchema.extend({
+	type: z.literal('CHAT_ERROR'),
+	payload: z.object({
+		code: ChatErrorCodeSchema,
+		message: z.string(),
+	}),
+});
+
+// =============================================================================
+// Invite Event Schemas (Server → Client)
+// =============================================================================
+
+/**
+ * Invite sent confirmation (to host)
+ */
+export const InviteSentEventSchema = BaseEventSchema.extend({
+	type: z.literal('INVITE_SENT'),
+	payload: z.object({
+		inviteId: z.uuid(),
+		targetUserId: z.uuid(),
+		targetDisplayName: DisplayNameSchema,
+		expiresAt: z.number(), // Unix timestamp ms
+	}),
+});
+
+/**
+ * Invite accepted by target (to host)
+ */
+export const InviteAcceptedEventSchema = BaseEventSchema.extend({
+	type: z.literal('INVITE_ACCEPTED'),
+	payload: z.object({
+		inviteId: z.uuid(),
+		targetUserId: z.uuid(),
+		targetDisplayName: DisplayNameSchema,
+	}),
+});
+
+/**
+ * Invite declined by target (to host)
+ */
+export const InviteDeclinedEventSchema = BaseEventSchema.extend({
+	type: z.literal('INVITE_DECLINED'),
+	payload: z.object({
+		inviteId: z.uuid(),
+		targetUserId: z.uuid(),
+		targetDisplayName: DisplayNameSchema,
+	}),
+});
+
+/**
+ * Invite expired (to host)
+ */
+export const InviteExpiredEventSchema = BaseEventSchema.extend({
+	type: z.literal('INVITE_EXPIRED'),
+	payload: z.object({
+		inviteId: z.uuid(),
+		targetUserId: z.uuid(),
+	}),
+});
+
+/**
+ * Invite received (to target user via GlobalLobby)
+ */
+export const InviteReceivedEventSchema = BaseEventSchema.extend({
+	type: z.literal('INVITE_RECEIVED'),
+	payload: z.object({
+		inviteId: z.uuid(),
+		roomCode: RoomCodeSchema,
+		hostUserId: z.uuid(),
+		hostDisplayName: DisplayNameSchema,
+		hostAvatarSeed: z.string(),
+		game: z.literal('dicee'),
+		playerCount: z.number().int().min(1),
+		maxPlayers: z.number().int().min(2).max(4),
+		expiresAt: z.number(), // Unix timestamp ms
+	}),
+});
+
+/**
+ * Invite cancelled (to target user)
+ */
+export const InviteCancelledEventSchema = BaseEventSchema.extend({
+	type: z.literal('INVITE_CANCELLED'),
+	payload: z.object({
+		inviteId: z.uuid(),
+		roomCode: RoomCodeSchema,
+		reason: z.enum(['cancelled', 'host_left', 'room_closed', 'room_full', 'expired']),
+	}),
+});
+
 /**
  * All server events - discriminated union
  */
@@ -367,9 +675,31 @@ export const ServerEventSchema = z.discriminatedUnion('type', [
 	RematchStartedEventSchema,
 	ErrorEventSchema,
 	PongEventSchema,
+	// AI events
+	AIThinkingEventSchema,
+	AIRollingEventSchema,
+	AIKeepingEventSchema,
+	AIScoringEventSchema,
+	// Chat events
+	ChatMessageEventSchema,
+	ChatHistoryEventSchema,
+	ReactionUpdateEventSchema,
+	TypingUpdateEventSchema,
+	ChatErrorEventSchema,
+	// Invite events
+	InviteSentEventSchema,
+	InviteAcceptedEventSchema,
+	InviteDeclinedEventSchema,
+	InviteExpiredEventSchema,
+	InviteReceivedEventSchema,
+	InviteCancelledEventSchema,
 ]);
 
+/** Server event input type (before validation) */
 export type ServerEventInput = z.input<typeof ServerEventSchema>;
+
+/** Validated server event type */
+export type ServerEvent = z.output<typeof ServerEventSchema>;
 
 // =============================================================================
 // Validation Helpers
@@ -390,10 +720,63 @@ export function parseServerEvent(input: unknown) {
 }
 
 /**
- * Validate a room code
+ * Validate a room code (simple boolean)
  */
 export function isValidRoomCode(code: string): boolean {
 	return RoomCodeSchema.safeParse(code).success;
+}
+
+// =============================================================================
+// Type Guards
+// =============================================================================
+
+/**
+ * Type guard: Check if input is a valid Command
+ */
+export function isCommand(input: unknown): input is Command {
+	return CommandSchema.safeParse(input).success;
+}
+
+/**
+ * Type guard: Check if input is a valid ServerEvent
+ */
+export function isServerEvent(input: unknown): input is ServerEvent {
+	return ServerEventSchema.safeParse(input).success;
+}
+
+/**
+ * Type guard: Check if input is a valid RoomCode
+ */
+export function isRoomCode(input: unknown): input is RoomCode {
+	return RoomCodeSchema.safeParse(input).success;
+}
+
+/**
+ * Type guard: Check if input is a valid PlayerId (UUID)
+ */
+export function isPlayerId(input: unknown): input is PlayerId {
+	return PlayerIdSchema.safeParse(input).success;
+}
+
+/**
+ * Type guard: Check if input is a valid RoomConfig
+ */
+export function isRoomConfig(input: unknown): input is RoomConfig {
+	return RoomConfigSchema.safeParse(input).success;
+}
+
+/**
+ * Type guard: Check if input is a valid RoomState
+ */
+export function isRoomState(input: unknown): input is RoomState {
+	return RoomStateSchema.safeParse(input).success;
+}
+
+/**
+ * Type guard: Check if input is a valid RoomPlayer
+ */
+export function isRoomPlayer(input: unknown): input is RoomPlayer {
+	return RoomPlayerSchema.safeParse(input).success;
 }
 
 // =============================================================================

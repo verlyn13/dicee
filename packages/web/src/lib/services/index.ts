@@ -25,6 +25,7 @@ export {
 	preloadEngine,
 	resetEngine,
 } from './engine';
+export type { TelemetryEventType } from './telemetry';
 export {
 	getTelemetryState,
 	hasConsent,
@@ -33,7 +34,7 @@ export {
 	setConsent,
 	setUserId,
 	shutdownTelemetry,
-	TelemetryEventType,
+	TELEMETRY_EVENT_TYPES,
 	track,
 	trackPageView,
 } from './telemetry';

@@ -16,6 +16,9 @@ import './shared-isolation.js';
 import './store-file-naming.js';
 import './callback-prop-naming.js';
 
+// Consistency invariants
+import './type-schema-consistency.js';
+
 // Export list of built-in invariant IDs
 export const BUILTIN_INVARIANTS = [
 	'wasm_single_entry',
@@ -25,6 +28,7 @@ export const BUILTIN_INVARIANTS = [
 	'shared_isolation',
 	'store_file_naming',
 	'callback_prop_naming',
+	'type_schema_consistency',
 ] as const;
 
 export type BuiltinInvariantId = (typeof BUILTIN_INVARIANTS)[number];

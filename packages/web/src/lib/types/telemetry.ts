@@ -4,17 +4,49 @@
  * Event types for UX metrics and learning analytics.
  * Follows RFC-003 three-stream architecture (telemetry stream, 30-day retention).
  *
+ * Types are derived from Zod schemas for runtime validation.
+ *
  * @module types/telemetry
+ * @see telemetry.schema.ts - Zod schemas for runtime validation
  */
+
+// =============================================================================
+// Re-export all types from schema
+// =============================================================================
+
+export type {
+	CategoryHoverPayload,
+	CategoryScorePayload,
+	DecisionQualityPayload,
+	ErrorPayload,
+	GameCompletePayload,
+	GameStartPayload,
+	HintRequestedPayload,
+	PageViewPayload,
+	PredictionPayload,
+	RollPayload,
+	SessionEndPayload,
+	// Payload types
+	SessionStartPayload,
+	// Config
+	TelemetryConfig,
+	// Event type
+	TelemetryEvent,
+	TelemetryEventType,
+} from './telemetry.schema.js';
+
+// Re-export type guards and validation helpers
+export { isTelemetryEvent, isTelemetryEventType, parseTelemetryEvent } from './telemetry.schema.js';
 
 // =============================================================================
 // Event Type Constants
 // =============================================================================
 
 /**
- * Telemetry event types following RFC-003 naming conventions
+ * Telemetry event types as const object for convenient access
+ * Use: TelemetryEventType.SESSION_START
  */
-export const TelemetryEventType = {
+export const TELEMETRY_EVENT_TYPES = {
 	// Session events
 	SESSION_START: 'session_start',
 	SESSION_END: 'session_end',
@@ -38,119 +70,26 @@ export const TelemetryEventType = {
 	ERROR: 'error',
 } as const;
 
-export type TelemetryEventType = (typeof TelemetryEventType)[keyof typeof TelemetryEventType];
-
 // =============================================================================
-// Payload Interfaces
+// Payload Type Map
 // =============================================================================
 
-/**
- * Session start payload
- */
-export interface SessionStartPayload {
-	entry_page: string;
-	referrer: string | null;
-}
-
-/**
- * Session end payload
- */
-export interface SessionEndPayload {
-	duration_ms: number;
-	page_count: number;
-}
-
-/**
- * Page view payload
- */
-export interface PageViewPayload {
-	page: string;
-	previous_page: string | null;
-}
-
-/**
- * Game start payload
- */
-export interface GameStartPayload {
-	mode: 'solo' | 'multiplayer';
-	player_count: number;
-}
-
-/**
- * Game complete payload
- */
-export interface GameCompletePayload {
-	final_score: number;
-	duration_ms: number;
-	turns_played: number;
-}
-
-/**
- * Roll event payload (lightweight telemetry)
- */
-export interface RollPayload {
-	turn: number;
-	roll_number: number;
-	time_since_last_ms: number | null;
-}
-
-/**
- * Category hover payload
- */
-export interface CategoryHoverPayload {
-	category: string;
-	duration_ms: number;
-}
-
-/**
- * Category score payload
- */
-export interface CategoryScorePayload {
-	category: string;
-	points: number;
-	was_optimal: boolean;
-	turn: number;
-}
-
-/**
- * Hint requested payload
- */
-export interface HintRequestedPayload {
-	context: 'scoring' | 'reroll' | 'general';
-	turn: number;
-	roll_number: number;
-}
-
-/**
- * Decision quality payload
- */
-export interface DecisionQualityPayload {
-	quality: 'optimal' | 'excellent' | 'good' | 'acceptable' | 'suboptimal' | 'poor';
-	ev_difference: number;
-	category: string;
-}
-
-/**
- * Prediction payload
- */
-export interface PredictionPayload {
-	predicted: string;
-	actual: string;
-	accuracy: number;
-}
-
-/**
- * Error payload
- */
-export interface ErrorPayload {
-	error_code: string;
-	error_message: string;
-	context: string | null;
-}
-
-// =============================================================================
-// Union Type for All Payloads
-// =============================================================================
+import type {
+	CategoryHoverPayload,
+	CategoryScorePayload,
+	DecisionQualityPayload,
+	ErrorPayload,
+	GameCompletePayload,
+	GameStartPayload,
+	HintRequestedPayload,
+	PageViewPayload,
+	PredictionPayload,
+	RollPayload,
+	SessionEndPayload,
+	SessionStartPayload,
+	TelemetryConfig,
+	TelemetryEventType,
+} from './telemetry.schema.js';
 
 /**
  * Payload type map for type-safe event creation
@@ -171,9 +110,12 @@ export interface TelemetryPayloadMap {
 }
 
 /**
- * Generic telemetry event
+ * Generic event input type for creating events with type safety
+ *
+ * Use TelemetryEventInput<T> when creating events to get payload type inference.
+ * Use TelemetryEvent (discriminated union from schema) for runtime validation.
  */
-export interface TelemetryEvent<T extends TelemetryEventType = TelemetryEventType> {
+export interface TelemetryEventInput<T extends TelemetryEventType = TelemetryEventType> {
 	id?: string;
 	session_id: string;
 	user_id?: string | null;
@@ -186,22 +128,8 @@ export interface TelemetryEvent<T extends TelemetryEventType = TelemetryEventTyp
 }
 
 // =============================================================================
-// Configuration
+// Default Configuration
 // =============================================================================
-
-/**
- * Telemetry service configuration
- */
-export interface TelemetryConfig {
-	/** Enable/disable telemetry collection */
-	enabled: boolean;
-	/** Batch size before auto-flush */
-	batchSize: number;
-	/** Flush interval in milliseconds */
-	flushIntervalMs: number;
-	/** Enable debug logging */
-	debug: boolean;
-}
 
 /**
  * Default telemetry configuration

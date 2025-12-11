@@ -1,31 +1,77 @@
 /**
  * Multiplayer Types (Wire Format) - UPPERCASE Protocol
  *
- * Re-exports canonical types from @dicee/shared and defines web-specific
- * command/event interfaces for the multiplayer room system.
+ * Re-exports canonical types from @dicee/shared and exports web-specific
+ * command/event types derived from Zod schemas for runtime validation.
  *
  * All wire protocol messages use UPPERCASE_SNAKE_CASE for type identifiers.
  * Payloads use camelCase for property names.
  *
  * @see packages/cloudflare-do/src/GameRoom.ts - Server implementation
+ * @see multiplayer.schema.ts - Zod schemas for runtime validation
  * @invariant category_type_consistency
  */
 
+import type { z } from 'zod';
+
 // =============================================================================
-// Import types for internal use (needed because re-exports don't make types available in same file)
+// Import all schemas for z.infer derivation
 // =============================================================================
 import type {
-	ChatErrorCode as ChatErrorCodeType,
-	ChatMessage as ChatMessageType,
-	DiceArray as DiceArrayType,
-	KeptMask as KeptMaskType,
-	MessageReactions as MessageReactionsType,
-	PlayerGameState as PlayerGameStateType,
-	QuickChatKey as QuickChatKeyType,
-	ReactionEmoji as ReactionEmojiType,
-	RoomCode as RoomCodeType,
-	TypingState as TypingStateType,
-} from '@dicee/shared';
+	// Command schemas
+	AddAIPlayerCommandSchema,
+	// Event schemas
+	AIKeepingEventSchema,
+	AIPlayerJoinedEventSchema,
+	AIRollingEventSchema,
+	AIScoringEventSchema,
+	AIThinkingEventSchema,
+	CancelInviteCommandSchema,
+	CategoryScoredEventSchema,
+	ChatCommandSchema,
+	ChatErrorEventSchema,
+	ChatHistoryEventSchema,
+	ChatMessageEventSchema,
+	CommandSchema,
+	ConnectedEventSchema,
+	DiceKeptEventSchema,
+	DiceRolledEventSchema,
+	ErrorEventSchema,
+	GameOverEventSchema,
+	GameStartedEventSchema,
+	GameStartingEventSchema,
+	InviteAcceptedEventSchema,
+	InviteCancelledEventSchema,
+	InviteDeclinedEventSchema,
+	InviteExpiredEventSchema,
+	InviteReceivedEventSchema,
+	InviteResponseCommandSchema,
+	InviteSentEventSchema,
+	KeepDiceCommandSchema,
+	PingCommandSchema,
+	PlayerAfkEventSchema,
+	PlayerJoinedEventSchema,
+	PlayerLeftEventSchema,
+	PongEventSchema,
+	QuickChatCommandSchema,
+	QuickPlayStartCommandSchema,
+	QuickPlayStartedEventSchema,
+	ReactionCommandSchema,
+	ReactionUpdateEventSchema,
+	RematchCommandSchema,
+	RematchStartedEventSchema,
+	RollDiceCommandSchema,
+	ScoreCategoryCommandSchema,
+	SendInviteCommandSchema,
+	ServerEventSchema,
+	StartGameCommandSchema,
+	TurnChangedEventSchema,
+	TurnSkippedEventSchema,
+	TurnStartedEventSchema,
+	TypingStartCommandSchema,
+	TypingStopCommandSchema,
+	TypingUpdateEventSchema,
+} from './multiplayer.schema.js';
 
 // =============================================================================
 // Re-export core types from @dicee/shared
@@ -106,411 +152,71 @@ export {
 } from '@dicee/shared';
 
 // =============================================================================
-// Command Types (Client → Server) - UPPERCASE format
+// Command Types (Client → Server) - Derived from Zod schemas
 // =============================================================================
-
-/** Base command interface */
-interface BaseCommand {
-	type: string;
-	payload?: unknown;
-}
 
 /** Start the game (host only) */
-export interface StartGameCommand extends BaseCommand {
-	type: 'START_GAME';
-}
+export type StartGameCommand = z.infer<typeof StartGameCommandSchema>;
 
 /** Start quick play with AI opponents */
-export interface QuickPlayStartCommand extends BaseCommand {
-	type: 'QUICK_PLAY_START';
-	payload: {
-		aiProfiles: string[];
-	};
-}
+export type QuickPlayStartCommand = z.infer<typeof QuickPlayStartCommandSchema>;
 
 /** Roll dice */
-export interface RollDiceCommand extends BaseCommand {
-	type: 'DICE_ROLL';
-	payload: {
-		kept?: KeptMaskType;
-	};
-}
+export type RollDiceCommand = z.infer<typeof RollDiceCommandSchema>;
 
 /** Keep specific dice */
-export interface KeepDiceCommand extends BaseCommand {
-	type: 'DICE_KEEP';
-	payload: {
-		indices: number[];
-	};
-}
+export type KeepDiceCommand = z.infer<typeof KeepDiceCommandSchema>;
 
 /** Score a category */
-export interface ScoreCategoryCommand extends BaseCommand {
-	type: 'CATEGORY_SCORE';
-	payload: {
-		category: string;
-	};
-}
+export type ScoreCategoryCommand = z.infer<typeof ScoreCategoryCommandSchema>;
 
 /** Request rematch (host only, from game_over) */
-export interface RematchCommand extends BaseCommand {
-	type: 'REMATCH';
-}
+export type RematchCommand = z.infer<typeof RematchCommandSchema>;
 
 /** Add AI player to room (host only, during waiting) */
-export interface AddAIPlayerCommand extends BaseCommand {
-	type: 'ADD_AI_PLAYER';
-	payload: {
-		profileId: string;
-	};
-}
+export type AddAIPlayerCommand = z.infer<typeof AddAIPlayerCommandSchema>;
 
 /** Heartbeat ping */
-export interface PingCommand extends BaseCommand {
-	type: 'PING';
-}
-
-/** All command types */
-export type Command =
-	| StartGameCommand
-	| QuickPlayStartCommand
-	| RollDiceCommand
-	| KeepDiceCommand
-	| ScoreCategoryCommand
-	| RematchCommand
-	| AddAIPlayerCommand
-	| PingCommand;
+export type PingCommand = z.infer<typeof PingCommandSchema>;
 
 // =============================================================================
-// Server Event Types (Server → Client) - UPPERCASE format with payload
-// =============================================================================
-
-/** Base server event interface */
-interface BaseServerEvent {
-	type: string;
-	payload?: unknown;
-	timestamp?: string;
-}
-
-/** Initial connection - full room state */
-export interface ConnectedEvent extends BaseServerEvent {
-	type: 'CONNECTED';
-	payload: {
-		roomCode: RoomCodeType;
-		isHost: boolean;
-		players: Array<{
-			id: string;
-			displayName: string;
-			avatarSeed: string;
-			isHost: boolean;
-			isConnected: boolean;
-		}>;
-		aiPlayers?: Array<{
-			id: string;
-			profileId: string;
-			displayName: string;
-			avatarSeed: string;
-		}>;
-		spectators: Array<{
-			id: string;
-			displayName: string;
-		}>;
-		roomStatus: 'waiting' | 'starting' | 'playing' | 'completed' | 'abandoned';
-		spectatorCount: number;
-	};
-}
-
-/** Player joined the room */
-export interface PlayerJoinedEvent extends BaseServerEvent {
-	type: 'PLAYER_JOINED';
-	payload: {
-		userId: string;
-		displayName: string;
-		avatarSeed: string;
-	};
-}
-
-/** Player left the room */
-export interface PlayerLeftEvent extends BaseServerEvent {
-	type: 'PLAYER_LEFT';
-	payload: {
-		userId: string;
-		reason: 'left' | 'disconnected' | 'kicked';
-	};
-}
-
-/** AI player joined the room */
-export interface AIPlayerJoinedEvent extends BaseServerEvent {
-	type: 'AI_PLAYER_JOINED';
-	payload: {
-		id: string;
-		profileId: string;
-		displayName: string;
-		avatarSeed: string;
-	};
-}
-
-/** Game is starting */
-export interface GameStartingEvent extends BaseServerEvent {
-	type: 'GAME_STARTING';
-	payload: {
-		playerCount: number;
-	};
-}
-
-/** Game started */
-export interface GameStartedEvent extends BaseServerEvent {
-	type: 'GAME_STARTED';
-	payload: {
-		playerOrder: string[];
-		currentPlayerId: string;
-		turnNumber: number;
-		roundNumber: number;
-		phase: string;
-		players: Record<string, PlayerGameStateType>;
-	};
-}
-
-/** Quick play started (solo vs AI) */
-export interface QuickPlayStartedEvent extends BaseServerEvent {
-	type: 'QUICK_PLAY_STARTED';
-	payload: {
-		playerOrder: string[];
-		currentPlayerId: string;
-		turnNumber: number;
-		roundNumber: number;
-		phase: string;
-		players: Record<string, PlayerGameStateType>;
-		aiPlayers: Array<{
-			id: string;
-			profileId: string;
-			displayName: string;
-			avatarSeed: string;
-		}>;
-	};
-}
-
-/** Turn started */
-export interface TurnStartedEvent extends BaseServerEvent {
-	type: 'TURN_STARTED';
-	payload: {
-		playerId: string;
-		turnNumber: number;
-		roundNumber: number;
-	};
-}
-
-/** Turn changed to next player */
-export interface TurnChangedEvent extends BaseServerEvent {
-	type: 'TURN_CHANGED';
-	payload: {
-		currentPlayerId: string;
-		turnNumber: number;
-		roundNumber: number;
-		phase: string;
-	};
-}
-
-/** Dice rolled */
-export interface DiceRolledEvent extends BaseServerEvent {
-	type: 'DICE_ROLLED';
-	payload: {
-		playerId: string;
-		dice: DiceArrayType;
-		rollNumber: number;
-		rollsRemaining: number;
-	};
-}
-
-/** Dice kept */
-export interface DiceKeptEvent extends BaseServerEvent {
-	type: 'DICE_KEPT';
-	payload: {
-		playerId: string;
-		kept: KeptMaskType;
-	};
-}
-
-/** Category scored */
-export interface CategoryScoredEvent extends BaseServerEvent {
-	type: 'CATEGORY_SCORED';
-	payload: {
-		playerId: string;
-		category: string;
-		score: number;
-		totalScore: number;
-		isDiceeBonus: boolean;
-	};
-}
-
-/** Turn skipped (AFK) */
-export interface TurnSkippedEvent extends BaseServerEvent {
-	type: 'TURN_SKIPPED';
-	payload: {
-		playerId: string;
-		reason: 'timeout' | 'disconnect';
-		categoryScored: string;
-		score: number;
-	};
-}
-
-/** AFK warning */
-export interface PlayerAfkEvent extends BaseServerEvent {
-	type: 'PLAYER_AFK';
-	payload: {
-		playerId: string;
-		secondsRemaining: number;
-	};
-}
-
-/** Game over */
-export interface GameOverEvent extends BaseServerEvent {
-	type: 'GAME_OVER';
-	payload: {
-		rankings: Array<{
-			playerId: string;
-			displayName: string;
-			rank: number;
-			score: number;
-			diceeCount: number;
-		}>;
-		duration: number;
-	};
-}
-
-/** Rematch started - return to waiting room */
-export interface RematchStartedEvent extends BaseServerEvent {
-	type: 'REMATCH_STARTED';
-	payload: {
-		roomCode: RoomCodeType;
-		players: Array<{
-			id: string;
-			displayName: string;
-			avatarSeed: string;
-			isHost: boolean;
-			isConnected: boolean;
-		}>;
-	};
-}
-
-/** Error event */
-export interface ErrorEvent extends BaseServerEvent {
-	type: 'ERROR';
-	payload: {
-		code: string;
-		message: string;
-	};
-}
-
-/** Heartbeat response */
-export interface PongEvent extends BaseServerEvent {
-	type: 'PONG';
-	payload: number;
-}
-
-// =============================================================================
-// AI Events (Server → Client)
-// =============================================================================
-
-/** AI is thinking */
-export interface AIThinkingEvent extends BaseServerEvent {
-	type: 'AI_THINKING';
-	payload: {
-		playerId: string;
-		displayName: string;
-	};
-}
-
-/** AI is rolling */
-export interface AIRollingEvent extends BaseServerEvent {
-	type: 'AI_ROLLING';
-	payload: {
-		playerId: string;
-	};
-}
-
-/** AI is keeping dice */
-export interface AIKeepingEvent extends BaseServerEvent {
-	type: 'AI_KEEPING';
-	payload: {
-		playerId: string;
-		kept: KeptMaskType;
-	};
-}
-
-/** AI is scoring */
-export interface AIScoringEvent extends BaseServerEvent {
-	type: 'AI_SCORING';
-	payload: {
-		playerId: string;
-		category: string;
-	};
-}
-
-// =============================================================================
-// All Server Event Types
-// =============================================================================
-
-/** All server event types */
-export type ServerEvent =
-	| ConnectedEvent
-	| PlayerJoinedEvent
-	| PlayerLeftEvent
-	| AIPlayerJoinedEvent
-	| GameStartingEvent
-	| GameStartedEvent
-	| QuickPlayStartedEvent
-	| TurnStartedEvent
-	| TurnChangedEvent
-	| DiceRolledEvent
-	| DiceKeptEvent
-	| CategoryScoredEvent
-	| TurnSkippedEvent
-	| PlayerAfkEvent
-	| GameOverEvent
-	| RematchStartedEvent
-	| ErrorEvent
-	| PongEvent
-	| AIThinkingEvent
-	| AIRollingEvent
-	| AIKeepingEvent
-	| AIScoringEvent;
-
-// =============================================================================
-// Chat Commands (Client → Server) - UPPERCASE format
+// Chat Command Types (Client → Server) - Derived from Zod schemas
 // =============================================================================
 
 /** Send a text chat message */
-export interface ChatCommand extends BaseCommand {
-	type: 'CHAT';
-	payload: { content: string };
-}
+export type ChatCommand = z.infer<typeof ChatCommandSchema>;
 
 /** Send a quick chat message */
-export interface QuickChatCommand extends BaseCommand {
-	type: 'QUICK_CHAT';
-	payload: { key: QuickChatKeyType };
-}
+export type QuickChatCommand = z.infer<typeof QuickChatCommandSchema>;
 
 /** Add or remove a reaction */
-export interface ReactionCommand extends BaseCommand {
-	type: 'REACTION';
-	payload: {
-		messageId: string;
-		emoji: ReactionEmojiType;
-		action: 'add' | 'remove';
-	};
-}
+export type ReactionCommand = z.infer<typeof ReactionCommandSchema>;
 
 /** Start typing indicator */
-export interface TypingStartCommand extends BaseCommand {
-	type: 'TYPING_START';
-}
+export type TypingStartCommand = z.infer<typeof TypingStartCommandSchema>;
 
 /** Stop typing indicator */
-export interface TypingStopCommand extends BaseCommand {
-	type: 'TYPING_STOP';
-}
+export type TypingStopCommand = z.infer<typeof TypingStopCommandSchema>;
+
+// =============================================================================
+// Invite Command Types (Client → Server) - Derived from Zod schemas
+// =============================================================================
+
+/** Send game invite to online user (host only) */
+export type SendInviteCommand = z.infer<typeof SendInviteCommandSchema>;
+
+/** Cancel a pending invite (host only) */
+export type CancelInviteCommand = z.infer<typeof CancelInviteCommandSchema>;
+
+/** Respond to an invite (target user) */
+export type InviteResponseCommand = z.infer<typeof InviteResponseCommandSchema>;
+
+// =============================================================================
+// All Command Types - Derived from discriminated union schema
+// =============================================================================
+
+/** All command types */
+export type Command = z.infer<typeof CommandSchema>;
 
 /** All chat command types */
 export type ChatCommand_Union =
@@ -521,46 +227,126 @@ export type ChatCommand_Union =
 	| TypingStopCommand;
 
 // =============================================================================
-// Chat Server Events (Server → Client) - UPPERCASE format
+// Server Event Types (Server → Client) - Derived from Zod schemas
+// =============================================================================
+
+/** Initial connection - full room state */
+export type ConnectedEvent = z.infer<typeof ConnectedEventSchema>;
+
+/** Player joined the room */
+export type PlayerJoinedEvent = z.infer<typeof PlayerJoinedEventSchema>;
+
+/** Player left the room */
+export type PlayerLeftEvent = z.infer<typeof PlayerLeftEventSchema>;
+
+/** AI player joined the room */
+export type AIPlayerJoinedEvent = z.infer<typeof AIPlayerJoinedEventSchema>;
+
+/** Game is starting */
+export type GameStartingEvent = z.infer<typeof GameStartingEventSchema>;
+
+/** Game started */
+export type GameStartedEvent = z.infer<typeof GameStartedEventSchema>;
+
+/** Quick play started (solo vs AI) */
+export type QuickPlayStartedEvent = z.infer<typeof QuickPlayStartedEventSchema>;
+
+/** Turn started */
+export type TurnStartedEvent = z.infer<typeof TurnStartedEventSchema>;
+
+/** Turn changed to next player */
+export type TurnChangedEvent = z.infer<typeof TurnChangedEventSchema>;
+
+/** Dice rolled */
+export type DiceRolledEvent = z.infer<typeof DiceRolledEventSchema>;
+
+/** Dice kept */
+export type DiceKeptEvent = z.infer<typeof DiceKeptEventSchema>;
+
+/** Category scored */
+export type CategoryScoredEvent = z.infer<typeof CategoryScoredEventSchema>;
+
+/** Turn skipped (AFK) */
+export type TurnSkippedEvent = z.infer<typeof TurnSkippedEventSchema>;
+
+/** AFK warning */
+export type PlayerAfkEvent = z.infer<typeof PlayerAfkEventSchema>;
+
+/** Game over */
+export type GameOverEvent = z.infer<typeof GameOverEventSchema>;
+
+/** Rematch started - return to waiting room */
+export type RematchStartedEvent = z.infer<typeof RematchStartedEventSchema>;
+
+/** Error event */
+export type ErrorEvent = z.infer<typeof ErrorEventSchema>;
+
+/** Heartbeat response */
+export type PongEvent = z.infer<typeof PongEventSchema>;
+
+// =============================================================================
+// AI Event Types (Server → Client) - Derived from Zod schemas
+// =============================================================================
+
+/** AI is thinking */
+export type AIThinkingEvent = z.infer<typeof AIThinkingEventSchema>;
+
+/** AI is rolling */
+export type AIRollingEvent = z.infer<typeof AIRollingEventSchema>;
+
+/** AI is keeping dice */
+export type AIKeepingEvent = z.infer<typeof AIKeepingEventSchema>;
+
+/** AI is scoring */
+export type AIScoringEvent = z.infer<typeof AIScoringEventSchema>;
+
+// =============================================================================
+// Chat Event Types (Server → Client) - Derived from Zod schemas
 // =============================================================================
 
 /** Chat message received */
-export interface ChatMessageEvent extends BaseServerEvent {
-	type: 'CHAT_MESSAGE';
-	payload: ChatMessageType;
-}
+export type ChatMessageEvent = z.infer<typeof ChatMessageEventSchema>;
 
 /** Chat history (sent on connect) */
-export interface ChatHistoryEvent extends BaseServerEvent {
-	type: 'CHAT_HISTORY';
-	payload: ChatMessageType[];
-}
+export type ChatHistoryEvent = z.infer<typeof ChatHistoryEventSchema>;
 
 /** Reaction updated on a message */
-export interface ReactionUpdateEvent extends BaseServerEvent {
-	type: 'REACTION_UPDATE';
-	payload: {
-		messageId: string;
-		reactions: MessageReactionsType;
-	};
-}
+export type ReactionUpdateEvent = z.infer<typeof ReactionUpdateEventSchema>;
 
 /** Typing indicator update */
-export interface TypingUpdateEvent extends BaseServerEvent {
-	type: 'TYPING_UPDATE';
-	payload: {
-		typing: TypingStateType[];
-	};
-}
+export type TypingUpdateEvent = z.infer<typeof TypingUpdateEventSchema>;
 
 /** Chat error */
-export interface ChatErrorEvent extends BaseServerEvent {
-	type: 'CHAT_ERROR';
-	payload: {
-		code: ChatErrorCodeType;
-		message: string;
-	};
-}
+export type ChatErrorEvent = z.infer<typeof ChatErrorEventSchema>;
+
+// =============================================================================
+// Invite Event Types (Server → Client) - Derived from Zod schemas
+// =============================================================================
+
+/** Invite sent confirmation (to host) */
+export type InviteSentEvent = z.infer<typeof InviteSentEventSchema>;
+
+/** Invite accepted by target (to host) */
+export type InviteAcceptedEvent = z.infer<typeof InviteAcceptedEventSchema>;
+
+/** Invite declined by target (to host) */
+export type InviteDeclinedEvent = z.infer<typeof InviteDeclinedEventSchema>;
+
+/** Invite expired (to host) */
+export type InviteExpiredEvent = z.infer<typeof InviteExpiredEventSchema>;
+
+/** Invite received (to target user via GlobalLobby) */
+export type InviteReceivedEvent = z.infer<typeof InviteReceivedEventSchema>;
+
+/** Invite cancelled (to target user) */
+export type InviteCancelledEvent = z.infer<typeof InviteCancelledEventSchema>;
+
+// =============================================================================
+// All Server Event Types - Derived from discriminated union schema
+// =============================================================================
+
+/** All server event types */
+export type ServerEvent = z.infer<typeof ServerEventSchema>;
 
 /** All chat server event types */
 export type ChatServerEvent =
@@ -589,6 +375,10 @@ export type GetCommand<T extends CommandType> = Extract<Command, { type: T }>;
 /** Chat event type names */
 export type ChatEventType = ChatServerEvent['type'];
 
+// =============================================================================
+// Type Guards (use schema-based validation from multiplayer.schema.ts)
+// =============================================================================
+
 /** Check if an event is a chat event */
 export function isChatEvent(event: { type: string }): event is ChatServerEvent {
 	return [
@@ -603,4 +393,16 @@ export function isChatEvent(event: { type: string }): event is ChatServerEvent {
 /** Check if an event is an AI event (for UI display) */
 export function isAIEvent(event: { type: string }): boolean {
 	return ['AI_THINKING', 'AI_ROLLING', 'AI_KEEPING', 'AI_SCORING'].includes(event.type);
+}
+
+/** Check if an event is an invite event */
+export function isInviteEvent(event: { type: string }): boolean {
+	return [
+		'INVITE_SENT',
+		'INVITE_ACCEPTED',
+		'INVITE_DECLINED',
+		'INVITE_EXPIRED',
+		'INVITE_RECEIVED',
+		'INVITE_CANCELLED',
+	].includes(event.type);
 }
