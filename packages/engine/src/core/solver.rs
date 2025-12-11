@@ -257,7 +257,10 @@ impl TurnSolver {
     }
 
     /// Finds the best keep pattern for a specific category.
+    // Lint renamed in Rust 1.92: only_used_in_recursion -> self_only_used_in_recursion
+    #[allow(unknown_lints)]
     #[allow(clippy::only_used_in_recursion)]
+    #[allow(clippy::self_only_used_in_recursion)]
     fn best_keep_for_category(
         &self,
         config: &DiceConfig,
