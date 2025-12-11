@@ -457,26 +457,18 @@ function handleCloseGameOver(): void {
 {/if}
 
 <style>
-	/* Waiting Room Container */
+	/* Waiting Room Container
+	 * Simple approach: normal document flow, let browser handle keyboard.
+	 * No fixed heights, no viewport units, no keyboard detection.
+	 */
 	.waiting-room-container {
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		min-height: 100vh;
-		min-height: 100svh;
-		max-height: 100svh;
-		overflow-y: auto;
+		min-height: 100dvh; /* Dynamic viewport for mobile */
 		padding: var(--space-3);
+		padding-bottom: var(--space-6); /* Extra space at bottom for breathing room */
 		background: var(--color-background);
-	}
-
-	/* Keyboard awareness for waiting room */
-	@media (max-width: 768px) {
-		:global(html.keyboard-open) .waiting-room-container {
-			max-height: calc(100svh - var(--keyboard-height, 0px));
-			align-items: flex-start;
-			padding-top: var(--space-2);
-		}
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 
 	.multiplayer-game-view {

@@ -333,6 +333,7 @@ function handleInviteUser(userId: string) {
 		gap: var(--space-3);
 		width: 100%;
 		max-width: 480px;
+		margin: 0 auto; /* Horizontal center only */
 	}
 
 	/* Header */

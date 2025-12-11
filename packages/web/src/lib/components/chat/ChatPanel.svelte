@@ -237,55 +237,25 @@ function handleTouchEnd(): void {
 		overflow: hidden;
 	}
 
-	/* Mobile: Fixed bottom sheet with keyboard-aware layout
-	 *
-	 * IMPORTANT: position:fixed + bottom:0 is problematic with mobile keyboards.
-	 * The keyboard pushes the visual viewport up, but fixed elements stay relative
-	 * to the layout viewport (which doesn't resize).
-	 *
-	 * Solution: Use transform: translateY() instead of bottom for smoother animation.
-	 * The keyboard.ts utility updates --keyboard-height CSS variable via VisualViewport API.
+	/* Mobile: Full-screen overlay when open, completely hidden when closed.
+	 * No floating bar. Chat accessed via header button.
 	 */
 	@media (max-width: 768px) {
-		.chat-panel {
+		/* Collapsed: completely hidden on mobile */
+		.chat-panel.collapsed {
+			display: none;
+		}
+
+		/* Expanded: full screen overlay */
+		.chat-panel:not(.collapsed) {
 			position: fixed;
-			bottom: 0;
+			top: 0;
 			left: 0;
 			right: 0;
-			/* Use transform for smoother animation (GPU accelerated) */
-			transform: translateY(calc(-1 * var(--keyboard-height, 0px)));
-			/* Dynamic max-height based on available space */
-			max-height: min(60svh, calc(100svh - var(--keyboard-height, 0px) - 80px));
-			border-radius: var(--radius-md) var(--radius-md) 0 0;
+			bottom: 0;
 			z-index: var(--z-bottomsheet);
-			transition:
-				transform var(--transition-medium) ease,
-				max-height var(--transition-medium) ease;
-			box-shadow: var(--shadow-brutal-lg);
-			/* Safe area for notched devices (home indicator) */
+			border-radius: 0;
 			padding-bottom: env(safe-area-inset-bottom, 0px);
-			/* GPU acceleration hint */
-			will-change: transform, max-height;
-		}
-
-		.chat-panel.collapsed {
-			transform: translateY(calc(100% - 48px));
-		}
-
-		/* When keyboard open AND collapsed, account for keyboard offset */
-		:global(html.keyboard-open) .chat-panel.collapsed {
-			transform: translateY(calc(100% - 48px - var(--keyboard-height, 0px)));
-		}
-
-		/* When keyboard is open, reduce max-height to leave room for game view */
-		:global(html.keyboard-open) .chat-panel {
-			max-height: min(45svh, calc(100svh - var(--keyboard-height, 0px) - 60px));
-		}
-
-		/* Reduce messages container when keyboard is open */
-		:global(html.keyboard-open) .messages-container {
-			max-height: 100px;
-			min-height: 60px;
 		}
 	}
 

@@ -42,51 +42,18 @@ function handleBlur(): void {
 }
 
 /**
- * Scroll input into view when focused on mobile.
- * Uses Visual Viewport API for precise timing instead of fixed delay.
+ * Simple scroll assist on focus.
+ * With full-screen chat overlay, browser handles keyboard naturally.
+ * This is just a backup to ensure input is visible.
  */
 function handleFocus(): void {
-	// Skip on desktop (no virtual keyboard)
+	// Skip on desktop
 	if (typeof window !== 'undefined' && window.innerWidth > 768) return;
 
-	if (typeof window === 'undefined' || !window.visualViewport) {
-		// Fallback for older browsers or SSR
-		setTimeout(() => {
-			inputElement?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-		}, 350);
-		return;
-	}
-
-	// Track resize events to detect keyboard fully open
-	let resizeCount = 0;
-	let timeoutId: ReturnType<typeof setTimeout>;
-
-	const handleResize = (): void => {
-		resizeCount++;
-		// Keyboard animation typically fires 2-3 resize events
-		// Wait for stabilization (no resize for 100ms)
-		clearTimeout(timeoutId);
-		timeoutId = setTimeout(() => {
-			inputElement?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-			cleanup();
-		}, 100);
-	};
-
-	const cleanup = (): void => {
-		window.visualViewport?.removeEventListener('resize', handleResize);
-		clearTimeout(timeoutId);
-	};
-
-	window.visualViewport.addEventListener('resize', handleResize);
-
-	// Cleanup after 800ms if resize never fires (keyboard already open)
+	// Simple delay then scroll - browser usually handles this, but backup doesn't hurt
 	setTimeout(() => {
-		if (resizeCount === 0) {
-			// Keyboard was already open, just scroll
-			inputElement?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-		}
-		cleanup();
-	}, 800);
+		inputElement?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+	}, 300);
 }
 
 /**
