@@ -1,6 +1,6 @@
 {
 	"version": "1.0.0",
-	"generatedAt": "2025-12-11T03:30:23.883Z",
+	"generatedAt": "2025-12-11T04:36:36.979Z",
 	"projectRoot": "/Users/verlyn13/Development/personal/dicee",
 	"nodes": [
 		{
@@ -64,7 +64,7 @@
 				"endLine": 99
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.094Z",
+				"discoveredAt": "2025-12-11T04:36:38.299Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -160,7 +160,7 @@
 				"endLine": 96
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.095Z",
+				"discoveredAt": "2025-12-11T04:36:38.301Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -211,7 +211,7 @@
 				"endLine": 499
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.095Z",
+				"discoveredAt": "2025-12-11T04:36:38.301Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -377,7 +377,7 @@
 				"endLine": 48
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.096Z",
+				"discoveredAt": "2025-12-11T04:36:38.302Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -403,7 +403,7 @@
 				"endLine": 825
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.096Z",
+				"discoveredAt": "2025-12-11T04:36:38.303Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -439,7 +439,7 @@
 				"endLine": 745
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.096Z",
+				"discoveredAt": "2025-12-11T04:36:38.303Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -565,7 +565,7 @@
 				"endLine": 309
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.097Z",
+				"discoveredAt": "2025-12-11T04:36:38.303Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -881,7 +881,7 @@
 				"endLine": 97
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.098Z",
+				"discoveredAt": "2025-12-11T04:36:38.304Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -942,7 +942,7 @@
 				"endLine": 269
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.098Z",
+				"discoveredAt": "2025-12-11T04:36:38.304Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1293,7 +1293,7 @@
 				"endLine": 81
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.099Z",
+				"discoveredAt": "2025-12-11T04:36:38.305Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1619,7 +1619,7 @@
 				"endLine": 1147
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.100Z",
+				"discoveredAt": "2025-12-11T04:36:38.306Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1695,7 +1695,7 @@
 				"endLine": 228
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.100Z",
+				"discoveredAt": "2025-12-11T04:36:38.306Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1736,7 +1736,7 @@
 				"endLine": 508
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.100Z",
+				"discoveredAt": "2025-12-11T04:36:38.306Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1787,7 +1787,7 @@
 				"endLine": 478
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.100Z",
+				"discoveredAt": "2025-12-11T04:36:38.307Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1858,7 +1858,7 @@
 				"endLine": 245
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.100Z",
+				"discoveredAt": "2025-12-11T04:36:38.307Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1909,7 +1909,7 @@
 				"endLine": 301
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.101Z",
+				"discoveredAt": "2025-12-11T04:36:38.307Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1935,7 +1935,7 @@
 				"endLine": 484
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.101Z",
+				"discoveredAt": "2025-12-11T04:36:38.307Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -1961,7 +1961,7 @@
 				"endLine": 160
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.101Z",
+				"discoveredAt": "2025-12-11T04:36:38.307Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2017,7 +2017,7 @@
 				"endLine": 135
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.101Z",
+				"discoveredAt": "2025-12-11T04:36:38.307Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2043,7 +2043,7 @@
 				"endLine": 125
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.101Z",
+				"discoveredAt": "2025-12-11T04:36:38.307Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2084,7 +2084,7 @@
 				"endLine": 113
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.101Z",
+				"discoveredAt": "2025-12-11T04:36:38.307Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2180,7 +2180,7 @@
 				"endLine": 24
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.101Z",
+				"discoveredAt": "2025-12-11T04:36:38.307Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2206,7 +2206,7 @@
 				"endLine": 306
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.101Z",
+				"discoveredAt": "2025-12-11T04:36:38.308Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2522,7 +2522,7 @@
 				"endLine": 73
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.102Z",
+				"discoveredAt": "2025-12-11T04:36:38.308Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2578,7 +2578,7 @@
 				"endLine": 483
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.102Z",
+				"discoveredAt": "2025-12-11T04:36:38.308Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2639,7 +2639,7 @@
 				"endLine": 332
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.102Z",
+				"discoveredAt": "2025-12-11T04:36:38.309Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2680,7 +2680,7 @@
 				"endLine": 65
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.103Z",
+				"discoveredAt": "2025-12-11T04:36:38.309Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2706,7 +2706,7 @@
 				"endLine": 4392
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.103Z",
+				"discoveredAt": "2025-12-11T04:36:38.309Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2756,7 +2756,7 @@
 				"endLine": 417
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.103Z",
+				"discoveredAt": "2025-12-11T04:36:38.310Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2806,7 +2806,7 @@
 				"endLine": 15
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.103Z",
+				"discoveredAt": "2025-12-11T04:36:38.310Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2825,7 +2825,7 @@
 				"endLine": 475
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.103Z",
+				"discoveredAt": "2025-12-11T04:36:38.310Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -2945,7 +2945,7 @@
 				"endLine": 238
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.103Z",
+				"discoveredAt": "2025-12-11T04:36:38.310Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3120,7 +3120,7 @@
 				"endLine": 52
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.104Z",
+				"discoveredAt": "2025-12-11T04:36:38.310Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3195,7 +3195,7 @@
 				"endLine": 113
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.104Z",
+				"discoveredAt": "2025-12-11T04:36:38.310Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3425,7 +3425,7 @@
 				"endLine": 26
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.104Z",
+				"discoveredAt": "2025-12-11T04:36:38.311Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3465,7 +3465,7 @@
 				"endLine": 221
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.104Z",
+				"discoveredAt": "2025-12-11T04:36:38.311Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3505,7 +3505,7 @@
 				"endLine": 13
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.104Z",
+				"discoveredAt": "2025-12-11T04:36:38.311Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3585,7 +3585,7 @@
 				"endLine": 338
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.105Z",
+				"discoveredAt": "2025-12-11T04:36:38.311Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3755,7 +3755,7 @@
 				"endLine": 38
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.105Z",
+				"discoveredAt": "2025-12-11T04:36:38.311Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3825,7 +3825,7 @@
 				"endLine": 348
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.105Z",
+				"discoveredAt": "2025-12-11T04:36:38.311Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3890,7 +3890,7 @@
 				"endLine": 477
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.105Z",
+				"discoveredAt": "2025-12-11T04:36:38.312Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -3950,7 +3950,7 @@
 				"endLine": 357
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.105Z",
+				"discoveredAt": "2025-12-11T04:36:38.312Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4025,7 +4025,7 @@
 				"endLine": 467
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.105Z",
+				"discoveredAt": "2025-12-11T04:36:38.312Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4270,7 +4270,7 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.106Z",
+				"discoveredAt": "2025-12-11T04:36:38.312Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4325,7 +4325,7 @@
 				"endLine": 409
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.106Z",
+				"discoveredAt": "2025-12-11T04:36:38.312Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4465,7 +4465,7 @@
 				"endLine": 422
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.106Z",
+				"discoveredAt": "2025-12-11T04:36:38.313Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4570,7 +4570,7 @@
 				"endLine": 828
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.106Z",
+				"discoveredAt": "2025-12-11T04:36:38.313Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4695,7 +4695,7 @@
 				"endLine": 32
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.313Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4740,7 +4740,7 @@
 				"endLine": 167
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.313Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4820,7 +4820,7 @@
 				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4839,7 +4839,7 @@
 				"endLine": 85
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4855,10 +4855,10 @@
 				"exports": [],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 100
+				"endLine": 109
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4877,7 +4877,7 @@
 				"endLine": 88
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4896,7 +4896,7 @@
 				"endLine": 115
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4915,7 +4915,7 @@
 				"endLine": 92
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4945,7 +4945,7 @@
 				"endLine": 35
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4964,7 +4964,7 @@
 				"endLine": 137
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -4983,7 +4983,7 @@
 				"endLine": 99
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5002,7 +5002,7 @@
 				"endLine": 98
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5047,7 +5047,7 @@
 				"endLine": 284
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5066,7 +5066,7 @@
 				"endLine": 696
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5085,7 +5085,7 @@
 				"endLine": 13
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5104,7 +5104,7 @@
 				"endLine": 941
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5129,7 +5129,7 @@
 				"endLine": 774
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5148,7 +5148,7 @@
 				"endLine": 341
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5173,7 +5173,7 @@
 				"endLine": 306
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5288,7 +5288,7 @@
 				"endLine": 387
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.107Z",
+				"discoveredAt": "2025-12-11T04:36:38.314Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5428,7 +5428,7 @@
 				"endLine": 355
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.108Z",
+				"discoveredAt": "2025-12-11T04:36:38.315Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -5653,7 +5653,7 @@
 				"endLine": 446
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.108Z",
+				"discoveredAt": "2025-12-11T04:36:38.315Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6093,7 +6093,7 @@
 				"endLine": 80
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.109Z",
+				"discoveredAt": "2025-12-11T04:36:38.316Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6963,7 +6963,7 @@
 				"endLine": 24
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.110Z",
+				"discoveredAt": "2025-12-11T04:36:38.317Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -6998,7 +6998,7 @@
 				"endLine": 316
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.110Z",
+				"discoveredAt": "2025-12-11T04:36:38.317Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7048,7 +7048,7 @@
 				"endLine": 294
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.110Z",
+				"discoveredAt": "2025-12-11T04:36:38.317Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7103,7 +7103,7 @@
 				"endLine": 290
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.110Z",
+				"discoveredAt": "2025-12-11T04:36:38.317Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7203,7 +7203,7 @@
 				"endLine": 29
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.110Z",
+				"discoveredAt": "2025-12-11T04:36:38.318Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7228,7 +7228,7 @@
 				"endLine": 69
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.110Z",
+				"discoveredAt": "2025-12-11T04:36:38.318Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7474,7 +7474,7 @@
 				"endLine": 288
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.111Z",
+				"discoveredAt": "2025-12-11T04:36:38.318Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7494,7 +7494,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.111Z",
+				"discoveredAt": "2025-12-11T04:36:38.318Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7514,7 +7514,7 @@
 				"endLine": 31
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.111Z",
+				"discoveredAt": "2025-12-11T04:36:38.318Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7645,7 +7645,7 @@
 				"endLine": 143
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.111Z",
+				"discoveredAt": "2025-12-11T04:36:38.318Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7706,7 +7706,7 @@
 				"endLine": 138
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.111Z",
+				"discoveredAt": "2025-12-11T04:36:38.319Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -7767,7 +7767,7 @@
 				"endLine": 711
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.111Z",
+				"discoveredAt": "2025-12-11T04:36:38.319Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -8608,7 +8608,7 @@
 				"endLine": 209
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.113Z",
+				"discoveredAt": "2025-12-11T04:36:38.321Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9024,7 +9024,7 @@
 				"endLine": 797
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.114Z",
+				"discoveredAt": "2025-12-11T04:36:38.321Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9690,7 +9690,7 @@
 				"endLine": 409
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.322Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9751,7 +9751,7 @@
 				"endLine": 88
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.322Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9812,7 +9812,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.322Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9893,7 +9893,7 @@
 				"endLine": 171
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.322Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -9944,7 +9944,7 @@
 				"endLine": 714
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.322Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10000,7 +10000,7 @@
 				"endLine": 478
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.322Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10051,7 +10051,7 @@
 				"endLine": 341
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.322Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10097,7 +10097,7 @@
 				"endLine": 635
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.322Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10158,7 +10158,7 @@
 				"endLine": 164
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10219,7 +10219,7 @@
 				"endLine": 192
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10245,7 +10245,7 @@
 				"endLine": 240
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.115Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10291,7 +10291,7 @@
 				"endLine": 293
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10327,7 +10327,7 @@
 				"endLine": 217
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10378,7 +10378,7 @@
 				"endLine": 331
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10439,7 +10439,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10535,7 +10535,7 @@
 				"endLine": 747
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10566,7 +10566,7 @@
 				"endLine": 502
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10601,7 +10601,7 @@
 				"endLine": 155
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10696,7 +10696,7 @@
 				"endLine": 182
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10841,7 +10841,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.323Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10896,7 +10896,7 @@
 				"endLine": 126
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.116Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -10971,7 +10971,7 @@
 				"endLine": 187
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.117Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11027,7 +11027,7 @@
 				"endLine": 116
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.117Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11153,7 +11153,7 @@
 				"endLine": 593
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.117Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11179,7 +11179,7 @@
 				"endLine": 12
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.117Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11220,7 +11220,7 @@
 				"endLine": 73
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.117Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11276,7 +11276,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.117Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11337,7 +11337,7 @@
 				"endLine": 228
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.117Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11363,7 +11363,7 @@
 				"endLine": 25
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.117Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11524,7 +11524,7 @@
 				"endLine": 254
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.117Z",
+				"discoveredAt": "2025-12-11T04:36:38.324Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11565,7 +11565,7 @@
 				"endLine": 6
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.118Z",
+				"discoveredAt": "2025-12-11T04:36:38.325Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11606,7 +11606,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.118Z",
+				"discoveredAt": "2025-12-11T04:36:38.325Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11697,7 +11697,7 @@
 				"endLine": 14
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.119Z",
+				"discoveredAt": "2025-12-11T04:36:38.326Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11768,7 +11768,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.120Z",
+				"discoveredAt": "2025-12-11T04:36:38.327Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11809,7 +11809,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.120Z",
+				"discoveredAt": "2025-12-11T04:36:38.327Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -11960,7 +11960,7 @@
 				"endLine": 26
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.121Z",
+				"discoveredAt": "2025-12-11T04:36:38.328Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12086,16 +12086,6 @@
 						"line": 3157
 					},
 					{
-						"name": "PlayVsAIButton",
-						"kind": "const",
-						"line": 3156
-					},
-					{
-						"name": "PlayVsAIButton",
-						"kind": "type",
-						"line": 3157
-					},
-					{
 						"name": "RoomCard",
 						"kind": "const",
 						"line": 3156
@@ -12128,10 +12118,10 @@
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 26
+				"endLine": 25
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.123Z",
+				"discoveredAt": "2025-12-11T04:36:38.330Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12172,7 +12162,7 @@
 				"endLine": 3
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.124Z",
+				"discoveredAt": "2025-12-11T04:36:38.330Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12194,16 +12184,6 @@
 					},
 					{
 						"name": "AIBadge",
-						"kind": "type",
-						"line": 3157
-					},
-					{
-						"name": "GameGateway",
-						"kind": "const",
-						"line": 3156
-					},
-					{
-						"name": "GameGateway",
 						"kind": "type",
 						"line": 3157
 					},
@@ -12270,10 +12250,10 @@
 				],
 				"usesRunes": false,
 				"startLine": 1,
-				"endLine": 15
+				"endLine": 14
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.125Z",
+				"discoveredAt": "2025-12-11T04:36:38.331Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12414,7 +12394,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.126Z",
+				"discoveredAt": "2025-12-11T04:36:38.333Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12465,7 +12445,7 @@
 				"endLine": 11
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.127Z",
+				"discoveredAt": "2025-12-11T04:36:38.334Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12506,7 +12486,7 @@
 				"endLine": 3
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.127Z",
+				"discoveredAt": "2025-12-11T04:36:38.334Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12577,7 +12557,7 @@
 				"endLine": 8
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.127Z",
+				"discoveredAt": "2025-12-11T04:36:38.334Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12628,7 +12608,7 @@
 				"endLine": 4
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.335Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12688,7 +12668,7 @@
 				"endLine": 133
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.335Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12728,7 +12708,7 @@
 				"endLine": 117
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.335Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12808,7 +12788,7 @@
 				"endLine": 23
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.335Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12838,7 +12818,7 @@
 				"endLine": 123
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.335Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12863,7 +12843,7 @@
 				"endLine": 63
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.335Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -12898,7 +12878,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.335Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13098,7 +13078,7 @@
 				"endLine": 20
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.335Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13169,7 +13149,7 @@
 				"endLine": 607
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.336Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13195,7 +13175,7 @@
 				"endLine": 329
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.128Z",
+				"discoveredAt": "2025-12-11T04:36:38.336Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13256,7 +13236,7 @@
 				"endLine": 211
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.129Z",
+				"discoveredAt": "2025-12-11T04:36:38.336Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13442,7 +13422,7 @@
 				"endLine": 1614
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.129Z",
+				"discoveredAt": "2025-12-11T04:36:38.336Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13518,7 +13498,7 @@
 				"endLine": 367
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.129Z",
+				"discoveredAt": "2025-12-11T04:36:38.336Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13679,7 +13659,7 @@
 				"endLine": 41
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.129Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13720,7 +13700,7 @@
 				"endLine": 629
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.129Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13745,7 +13725,7 @@
 				"endLine": 47
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.129Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13771,7 +13751,7 @@
 				"endLine": 38
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.129Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13797,7 +13777,7 @@
 				"endLine": 67
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.129Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13823,7 +13803,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13849,7 +13829,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13875,7 +13855,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13901,7 +13881,7 @@
 				"endLine": 12
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13927,7 +13907,7 @@
 				"endLine": 23
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13953,7 +13933,7 @@
 				"endLine": 51
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -13979,7 +13959,7 @@
 				"endLine": 32
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14005,7 +13985,7 @@
 				"endLine": 32
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14031,7 +14011,7 @@
 				"endLine": 111
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14057,7 +14037,7 @@
 				"endLine": 94
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14083,7 +14063,7 @@
 				"endLine": 66
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14109,7 +14089,7 @@
 				"endLine": 10
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14190,7 +14170,7 @@
 				"endLine": 100
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14251,7 +14231,7 @@
 				"endLine": 73
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14307,7 +14287,7 @@
 				"endLine": 115
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14383,7 +14363,7 @@
 				"endLine": 91
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.337Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14444,7 +14424,7 @@
 				"endLine": 129
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.338Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14505,7 +14485,7 @@
 				"endLine": 31
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.338Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14596,7 +14576,7 @@
 				"endLine": 134
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.130Z",
+				"discoveredAt": "2025-12-11T04:36:38.338Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -14957,7 +14937,7 @@
 				"endLine": 91
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.131Z",
+				"discoveredAt": "2025-12-11T04:36:38.338Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16028,7 +16008,7 @@
 				"endLine": 42
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.132Z",
+				"discoveredAt": "2025-12-11T04:36:38.340Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16169,7 +16149,7 @@
 				"endLine": 213
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.132Z",
+				"discoveredAt": "2025-12-11T04:36:38.340Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16390,7 +16370,7 @@
 				"endLine": 422
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.132Z",
+				"discoveredAt": "2025-12-11T04:36:38.340Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -16731,7 +16711,7 @@
 				"endLine": 78
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.133Z",
+				"discoveredAt": "2025-12-11T04:36:38.341Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17092,7 +17072,7 @@
 				"endLine": 663
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.133Z",
+				"discoveredAt": "2025-12-11T04:36:38.341Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17163,7 +17143,7 @@
 				"endLine": 155
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.133Z",
+				"discoveredAt": "2025-12-11T04:36:38.341Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17574,7 +17554,7 @@
 				"endLine": 9
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17593,7 +17573,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17612,7 +17592,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17631,7 +17611,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17650,7 +17630,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17669,7 +17649,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17688,7 +17668,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17707,7 +17687,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17726,7 +17706,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17745,7 +17725,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17764,7 +17744,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17783,7 +17763,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17802,7 +17782,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17821,7 +17801,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17840,7 +17820,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17859,7 +17839,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17878,7 +17858,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17897,7 +17877,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17916,7 +17896,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17935,7 +17915,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17954,7 +17934,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17973,7 +17953,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -17992,7 +17972,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18011,7 +17991,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18030,7 +18010,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18049,7 +18029,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18068,7 +18048,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18087,7 +18067,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18106,7 +18086,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18125,7 +18105,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18144,7 +18124,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18163,7 +18143,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18182,7 +18162,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18201,7 +18181,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18220,26 +18200,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.134Z",
-				"confidence": "high",
-				"discoveryMethod": "static_analysis"
-			}
-		},
-		{
-			"id": "smartcontainer::PlayVsAIButton::layVsAIButton_svelte",
-			"type": "SmartContainer",
-			"name": "PlayVsAIButton",
-			"filePath": "packages/web/src/lib/components/lobby/PlayVsAIButton.svelte",
-			"attributes": {
-				"layer": "components",
-				"package": "@dicee/web",
-				"classification": "smart",
-				"hasSlots": false,
-				"usesRunes": true,
-				"startLine": 1
-			},
-			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18258,7 +18219,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18277,7 +18238,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18296,7 +18257,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18315,7 +18276,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18334,7 +18295,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18353,7 +18314,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18372,7 +18333,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18391,7 +18352,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18410,7 +18371,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18429,7 +18390,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18448,7 +18409,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18467,7 +18428,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18486,7 +18447,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18505,7 +18466,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18524,26 +18485,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
-				"confidence": "high",
-				"discoveryMethod": "static_analysis"
-			}
-		},
-		{
-			"id": "smartcontainer::GameGateway::e_GameGateway_svelte",
-			"type": "SmartContainer",
-			"name": "GameGateway",
-			"filePath": "packages/web/src/lib/components/game/GameGateway.svelte",
-			"attributes": {
-				"layer": "components",
-				"package": "@dicee/web",
-				"classification": "smart",
-				"hasSlots": false,
-				"usesRunes": true,
-				"startLine": 1
-			},
-			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18562,7 +18504,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18581,7 +18523,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18600,7 +18542,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18619,7 +18561,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18638,7 +18580,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18657,7 +18599,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.342Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18676,7 +18618,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18695,7 +18637,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18714,7 +18656,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18733,7 +18675,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18752,7 +18694,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18771,7 +18713,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18790,7 +18732,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18809,7 +18751,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18828,7 +18770,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18847,7 +18789,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18866,7 +18808,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18885,7 +18827,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18904,7 +18846,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18923,7 +18865,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18942,7 +18884,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18961,7 +18903,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18980,7 +18922,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -18999,7 +18941,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19018,7 +18960,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19037,7 +18979,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19056,7 +18998,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19075,7 +19017,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19094,7 +19036,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19113,7 +19055,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19132,7 +19074,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19151,7 +19093,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19170,7 +19112,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19189,7 +19131,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19208,7 +19150,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19227,7 +19169,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19246,7 +19188,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19265,7 +19207,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19284,7 +19226,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19303,26 +19245,7 @@
 				"startLine": 1
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
-				"confidence": "high",
-				"discoveryMethod": "static_analysis"
-			}
-		},
-		{
-			"id": "route::+page::s_dicee__page_svelte",
-			"type": "Route",
-			"name": "+page",
-			"filePath": "packages/web/src/routes/dicee/+page.svelte",
-			"attributes": {
-				"layer": "routes",
-				"package": "@dicee/web",
-				"classification": "smart",
-				"hasSlots": false,
-				"usesRunes": true,
-				"startLine": 1
-			},
-			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19336,7 +19259,7 @@
 				"mayImport": []
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -19352,7 +19275,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -19373,7 +19296,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -19395,7 +19318,7 @@
 				"notes": "Smart containers may import stores (exception)"
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -19417,7 +19340,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -19440,7 +19363,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -19456,7 +19379,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -19478,7 +19401,7 @@
 				]
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -19495,7 +19418,7 @@
 				"notes": "Only engine.ts should be imported by other modules"
 			},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -19506,7 +19429,7 @@
 			"name": "unknown",
 			"attributes": {},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19517,7 +19440,7 @@
 			"name": "@dicee/web",
 			"attributes": {},
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.135Z",
+				"discoveredAt": "2025-12-11T04:36:38.343Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19547,7 +19470,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.136Z",
+				"discoveredAt": "2025-12-11T04:36:38.344Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19584,7 +19507,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.344Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19615,7 +19538,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.344Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19645,7 +19568,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.344Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19673,7 +19596,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.344Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19705,7 +19628,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.344Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19737,7 +19660,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.344Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19766,7 +19689,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.344Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19794,7 +19717,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.344Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19822,7 +19745,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19850,7 +19773,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19877,7 +19800,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19904,7 +19827,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.137Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19931,7 +19854,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19957,7 +19880,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -19983,7 +19906,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20011,7 +19934,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20039,7 +19962,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20067,7 +19990,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20093,7 +20016,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20119,7 +20042,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.345Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20146,7 +20069,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20172,7 +20095,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20196,7 +20119,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20220,7 +20143,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20244,7 +20167,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20268,7 +20191,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20292,7 +20215,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20320,7 +20243,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20346,7 +20269,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20374,7 +20297,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20403,7 +20326,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20429,7 +20352,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20455,7 +20378,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20481,7 +20404,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20511,7 +20434,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.138Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20537,7 +20460,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20563,7 +20486,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20589,7 +20512,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.346Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20615,7 +20538,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.347Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20677,7 +20600,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.347Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20715,7 +20638,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.347Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20742,7 +20665,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.347Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20768,7 +20691,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.347Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20797,7 +20720,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.347Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20828,7 +20751,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.347Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20859,7 +20782,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.347Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20888,7 +20811,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.139Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20914,7 +20837,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20940,7 +20863,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20973,7 +20896,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -20999,7 +20922,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21025,7 +20948,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21051,7 +20974,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21084,7 +21007,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21111,7 +21034,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21139,7 +21062,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21165,7 +21088,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21191,7 +21114,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21219,7 +21142,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.348Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21246,7 +21169,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21273,7 +21196,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21300,7 +21223,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21325,7 +21248,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21351,7 +21274,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21378,7 +21301,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21402,7 +21325,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.140Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21428,7 +21351,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21455,7 +21378,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21481,7 +21404,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21507,7 +21430,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21533,7 +21456,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21560,7 +21483,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21586,7 +21509,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21612,7 +21535,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21638,7 +21561,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21665,7 +21588,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21691,7 +21614,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21717,7 +21640,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21743,7 +21666,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21770,7 +21693,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21796,7 +21719,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21822,7 +21745,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21848,7 +21771,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21875,7 +21798,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21901,7 +21824,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21927,7 +21850,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21951,7 +21874,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21975,7 +21898,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -21999,7 +21922,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22023,7 +21946,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22047,7 +21970,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22071,7 +21994,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22095,7 +22018,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22119,7 +22042,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22145,7 +22068,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22172,7 +22095,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22198,7 +22121,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22224,7 +22147,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.141Z",
+				"discoveredAt": "2025-12-11T04:36:38.349Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22250,7 +22173,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22277,7 +22200,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22303,7 +22226,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22329,7 +22252,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22355,7 +22278,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22382,7 +22305,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22408,7 +22331,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22434,7 +22357,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22461,7 +22384,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22487,7 +22410,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22514,7 +22437,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22544,7 +22467,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22571,7 +22494,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22596,7 +22519,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22622,7 +22545,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22648,7 +22571,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22674,7 +22597,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22701,7 +22624,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22728,7 +22651,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22755,7 +22678,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22779,7 +22702,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22804,7 +22727,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22831,7 +22754,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22869,7 +22792,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22897,7 +22820,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22927,7 +22850,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22951,7 +22874,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.142Z",
+				"discoveredAt": "2025-12-11T04:36:38.350Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -22977,7 +22900,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23013,7 +22936,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23039,7 +22962,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23065,7 +22988,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23094,7 +23017,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23120,7 +23043,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23147,7 +23070,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23173,7 +23096,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23199,7 +23122,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23225,7 +23148,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23251,7 +23174,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23278,7 +23201,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23309,7 +23232,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23336,7 +23259,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23362,7 +23285,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23388,7 +23311,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23414,7 +23337,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23441,7 +23364,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23467,7 +23390,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23493,7 +23416,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23532,7 +23455,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23558,7 +23481,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23584,7 +23507,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.143Z",
+				"discoveredAt": "2025-12-11T04:36:38.351Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23660,7 +23583,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23692,7 +23615,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23719,7 +23642,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23745,7 +23668,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23780,7 +23703,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23806,7 +23729,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23832,7 +23755,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23856,7 +23779,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -23880,7 +23803,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -23904,7 +23827,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23928,7 +23851,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23956,7 +23879,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -23984,7 +23907,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24010,7 +23933,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -24036,7 +23959,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24062,7 +23985,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24094,7 +24017,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24118,7 +24041,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24142,7 +24065,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24166,7 +24089,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -24190,7 +24113,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24217,7 +24140,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24244,7 +24167,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24272,7 +24195,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24298,7 +24221,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24331,7 +24254,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24358,7 +24281,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24389,7 +24312,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -24420,7 +24343,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.144Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24446,7 +24369,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24473,7 +24396,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24499,7 +24422,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24526,7 +24449,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24553,7 +24476,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24590,7 +24513,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24615,7 +24538,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -24640,7 +24563,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24668,7 +24591,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24694,7 +24617,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24720,7 +24643,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.352Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24748,7 +24671,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24776,7 +24699,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24802,7 +24725,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24829,7 +24752,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24855,7 +24778,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24881,7 +24804,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24907,7 +24830,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24931,7 +24854,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24957,7 +24880,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -24985,7 +24908,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25009,7 +24932,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -25035,7 +24958,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25061,7 +24984,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25085,7 +25008,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "medium",
 				"discoveryMethod": "inference"
 			}
@@ -25109,7 +25032,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25136,7 +25059,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25160,7 +25083,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25184,7 +25107,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25208,7 +25131,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25230,7 +25153,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25252,7 +25175,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25274,7 +25197,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.145Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25304,7 +25227,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25334,7 +25257,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25360,7 +25283,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25392,7 +25315,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25416,7 +25339,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25440,7 +25363,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25464,7 +25387,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25490,7 +25413,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.353Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25516,7 +25439,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25543,7 +25466,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25569,7 +25492,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25595,7 +25518,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25622,7 +25545,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25649,7 +25572,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25675,7 +25598,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25701,7 +25624,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.146Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25727,7 +25650,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25755,7 +25678,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25782,7 +25705,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25812,7 +25735,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25848,7 +25771,7 @@
 				}
 			],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.354Z",
 				"confidence": "high",
 				"discoveryMethod": "static_analysis"
 			}
@@ -25861,7 +25784,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25874,7 +25797,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25887,7 +25810,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25900,7 +25823,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25913,7 +25836,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25926,7 +25849,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25939,7 +25862,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25952,7 +25875,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25965,7 +25888,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25978,7 +25901,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -25991,7 +25914,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26004,7 +25927,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26017,7 +25940,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26030,7 +25953,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26043,7 +25966,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26056,7 +25979,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26069,7 +25992,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26082,7 +26005,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26095,7 +26018,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26108,7 +26031,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26121,7 +26044,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26134,7 +26057,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26147,7 +26070,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26160,7 +26083,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26173,7 +26096,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26186,7 +26109,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26199,7 +26122,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26212,7 +26135,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26225,7 +26148,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26238,7 +26161,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26251,7 +26174,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26264,7 +26187,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26277,7 +26200,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26290,7 +26213,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26303,7 +26226,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26316,7 +26239,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26329,7 +26252,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26342,7 +26265,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26355,7 +26278,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26368,7 +26291,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26381,7 +26304,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26394,7 +26317,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26407,7 +26330,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26420,7 +26343,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26433,7 +26356,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26446,7 +26369,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26459,7 +26382,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26472,7 +26395,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26485,7 +26408,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26498,7 +26421,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26511,7 +26434,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26524,7 +26447,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26537,7 +26460,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26550,7 +26473,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26563,7 +26486,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26576,7 +26499,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26589,7 +26512,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26602,7 +26525,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26615,7 +26538,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26628,7 +26551,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26641,7 +26564,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26654,7 +26577,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26667,7 +26590,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26680,7 +26603,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26693,7 +26616,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26706,7 +26629,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26719,7 +26642,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26732,7 +26655,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26745,7 +26668,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26758,7 +26681,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26771,7 +26694,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26784,7 +26707,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26797,7 +26720,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26810,7 +26733,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26823,7 +26746,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26836,7 +26759,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26849,7 +26772,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26862,7 +26785,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26875,7 +26798,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26888,7 +26811,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26901,7 +26824,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26914,7 +26837,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26927,7 +26850,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26940,7 +26863,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26953,7 +26876,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26966,7 +26889,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26979,7 +26902,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -26992,7 +26915,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27005,7 +26928,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27018,7 +26941,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27031,7 +26954,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27044,7 +26967,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27057,7 +26980,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27070,7 +26993,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27083,7 +27006,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27096,7 +27019,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27109,7 +27032,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27122,7 +27045,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27135,7 +27058,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27148,7 +27071,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27161,7 +27084,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27174,7 +27097,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27187,7 +27110,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27200,7 +27123,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27213,7 +27136,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27226,7 +27149,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27239,7 +27162,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27252,7 +27175,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27265,7 +27188,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27278,7 +27201,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27291,7 +27214,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27304,7 +27227,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27317,7 +27240,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27330,7 +27253,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27343,7 +27266,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27356,7 +27279,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27369,7 +27292,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27382,7 +27305,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27395,7 +27318,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27408,7 +27331,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27421,7 +27344,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27434,7 +27357,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27447,7 +27370,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27460,7 +27383,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27473,7 +27396,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27486,7 +27409,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27499,7 +27422,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27512,7 +27435,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27525,7 +27448,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27538,7 +27461,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27551,7 +27474,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27564,7 +27487,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27577,7 +27500,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27590,7 +27513,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27603,7 +27526,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27616,7 +27539,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27629,7 +27552,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27642,7 +27565,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27655,7 +27578,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27668,7 +27591,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27681,7 +27604,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27694,7 +27617,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27707,7 +27630,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27720,7 +27643,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27733,20 +27656,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
-				"confidence": "high",
-				"discoveryMethod": "inference"
-			}
-		},
-		{
-			"id": "belongs_to::smartcontainer::PlayVsAIButton->layer::components",
-			"type": "belongs_to",
-			"sourceNodeId": "smartcontainer::PlayVsAIButton::layVsAIButton_svelte",
-			"targetNodeId": "layer::components",
-			"attributes": {},
-			"evidence": [],
-			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27759,7 +27669,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27772,7 +27682,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27785,7 +27695,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27798,7 +27708,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27811,7 +27721,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27824,7 +27734,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27837,7 +27747,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27850,7 +27760,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27863,7 +27773,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27876,7 +27786,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27889,7 +27799,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27902,7 +27812,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27915,7 +27825,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27928,7 +27838,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27941,20 +27851,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
-				"confidence": "high",
-				"discoveryMethod": "inference"
-			}
-		},
-		{
-			"id": "belongs_to::smartcontainer::GameGateway->layer::components",
-			"type": "belongs_to",
-			"sourceNodeId": "smartcontainer::GameGateway::e_GameGateway_svelte",
-			"targetNodeId": "layer::components",
-			"attributes": {},
-			"evidence": [],
-			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27967,7 +27864,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27980,7 +27877,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -27993,7 +27890,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28006,7 +27903,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28019,7 +27916,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28032,7 +27929,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28045,7 +27942,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28058,7 +27955,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28071,7 +27968,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28084,7 +27981,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28097,7 +27994,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28110,7 +28007,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28123,7 +28020,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28136,7 +28033,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28149,7 +28046,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28162,7 +28059,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28175,7 +28072,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28188,7 +28085,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28201,7 +28098,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28214,7 +28111,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28227,7 +28124,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28240,7 +28137,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28253,7 +28150,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28266,7 +28163,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28279,7 +28176,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28292,7 +28189,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28305,7 +28202,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28318,7 +28215,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28331,7 +28228,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28344,7 +28241,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28357,7 +28254,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28370,7 +28267,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28383,7 +28280,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28396,7 +28293,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28409,7 +28306,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28422,7 +28319,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28435,7 +28332,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28448,7 +28345,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28461,7 +28358,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28474,20 +28371,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
-				"confidence": "high",
-				"discoveryMethod": "inference"
-			}
-		},
-		{
-			"id": "belongs_to::route::+page->layer::routes",
-			"type": "belongs_to",
-			"sourceNodeId": "route::+page::s_dicee__page_svelte",
-			"targetNodeId": "layer::routes",
-			"attributes": {},
-			"evidence": [],
-			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "inference"
 			}
@@ -28500,7 +28384,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28513,7 +28397,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28526,7 +28410,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28539,7 +28423,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28552,7 +28436,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28565,7 +28449,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28578,7 +28462,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28591,7 +28475,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28604,7 +28488,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28617,7 +28501,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28630,7 +28514,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28643,7 +28527,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28656,7 +28540,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28669,7 +28553,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28682,7 +28566,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28695,7 +28579,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28708,7 +28592,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28721,7 +28605,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28734,7 +28618,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28747,7 +28631,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28760,7 +28644,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28773,7 +28657,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28786,7 +28670,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28799,7 +28683,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28812,7 +28696,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28825,7 +28709,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28838,7 +28722,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28851,7 +28735,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28864,7 +28748,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28877,7 +28761,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28890,7 +28774,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28903,7 +28787,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28916,7 +28800,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28929,7 +28813,7 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
@@ -28942,20 +28826,20 @@
 			"attributes": {},
 			"evidence": [],
 			"metadata": {
-				"discoveredAt": "2025-12-11T03:30:25.147Z",
+				"discoveredAt": "2025-12-11T04:36:38.355Z",
 				"confidence": "high",
 				"discoveryMethod": "manual"
 			}
 		}
 	],
 	"metadata": {
-		"totalFiles": 264,
-		"discoveryDurationMs": 1273,
+		"totalFiles": 261,
+		"discoveryDurationMs": 1385,
 		"packages": [
 			"unknown",
 			"@dicee/web"
 		],
-		"gitCommit": "1159702338e80e7cacc29de6894a6bc06cefe240",
+		"gitCommit": "d7d5b12cd4784131cfc30bbbc46d8d633f9664d9",
 		"gitBranch": "main"
 	}
 }
