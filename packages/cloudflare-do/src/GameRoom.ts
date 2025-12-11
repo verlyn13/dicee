@@ -2241,6 +2241,11 @@ export class GameRoom extends DurableObject<Env> {
 		this.ctx.waitUntil(
 			(async () => {
 				try {
+					// Small delay to ensure previous turn's finally block completes
+					// This is critical for AI-to-AI transitions where the ctx.waitUntil
+					// callback starts executing before the previous turn releases turnInProgress
+					await new Promise((resolve) => setTimeout(resolve, 50));
+
 					console.log(`[GameRoom] AI turn execution starting for ${playerId}`);
 					await this.aiManager.executeAITurn(
 						playerId,
