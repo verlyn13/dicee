@@ -485,4 +485,42 @@ onMount(() => {
 			order: 1;
 		}
 	}
+
+	/* ==========================================================================
+	 * Mobile Keyboard Awareness
+	 * When virtual keyboard is open, hide non-essential elements to make room
+	 * for chat panel. User can close chat to see full spectator view.
+	 * ========================================================================== */
+	@media (max-width: 767px) {
+		:global(html.keyboard-open) .spectator-view {
+			max-height: calc(100svh - var(--keyboard-height, 0px));
+			overflow: hidden;
+		}
+
+		:global(html.keyboard-open) .spectator-layout {
+			max-height: calc(100svh - var(--keyboard-height, 0px) - 100px);
+			overflow: hidden;
+		}
+
+		:global(html.keyboard-open) .scorecards-area {
+			display: none;
+		}
+
+		:global(html.keyboard-open) .dice-display {
+			max-height: 120px;
+			overflow: hidden;
+		}
+
+		:global(html.keyboard-open) .spectator-status {
+			display: none;
+		}
+
+		:global(html.keyboard-open) .keyboard-hint {
+			display: none;
+		}
+
+		:global(html.keyboard-open) .status-sidebar {
+			display: none;
+		}
+	}
 </style>

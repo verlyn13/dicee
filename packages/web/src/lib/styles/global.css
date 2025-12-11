@@ -50,6 +50,45 @@
 }
 
 /* ==========================================================================
+ * Keyboard-Aware Layout Utilities
+ * 
+ * These utility classes provide consistent keyboard-aware behavior across
+ * components. Use these instead of duplicating :global(html.keyboard-open)
+ * rules in individual components.
+ * 
+ * Usage:
+ *   <div class="hide-on-keyboard">Hidden when keyboard open</div>
+ *   <div class="shrink-on-keyboard">Shrinks to 120px when keyboard open</div>
+ *   <div class="keyboard-aware-max-height">Respects keyboard height</div>
+ * 
+ * NOTE: These use html.keyboard-open selector for high specificity without !important.
+ * ========================================================================== */
+
+/* Hide element when keyboard is open (mobile only) */
+@media (max-width: 768px) {
+	html.keyboard-open .hide-on-keyboard {
+		display: none;
+	}
+
+	/* Reduce element height when keyboard is open */
+	html.keyboard-open .shrink-on-keyboard {
+		max-height: 120px;
+		overflow: hidden;
+	}
+
+	/* Limit container to available space above keyboard */
+	html.keyboard-open .keyboard-aware-max-height {
+		max-height: calc(100svh - var(--keyboard-height, 0px));
+		overflow: hidden;
+	}
+
+	/* Align content to top when keyboard is open (useful for centered containers) */
+	html.keyboard-open .keyboard-align-top {
+		align-items: flex-start;
+	}
+}
+
+/* ==========================================================================
  * Reset & Base
  * ========================================================================== */
 

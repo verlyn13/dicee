@@ -8,13 +8,20 @@
 	"files": {
 		"ignoreUnknown": true,
 		"includes": [
-			"**",
+			"src/**",
+			"scripts/**",
+			"*.ts",
+			"*.js",
+			"*.json",
 			"!**/node_modules",
 			"!!**/.svelte-kit",
 			"!!**/build",
+			"!!**/dist",
 			"!!**/playwright-report",
 			"!!**/test-results",
-			"!**/src/lib/wasm"
+			"!**/src/lib/wasm",
+			"!!**/static",
+			"!!**/coverage"
 		]
 	},
 	"formatter": {

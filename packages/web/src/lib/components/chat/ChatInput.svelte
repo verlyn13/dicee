@@ -43,13 +43,50 @@ function handleBlur(): void {
 
 /**
  * Scroll input into view when focused on mobile.
- * Waits for keyboard animation to complete before scrolling.
+ * Uses Visual Viewport API for precise timing instead of fixed delay.
  */
 function handleFocus(): void {
-	// Delay to allow keyboard animation to complete (typically 250-300ms)
+	// Skip on desktop (no virtual keyboard)
+	if (typeof window !== 'undefined' && window.innerWidth > 768) return;
+
+	if (typeof window === 'undefined' || !window.visualViewport) {
+		// Fallback for older browsers or SSR
+		setTimeout(() => {
+			inputElement?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+		}, 350);
+		return;
+	}
+
+	// Track resize events to detect keyboard fully open
+	let resizeCount = 0;
+	let timeoutId: ReturnType<typeof setTimeout>;
+
+	const handleResize = (): void => {
+		resizeCount++;
+		// Keyboard animation typically fires 2-3 resize events
+		// Wait for stabilization (no resize for 100ms)
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => {
+			inputElement?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+			cleanup();
+		}, 100);
+	};
+
+	const cleanup = (): void => {
+		window.visualViewport?.removeEventListener('resize', handleResize);
+		clearTimeout(timeoutId);
+	};
+
+	window.visualViewport.addEventListener('resize', handleResize);
+
+	// Cleanup after 800ms if resize never fires (keyboard already open)
 	setTimeout(() => {
-		inputElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-	}, 300);
+		if (resizeCount === 0) {
+			// Keyboard was already open, just scroll
+			inputElement?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+		}
+		cleanup();
+	}, 800);
 }
 
 /**

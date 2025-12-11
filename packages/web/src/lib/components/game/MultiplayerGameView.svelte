@@ -159,7 +159,7 @@ const keyboardNav = useKeyboardNavigation({
 	enabled: () => isMyTurn && isPlayingPhase(phase),
 });
 
-// Additional keyboard shortcut: 'C' to toggle chat
+// Keyboard shortcuts: 'C' to toggle chat, 'Escape' to close chat
 onMount(() => {
 	function handleGlobalKeydown(e: KeyboardEvent): void {
 		// Skip if typing in input
@@ -169,6 +169,12 @@ onMount(() => {
 
 		// 'C' toggles chat panel
 		if (e.key.toLowerCase() === 'c' && chatStore) {
+			e.preventDefault();
+			handleChatToggle();
+		}
+
+		// 'Escape' closes chat if open
+		if (e.key === 'Escape' && !chatCollapsed) {
 			e.preventDefault();
 			handleChatToggle();
 		}
@@ -405,8 +411,19 @@ function handleCloseGameOver(): void {
 		justify-content: center;
 		min-height: 100vh;
 		min-height: 100svh;
+		max-height: 100svh;
+		overflow-y: auto;
 		padding: var(--space-3);
 		background: var(--color-background);
+	}
+
+	/* Keyboard awareness for waiting room */
+	@media (max-width: 768px) {
+		:global(html.keyboard-open) .waiting-room-container {
+			max-height: calc(100svh - var(--keyboard-height, 0px));
+			align-items: flex-start;
+			padding-top: var(--space-2);
+		}
 	}
 
 	.multiplayer-game-view {
@@ -415,6 +432,8 @@ function handleCloseGameOver(): void {
 		/* Use svh for stable height (accounts for browser chrome) */
 		min-height: 100vh;
 		min-height: 100svh;
+		max-height: 100svh;
+		overflow: hidden;
 		background: var(--color-background);
 	}
 
@@ -522,6 +541,13 @@ function handleCloseGameOver(): void {
 	/* Hide on desktop (sidebar shows instead) */
 	@media (min-width: 768px) {
 		.mobile-player-bar {
+			display: none;
+		}
+	}
+
+	/* Hide mobile player bar when keyboard is open to save space */
+	@media (max-width: 767px) {
+		:global(html.keyboard-open) .mobile-player-bar {
 			display: none;
 		}
 	}
@@ -729,6 +755,35 @@ function handleCloseGameOver(): void {
 	/* Hide keyboard hints on mobile (no keyboard) */
 	@media (max-width: 768px) {
 		.keyboard-hints {
+			display: none;
+		}
+	}
+
+	/* ==========================================================================
+	 * Mobile Keyboard Awareness
+	 * When virtual keyboard is open, hide non-essential elements to make room
+	 * for chat panel. User can close chat to see full game view.
+	 * ========================================================================== */
+	@media (max-width: 767px) {
+		:global(html.keyboard-open) .game-layout {
+			max-height: calc(100svh - var(--keyboard-height, 0px) - 48px);
+			overflow: hidden;
+		}
+
+		:global(html.keyboard-open) .scorecard-area {
+			display: none;
+		}
+
+		:global(html.keyboard-open) .dice-area {
+			max-height: 150px;
+			overflow: hidden;
+		}
+
+		:global(html.keyboard-open) .turn-status {
+			display: none;
+		}
+
+		:global(html.keyboard-open) .sidebar {
 			display: none;
 		}
 	}

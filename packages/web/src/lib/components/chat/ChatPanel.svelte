@@ -37,6 +37,11 @@ let chatInputRef: { focus: () => void; blur: () => void } | undefined = $state()
 let isScrolledUp = $state(false);
 let hasNewMessages = $state(false);
 
+// Swipe-to-close state
+let touchStartY = 0;
+let touchDeltaY = $state(0);
+let isSwiping = false;
+
 // Auto-scroll to bottom when new messages arrive (if not scrolled up)
 $effect(() => {
 	// Trigger on messageGroups change
@@ -102,6 +107,44 @@ onMount(() => {
 	document.addEventListener('keydown', handleEscapeKey);
 	return () => document.removeEventListener('keydown', handleEscapeKey);
 });
+
+// Swipe-to-close handlers for mobile
+function handleTouchStart(e: TouchEvent): void {
+	touchStartY = e.touches[0].clientY;
+	touchDeltaY = 0;
+	isSwiping = true;
+}
+
+function handleTouchMove(e: TouchEvent): void {
+	if (!isSwiping) return;
+	const delta = e.touches[0].clientY - touchStartY;
+
+	// Only allow downward swipes
+	touchDeltaY = Math.max(0, delta);
+
+	// Apply visual feedback
+	if (panelElement && touchDeltaY > 0) {
+		panelElement.style.transform = `translateY(${touchDeltaY}px)`;
+	}
+}
+
+function handleTouchEnd(): void {
+	if (!isSwiping) return;
+	isSwiping = false;
+
+	// Reset transform
+	if (panelElement) {
+		panelElement.style.transform = '';
+	}
+
+	// If swiped down more than 80px, close the panel
+	if (touchDeltaY > 80) {
+		onToggle?.();
+		chatInputRef?.blur();
+	}
+
+	touchDeltaY = 0;
+}
 </script>
 
 <div
@@ -111,11 +154,14 @@ onMount(() => {
 	role="region"
 	aria-label="Chat"
 >
-	<!-- Header (mobile toggle) -->
+	<!-- Header (mobile toggle with swipe-to-close) -->
 	<button
 		type="button"
 		class="chat-header"
 		onclick={onToggle}
+		ontouchstart={handleTouchStart}
+		ontouchmove={handleTouchMove}
+		ontouchend={handleTouchEnd}
 		aria-expanded={!collapsed}
 		aria-controls="chat-body"
 	>
@@ -197,51 +243,49 @@ onMount(() => {
 	 * The keyboard pushes the visual viewport up, but fixed elements stay relative
 	 * to the layout viewport (which doesn't resize).
 	 *
-	 * Solution: Use bottom: var(--keyboard-height) to push the panel up when
-	 * keyboard opens. The keyboard.ts utility updates this CSS variable via
-	 * the VisualViewport API.
+	 * Solution: Use transform: translateY() instead of bottom for smoother animation.
+	 * The keyboard.ts utility updates --keyboard-height CSS variable via VisualViewport API.
 	 */
 	@media (max-width: 768px) {
 		.chat-panel {
 			position: fixed;
-			/* Key fix: bottom offset by keyboard height */
-			bottom: var(--keyboard-height, 0px);
+			bottom: 0;
 			left: 0;
 			right: 0;
-			/* Use svh for stable height (accounts for browser chrome) */
-			max-height: 60vh;
-			max-height: 60svh;
+			/* Use transform for smoother animation (GPU accelerated) */
+			transform: translateY(calc(-1 * var(--keyboard-height, 0px)));
+			/* Dynamic max-height based on available space */
+			max-height: min(60svh, calc(100svh - var(--keyboard-height, 0px) - 80px));
 			border-radius: var(--radius-md) var(--radius-md) 0 0;
-			z-index: var(--z-bottomsheet, 100);
+			z-index: var(--z-bottomsheet);
 			transition:
 				transform var(--transition-medium) ease,
-				bottom var(--transition-medium) ease,
 				max-height var(--transition-medium) ease;
 			box-shadow: var(--shadow-brutal-lg);
 			/* Safe area for notched devices (home indicator) */
 			padding-bottom: env(safe-area-inset-bottom, 0px);
+			/* GPU acceleration hint */
+			will-change: transform, max-height;
 		}
 
 		.chat-panel.collapsed {
 			transform: translateY(calc(100% - 48px));
 		}
 
-		/* When keyboard is open, reduce max-height significantly
-		 * to leave room for game view above.
-		 * Uses calc to account for keyboard height dynamically.
-		 */
+		/* When keyboard open AND collapsed, account for keyboard offset */
+		:global(html.keyboard-open) .chat-panel.collapsed {
+			transform: translateY(calc(100% - 48px - var(--keyboard-height, 0px)));
+		}
+
+		/* When keyboard is open, reduce max-height to leave room for game view */
 		:global(html.keyboard-open) .chat-panel {
-			/* Calculate available height: viewport - keyboard - safe area */
-			max-height: calc(100svh - var(--keyboard-height, 0px) - 60px);
-			/* Fallback for older browsers */
-			max-height: 40vh;
-			/* Cap at reasonable size even if calculation allows more */
-			max-height: min(40svh, calc(100svh - var(--keyboard-height, 0px) - 60px));
+			max-height: min(45svh, calc(100svh - var(--keyboard-height, 0px) - 60px));
 		}
 
 		/* Reduce messages container when keyboard is open */
 		:global(html.keyboard-open) .messages-container {
-			max-height: 120px;
+			max-height: 100px;
+			min-height: 60px;
 		}
 	}
 
@@ -258,7 +302,11 @@ onMount(() => {
 		color: var(--color-text);
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-wide);
-		touch-action: manipulation;
+		/* Allow vertical touch gestures for swipe-to-close */
+		touch-action: pan-y;
+		/* Prevent text selection during swipe */
+		user-select: none;
+		-webkit-user-select: none;
 	}
 
 	.chat-title {
