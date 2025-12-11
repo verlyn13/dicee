@@ -36,6 +36,9 @@
     "audio:list": "bun run packages/web/src/tools/audio-gen/cli/generate.ts --list",
     "audio:status": "bun run packages/web/src/tools/audio-gen/cli/generate.ts --status",
     "audio:gen": "bun run packages/web/src/tools/audio-gen/cli/generate.ts",
+    "sim:run": "pnpm --filter @dicee/simulation sim:run",
+    "sim:bench": "pnpm --filter @dicee/simulation sim:bench",
+    "sim:test": "pnpm --filter @dicee/simulation test",
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {

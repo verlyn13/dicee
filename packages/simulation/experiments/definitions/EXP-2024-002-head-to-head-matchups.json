@@ -1,0 +1,251 @@
+{
+  "id": "EXP-2024-002",
+  "version": "1.0.0",
+  "status": "DRAFT",
+  "title": "Head-to-Head Matchup Analysis: Competitive Strategy Dynamics",
+  "description": "Tests how strategies perform in direct competition. While EXP-2024-001 establishes solo performance, this experiment examines whether rankings hold in head-to-head play and measures win rates, score differentials, and competitive dynamics.",
+  "type": "MATCHUP_ANALYSIS",
+  "author": "simulation-framework",
+  "createdAt": "2024-12-10T00:00:00Z",
+  "tags": ["matchup", "head-to-head", "competitive", "phase-1"],
+
+  "lineage": [
+    {
+      "experimentId": "EXP-2024-001",
+      "version": "1.0.0",
+      "relationship": "extends",
+      "findings": "Established baseline solo performance: optimal ~185, professor ~180, carmen ~145, random ~120"
+    }
+  ],
+
+  "assumptions": [
+    "Solo performance is predictive of head-to-head capability",
+    "Win rate is approximately determined by relative skill",
+    "Two-player games have minimal meta-game effects",
+    "Order of play (first vs second) has negligible effect"
+  ],
+
+  "limitations": [
+    "Two-player dynamics may differ from 4-player",
+    "Doesn't test adaptation to specific opponent",
+    "Win rate may be noisy for closely-matched strategies"
+  ],
+
+  "hypotheses": [
+    {
+      "id": "H1",
+      "null": "Optimal brain has 50% win rate against professor",
+      "alternative": "Optimal brain has greater than 50% win rate against professor",
+      "metric": "win_rate",
+      "compareConditions": ["C01-optimal-vs-professor"],
+      "direction": "greater",
+      "expectedEffectSize": 0.3,
+      "test": "chi-square",
+      "alpha": 0.05,
+      "power": 0.80,
+      "rationale": "Pure EV should have slight edge over personality-influenced decisions"
+    },
+    {
+      "id": "H2",
+      "null": "Professor has 50% win rate against carmen",
+      "alternative": "Professor has greater than 50% win rate against carmen",
+      "metric": "win_rate",
+      "compareConditions": ["C02-professor-vs-carmen"],
+      "direction": "greater",
+      "expectedEffectSize": 0.6,
+      "test": "chi-square",
+      "alpha": 0.05,
+      "power": 0.80,
+      "rationale": "Analytical play should consistently beat risk-seeking in expectation"
+    },
+    {
+      "id": "H3",
+      "null": "Optimal mirror match produces 50% win rate for player 1",
+      "alternative": "Optimal mirror match win rate differs from 50%",
+      "metric": "win_rate",
+      "compareConditions": ["C03-optimal-mirror"],
+      "direction": "not-equal",
+      "expectedEffectSize": 0.1,
+      "test": "chi-square",
+      "alpha": 0.05,
+      "power": 0.80,
+      "rationale": "Validates that first/second player has no systematic advantage"
+    },
+    {
+      "id": "H4",
+      "null": "Score differential in optimal vs random is zero",
+      "alternative": "Score differential in optimal vs random is positive",
+      "metric": "total_score",
+      "compareConditions": ["C04-optimal-vs-random"],
+      "direction": "greater",
+      "expectedEffectSize": 2.5,
+      "test": "t-test-paired",
+      "alpha": 0.05,
+      "power": 0.99,
+      "rationale": "Optimal should dominate random; validates competitive matchup coding"
+    }
+  ],
+
+  "conditions": [
+    {
+      "conditionId": "C01-optimal-vs-professor",
+      "name": "Optimal vs Professor",
+      "description": "Pure EV against analytical personality",
+      "players": [
+        {
+          "playerId": "optimal",
+          "strategy": "optimal",
+          "label": "optimal"
+        },
+        {
+          "playerId": "professor",
+          "strategy": "personality",
+          "profile": "professor",
+          "label": "professor"
+        }
+      ],
+      "matchupType": "head-to-head",
+      "gameCount": 2000,
+      "factorLabels": {
+        "matchup": "optimal-vs-professor",
+        "matchup_class": "strong-vs-strong"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C02-professor-vs-carmen",
+      "name": "Professor vs Carmen",
+      "description": "Analytical vs risk-seeking personalities",
+      "players": [
+        {
+          "playerId": "professor",
+          "strategy": "personality",
+          "profile": "professor",
+          "label": "professor"
+        },
+        {
+          "playerId": "carmen",
+          "strategy": "personality",
+          "profile": "carmen",
+          "label": "carmen"
+        }
+      ],
+      "matchupType": "head-to-head",
+      "gameCount": 2000,
+      "factorLabels": {
+        "matchup": "professor-vs-carmen",
+        "matchup_class": "personality-contrast"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C03-optimal-mirror",
+      "name": "Optimal Mirror Match",
+      "description": "Optimal vs optimal - control for player order effects",
+      "players": [
+        {
+          "playerId": "optimal-p1",
+          "strategy": "optimal",
+          "label": "optimal-p1"
+        },
+        {
+          "playerId": "optimal-p2",
+          "strategy": "optimal",
+          "label": "optimal-p2"
+        }
+      ],
+      "matchupType": "mirror",
+      "gameCount": 2000,
+      "factorLabels": {
+        "matchup": "optimal-mirror",
+        "matchup_class": "control"
+      },
+      "isControl": true
+    },
+    {
+      "conditionId": "C04-optimal-vs-random",
+      "name": "Optimal vs Random",
+      "description": "Skill ceiling vs floor comparison",
+      "players": [
+        {
+          "playerId": "optimal",
+          "strategy": "optimal",
+          "label": "optimal"
+        },
+        {
+          "playerId": "random",
+          "strategy": "random",
+          "label": "random"
+        }
+      ],
+      "matchupType": "head-to-head",
+      "gameCount": 1000,
+      "factorLabels": {
+        "matchup": "optimal-vs-random",
+        "matchup_class": "ceiling-floor"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C05-riley-vs-liam",
+      "name": "Riley vs Liam",
+      "description": "Adaptive vs conservative personalities",
+      "players": [
+        {
+          "playerId": "riley",
+          "strategy": "personality",
+          "profile": "riley",
+          "label": "riley"
+        },
+        {
+          "playerId": "liam",
+          "strategy": "personality",
+          "profile": "liam",
+          "label": "liam"
+        }
+      ],
+      "matchupType": "head-to-head",
+      "gameCount": 2000,
+      "factorLabels": {
+        "matchup": "riley-vs-liam",
+        "matchup_class": "personality-contrast"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C06-carmen-vs-charlie",
+      "name": "Carmen vs Charlie",
+      "description": "Risk-seeking vs chaotic - high variance matchup",
+      "players": [
+        {
+          "playerId": "carmen",
+          "strategy": "personality",
+          "profile": "carmen",
+          "label": "carmen"
+        },
+        {
+          "playerId": "charlie",
+          "strategy": "personality",
+          "profile": "charlie",
+          "label": "charlie"
+        }
+      ],
+      "matchupType": "head-to-head",
+      "gameCount": 2000,
+      "factorLabels": {
+        "matchup": "carmen-vs-charlie",
+        "matchup_class": "high-variance"
+      },
+      "isControl": false
+    }
+  ],
+
+  "granularity": "game",
+  "masterSeed": 20241211,
+  "minGamesPerCondition": 1000,
+  "balancedDesign": true,
+  "multipleComparisonCorrection": "holm",
+  "outputDir": "results/EXP-2024-002",
+  "captureDecisions": false,
+  "progressInterval": 100
+}

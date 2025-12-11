@@ -1,0 +1,16 @@
+# Results and output data
+results/
+*.ndjson
+*.parquet
+
+# Test output
+test-output/
+
+# Build artifacts
+dist/
+
+# Node modules (handled by root)
+node_modules/
+
+# Logs
+*.log

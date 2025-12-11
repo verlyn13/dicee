@@ -1,0 +1,263 @@
+{
+  "id": "EXP-2024-001",
+  "version": "1.0.0",
+  "status": "APPROVED",
+  "title": "Baseline Calibration: Core Brain Performance Characterization",
+  "description": "Establishes baseline performance metrics for all core brain types (optimal, probabilistic, personality variants, random). This foundational experiment provides reference distributions against which all future strategies will be compared. Uses solo play to isolate pure strategy performance without opponent effects.",
+  "type": "CALIBRATION",
+  "author": "simulation-framework",
+  "createdAt": "2024-12-10T00:00:00Z",
+  "tags": ["baseline", "calibration", "core-brains", "phase-1"],
+
+  "lineage": [],
+
+  "assumptions": [
+    "Each game is statistically independent given different seeds",
+    "Brain implementations are deterministic given the same RNG state",
+    "Score distributions are approximately normal for sufficient sample sizes",
+    "Solo play reflects inherent strategy quality without opponent interaction effects"
+  ],
+
+  "limitations": [
+    "Solo play may not predict head-to-head performance",
+    "Personality brains have internal randomness that increases variance",
+    "Does not test adaptation to opponent behavior"
+  ],
+
+  "hypotheses": [
+    {
+      "id": "H1",
+      "null": "The optimal brain produces the same mean score as the random brain",
+      "alternative": "The optimal brain produces a higher mean score than the random brain",
+      "metric": "total_score",
+      "compareConditions": ["C01-optimal-solo", "C04-random-solo"],
+      "direction": "greater",
+      "expectedEffectSize": 2.0,
+      "test": "t-test-independent",
+      "alpha": 0.05,
+      "power": 0.95,
+      "rationale": "Optimal play should dramatically outperform random; this validates basic brain functionality"
+    },
+    {
+      "id": "H2",
+      "null": "The professor personality produces the same mean score as carmen",
+      "alternative": "The professor personality produces a higher mean score than carmen",
+      "metric": "total_score",
+      "compareConditions": ["C05-professor-solo", "C06-carmen-solo"],
+      "direction": "greater",
+      "expectedEffectSize": 0.8,
+      "test": "t-test-independent",
+      "alpha": 0.05,
+      "power": 0.80,
+      "rationale": "Professor is designed as analytical/optimal-leaning; should outperform risk-seeking carmen"
+    },
+    {
+      "id": "H3",
+      "null": "All personality profiles have equal score variance",
+      "alternative": "Carmen has higher score variance than professor",
+      "metric": "score_variance",
+      "compareConditions": ["C05-professor-solo", "C06-carmen-solo"],
+      "direction": "greater",
+      "expectedEffectSize": 0.5,
+      "test": "mann-whitney",
+      "alpha": 0.05,
+      "power": 0.80,
+      "rationale": "Risk-seeking behavior should produce more variable outcomes"
+    },
+    {
+      "id": "H4",
+      "null": "Optimal brain achieves upper bonus at the same rate as random",
+      "alternative": "Optimal brain achieves upper bonus at a higher rate than random",
+      "metric": "upper_bonus_rate",
+      "compareConditions": ["C01-optimal-solo", "C04-random-solo"],
+      "direction": "greater",
+      "expectedEffectSize": 1.5,
+      "test": "chi-square",
+      "alpha": 0.05,
+      "power": 0.90,
+      "rationale": "Optimal strategy should prioritize the valuable 35-point bonus"
+    }
+  ],
+
+  "conditions": [
+    {
+      "conditionId": "C01-optimal-solo",
+      "name": "Optimal Brain Solo",
+      "description": "Pure EV-maximizing brain in solo play",
+      "players": [
+        {
+          "playerId": "p1",
+          "strategy": "optimal",
+          "label": "optimal"
+        }
+      ],
+      "matchupType": "solo",
+      "gameCount": 1000,
+      "factorLabels": {
+        "strategy": "optimal",
+        "matchup": "solo",
+        "brain_class": "core"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C02-probabilistic-solo",
+      "name": "Probabilistic Brain Solo",
+      "description": "Weighted random based on EV in solo play",
+      "players": [
+        {
+          "playerId": "p1",
+          "strategy": "probabilistic",
+          "label": "probabilistic"
+        }
+      ],
+      "matchupType": "solo",
+      "gameCount": 1000,
+      "factorLabels": {
+        "strategy": "probabilistic",
+        "matchup": "solo",
+        "brain_class": "core"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C03-personality-riley-solo",
+      "name": "Riley Personality Solo",
+      "description": "Balanced, adaptive personality in solo play",
+      "players": [
+        {
+          "playerId": "p1",
+          "strategy": "personality",
+          "profile": "riley",
+          "label": "riley"
+        }
+      ],
+      "matchupType": "solo",
+      "gameCount": 1000,
+      "factorLabels": {
+        "strategy": "personality",
+        "profile": "riley",
+        "matchup": "solo",
+        "brain_class": "personality"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C04-random-solo",
+      "name": "Random Brain Solo (Control)",
+      "description": "Uniform random decisions - baseline control",
+      "players": [
+        {
+          "playerId": "p1",
+          "strategy": "random",
+          "label": "random"
+        }
+      ],
+      "matchupType": "solo",
+      "gameCount": 1000,
+      "factorLabels": {
+        "strategy": "random",
+        "matchup": "solo",
+        "brain_class": "control"
+      },
+      "isControl": true
+    },
+    {
+      "conditionId": "C05-professor-solo",
+      "name": "Professor Personality Solo",
+      "description": "Analytical, optimal-leaning personality in solo play",
+      "players": [
+        {
+          "playerId": "p1",
+          "strategy": "personality",
+          "profile": "professor",
+          "label": "professor"
+        }
+      ],
+      "matchupType": "solo",
+      "gameCount": 1000,
+      "factorLabels": {
+        "strategy": "personality",
+        "profile": "professor",
+        "matchup": "solo",
+        "brain_class": "personality"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C06-carmen-solo",
+      "name": "Carmen Personality Solo",
+      "description": "Risk-seeking, aggressive personality in solo play",
+      "players": [
+        {
+          "playerId": "p1",
+          "strategy": "personality",
+          "profile": "carmen",
+          "label": "carmen"
+        }
+      ],
+      "matchupType": "solo",
+      "gameCount": 1000,
+      "factorLabels": {
+        "strategy": "personality",
+        "profile": "carmen",
+        "matchup": "solo",
+        "brain_class": "personality"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C07-liam-solo",
+      "name": "Liam Personality Solo",
+      "description": "Conservative, safe-playing personality in solo play",
+      "players": [
+        {
+          "playerId": "p1",
+          "strategy": "personality",
+          "profile": "liam",
+          "label": "liam"
+        }
+      ],
+      "matchupType": "solo",
+      "gameCount": 1000,
+      "factorLabels": {
+        "strategy": "personality",
+        "profile": "liam",
+        "matchup": "solo",
+        "brain_class": "personality"
+      },
+      "isControl": false
+    },
+    {
+      "conditionId": "C08-charlie-solo",
+      "name": "Charlie Personality Solo",
+      "description": "Chaotic, unpredictable personality in solo play",
+      "players": [
+        {
+          "playerId": "p1",
+          "strategy": "personality",
+          "profile": "charlie",
+          "label": "charlie"
+        }
+      ],
+      "matchupType": "solo",
+      "gameCount": 1000,
+      "factorLabels": {
+        "strategy": "personality",
+        "profile": "charlie",
+        "matchup": "solo",
+        "brain_class": "personality"
+      },
+      "isControl": false
+    }
+  ],
+
+  "granularity": "game",
+  "masterSeed": 20241210,
+  "minGamesPerCondition": 1000,
+  "balancedDesign": true,
+  "multipleComparisonCorrection": "holm",
+  "outputDir": "results/EXP-2024-001",
+  "captureDecisions": false,
+  "progressInterval": 100
+}
