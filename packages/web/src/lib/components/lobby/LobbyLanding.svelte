@@ -2,10 +2,10 @@
 /**
  * LobbyLanding - Main lobby landing page component
  *
- * Redesigned UX with three clear entry points:
- * 1. QUICK PLAY - Start immediately vs AI (default: Carmen)
- * 2. PLAY WITH FRIENDS - Create/join private room
- * 3. PRACTICE - Solo mode for learning (no opponent)
+ * Three clear game mode entry points:
+ * 1. SOLO - Practice mode, single player (no opponents)
+ * 2. QUICK PLAY - 1-3 AI opponents, skips waiting room
+ * 3. MULTIPLAYER - Create/join rooms with humans and/or AI
  *
  * Also shows:
  * - Open games browser
@@ -33,7 +33,7 @@ let settingsOpen = $state(false);
 
 // Quick Play AI selector state
 let showAISelector = $state(false);
-let selectedAIProfile = $state<string>('carmen');
+let selectedAIProfiles = $state<string[]>(['carmen']);
 let quickPlayLoading = $state(false);
 
 // Derive display name from user object
@@ -86,8 +86,8 @@ onMount(() => {
 });
 
 /**
- * QUICK PLAY - Start a game vs AI immediately
- * Creates room, adds AI, and starts game
+ * QUICK PLAY - Start a game with 1-3 AI opponents immediately
+ * Shows AI selector, then creates room, adds AI, and starts game
  */
 async function handleQuickPlay() {
 	if (!auth.isAuthenticated) {
@@ -116,10 +116,10 @@ async function startQuickPlayWithAI() {
 			code += chars[Math.floor(Math.random() * chars.length)];
 		}
 
-		console.log('[QuickPlay] Starting with AI:', selectedAIProfile, 'Room:', code);
+		console.log('[QuickPlay] Starting with AI:', selectedAIProfiles, 'Room:', code);
 
-		// Store AI profile to add after connecting
-		sessionStorage.setItem('quickplay_ai_profile', selectedAIProfile);
+		// Store AI profiles to add after connecting (JSON array for multi-AI)
+		sessionStorage.setItem('quickplay_ai_profiles', JSON.stringify(selectedAIProfiles));
 		sessionStorage.setItem('quickplay_auto_start', 'true');
 
 		// Navigate to room - the room page will handle adding AI and starting
@@ -131,7 +131,7 @@ async function startQuickPlayWithAI() {
 }
 
 /**
- * PLAY WITH FRIENDS - Show create/join options
+ * MULTIPLAYER - Show create/join room options
  */
 function handlePlayWithFriends() {
 	if (!auth.isAuthenticated) {
@@ -163,17 +163,17 @@ function handleJoinRoom(code: string) {
 }
 
 /**
- * PRACTICE - Solo mode for learning
+ * SOLO - Single player practice mode
  */
 function handlePractice() {
 	goto('/games/dicee?mode=solo');
 }
 
 /**
- * Handle AI profile selection in quick play
+ * Handle AI profile selection in quick play (multi-select)
  */
-function handleAISelect(profileId: string) {
-	selectedAIProfile = profileId;
+function handleAISelect(profileIds: string[]) {
+	selectedAIProfiles = profileIds;
 }
 
 /**
@@ -263,25 +263,25 @@ function handleDeclineInvite(inviteId: string) {
 
 	<!-- Game Mode Cards -->
 	<section class="mode-cards">
-		<!-- Quick Play - Primary Action -->
-		<button class="mode-card mode-card--primary" onclick={handleQuickPlay}>
-			<span class="mode-icon">🎲</span>
-			<span class="mode-title">QUICK PLAY</span>
-			<span class="mode-subtitle">vs AI opponent</span>
+		<!-- Solo - Practice your skills -->
+		<button class="mode-card mode-card--tertiary" onclick={handlePractice}>
+			<span class="mode-icon">👤</span>
+			<span class="mode-title">SOLO</span>
+			<span class="mode-subtitle">Practice your skills</span>
 		</button>
 
-		<!-- Play with Friends -->
+		<!-- Quick Play - AI opponents -->
+		<button class="mode-card mode-card--primary" onclick={handleQuickPlay}>
+			<span class="mode-icon">🤖</span>
+			<span class="mode-title">QUICK PLAY</span>
+			<span class="mode-subtitle">Play against AI</span>
+		</button>
+
+		<!-- Multiplayer - Compete with friends -->
 		<button class="mode-card mode-card--secondary" onclick={handlePlayWithFriends}>
 			<span class="mode-icon">👥</span>
-			<span class="mode-title">FRIENDS</span>
-			<span class="mode-subtitle">Create or join room</span>
-		</button>
-
-		<!-- Practice Mode -->
-		<button class="mode-card mode-card--tertiary" onclick={handlePractice}>
-			<span class="mode-icon">📚</span>
-			<span class="mode-title">PRACTICE</span>
-			<span class="mode-subtitle">Learn the rules</span>
+			<span class="mode-title">MULTIPLAYER</span>
+			<span class="mode-subtitle">Compete with friends</span>
 		</button>
 	</section>
 
@@ -379,8 +379,12 @@ function handleDeclineInvite(inviteId: string) {
 			</header>
 
 			<div class="modal-body">
-				<p class="modal-description">Choose your AI opponent:</p>
-				<AIOpponentSelector selected={selectedAIProfile} onSelect={handleAISelect} />
+				<p class="modal-description">Choose 1-3 AI opponents:</p>
+				<AIOpponentSelector
+					selected={selectedAIProfiles}
+					onSelect={handleAISelect}
+					maxSelection={3}
+				/>
 			</div>
 
 			<footer class="modal-footer">

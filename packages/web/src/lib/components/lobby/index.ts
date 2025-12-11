@@ -19,7 +19,6 @@ export { default as JoinRoomModal } from './JoinRoomModal.svelte';
 export { default as LobbyLanding } from './LobbyLanding.svelte';
 export { default as MobileTabToggle } from './MobileTabToggle.svelte';
 export { default as PlayerListItem } from './PlayerListItem.svelte';
-export { default as PlayVsAIButton } from './PlayVsAIButton.svelte';
 export { default as RoomCard } from './RoomCard.svelte';
 export { default as RoomLobby } from './RoomLobby.svelte';
 export { default as Ticker } from './Ticker.svelte';

@@ -10,8 +10,10 @@ import { onDestroy, onMount } from 'svelte';
 import { ChatPanel } from '$lib/components/chat';
 import { DiceTray } from '$lib/components/dice';
 import { RoomLobby } from '$lib/components/lobby';
+import { SettingsButton, SettingsPanel } from '$lib/components/settings';
 import { KEY_BINDINGS, useKeyboardNavigation } from '$lib/hooks/useKeyboardNavigation.svelte';
 import { analyzeTurnOptimal, isEngineReady, preloadEngine } from '$lib/services/engine';
+import { audioStore } from '$lib/stores/audio.svelte';
 import type { ChatStore } from '$lib/stores/chat.svelte';
 import type { MultiplayerGameStore } from '$lib/stores/multiplayerGame.svelte';
 import type { Category as CoreCategory, DiceArray, DieValue, TurnAnalysis } from '$lib/types';
@@ -148,6 +150,33 @@ function handleChatToggle(): void {
 	chatCollapsed = !chatCollapsed;
 }
 
+// Settings panel state
+let settingsOpen = $state(false);
+
+function handleOpenSettings(): void {
+	settingsOpen = true;
+}
+
+function handleCloseSettings(): void {
+	settingsOpen = false;
+}
+
+function handleVolumeChange(volume: number): void {
+	audioStore.setMasterVolume(volume / 100); // Convert 0-100 to 0-1
+}
+
+function handleMuteChange(muted: boolean): void {
+	audioStore.setMuted(muted);
+}
+
+function handleHapticsChange(enabled: boolean): void {
+	audioStore.setHapticsEnabled(enabled);
+}
+
+function handleResetSettings(): void {
+	audioStore.resetToDefaults();
+}
+
 // Keyboard navigation for game controls (only active when it's my turn and game is in playing phase)
 const keyboardNav = useKeyboardNavigation({
 	onRoll: handleRoll,
@@ -265,7 +294,7 @@ function handleCloseGameOver(): void {
 				← Leave
 			</button>
 			<div class="game-info">
-				<span class="room-code">{gameState?.roomCode ?? '----'}</span>
+				<SettingsButton onclick={handleOpenSettings} isOpen={settingsOpen} />
 				<span class="round-badge">R{roundNumber}/13</span>
 				{#if chatStore}
 					<button
@@ -392,6 +421,30 @@ function handleCloseGameOver(): void {
 			<ChatPanel collapsed={chatCollapsed} onToggle={handleChatToggle} />
 		{/if}
 
+		<!-- Settings Panel -->
+		{#if settingsOpen}
+			<div class="settings-overlay" role="presentation">
+				<button
+					type="button"
+					class="settings-backdrop"
+					onclick={handleCloseSettings}
+					aria-label="Close settings"
+				></button>
+				<div class="settings-container">
+					<SettingsPanel
+						masterVolume={Math.round(audioStore.masterVolume * 100)}
+						muted={audioStore.isMuted}
+						hapticsEnabled={audioStore.hapticsEnabled}
+						onVolumeChange={handleVolumeChange}
+						onMuteChange={handleMuteChange}
+						onHapticsChange={handleHapticsChange}
+						onReset={handleResetSettings}
+						onClose={handleCloseSettings}
+					/>
+				</div>
+			</div>
+		{/if}
+
 		<!-- Game Over Modal -->
 		{#if isGameOver && rankings}
 			<MultiplayerGameOverModal
@@ -507,16 +560,6 @@ function handleCloseGameOver(): void {
 		display: flex;
 		align-items: center;
 		gap: var(--space-2);
-	}
-
-	.room-code {
-		font-family: var(--font-mono);
-		font-size: var(--text-body);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wider);
-		padding: var(--space-1) var(--space-2);
-		background: var(--color-background);
-		border: var(--border-thin);
 	}
 
 	.round-badge {
@@ -709,6 +752,8 @@ function handleCloseGameOver(): void {
 	.scorecard-area {
 		display: flex;
 		flex-direction: column;
+		overflow-y: auto;
+		min-height: 0;
 	}
 
 	/* Mobile: Scorecard below dice */
@@ -786,5 +831,28 @@ function handleCloseGameOver(): void {
 		:global(html.keyboard-open) .sidebar {
 			display: none;
 		}
+	}
+
+	/* Settings Overlay */
+	.settings-overlay {
+		position: fixed;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+	}
+
+	.settings-backdrop {
+		position: absolute;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.4);
+		border: none;
+		cursor: pointer;
+	}
+
+	.settings-container {
+		position: relative;
+		z-index: 1;
 	}
 </style>

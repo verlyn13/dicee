@@ -3,7 +3,7 @@
  * JoinRoomModal - Modal for joining an existing room
  *
  * Input field for room code with validation.
- * Part of the "Play with Friends" flow.
+ * Part of the Multiplayer flow.
  */
 
 interface Props {

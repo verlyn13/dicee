@@ -3,7 +3,7 @@
  * CreateRoomModal - Modal for creating a new room
  *
  * Shows room code with copy functionality and invite link.
- * Part of the "Play with Friends" flow.
+ * Part of the Multiplayer flow.
  */
 
 interface Props {
@@ -45,7 +45,7 @@ function handleKeydown(event: KeyboardEvent) {
 	>
 		<div class="modal-content">
 			<header class="modal-header">
-				<h2 id="create-modal-title" class="modal-title">Play with Friends</h2>
+				<h2 id="create-modal-title" class="modal-title">Multiplayer</h2>
 				<button type="button" class="modal-close" onclick={onClose} aria-label="Close">
 					✕
 				</button>

@@ -2,19 +2,21 @@
 /**
  * /games/dicee - Solo Game Route
  *
- * Mode selection and solo game play.
- * Shows GameGateway for mode selection, then inline solo game when selected.
- * If ?mode=solo query param is present, skips gateway and starts immediately.
+ * Direct solo game play without mode selection.
+ * Mode selection is handled by LobbyLanding at the root path.
+ *
+ * Entry points:
+ * - /games/dicee - Solo game
+ * - /games/dicee?mode=solo - Same (backward compatibility)
  */
 
 import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
-import { page } from '$app/stores';
 import { DiceTray } from '$lib/components/dice/index.js';
-import { GameGateway, GameOverModal } from '$lib/components/game/index.js';
+import { GameOverModal } from '$lib/components/game/index.js';
 import { GameStatus, KeyboardHelp, StatsToggle } from '$lib/components/hud/index.js';
-import { AIOpponentSelector } from '$lib/components/lobby/index.js';
 import { Scorecard } from '$lib/components/scorecard/index.js';
+import { SettingsButton, SettingsPanel } from '$lib/components/settings';
 import {
 	trackCategoryScore,
 	trackDecisionQuality,
@@ -24,24 +26,21 @@ import {
 	useKeyboardNavigation,
 } from '$lib/hooks/index.js';
 import { analyzeTurnOptimal, initializeEngine } from '$lib/services/engine.js';
+import { audioStore } from '$lib/stores/audio.svelte';
 import { game } from '$lib/stores/game.svelte.js';
 import type {
 	Category,
-	CategoryAnalysis,
 	CategoryProbability,
 	ScoringResult,
 	StatsProfile,
 	TurnAnalysis,
 } from '$lib/types.js';
 
-// View state - check if we should skip gateway (e.g., came from lobby SOLO button)
-const mode = $derived($page.url.searchParams.get('mode'));
-const skipGateway = $derived(mode === 'solo');
-const showAISelector = $derived(mode === 'ai');
-let showGateway = $state(true);
-let showAIModal = $state(false);
-let selectedAIProfile = $state<string>('carmen');
+// Engine ready state
 let ready = $state(false);
+
+// Settings panel state
+let settingsOpen = $state(false);
 
 // Game state (M1-M4 turn analysis)
 let currentAnalysis = $state<TurnAnalysis | null>(null);
@@ -66,8 +65,6 @@ const probabilities = $derived<CategoryProbability[]>(
 	})) ?? [],
 );
 
-const bestEV = $derived(currentAnalysis?.expectedValue ?? 0);
-
 // Derived from game state
 const dice = $derived(game.dice.values);
 const kept = $derived(game.dice.kept);
@@ -88,7 +85,7 @@ const upperTotal = $derived(game.scorecard.upperTotal);
 const lowerTotal = $derived(game.scorecard.lowerTotal);
 const grandTotal = $derived(game.scorecard.grandTotal);
 
-// Keyboard navigation - use getter to capture current showGateway value
+// Keyboard navigation
 const canKeep = $derived(game.rollNumber > 0 && rollsRemaining > 0);
 useKeyboardNavigation({
 	onRoll: () => doRoll(),
@@ -97,55 +94,18 @@ useKeyboardNavigation({
 	onReleaseAll: () => releaseAll(),
 	canRoll: () => canRoll && !rolling,
 	canKeep: () => canKeep && !isGameOver,
-	enabled: true, // Always enabled, handlers check showGateway
+	enabled: true,
 });
 
 onMount(async () => {
 	await initializeEngine();
 	ready = true;
-
-	// Auto-start if mode=solo query param (user clicked SOLO from lobby)
-	if (skipGateway) {
-		handleStartSolo();
-	}
-	// Show AI selector if mode=ai
-	if (showAISelector) {
-		showAIModal = true;
-	}
-});
-
-function handleStartSolo() {
-	showGateway = false;
+	// Start the solo game immediately
 	game.startGame();
 	trackGameStart('solo', 1);
-	// Don't auto-roll - let player click to start their turn
-}
-
-function handleStartAI() {
-	// Redirect to lobby to create a multiplayer room with AI
-	// The user can add AI opponents in the waiting room
-	goto('/lobby?action=create');
-}
-
-function handleAIProfileSelect(profileId: string) {
-	selectedAIProfile = profileId;
-}
-
-function handleStartAIGame() {
-	// Redirect to lobby to create a multiplayer room with AI
-	goto('/lobby?action=create');
-}
-
-function handleCloseAIModal() {
-	showAIModal = false;
-	if (showAISelector) {
-		// If we came from ?mode=ai, redirect to lobby
-		goto('/lobby?action=create');
-	}
-}
+});
 
 async function doRoll() {
-	if (showGateway) return;
 	if (!canRoll) return;
 
 	rolling = true;
@@ -175,20 +135,17 @@ async function updateAnalysis() {
 }
 
 function toggleKeep(index: number) {
-	if (showGateway) return;
 	if (game.rollNumber === 0 || rollsRemaining === 0) return;
 	game.dice.toggleKeep(index);
 	updateAnalysis();
 }
 
 function keepAll() {
-	if (showGateway) return;
 	game.dice.keepAll();
 	updateAnalysis();
 }
 
 function releaseAll() {
-	if (showGateway) return;
 	game.dice.releaseAll();
 	updateAnalysis();
 }
@@ -213,13 +170,11 @@ function scoreCategory(category: Category) {
 	if (isGameOver) {
 		trackGameComplete(grandTotal);
 	}
-	// Don't auto-roll next turn - let player click to start
 }
 
 function newGame() {
 	game.startGame();
 	trackGameStart('solo', 1);
-	// Don't auto-roll - let player click to start their turn
 }
 
 function handleStatsToggle() {
@@ -230,30 +185,26 @@ function handleProfileChange(profile: StatsProfile) {
 	game.setStatsProfile(profile);
 }
 
-function handleBackdropClick(event: MouseEvent) {
-	if (event.target === event.currentTarget) {
-		handleCloseAIModal();
-	}
-}
-
-function handleBackToGateway() {
-	showGateway = true;
-	// Reset game state for fresh start
-	game.startGame();
+function handleBackToLobby() {
+	goto('/');
 }
 </script>
 
 <svelte:head>
-	<title>Play Dicee</title>
+	<title>Solo Game | Dicee</title>
 </svelte:head>
 
-{#if showGateway}
-	<GameGateway onStartSolo={handleStartSolo} onStartAI={handleStartAI} />
+{#if !ready}
+	<div class="loading-state">
+		<div class="loading-content">
+			<p class="loading-text">Loading game...</p>
+		</div>
+	</div>
 {:else}
 	<div class="game-container">
 		<!-- Header -->
 		<header class="game-header">
-			<button class="back-button" onclick={handleBackToGateway} aria-label="Back to mode selection">
+			<button class="back-button" onclick={handleBackToLobby} aria-label="Back to lobby">
 				<svg
 					viewBox="0 0 24 24"
 					fill="none"
@@ -266,12 +217,7 @@ function handleBackToGateway() {
 					<polyline points="12 19 5 12 12 5" />
 				</svg>
 			</button>
-			<GameStatus
-				{turnNumber}
-				{grandTotal}
-				{isGameOver}
-				onNewGame={newGame}
-			/>
+			<GameStatus {turnNumber} {grandTotal} {isGameOver} onNewGame={newGame} />
 			<div class="header-actions">
 				<StatsToggle
 					enabled={statsEnabled}
@@ -279,9 +225,26 @@ function handleBackToGateway() {
 					onToggle={handleStatsToggle}
 					onProfileChange={handleProfileChange}
 				/>
+				<SettingsButton onclick={() => (settingsOpen = !settingsOpen)} isOpen={settingsOpen} />
 				<KeyboardHelp />
 			</div>
 		</header>
+
+		<!-- Settings Panel (positioned absolutely) -->
+		{#if settingsOpen}
+			<div class="settings-dropdown">
+				<SettingsPanel
+					masterVolume={Math.round(audioStore.masterVolume * 100)}
+					muted={audioStore.isMuted}
+					hapticsEnabled={audioStore.hapticsEnabled}
+					onVolumeChange={(v) => audioStore.setMasterVolume(v / 100)}
+					onMuteChange={(m) => audioStore.setMuted(m)}
+					onHapticsChange={(e) => audioStore.setHapticsEnabled(e)}
+					onReset={() => audioStore.resetToDefaults()}
+					onClose={() => (settingsOpen = false)}
+				/>
+			</div>
+		{/if}
 
 		<!-- Game Content -->
 		<main class="game-main">
@@ -323,75 +286,39 @@ function handleBackToGateway() {
 
 		<!-- Game Over Modal -->
 		{#if isGameOver}
-			<GameOverModal
-				{upperSubtotal}
-				{upperBonus}
-				{lowerTotal}
-				{grandTotal}
-				onPlayAgain={newGame}
-			/>
+			<GameOverModal {upperSubtotal} {upperBonus} {lowerTotal} {grandTotal} onPlayAgain={newGame} />
 		{/if}
 	</div>
 {/if}
 
-<!-- AI Opponent Selector Modal -->
-{#if showAIModal}
-	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<div 
-		class="modal-backdrop" 
-		role="dialog" 
-		aria-modal="true"
-		aria-labelledby="ai-modal-title"
-		tabindex="-1"
-		onclick={handleBackdropClick}
-	>
-		<div class="modal-content">
-			<header class="modal-header">
-				<h2 id="ai-modal-title" class="modal-title">Choose Your Opponent</h2>
-				<button 
-					type="button" 
-					class="modal-close" 
-					onclick={handleCloseAIModal}
-					aria-label="Close"
-				>
-					✕
-				</button>
-			</header>
-
-			<div class="modal-body">
-				<AIOpponentSelector 
-					selected={selectedAIProfile} 
-					onSelect={handleAIProfileSelect}
-				/>
-			</div>
-
-			<footer class="modal-footer">
-				<button 
-					type="button" 
-					class="cancel-button" 
-					onclick={handleCloseAIModal}
-				>
-					Cancel
-				</button>
-				<button 
-					type="button" 
-					class="start-button" 
-					onclick={handleStartAIGame}
-				>
-					Start Game
-				</button>
-			</footer>
-		</div>
-	</div>
-{/if}
-
 <style>
+	.loading-state {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		padding: var(--space-3);
+		background: var(--color-background);
+	}
+
+	.loading-content {
+		text-align: center;
+		padding: var(--space-4);
+		background: var(--color-surface);
+		border: var(--border-thick);
+	}
+
+	.loading-text {
+		font-size: var(--text-body);
+		margin: 0;
+	}
+
 	.game-container {
 		min-height: 100svh;
 		display: flex;
 		flex-direction: column;
 		background: var(--color-background);
+		position: relative;
 	}
 
 	.game-header {
@@ -402,6 +329,14 @@ function handleBackToGateway() {
 		background: var(--color-surface);
 		border-bottom: var(--border-medium);
 		gap: var(--space-2);
+	}
+
+	/* Settings Dropdown */
+	.settings-dropdown {
+		position: absolute;
+		top: 60px;
+		right: var(--space-3);
+		z-index: 100;
 	}
 
 	.back-button {
@@ -477,99 +412,5 @@ function handleBackToGateway() {
 			flex: 1;
 			overflow-y: visible;
 		}
-	}
-
-	/* AI Modal Styles */
-	.modal-backdrop {
-		position: fixed;
-		inset: 0;
-		z-index: var(--z-modal);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: var(--space-3);
-		background: rgba(0, 0, 0, 0.7);
-	}
-
-	.modal-content {
-		width: 100%;
-		max-width: 600px;
-		max-height: 90vh;
-		overflow-y: auto;
-		background: var(--color-background);
-		border: var(--border-thick);
-		box-shadow: 8px 8px 0 var(--color-border);
-	}
-
-	.modal-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: var(--space-2) var(--space-3);
-		border-bottom: var(--border-medium);
-		background: var(--color-surface);
-	}
-
-	.modal-title {
-		font-size: var(--text-h3);
-		font-weight: var(--weight-bold);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
-		margin: 0;
-	}
-
-	.modal-close {
-		appearance: none;
-		background: none;
-		border: var(--border-thin);
-		padding: var(--space-1);
-		font-size: var(--text-body);
-		cursor: pointer;
-		line-height: 1;
-	}
-
-	.modal-close:hover {
-		background: var(--color-surface-alt);
-	}
-
-	.modal-body {
-		padding: var(--space-3);
-	}
-
-	.modal-footer {
-		display: flex;
-		gap: var(--space-2);
-		justify-content: flex-end;
-		padding: var(--space-2) var(--space-3);
-		border-top: var(--border-medium);
-		background: var(--color-surface);
-	}
-
-	.cancel-button,
-	.start-button {
-		padding: var(--space-1) var(--space-3);
-		font-family: var(--font-sans);
-		font-weight: var(--weight-bold);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
-		cursor: pointer;
-		transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-	}
-
-	.cancel-button {
-		background: var(--color-surface);
-		border: var(--border-medium);
-	}
-
-	.start-button {
-		background: var(--color-primary);
-		color: var(--color-text-on-primary, var(--color-text));
-		border: var(--border-medium);
-	}
-
-	.cancel-button:hover,
-	.start-button:hover {
-		transform: translate(-1px, -1px);
-		box-shadow: 2px 2px 0 var(--color-border);
 	}
 </style>

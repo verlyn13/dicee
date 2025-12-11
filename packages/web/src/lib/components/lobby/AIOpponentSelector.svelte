@@ -2,10 +2,11 @@
 /**
  * AI Opponent Selector
  *
- * Grid of AI profiles for selecting an opponent in solo/practice mode.
+ * Grid of AI profiles for selecting opponents in Quick Play mode.
+ * Supports multi-select (1-3 AI opponents).
  * Shows avatar, name, skill level, and personality tagline.
  *
- * Design: Neo-Brutalist cards with skill indicators
+ * Design: Neo-Brutalist cards with skill indicators and checkbox-like multi-select
  */
 
 import Avatar from '../ui/Avatar.svelte';
@@ -22,10 +23,12 @@ interface AIProfile {
 }
 
 interface Props {
-	/** Currently selected profile ID */
-	selected?: string;
-	/** Callback when profile is selected */
-	onSelect: (profileId: string) => void;
+	/** Currently selected profile IDs (array for multi-select) */
+	selected?: string[];
+	/** Callback when selection changes */
+	onSelect: (profileIds: string[]) => void;
+	/** Maximum AI opponents to select (default: 3) */
+	maxSelection?: number;
 	/** Whether selection is disabled */
 	disabled?: boolean;
 }
@@ -33,9 +36,14 @@ interface Props {
 let props: Props = $props();
 
 // Destructure with reactivity
-const selected = $derived(props.selected);
+const selected = $derived(props.selected ?? []);
 const onSelect = $derived(props.onSelect);
+const maxSelection = $derived(props.maxSelection ?? 3);
 const disabled = $derived(props.disabled ?? false);
+
+// Derived: selection count for UI
+const selectionCount = $derived(selected.length);
+const isAtMax = $derived(selectionCount >= maxSelection);
 
 /**
  * Pre-built AI profiles (synced with cloudflare-do/src/ai/profiles.ts)
@@ -101,11 +109,26 @@ function getDifficultyClass(skillLevel: number): string {
 }
 
 /**
- * Handle profile selection
+ * Check if profile is selected
+ */
+function isSelected(profileId: string): boolean {
+	return selected.includes(profileId);
+}
+
+/**
+ * Handle profile toggle (multi-select)
  */
 function handleSelect(profileId: string) {
-	if (!disabled) {
-		onSelect(profileId);
+	if (disabled) return;
+
+	if (isSelected(profileId)) {
+		// Deselect - but keep at least 1 selected
+		if (selectionCount > 1) {
+			onSelect(selected.filter((id) => id !== profileId));
+		}
+	} else if (!isAtMax) {
+		// Select if under max limit
+		onSelect([...selected, profileId]);
 	}
 }
 
@@ -120,44 +143,59 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 }
 </script>
 
-<div class="ai-selector" role="radiogroup" aria-label="Select AI opponent">
-	<h3 class="ai-selector__title">Choose Your Opponent</h3>
-	
+<div class="ai-selector" role="group" aria-label="Select AI opponents">
+	<div class="ai-selector__header">
+		<h3 class="ai-selector__title">Choose Your Opponents</h3>
+		<span class="ai-selector__count" class:at-max={isAtMax}>
+			{selectionCount}/{maxSelection} selected
+		</span>
+	</div>
+
 	<div class="ai-selector__grid">
 		{#each AI_PROFILES as profile (profile.id)}
+			{@const profileSelected = isSelected(profile.id)}
+			{@const canSelect = profileSelected || !isAtMax}
 			<button
 				type="button"
 				class="ai-card"
-				class:ai-card--selected={selected === profile.id}
-				class:ai-card--disabled={disabled}
-				role="radio"
-				aria-checked={selected === profile.id}
-				aria-disabled={disabled}
+				class:ai-card--selected={profileSelected}
+				class:ai-card--disabled={disabled || (!profileSelected && isAtMax)}
+				role="checkbox"
+				aria-checked={profileSelected}
+				aria-disabled={disabled || (!profileSelected && isAtMax)}
 				onclick={() => handleSelect(profile.id)}
 				onkeydown={(e) => handleKeydown(e, profile.id)}
 			>
+				<!-- Selection indicator -->
+				<div class="ai-card__check" aria-hidden="true">
+					{#if profileSelected}
+						<span class="check-icon">✓</span>
+					{/if}
+				</div>
+
 				<div class="ai-card__avatar">
 					<Avatar seed={profile.avatarSeed} size="lg" alt={profile.name} />
 					<span class="ai-card__robot-badge" aria-label="AI Player">🤖</span>
 				</div>
-				
+
 				<div class="ai-card__info">
 					<span class="ai-card__name">{profile.name}</span>
 					<span class="ai-card__tagline">{profile.tagline}</span>
 				</div>
-				
+
 				<div class="ai-card__difficulty {getDifficultyClass(profile.skillLevel)}">
 					<span class="difficulty__label">{getDifficultyLabel(profile.skillLevel)}</span>
 					<div class="difficulty__bar" aria-hidden="true">
-						<div 
-							class="difficulty__fill" 
-							style="width: {profile.skillLevel * 100}%"
-						></div>
+						<div class="difficulty__fill" style="width: {profile.skillLevel * 100}%"></div>
 					</div>
 				</div>
 			</button>
 		{/each}
 	</div>
+
+	<p class="ai-selector__hint">
+		Select 1-{maxSelection} AI opponents. Click to toggle selection.
+	</p>
 </div>
 
 <style>
@@ -165,18 +203,47 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 		width: 100%;
 	}
 
+	.ai-selector__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: var(--spacing-md);
+		flex-wrap: wrap;
+		gap: var(--spacing-sm);
+	}
+
 	.ai-selector__title {
 		font-size: var(--font-size-lg);
 		font-weight: var(--font-weight-bold);
-		margin-bottom: var(--spacing-md);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
+		margin: 0;
+	}
+
+	.ai-selector__count {
+		font-size: var(--font-size-sm);
+		font-weight: var(--font-weight-semibold);
+		padding: var(--spacing-xs) var(--spacing-sm);
+		background: var(--color-surface-alt);
+		border: var(--border-thin);
+	}
+
+	.ai-selector__count.at-max {
+		background: var(--color-warning);
+		color: var(--color-text);
 	}
 
 	.ai-selector__grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 		gap: var(--spacing-md);
+	}
+
+	.ai-selector__hint {
+		margin-top: var(--spacing-md);
+		font-size: var(--font-size-sm);
+		color: var(--color-text-muted);
+		text-align: center;
 	}
 
 	.ai-card {
@@ -189,17 +256,21 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 		text-align: left;
 
 		/* Card styling */
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: var(--spacing-sm);
 		padding: var(--spacing-md);
-		
+		padding-top: calc(var(--spacing-md) + 8px);
+
 		/* Neo-Brutalist */
 		background: var(--color-surface);
 		border: var(--border-medium);
-		
-		transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+
+		transition:
+			transform var(--transition-fast),
+			box-shadow var(--transition-fast);
 	}
 
 	.ai-card:hover:not(.ai-card--disabled) {
@@ -213,7 +284,7 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 	}
 
 	.ai-card--selected {
-		background: var(--color-success, #90EE90);
+		background: var(--color-success, #90ee90);
 		border-color: var(--color-text, #000);
 		border-width: 3px;
 		box-shadow: 4px 4px 0 var(--color-text, #000);
@@ -227,6 +298,31 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 	.ai-card--disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
+	}
+
+	/* Selection checkbox indicator */
+	.ai-card__check {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		width: 24px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--color-surface);
+		border: 2px solid var(--color-border);
+		font-size: 14px;
+		font-weight: bold;
+	}
+
+	.ai-card--selected .ai-card__check {
+		background: var(--color-text, #000);
+		border-color: var(--color-text, #000);
+	}
+
+	.check-icon {
+		color: var(--color-surface);
 	}
 
 	.ai-card__avatar {
@@ -323,10 +419,11 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 		color: var(--color-accent);
 	}
 	.difficulty--chaos .difficulty__fill {
-		background: linear-gradient(90deg, 
-			var(--color-error), 
-			var(--color-warning), 
-			var(--color-success), 
+		background: linear-gradient(
+			90deg,
+			var(--color-error),
+			var(--color-warning),
+			var(--color-success),
 			var(--color-primary)
 		);
 	}
@@ -345,6 +442,7 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 
 		.ai-card {
 			padding: var(--spacing-sm);
+			padding-top: calc(var(--spacing-sm) + 8px);
 		}
 
 		.ai-card__tagline {

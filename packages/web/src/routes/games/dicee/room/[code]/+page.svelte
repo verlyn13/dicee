@@ -50,7 +50,7 @@ let connectionError = $state<string | null>(null);
 let wasDowngraded = $state(false);
 
 // Quick play state (from LobbyLanding)
-let quickPlayAIProfile = $state<string | null>(null);
+let quickPlayAIProfiles = $state<string[]>([]);
 let quickPlayAutoStart = $state(false);
 
 // =============================================================================
@@ -86,13 +86,20 @@ $effect(() => {
 	setChatStore(chatStore);
 
 	// Check for quick play mode (from LobbyLanding)
-	quickPlayAIProfile = sessionStorage.getItem('quickplay_ai_profile');
+	const profilesJson = sessionStorage.getItem('quickplay_ai_profiles');
+	if (profilesJson) {
+		try {
+			quickPlayAIProfiles = JSON.parse(profilesJson);
+		} catch {
+			quickPlayAIProfiles = ['carmen']; // Fallback to default
+		}
+	}
 	quickPlayAutoStart = sessionStorage.getItem('quickplay_auto_start') === 'true';
 
-	console.log('[Room] Quick play check:', { quickPlayAIProfile, quickPlayAutoStart });
+	console.log('[Room] Quick play check:', { quickPlayAIProfiles, quickPlayAutoStart });
 
 	// Clear the flags so they don't persist
-	sessionStorage.removeItem('quickplay_ai_profile');
+	sessionStorage.removeItem('quickplay_ai_profiles');
 	sessionStorage.removeItem('quickplay_auto_start');
 
 	// Connect based on role
@@ -123,7 +130,7 @@ async function connectToRoom(role: 'player' | 'spectator'): Promise<void> {
 			setRoomStore(roomStore);
 
 			// Set up quick play handler BEFORE connecting
-			if (quickPlayAIProfile && quickPlayAutoStart) {
+			if (quickPlayAIProfiles.length > 0 && quickPlayAutoStart) {
 				setupQuickPlayHandler();
 			}
 
@@ -154,9 +161,9 @@ function setupQuickPlayHandler(): void {
 		// Server sends CONNECTED, not room.state
 		if ((eventType === 'CONNECTED' || eventType === 'room.state') && !hasStarted) {
 			hasStarted = true;
-			console.log('[QuickPlay] Room ready, starting quick play with AI:', quickPlayAIProfile);
+			console.log('[QuickPlay] Room ready, starting quick play with AI:', quickPlayAIProfiles);
 			// Send quick play start command - this creates AI and starts game in one step
-			roomService.sendQuickPlayStart([quickPlayAIProfile!]);
+			roomService.sendQuickPlayStart(quickPlayAIProfiles);
 			// Clean up handler
 			roomService.removeEventHandler(handler);
 		}

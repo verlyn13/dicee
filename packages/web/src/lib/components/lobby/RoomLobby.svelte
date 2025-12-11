@@ -35,7 +35,7 @@ const room = getRoomStore();
 let countdown = $state<number | null>(null);
 let chatCollapsed = $state(false); // Chat visible by default in waiting room
 let showAISelector = $state(false);
-let selectedAIProfile = $state<string | null>(null);
+let selectedAIProfiles = $state<string[]>([]);
 let copiedCode = $state(false);
 
 function handleChatToggle(): void {
@@ -122,16 +122,16 @@ function toggleAISelector() {
 }
 
 /** Handle AI profile selection */
-function handleAISelect(profileId: string) {
-	selectedAIProfile = profileId;
+function handleAISelect(profileIds: string[]) {
+	selectedAIProfiles = profileIds;
 }
 
 /** Add selected AI to the game */
 function addAIOpponent() {
-	if (!selectedAIProfile) return;
-	room.addAIPlayer(selectedAIProfile);
+	if (selectedAIProfiles.length === 0) return;
+	room.addAIPlayer(selectedAIProfiles[0]);
 	showAISelector = false;
-	selectedAIProfile = null;
+	selectedAIProfiles = [];
 }
 
 const waitingMessage = $derived.by(() => {
@@ -309,11 +309,15 @@ function handleInviteUser(userId: string) {
 					<button type="button" class="modal-close" onclick={toggleAISelector}>✕</button>
 				</header>
 				<div class="modal-body">
-					<AIOpponentSelector selected={selectedAIProfile ?? undefined} onSelect={handleAISelect} />
+					<AIOpponentSelector
+						selected={selectedAIProfiles}
+						onSelect={handleAISelect}
+						maxSelection={1}
+					/>
 				</div>
 				<footer class="modal-footer">
 					<button type="button" class="cancel-btn" onclick={toggleAISelector}>Cancel</button>
-					<button type="button" class="add-btn" onclick={addAIOpponent} disabled={!selectedAIProfile}>
+					<button type="button" class="add-btn" onclick={addAIOpponent} disabled={selectedAIProfiles.length === 0}>
 						Add to Game
 					</button>
 				</footer>
