@@ -14,7 +14,7 @@ import type { ChatStore } from '$lib/stores/chat.svelte';
 import { lobby } from '$lib/stores/lobby.svelte';
 import { getRoomStore } from '$lib/stores/room.svelte';
 import AIOpponentSelector from './AIOpponentSelector.svelte';
-import OnlineUserItem from './OnlineUserItem.svelte';
+import InvitePlayerModal from './InvitePlayerModal.svelte';
 import PlayerListItem from './PlayerListItem.svelte';
 
 interface Props {
@@ -35,6 +35,8 @@ const room = getRoomStore();
 let countdown = $state<number | null>(null);
 let chatCollapsed = $state(false); // Chat visible by default in waiting room
 let showAISelector = $state(false);
+let showInviteModal = $state(false);
+let showExternalShare = $state(false);
 let selectedAIProfiles = $state<string[]>([]);
 let copiedCode = $state(false);
 
@@ -144,21 +146,23 @@ const waitingMessage = $derived.by(() => {
 	return null;
 });
 
-// Filter online users for invite section (exclude players already in room and self)
-const invitableUsers = $derived.by(() => {
-	const playerIds = new Set(room.room?.players.map((p) => p.id) ?? []);
-	return lobby.onlineUsers.filter((u) => !playerIds.has(u.userId) && u.userId !== auth.userId);
-});
-
-// Check if a user has a pending invite
-function hasPendingInvite(userId: string): boolean {
-	return room.sentInvites.some((inv) => inv.targetUserId === userId && inv.status === 'pending');
+// Toggle invite modal
+function toggleInviteModal() {
+	showInviteModal = !showInviteModal;
 }
 
-// Send invite to a user
+// Toggle external share section
+function toggleExternalShare() {
+	showExternalShare = !showExternalShare;
+}
+
+// Send invite to a user (called from modal)
 function handleInviteUser(userId: string) {
 	room.sendInvite(userId);
 }
+
+// Get player IDs for the invite modal filter
+const playerIds = $derived(room.room?.players.map((p) => p.id) ?? []);
 </script>
 
 <div class="room-lobby {className}">
@@ -183,30 +187,25 @@ function handleInviteUser(userId: string) {
 		{/if}
 	</header>
 
-	<!-- Room Code Section -->
-	<section class="code-section">
-		<span class="room-label">ROOM CODE</span>
-		<button type="button" class="room-code" onclick={copyCode} title="Click to copy">
-			{room.roomCode}
-			<span class="copy-icon">{copiedCode ? '✓' : '📋'}</span>
-		</button>
-		<button type="button" class="invite-link-btn" onclick={copyInviteLink}>
-			🔗 Copy Invite Link
-		</button>
-	</section>
+	<!-- Primary Actions (Host only, when room not full) -->
+	{#if room.isHost && !room.isFull}
+		<section class="action-buttons">
+			<button type="button" class="action-btn invite-btn" onclick={toggleInviteModal}>
+				<span class="action-icon">👥</span>
+				<span class="action-label">Invite Player</span>
+			</button>
+			<button type="button" class="action-btn ai-btn" onclick={toggleAISelector}>
+				<span class="action-icon">🤖</span>
+				<span class="action-label">Add AI</span>
+			</button>
+		</section>
+	{/if}
 
 	<!-- Player List -->
 	<section class="player-section">
-		<div class="section-header">
-			<h2 class="section-title">
-				Players ({room.playerCount}/{room.room?.config.maxPlayers ?? 4})
-			</h2>
-			{#if room.isHost && !room.isFull}
-				<button type="button" class="add-ai-btn" onclick={toggleAISelector}>
-					🤖 Add AI
-				</button>
-			{/if}
-		</div>
+		<h2 class="section-title">
+			Players ({room.playerCount}/{room.room?.config.maxPlayers ?? 4})
+		</h2>
 
 		<div class="player-list">
 			<!-- Human players -->
@@ -232,32 +231,34 @@ function handleInviteUser(userId: string) {
 			{/each}
 		</div>
 
-		{#if !room.isFull && room.playerCount < 2}
-			<div class="invite-hint">
-				<p>Share the room code to invite friends!</p>
-				<p class="hint-or">— or —</p>
-				<button type="button" class="add-ai-hint-btn" onclick={toggleAISelector}>
-					🤖 Add an AI opponent to practice
-				</button>
-			</div>
-		{/if}
 	</section>
 
-	<!-- Invite Online Players (Host only, when room not full) -->
-	{#if room.isHost && !room.isFull && invitableUsers.length > 0}
-		<section class="invite-section">
-			<h2 class="section-title">Invite Players ({invitableUsers.length} online)</h2>
-			<div class="online-users-list">
-				{#each invitableUsers as user (user.userId)}
-					<OnlineUserItem
-						{user}
-						canInvite={true}
-						hasPendingInvite={hasPendingInvite(user.userId)}
-						isSelf={false}
-						onInvite={handleInviteUser}
-					/>
-				{/each}
-			</div>
+	<!-- External Sharing (Collapsed by default) -->
+	{#if room.isHost}
+		<section class="external-share-section">
+			<button
+				type="button"
+				class="external-toggle"
+				onclick={toggleExternalShare}
+				aria-expanded={showExternalShare}
+			>
+				<span class="toggle-icon">{showExternalShare ? '▼' : '▶'}</span>
+				<span class="toggle-label">Share externally</span>
+			</button>
+			{#if showExternalShare}
+				<div class="external-content">
+					<div class="share-row">
+						<span class="code-label">Room:</span>
+						<span class="code-value">{room.roomCode}</span>
+						<button type="button" class="share-btn" onclick={copyCode} title="Copy room code">
+							{copiedCode ? '✓' : '📋'}
+						</button>
+						<button type="button" class="share-btn" onclick={copyInviteLink} title="Copy invite link">
+							🔗
+						</button>
+					</div>
+				</div>
+			{/if}
 		</section>
 	{/if}
 
@@ -324,6 +325,16 @@ function handleInviteUser(userId: string) {
 			</div>
 		</div>
 	{/if}
+
+	<!-- Invite Player Modal -->
+	<InvitePlayerModal
+		open={showInviteModal}
+		roomCode={room.roomCode ?? ''}
+		{playerIds}
+		sentInvites={room.sentInvites}
+		onClose={toggleInviteModal}
+		onInvite={handleInviteUser}
+	/>
 </div>
 
 <style>
@@ -453,15 +464,6 @@ function handleInviteUser(userId: string) {
 		gap: var(--space-1);
 	}
 
-	.invite-hint {
-		font-size: var(--text-small);
-		color: var(--color-text-muted);
-		text-align: center;
-		padding: var(--space-2);
-		border: var(--border-thin);
-		border-style: dashed;
-	}
-
 	/* Footer */
 	.lobby-footer {
 		display: flex;
@@ -552,58 +554,126 @@ function handleInviteUser(userId: string) {
 		margin: 0;
 	}
 
-	.code-section {
+	/* Primary Action Buttons */
+	.action-buttons {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-2);
+	}
+
+	.action-btn {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: var(--space-2);
-		padding: var(--space-4);
+		justify-content: center;
+		gap: var(--space-1);
+		padding: var(--space-3);
 		background: var(--color-surface);
 		border: var(--border-thick);
+		cursor: pointer;
+		transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 	}
 
-	.room-code {
+	.action-btn:hover {
+		transform: translate(-2px, -2px);
+		box-shadow: 4px 4px 0 var(--color-border);
+	}
+
+	.action-btn:active {
+		transform: translate(0, 0);
+		box-shadow: none;
+	}
+
+	.action-btn.invite-btn {
+		background: var(--color-primary);
+	}
+
+	.action-btn.ai-btn {
+		background: var(--color-success);
+	}
+
+	.action-icon {
+		font-size: var(--text-h2);
+	}
+
+	.action-label {
+		font-size: var(--text-small);
+		font-weight: var(--weight-bold);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+	}
+
+	/* External Sharing Section (Collapsed by default) */
+	.external-share-section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.external-toggle {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: var(--space-2);
+		background: var(--color-background);
+		border: var(--border-thin);
+		font-size: var(--text-small);
+		color: var(--color-text-muted);
+		cursor: pointer;
+		transition: background var(--transition-fast);
+	}
+
+	.external-toggle:hover {
+		background: var(--color-surface);
+	}
+
+	.toggle-icon {
+		font-size: var(--text-tiny);
+	}
+
+	.toggle-label {
+		font-weight: var(--weight-medium);
+	}
+
+	.external-content {
+		padding: var(--space-2);
+		background: var(--color-surface);
+		border: var(--border-medium);
+	}
+
+	.share-row {
 		display: flex;
 		align-items: center;
 		gap: var(--space-2);
 	}
 
-	.copy-icon {
-		font-size: var(--text-body);
+	.code-label {
+		font-size: var(--text-small);
+		color: var(--color-text-muted);
 	}
 
-	.invite-link-btn {
-		padding: var(--space-1) var(--space-2);
+	.code-value {
+		font-family: var(--font-mono);
+		font-size: var(--text-body);
+		font-weight: var(--weight-bold);
+		letter-spacing: 0.1em;
+		flex: 1;
+	}
+
+	.share-btn {
+		width: 36px;
+		height: 36px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		background: var(--color-background);
 		border: var(--border-medium);
-		font-size: var(--text-small);
-		font-weight: var(--weight-semibold);
+		font-size: var(--text-body);
 		cursor: pointer;
 		transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 	}
 
-	.invite-link-btn:hover {
-		transform: translate(-1px, -1px);
-		box-shadow: 2px 2px 0 var(--color-border);
-	}
-
-	.section-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.add-ai-btn {
-		padding: var(--space-1) var(--space-2);
-		background: var(--color-primary);
-		border: var(--border-medium);
-		font-size: var(--text-small);
-		font-weight: var(--weight-bold);
-		cursor: pointer;
-		transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-	}
-
-	.add-ai-btn:hover {
+	.share-btn:hover {
 		transform: translate(-1px, -1px);
 		box-shadow: 2px 2px 0 var(--color-border);
 	}
@@ -656,38 +726,6 @@ function handleInviteUser(userId: string) {
 		font-size: var(--text-tiny);
 		font-weight: var(--weight-bold);
 		text-transform: uppercase;
-	}
-
-	.invite-hint {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: var(--space-1);
-	}
-
-	.invite-hint p {
-		margin: 0;
-	}
-
-	.hint-or {
-		font-size: var(--text-tiny);
-		color: var(--color-text-muted);
-	}
-
-	.add-ai-hint-btn {
-		padding: var(--space-2) var(--space-3);
-		background: var(--color-surface);
-		border: var(--border-medium);
-		font-size: var(--text-body);
-		font-weight: var(--weight-semibold);
-		cursor: pointer;
-		transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-	}
-
-	.add-ai-hint-btn:hover {
-		transform: translate(-2px, -2px);
-		box-shadow: 4px 4px 0 var(--color-border);
-		background: var(--color-primary-light, var(--color-accent-light));
 	}
 
 	/* Modal styles */
@@ -787,24 +825,6 @@ function handleInviteUser(userId: string) {
 	.add-btn:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
-	}
-
-	/* Invite section */
-	.invite-section {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
-		padding: var(--space-3);
-		background: var(--color-surface);
-		border: var(--border-thick);
-	}
-
-	.online-users-list {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-1);
-		max-height: 200px;
-		overflow-y: auto;
 	}
 
 	/* Keyboard Hints */

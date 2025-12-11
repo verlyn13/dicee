@@ -158,6 +158,7 @@ class LobbyState {
 	}
 
 	private handleMessage(data: { type: string; payload: unknown; timestamp?: number }) {
+		console.log('[lobby] handleMessage:', data.type, data);
 		switch (data.type) {
 			case 'chat': {
 				// Handle both history and single message formats from DO
@@ -258,8 +259,10 @@ class LobbyState {
 				break;
 
 			case 'online_users': {
+				console.log('[lobby] Received online_users:', data.payload);
 				const usersPayload = data.payload as { users: OnlineUser[]; count: number };
 				this.onlineUsers = usersPayload.users;
+				console.log('[lobby] Set onlineUsers to:', this.onlineUsers);
 				break;
 			}
 
@@ -390,8 +393,12 @@ class LobbyState {
 	 * Called when user clicks on the online indicator.
 	 */
 	requestOnlineUsers() {
+		console.log('[lobby] requestOnlineUsers called, ws state:', this.ws?.readyState);
 		if (this.ws?.readyState === WebSocket.OPEN) {
+			console.log('[lobby] Sending get_online_users');
 			this.ws.send(JSON.stringify({ type: 'get_online_users' }));
+		} else {
+			console.warn('[lobby] Cannot request online users - WebSocket not open');
 		}
 	}
 

@@ -297,6 +297,7 @@ export class GlobalLobby extends DurableObject<Env> {
 					this.sendRoomsList(ws);
 					break;
 				case 'get_online_users':
+					console.log('[GlobalLobby] Received get_online_users request');
 					this.sendOnlineUsers(ws);
 					break;
 				case 'room_created':
@@ -499,11 +500,14 @@ export class GlobalLobby extends DurableObject<Env> {
 	 * Returns deduplicated list with display info.
 	 */
 	private sendOnlineUsers(ws: WebSocket): void {
-		const users = this.getOnlineUsers().map((u) => ({
+		const rawUsers = this.getOnlineUsers();
+		console.log('[GlobalLobby] sendOnlineUsers - raw users:', rawUsers.length);
+		const users = rawUsers.map((u) => ({
 			userId: u.userId,
 			displayName: u.displayName,
 			avatarSeed: u.avatarSeed,
 		}));
+		console.log('[GlobalLobby] sendOnlineUsers - sending users:', users);
 
 		ws.send(
 			JSON.stringify({
