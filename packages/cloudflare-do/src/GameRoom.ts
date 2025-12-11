@@ -1770,35 +1770,51 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	private async triggerAITurnIfNeeded(playerId: string): Promise<void> {
 		if (!this.aiManager.isAIPlayer(playerId)) {
+			console.log(`[GameRoom] triggerAITurnIfNeeded: ${playerId} is NOT an AI player`);
 			return;
 		}
 
-		console.log(`[GameRoom] triggerAITurnIfNeeded: ${playerId}`);
+		console.log(`[GameRoom] triggerAITurnIfNeeded: ${playerId} IS an AI player, starting turn`);
+
+		// Get initial game state for logging
+		const initialState = await this.gameStateManager.getState();
+		console.log(`[GameRoom] AI turn starting - phase: ${initialState?.phase}, currentPlayer: ${initialState?.playerOrder[initialState?.currentPlayerIndex ?? 0]}`);
 
 		// Execute AI turn in background (don't await to avoid blocking)
 		this.ctx.waitUntil(
-			this.aiManager.executeAITurn(
-				playerId,
-				// Pass a getter function so AI gets fresh state each step
-				async () => this.gameStateManager.getState(),
-				async (pid, cmd) => {
-					console.log(`[GameRoom] execute callback invoked: ${pid} ${cmd.type}`);
-					try {
-						await this.executeAICommand(pid, cmd);
-						console.log(`[GameRoom] execute callback complete: ${cmd.type}`);
-					} catch (e) {
-						console.error(`[GameRoom] execute callback FAILED: ${cmd.type}`, e);
-						throw e;
-					}
-				},
-				(event) => {
-					// Broadcast AI events to all clients
-					this.broadcast(event);
-					this.broadcastToSpectators(event);
-				},
-			).catch((error) => {
-				console.error('[GameRoom] AI turn execution failed:', error);
-			}),
+			(async () => {
+				try {
+					console.log(`[GameRoom] AI turn execution starting for ${playerId}`);
+					await this.aiManager.executeAITurn(
+						playerId,
+						// Pass a getter function so AI gets fresh state each step
+						async () => {
+							const state = await this.gameStateManager.getState();
+							console.log(`[GameRoom] AI getState called - player ${playerId} dice: ${JSON.stringify(state?.players[playerId]?.currentDice)}, rollsRemaining: ${state?.players[playerId]?.rollsRemaining}`);
+							return state;
+						},
+						async (pid, cmd) => {
+							console.log(`[GameRoom] AI execute callback: ${pid} ${cmd.type}`);
+							try {
+								await this.executeAICommand(pid, cmd);
+								console.log(`[GameRoom] AI execute callback complete: ${cmd.type}`);
+							} catch (e) {
+								console.error(`[GameRoom] AI execute callback FAILED: ${cmd.type}`, e);
+								throw e;
+							}
+						},
+						(event) => {
+							console.log(`[GameRoom] AI broadcasting event: ${event.type}`);
+							// Broadcast AI events to all clients
+							this.broadcast(event);
+							this.broadcastToSpectators(event);
+						},
+					);
+					console.log(`[GameRoom] AI turn execution completed for ${playerId}`);
+				} catch (error) {
+					console.error(`[GameRoom] AI turn execution failed for ${playerId}:`, error);
+				}
+			})(),
 		);
 	}
 

@@ -186,12 +186,17 @@ export class AIController {
 		execute: CommandExecutor,
 		emit: EventEmitter,
 	): Promise<void> {
+		console.log(`[AIController] executeTurn starting for ${playerId}`);
+		
 		const playerState = this.players.get(playerId);
 		const brain = this.brains.get(playerId);
 
 		if (!playerState || !brain) {
+			console.error(`[AIController] AI player not found: ${playerId}, registered players: ${Array.from(this.players.keys()).join(', ')}`);
 			throw new Error(`AI player not found: ${playerId}`);
 		}
+
+		console.log(`[AIController] Found player state and brain for ${playerId}`);
 
 		// Reset turn state
 		playerState.turnStep = 0;
@@ -200,8 +205,12 @@ export class AIController {
 		// Execute turn steps until we score
 		let turnComplete = false;
 		let maxSteps = 10; // Safety limit
+		let stepCount = 0;
 
 		while (!turnComplete && maxSteps > 0) {
+			stepCount++;
+			console.log(`[AIController] Turn step ${stepCount} for ${playerId}`);
+			
 			// Get fresh game state for each step
 			const gameState = await getGameState();
 			if (!gameState) {
@@ -209,18 +218,25 @@ export class AIController {
 				return;
 			}
 
+			console.log(`[AIController] Got game state, executing step ${stepCount}`);
 			const decision = await this.executeTurnStep(
 				playerId,
 				gameState,
 				execute,
 				emit,
 			);
+			console.log(`[AIController] Step ${stepCount} decision: ${decision.action}`);
 
 			if (decision.action === 'score') {
 				turnComplete = true;
+				console.log(`[AIController] Turn complete after ${stepCount} steps`);
 			}
 
 			maxSteps--;
+		}
+
+		if (!turnComplete) {
+			console.error(`[AIController] Turn did not complete after ${stepCount} steps (maxSteps reached)`);
 		}
 	}
 
