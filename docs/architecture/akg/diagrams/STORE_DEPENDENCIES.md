@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 15d798565fb6639b7b62ec881d34b8fa5c5e08b1
-> Generated: 2025-12-11T17:24:14.752Z
+> Commit: 34d07ff7dd44c868d43b95a98f359ee6ddba1583
+> Generated: 2025-12-11T19:50:57.378Z
 
 ## Store Dependency Diagram
 
@@ -37,8 +37,11 @@ flowchart LR
     store__room_svelte__tores_room_svelte_ts --> store__roomService_svelte__oomService_sv
     store__room_svelte__tores_room_svelte_ts --> store__roomService_svelte__oomService_sv
     store__room_svelte__tores_room_svelte_ts --> store__roomService_svelte__oomService_sv
+    store__multiplayerGame_svelte__playerGam --> store__preferences_svelte__references_sv
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
+    store__multiplayerGame_svelte__playerGam --> store__preferences_svelte__references_sv
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
+    store__multiplayerGame_svelte__playerGam --> store__preferences_svelte__references_sv
     store__multiplayerGame_svelte__playerGam --> store__roomService_svelte__oomService_sv
     store__spectator_svelte___spectator_svel --> store__spectatorService_svelte__torServi
     store__spectator_svelte___spectator_svel --> store__spectatorService_svelte__torServi

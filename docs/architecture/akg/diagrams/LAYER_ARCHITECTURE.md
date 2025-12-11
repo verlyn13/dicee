@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 15d798565fb6639b7b62ec881d34b8fa5c5e08b1
-> Generated: 2025-12-11T17:24:14.751Z
+> Commit: 34d07ff7dd44c868d43b95a98f359ee6ddba1583
+> Generated: 2025-12-11T19:50:57.377Z
 
 ## Overview
 

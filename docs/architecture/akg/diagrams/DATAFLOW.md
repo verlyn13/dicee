@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 15d798565fb6639b7b62ec881d34b8fa5c5e08b1
-> Generated: 2025-12-11T17:24:14.752Z
+> Commit: 34d07ff7dd44c868d43b95a98f359ee6ddba1583
+> Generated: 2025-12-11T19:50:57.378Z
 
 ## Data Flow Diagram
 
@@ -67,6 +67,8 @@ flowchart TB
     store__game_svelte__tores_game_svelte_ts --> store__scorecard_svelte___scorecard_svel
     store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
     store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
+    store__multiplayerGame_svelte__playerGam --> store__preferences_svelte__references_sv
+    store__multiplayerGame_svelte__playerGam --> store__preferences_svelte__references_sv
     service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts
     service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts
     service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts
