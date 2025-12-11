@@ -48,6 +48,9 @@ export class AIRoomManager {
 	private controller: AIController;
 	private aiPlayers: Set<string> = new Set();
 	private turnInProgress = false;
+	private turnStartedAt: number | null = null;
+	/** Maximum time (ms) an AI turn can take before we consider it stale */
+	private static readonly TURN_TIMEOUT_MS = 30000; // 30 seconds
 
 	constructor() {
 		this.controller = new AIController({
@@ -111,6 +114,17 @@ export class AIRoomManager {
 	}
 
 	/**
+	 * Check if the turnInProgress flag is stale and should be force-reset.
+	 */
+	private isTurnStale(): boolean {
+		if (!this.turnInProgress || !this.turnStartedAt) {
+			return false;
+		}
+		const elapsed = Date.now() - this.turnStartedAt;
+		return elapsed > AIRoomManager.TURN_TIMEOUT_MS;
+	}
+
+	/**
 	 * Execute an AI player's complete turn.
 	 *
 	 * @param playerId - The AI player ID
@@ -126,10 +140,22 @@ export class AIRoomManager {
 	): Promise<void> {
 		console.log(`[AIRoomManager] executeAITurn called for ${playerId}`);
 		console.log(`[AIRoomManager] AI players registered: ${Array.from(this.aiPlayers).join(', ')}`);
+		console.log(
+			`[AIRoomManager] turnInProgress=${this.turnInProgress}, turnStartedAt=${this.turnStartedAt}`,
+		);
 
 		if (!this.isAIPlayer(playerId)) {
 			console.error(`[AIRoomManager] Player ${playerId} is not registered as AI`);
 			throw new Error(`Player ${playerId} is not an AI`);
+		}
+
+		// Check for stale turn and force reset if needed
+		if (this.isTurnStale()) {
+			console.warn(
+				`[AIRoomManager] Detected stale turnInProgress flag (started ${Date.now() - (this.turnStartedAt ?? 0)}ms ago). Force resetting.`,
+			);
+			this.turnInProgress = false;
+			this.turnStartedAt = null;
 		}
 
 		// Wait for any in-progress turn to complete (handles AI-to-AI transitions)
@@ -146,6 +172,14 @@ export class AIRoomManager {
 				`[AIRoomManager] Waiting for previous turn to complete (attempt ${attempt + 1}/${MAX_WAIT_ATTEMPTS})`,
 			);
 			await new Promise((resolve) => setTimeout(resolve, WAIT_INTERVAL_MS));
+
+			// Re-check staleness during wait
+			if (this.isTurnStale()) {
+				console.warn(`[AIRoomManager] Turn became stale during wait. Force resetting.`);
+				this.turnInProgress = false;
+				this.turnStartedAt = null;
+				break;
+			}
 		}
 
 		if (this.turnInProgress) {
@@ -156,7 +190,8 @@ export class AIRoomManager {
 		}
 
 		this.turnInProgress = true;
-		console.log(`[AIRoomManager] Starting AI turn for ${playerId}`);
+		this.turnStartedAt = Date.now();
+		console.log(`[AIRoomManager] Starting AI turn for ${playerId} at ${this.turnStartedAt}`);
 
 		try {
 			// Create command executor wrapper
@@ -179,7 +214,8 @@ export class AIRoomManager {
 			throw error;
 		} finally {
 			this.turnInProgress = false;
-			console.log(`[AIRoomManager] turnInProgress reset to false`);
+			this.turnStartedAt = null;
+			console.log(`[AIRoomManager] turnInProgress reset to false, turnStartedAt cleared`);
 		}
 	}
 
