@@ -111,6 +111,11 @@ const MAX_CHAT_MESSAGE_LENGTH = 500;
 const MAX_CHAT_HISTORY = 50;
 const RATE_LIMIT_MESSAGES_PER_MINUTE = 30;
 
+/** Storage keys for persistent data */
+const STORAGE_KEYS = {
+	CHAT_HISTORY: 'lobby:chatHistory',
+} as const;
+
 // =============================================================================
 // GlobalLobby Class
 // =============================================================================
@@ -119,8 +124,11 @@ export class GlobalLobby extends DurableObject<Env> {
 	/** Active game rooms (in-memory, rebuilt from notifications) */
 	private activeRooms: Map<string, RoomInfo> = new Map();
 
-	/** Recent chat messages (in-memory cache) */
+	/** Recent chat messages (in-memory cache, persisted to storage) */
 	private chatHistory: ChatMessage[] = [];
+
+	/** Whether chat history has been loaded from storage (for hibernation recovery) */
+	private chatHistoryLoaded = false;
 
 	/** Rate limiting: userId -> message timestamps (ephemeral, resets on hibernation) */
 	private rateLimits: Map<string, number[]> = new Map();
@@ -136,9 +144,9 @@ export class GlobalLobby extends DurableObject<Env> {
 		// This handles keepalive efficiently - no compute charge for pings
 		this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
 
-		// Note: In-memory state (activeRooms, chatHistory, rateLimits) is lost on hibernation.
+		// Note: In-memory state (activeRooms, rateLimits) is lost on hibernation.
 		// - activeRooms: Rebuilt from room notifications (acceptable for lobby)
-		// - chatHistory: Could persist to storage if needed (TODO)
+		// - chatHistory: Persisted to storage, loaded lazily on first access
 		// - rateLimits: Ephemeral by design - resets on wake (acceptable)
 		//
 		// User presence is derived from getWebSockets() + tags, which survive hibernation.
@@ -217,8 +225,8 @@ export class GlobalLobby extends DurableObject<Env> {
 		// Note: The new connection is already accepted, so it's included in the count
 		const isNewUser = existingConnections.length === 1;
 
-		// Send initial state to new connection
-		this.sendInitialState(server);
+		// Send initial state to new connection (async for storage loading)
+		await this.sendInitialState(server);
 
 		// Only broadcast join if this is the user's first connection
 		// (prevents "X joined" spam when same user opens multiple tabs)
@@ -246,7 +254,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		return new Response(null, { status: 101, webSocket: client });
 	}
 
-	private sendInitialState(ws: WebSocket): void {
+	private async sendInitialState(ws: WebSocket): Promise<void> {
 		// Send current online count (unique users, not connections)
 		// Derived from WebSocket tags - hibernation safe
 		ws.send(
@@ -260,14 +268,15 @@ export class GlobalLobby extends DurableObject<Env> {
 			}),
 		);
 
-		// Send recent chat history
-		if (this.chatHistory.length > 0) {
+		// Send recent chat history (load from storage if needed for hibernation recovery)
+		const chatHistory = await this.loadChatHistory();
+		if (chatHistory.length > 0) {
 			ws.send(
 				JSON.stringify({
 					type: 'chat',
 					payload: {
 						action: 'history',
-						messages: this.chatHistory.slice(-20),
+						messages: chatHistory.slice(-20),
 					},
 					timestamp: Date.now(),
 				}),
@@ -410,6 +419,41 @@ export class GlobalLobby extends DurableObject<Env> {
 	// Chat Handling
 	// =========================================================================
 
+	/**
+	 * Load chat history from storage (lazy loading for hibernation recovery).
+	 * Uses storage-first pattern to ensure messages persist across hibernation.
+	 */
+	private async loadChatHistory(): Promise<ChatMessage[]> {
+		if (!this.chatHistoryLoaded) {
+			const stored = await this.ctx.storage.get<ChatMessage[]>(STORAGE_KEYS.CHAT_HISTORY);
+			this.chatHistory = stored ?? [];
+			this.chatHistoryLoaded = true;
+		}
+		return this.chatHistory;
+	}
+
+	/**
+	 * Save chat message using storage-first pattern.
+	 * Storage → Memory → Broadcast (ensures persistence before any client sees it)
+	 */
+	private async saveChatMessage(message: ChatMessage): Promise<void> {
+		// Load existing history from storage (handles hibernation recovery)
+		const history = await this.loadChatHistory();
+
+		// Add new message
+		history.push(message);
+
+		// Trim to max history size
+		if (history.length > MAX_CHAT_HISTORY) {
+			this.chatHistory = history.slice(-MAX_CHAT_HISTORY);
+		} else {
+			this.chatHistory = history;
+		}
+
+		// Persist to storage FIRST (storage-first pattern)
+		await this.ctx.storage.put(STORAGE_KEYS.CHAT_HISTORY, this.chatHistory);
+	}
+
 	private async handleChat(ws: WebSocket, user: UserPresence, content: string): Promise<void> {
 		// Validate content
 		if (!content || content.trim().length === 0) {
@@ -447,11 +491,8 @@ export class GlobalLobby extends DurableObject<Env> {
 			timestamp: Date.now(),
 		};
 
-		// Add to history (trim if too long)
-		this.chatHistory.push(chatMessage);
-		if (this.chatHistory.length > MAX_CHAT_HISTORY) {
-			this.chatHistory = this.chatHistory.slice(-MAX_CHAT_HISTORY);
-		}
+		// Storage-first: Save to storage before broadcasting
+		await this.saveChatMessage(chatMessage);
 
 		// Broadcast to all
 		this.broadcast({
