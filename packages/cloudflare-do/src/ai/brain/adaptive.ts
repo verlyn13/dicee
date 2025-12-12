@@ -55,6 +55,21 @@ export class AdaptivePersonalityBrain implements AIBrain {
 			throw new Error('Brain not initialized');
 		}
 
+		// CRITICAL: If no dice exist yet, must roll first
+		// Dice are null/undefined at turn start before first roll
+		// This must be checked BEFORE any dice-dependent calculations
+		const hasValidDice =
+			context.dice && context.dice.length === 5 && context.dice.some((d) => d >= 1 && d <= 6);
+
+		if (!hasValidDice) {
+			console.log('[AdaptiveBrain] No valid dice - returning roll action');
+			return {
+				action: 'roll',
+				reasoning: 'No dice yet - must roll first',
+				confidence: 1.0,
+			};
+		}
+
 		// Calculate situational modifiers
 		const phase = this.getGamePhase(context);
 		const position = this.getCompetitivePosition(context);

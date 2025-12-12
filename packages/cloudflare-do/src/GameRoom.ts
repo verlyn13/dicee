@@ -53,12 +53,14 @@ import type {
 	PendingInvite,
 	PlayerInfo,
 	PlayerRootingInfo,
+	PlayerSeat,
 	PlayerSummary,
 	Prediction,
 	PredictionResult,
 	PredictionType,
 	ReactionCombo,
 	ReactionRateLimit,
+	ReconnectionState,
 	RoomState,
 	RoomStatusUpdate,
 	RootingChoice,
@@ -74,12 +76,14 @@ import {
 	calculateTotalPoints,
 	createEmptyGalleryPoints,
 	createInitialRoomState,
+	createPlayerSeat,
 	DEFAULT_REACTION_RATE_LIMIT,
 	GALLERY_ACHIEVEMENTS,
 	GALLERY_POINT_VALUES,
 	INVITE_EXPIRATION_MS,
 	MAX_QUEUE_SIZE,
 	REACTION_METADATA,
+	RECONNECT_WINDOW_MS,
 	ROOTING_REACTIONS,
 	SPECTATOR_REACTIONS,
 	STANDARD_REACTIONS,
@@ -343,6 +347,9 @@ export class GameRoom extends DurableObject<Env> {
 			case 'ROOM_CLEANUP':
 				await this.handleRoomCleanup();
 				break;
+			case 'SEAT_EXPIRATION':
+				await this.handleSeatExpiration();
+				break;
 		}
 
 		await this.ctx.storage.delete('alarm_data');
@@ -565,6 +572,225 @@ export class GameRoom extends DurableObject<Env> {
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
+	// Seat Reservation System (Phase 3 - Reconnection)
+	// ─────────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * Get all player seats from storage.
+	 * Seats persist through hibernation and track reconnection windows.
+	 */
+	private async getSeats(): Promise<Map<string, PlayerSeat>> {
+		const stored = await this.ctx.storage.get<[string, PlayerSeat][]>('seats');
+		return new Map(stored ?? []);
+	}
+
+	/**
+	 * Save seats to storage.
+	 */
+	private async saveSeats(seats: Map<string, PlayerSeat>): Promise<void> {
+		await this.ctx.storage.put('seats', [...seats.entries()]);
+	}
+
+	/**
+	 * Reserve a seat for a new player.
+	 * Returns true if seat was reserved, false if room is full.
+	 */
+	private async reserveSeat(
+		userId: string,
+		displayName: string,
+		avatarSeed: string,
+		isHost: boolean,
+	): Promise<boolean> {
+		const seats = await this.getSeats();
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		const maxPlayers = roomState?.settings.maxPlayers ?? 4;
+
+		// Check if room is full (only count active seats - connected or within reconnect window)
+		const now = Date.now();
+		const activeSeats = [...seats.values()].filter(
+			(seat) =>
+				seat.isConnected ||
+				(seat.reconnectDeadline !== null && seat.reconnectDeadline > now),
+		);
+
+		if (activeSeats.length >= maxPlayers) {
+			return false; // Room full
+		}
+
+		// Create new seat
+		const turnOrder = seats.size; // Position based on total seats (including expired)
+		const seat = createPlayerSeat(userId, displayName, avatarSeed, isHost, turnOrder);
+		seats.set(userId, seat);
+		await this.saveSeats(seats);
+
+		console.log(`[GameRoom] Reserved seat for ${displayName} (${userId}), turn order: ${turnOrder}`);
+		return true;
+	}
+
+	/**
+	 * Mark a player as disconnected and start reconnect window.
+	 * Returns the seat if successfully marked, null if player has no seat.
+	 */
+	private async markSeatDisconnected(userId: string): Promise<PlayerSeat | null> {
+		const seats = await this.getSeats();
+		const seat = seats.get(userId);
+
+		if (!seat) {
+			return null;
+		}
+
+		// Update seat with disconnect info
+		seat.isConnected = false;
+		seat.disconnectedAt = Date.now();
+		seat.reconnectDeadline = Date.now() + RECONNECT_WINDOW_MS;
+
+		seats.set(userId, seat);
+		await this.saveSeats(seats);
+
+		// Schedule alarm for seat expiration
+		await this.scheduleSeatExpirationAlarm(seat.reconnectDeadline);
+
+		console.log(
+			`[GameRoom] Marked seat disconnected for ${seat.displayName} (${userId}), deadline: ${new Date(seat.reconnectDeadline).toISOString()}`,
+		);
+		return seat;
+	}
+
+	/**
+	 * Handle player reconnection - reclaim their seat.
+	 * Returns true if reconnection succeeded, false if seat expired.
+	 */
+	private async handleReconnection(userId: string): Promise<{ success: boolean; seat: PlayerSeat | null }> {
+		const seats = await this.getSeats();
+		const seat = seats.get(userId);
+
+		if (!seat) {
+			return { success: false, seat: null };
+		}
+
+		const now = Date.now();
+
+		// Check if reconnect window is still valid
+		if (!seat.isConnected && seat.reconnectDeadline !== null && seat.reconnectDeadline < now) {
+			// Seat expired
+			return { success: false, seat: null };
+		}
+
+		// Reclaim seat
+		seat.isConnected = true;
+		seat.disconnectedAt = null;
+		seat.reconnectDeadline = null;
+
+		seats.set(userId, seat);
+		await this.saveSeats(seats);
+
+		console.log(`[GameRoom] Player ${seat.displayName} (${userId}) reconnected and reclaimed seat`);
+		return { success: true, seat };
+	}
+
+	/**
+	 * Remove a seat entirely (e.g., after expiration or kick).
+	 */
+	private async removeSeat(userId: string): Promise<PlayerSeat | null> {
+		const seats = await this.getSeats();
+		const seat = seats.get(userId);
+
+		if (!seat) {
+			return null;
+		}
+
+		seats.delete(userId);
+		await this.saveSeats(seats);
+
+		console.log(`[GameRoom] Removed seat for ${seat.displayName} (${userId})`);
+		return seat;
+	}
+
+	/**
+	 * Schedule seat expiration alarm.
+	 * Only sets alarm if it's sooner than existing alarm.
+	 */
+	private async scheduleSeatExpirationAlarm(deadline: number): Promise<void> {
+		const existingAlarm = await this.ctx.storage.getAlarm();
+
+		// Only set if no alarm exists or new deadline is sooner
+		if (!existingAlarm || deadline < existingAlarm) {
+			const alarmData: AlarmData = { type: 'SEAT_EXPIRATION' };
+			await this.ctx.storage.put('alarm_data', alarmData);
+			await this.ctx.storage.setAlarm(deadline);
+			console.log(`[GameRoom] Scheduled seat expiration alarm for ${new Date(deadline).toISOString()}`);
+		}
+	}
+
+	/**
+	 * Handle seat expiration alarm - remove expired seats.
+	 */
+	private async handleSeatExpiration(): Promise<void> {
+		const seats = await this.getSeats();
+		const now = Date.now();
+		let nextAlarm: number | null = null;
+		const expiredSeats: PlayerSeat[] = [];
+
+		for (const [userId, seat] of seats) {
+			if (!seat.isConnected && seat.reconnectDeadline !== null) {
+				if (now >= seat.reconnectDeadline) {
+					// Seat expired - remove
+					expiredSeats.push(seat);
+					seats.delete(userId);
+				} else if (!nextAlarm || seat.reconnectDeadline < nextAlarm) {
+					// Not yet expired - track for next alarm
+					nextAlarm = seat.reconnectDeadline;
+				}
+			}
+		}
+
+		// Save updated seats
+		if (expiredSeats.length > 0) {
+			await this.saveSeats(seats);
+
+			// Broadcast seat expirations
+			for (const seat of expiredSeats) {
+				console.log(`[GameRoom] Seat expired for ${seat.displayName} (${seat.userId})`);
+
+				this.broadcast({
+					type: 'PLAYER_SEAT_EXPIRED',
+					payload: {
+						userId: seat.userId,
+						displayName: seat.displayName,
+					},
+				});
+
+				// Also notify spectators
+				this.broadcastToSpectators({
+					type: 'PLAYER_SEAT_EXPIRED',
+					payload: {
+						userId: seat.userId,
+						displayName: seat.displayName,
+					},
+				});
+			}
+
+			// Update room playerOrder to remove expired players
+			const roomState = await this.ctx.storage.get<RoomState>('room');
+			if (roomState) {
+				const expiredUserIds = new Set(expiredSeats.map((s) => s.userId));
+				roomState.playerOrder = roomState.playerOrder.filter((id) => !expiredUserIds.has(id));
+				await this.ctx.storage.put('room', roomState);
+			}
+
+			// Notify lobby of player count change
+			await this.notifyLobbyOfUpdate();
+		}
+
+		// Schedule next alarm if there are pending expirations
+		if (nextAlarm) {
+			const alarmData: AlarmData = { type: 'SEAT_EXPIRATION' };
+			await this.ctx.storage.put('alarm_data', alarmData);
+			await this.ctx.storage.setAlarm(nextAlarm);
+		}
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────────
 	// GlobalLobby Notifications
 	// ─────────────────────────────────────────────────────────────────────────────
 
@@ -651,6 +877,44 @@ export class GameRoom extends DurableObject<Env> {
 		}
 	}
 
+	/**
+	 * Notify GlobalLobby that a user has entered or left this room.
+	 * This updates the user's currentRoomCode in their lobby presence,
+	 * enabling features like the invite modal to show which users are in rooms.
+	 *
+	 * Includes retry logic for resilience against transient failures.
+	 *
+	 * @param userId - The user who entered/left
+	 * @param action - 'entered' when joining, 'left' when leaving
+	 */
+	private notifyLobbyUserRoomStatus(userId: string, action: 'entered' | 'left'): void {
+		const roomCode = this.getRoomCode();
+		const maxRetries = 3;
+
+		const attemptNotify = (attempt: number): void => {
+			try {
+				this.lobbyStub.updateUserRoomStatus(userId, roomCode, action);
+				console.log(`[GameRoom] Notified lobby: user ${userId} ${action} room ${roomCode}`);
+			} catch (error) {
+				if (attempt < maxRetries) {
+					// Exponential backoff: 100ms, 200ms, 400ms
+					const delay = 100 * 2 ** attempt;
+					console.warn(
+						`[GameRoom] Retry ${attempt + 1}/${maxRetries} notifying lobby in ${delay}ms`,
+					);
+					setTimeout(() => attemptNotify(attempt + 1), delay);
+				} else {
+					console.error(
+						'[GameRoom] Failed to notify lobby of user room status after retries:',
+						error,
+					);
+				}
+			}
+		};
+
+		attemptNotify(0);
+	}
+
 	// ─────────────────────────────────────────────────────────────────────────────
 	// Connection Lifecycle
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -708,10 +972,16 @@ export class GameRoom extends DurableObject<Env> {
 
 			// Notify GlobalLobby of spectator count change
 			await this.notifyLobbyOfUpdate();
+
+			// Notify GlobalLobby that user is now in this room
+			this.notifyLobbyUserRoomStatus(connState.userId, 'entered');
 			return;
 		}
 
-		// Player connection
+		// Player connection - check for reconnection or new join
+		let isReconnection = false;
+		let reconnectedSeat: PlayerSeat | null = null;
+
 		if (!roomState) {
 			// First connection creates the room
 			roomState = createInitialRoomState(this.getRoomCode(), connState.userId);
@@ -720,19 +990,48 @@ export class GameRoom extends DurableObject<Env> {
 			// Update connection state to mark as host
 			connState.isHost = true;
 			ws.serializeAttachment(connState);
-		} else {
-			// Check if rejoining or new player
-			connState.isHost = connState.userId === roomState.hostUserId;
-			ws.serializeAttachment(connState);
 
-			// Add to player order if new
-			if (!roomState.playerOrder.includes(connState.userId)) {
-				roomState.playerOrder.push(connState.userId);
-				await this.ctx.storage.put('room', roomState);
+			// Reserve seat for host
+			await this.reserveSeat(connState.userId, connState.displayName, connState.avatarSeed, true);
+		} else {
+			// Check for reconnection - player might have a reserved seat
+			const reconnectionResult = await this.handleReconnection(connState.userId);
+
+			if (reconnectionResult.success && reconnectionResult.seat) {
+				// Successful reconnection
+				isReconnection = true;
+				reconnectedSeat = reconnectionResult.seat;
+				connState.isHost = reconnectedSeat.isHost;
+				ws.serializeAttachment(connState);
+				console.log(`[GameRoom] Player ${connState.displayName} reconnected with existing seat`);
+			} else {
+				// New player or seat expired
+				connState.isHost = connState.userId === roomState.hostUserId;
+				ws.serializeAttachment(connState);
+
+				// Try to reserve a new seat
+				const seatReserved = await this.reserveSeat(
+					connState.userId,
+					connState.displayName,
+					connState.avatarSeed,
+					connState.isHost,
+				);
+
+				if (!seatReserved) {
+					// Room is full - close connection
+					ws.close(4003, 'Room is full');
+					return;
+				}
+
+				// Add to player order if new
+				if (!roomState.playerOrder.includes(connState.userId)) {
+					roomState.playerOrder.push(connState.userId);
+					await this.ctx.storage.put('room', roomState);
+				}
 			}
 		}
 
-		// Send initial state to new connection
+		// Send initial state to connection
 		ws.send(
 			JSON.stringify({
 				type: 'CONNECTED',
@@ -744,11 +1043,12 @@ export class GameRoom extends DurableObject<Env> {
 					spectators: this.getSpectatorList(),
 					roomStatus: roomState.status,
 					spectatorCount: this.getSpectatorCount(),
+					reconnected: isReconnection,
 				},
 			}),
 		);
 
-		// Send chat history to new connection
+		// Send chat history to connection
 		this.sendChatHistory(ws);
 
 		// Send current typing users
@@ -757,24 +1057,53 @@ export class GameRoom extends DurableObject<Env> {
 			ws.send(JSON.stringify(createTypingUpdateResponse(typingUsers)));
 		}
 
-		// Create system message for join (broadcast to all)
-		const systemMsg = await this.chatManager.createSystemMessage(
-			`${connState.displayName} joined the lobby`,
-		);
-		this.broadcast(createChatMessageResponse(systemMsg));
+		if (isReconnection) {
+			// Reconnection - broadcast reconnection event
+			const systemMsg = await this.chatManager.createSystemMessage(
+				`${connState.displayName} reconnected`,
+			);
+			this.broadcast(createChatMessageResponse(systemMsg));
 
-		// Notify others about player join
-		this.broadcast(
-			{
-				type: 'PLAYER_JOINED',
+			this.broadcast(
+				{
+					type: 'PLAYER_RECONNECTED',
+					payload: {
+						userId: connState.userId,
+						displayName: connState.displayName,
+						avatarSeed: connState.avatarSeed,
+					},
+				},
+				ws,
+			);
+
+			// Also notify spectators
+			this.broadcastToSpectators({
+				type: 'PLAYER_RECONNECTED',
 				payload: {
 					userId: connState.userId,
 					displayName: connState.displayName,
 					avatarSeed: connState.avatarSeed,
 				},
-			},
-			ws,
-		);
+			});
+		} else {
+			// New join - broadcast join event
+			const systemMsg = await this.chatManager.createSystemMessage(
+				`${connState.displayName} joined the lobby`,
+			);
+			this.broadcast(createChatMessageResponse(systemMsg));
+
+			this.broadcast(
+				{
+					type: 'PLAYER_JOINED',
+					payload: {
+						userId: connState.userId,
+						displayName: connState.displayName,
+						avatarSeed: connState.avatarSeed,
+					},
+				},
+				ws,
+			);
+		}
 
 		// Check if room is now full and cancel pending invites
 		const playerCount = this.getConnectedPlayerCount() + (roomState.aiPlayers?.length ?? 0);
@@ -787,6 +1116,9 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Notify GlobalLobby of player count change
 		await this.notifyLobbyOfUpdate();
+
+		// Notify GlobalLobby that user is now in this room
+		this.notifyLobbyUserRoomStatus(connState.userId, 'entered');
 	}
 
 	private async handleMessage(
@@ -989,24 +1321,57 @@ export class GameRoom extends DurableObject<Env> {
 
 			// Notify GlobalLobby of spectator count change
 			await this.notifyLobbyOfUpdate();
+
+			// Notify GlobalLobby that user left this room
+			this.notifyLobbyUserRoomStatus(connState.userId, 'left');
 			return;
 		}
 
-		// Player disconnect
-		const systemMsg = await this.chatManager.createSystemMessage(
-			`${connState.displayName} ${reason === 'left' ? 'left the lobby' : 'disconnected'}`,
-		);
-		this.broadcast(createChatMessageResponse(systemMsg));
+		// Player disconnect - reserve their seat with reconnection window
+		const seat = await this.markSeatDisconnected(connState.userId);
 
-		// Notify other players
-		this.broadcast({
-			type: 'PLAYER_LEFT',
-			payload: {
-				userId: connState.userId,
-				displayName: connState.displayName,
-				reason,
-			},
-		});
+		if (seat) {
+			// Create system message for temporary disconnect
+			const systemMsg = await this.chatManager.createSystemMessage(
+				`${connState.displayName} ${reason === 'left' ? 'left' : 'disconnected'} (${Math.round(RECONNECT_WINDOW_MS / 60000)} min to reconnect)`,
+			);
+			this.broadcast(createChatMessageResponse(systemMsg));
+
+			// Notify other players with reconnection deadline
+			this.broadcast({
+				type: 'PLAYER_DISCONNECTED',
+				payload: {
+					userId: connState.userId,
+					displayName: connState.displayName,
+					reconnectDeadline: seat.reconnectDeadline,
+				},
+			});
+
+			// Also notify spectators
+			this.broadcastToSpectators({
+				type: 'PLAYER_DISCONNECTED',
+				payload: {
+					userId: connState.userId,
+					displayName: connState.displayName,
+					reconnectDeadline: seat.reconnectDeadline,
+				},
+			});
+		} else {
+			// No seat found (shouldn't happen normally) - fallback to old behavior
+			const systemMsg = await this.chatManager.createSystemMessage(
+				`${connState.displayName} ${reason === 'left' ? 'left the lobby' : 'disconnected'}`,
+			);
+			this.broadcast(createChatMessageResponse(systemMsg));
+
+			this.broadcast({
+				type: 'PLAYER_LEFT',
+				payload: {
+					userId: connState.userId,
+					displayName: connState.displayName,
+					reason,
+				},
+			});
+		}
 
 		// If host left, cancel all pending invites
 		if (connState.isHost && this.pendingInvites.size > 0) {
@@ -1016,10 +1381,8 @@ export class GameRoom extends DurableObject<Env> {
 		// Notify GlobalLobby of player count change
 		await this.notifyLobbyOfUpdate();
 
-		// Set AFK check alarm for players only
-		const alarmData: AlarmData = { type: 'AFK_CHECK', userId: connState.userId };
-		await this.ctx.storage.put('alarm_data', alarmData);
-		await this.ctx.storage.setAlarm(Date.now() + 60_000); // 60 second reconnect window
+		// Notify GlobalLobby that user left this room
+		this.notifyLobbyUserRoomStatus(connState.userId, 'left');
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -1956,8 +2319,9 @@ export class GameRoom extends DurableObject<Env> {
 
 			// Schedule turn timeout for next player (only for human players)
 			const roomState = await this.ctx.storage.get<RoomState>('room');
+			const isNextPlayerAI = this.aiManager.isAIPlayer(result.nextPlayerId);
 			if (roomState?.settings.turnTimeoutSeconds && roomState.settings.turnTimeoutSeconds > 0) {
-				if (!this.aiManager.isAIPlayer(result.nextPlayerId)) {
+				if (!isNextPlayerAI) {
 					await this.gameStateManager.scheduleAfkWarning(result.nextPlayerId);
 				}
 			}
@@ -2225,17 +2589,8 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	private async triggerAITurnIfNeeded(playerId: string): Promise<void> {
 		if (!this.aiManager.isAIPlayer(playerId)) {
-			console.log(`[GameRoom] triggerAITurnIfNeeded: ${playerId} is NOT an AI player`);
 			return;
 		}
-
-		console.log(`[GameRoom] triggerAITurnIfNeeded: ${playerId} IS an AI player, starting turn`);
-
-		// Get initial game state for logging
-		const initialState = await this.gameStateManager.getState();
-		console.log(
-			`[GameRoom] AI turn starting - phase: ${initialState?.phase}, currentPlayer: ${initialState?.playerOrder[initialState?.currentPlayerIndex ?? 0]}`,
-		);
 
 		// Execute AI turn in background (don't await to avoid blocking)
 		this.ctx.waitUntil(
@@ -2246,37 +2601,21 @@ export class GameRoom extends DurableObject<Env> {
 					// callback starts executing before the previous turn releases turnInProgress
 					await new Promise((resolve) => setTimeout(resolve, 50));
 
-					console.log(`[GameRoom] AI turn execution starting for ${playerId}`);
 					await this.aiManager.executeAITurn(
 						playerId,
 						// Pass a getter function so AI gets fresh state each step
-						async () => {
-							const state = await this.gameStateManager.getState();
-							console.log(
-								`[GameRoom] AI getState called - player ${playerId} dice: ${JSON.stringify(state?.players[playerId]?.currentDice)}, rollsRemaining: ${state?.players[playerId]?.rollsRemaining}`,
-							);
-							return state;
-						},
+						async () => this.gameStateManager.getState(),
 						async (pid, cmd) => {
-							console.log(`[GameRoom] AI execute callback: ${pid} ${cmd.type}`);
-							try {
-								await this.executeAICommand(pid, cmd);
-								console.log(`[GameRoom] AI execute callback complete: ${cmd.type}`);
-							} catch (e) {
-								console.error(`[GameRoom] AI execute callback FAILED: ${cmd.type}`, e);
-								throw e;
-							}
+							await this.executeAICommand(pid, cmd);
 						},
 						(event) => {
-							console.log(`[GameRoom] AI broadcasting event: ${event.type}`);
 							// Broadcast AI events to all clients
 							this.broadcast(event);
 							this.broadcastToSpectators(event);
 						},
 					);
-					console.log(`[GameRoom] AI turn execution completed for ${playerId}`);
 				} catch (error) {
-					console.error(`[GameRoom] AI turn execution failed for ${playerId}:`, error);
+					console.error(`[GameRoom] AI turn failed for ${playerId}:`, error);
 				}
 			})(),
 		);

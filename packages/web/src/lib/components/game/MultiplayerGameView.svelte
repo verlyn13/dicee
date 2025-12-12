@@ -25,6 +25,8 @@ import type { Category as CoreCategory, DiceArray, DieValue, TurnAnalysis } from
 import { isWireCategory, toCoreCategory, type WireCategory } from '$lib/types/category-convert';
 import type { Category, KeptMask, Scorecard } from '$lib/types/multiplayer';
 import { isPlayingPhase } from '$lib/types/multiplayer';
+import ConnectionStatusBanner from './ConnectionStatusBanner.svelte';
+import DisconnectedPlayersBanner from './DisconnectedPlayersBanner.svelte';
 import MultiplayerGameOverModal from './MultiplayerGameOverModal.svelte';
 import MultiplayerScorecard from './MultiplayerScorecard.svelte';
 import OpponentPanel from './OpponentPanel.svelte';
@@ -80,6 +82,10 @@ const afkWarning = $derived(store.afkWarning);
 const error = $derived(store.error);
 const aiActivity = $derived(store.aiActivity);
 const scoringNotifications = $derived(store.scoringNotifications);
+
+// Reconnection state (Phase 3)
+const disconnectedPlayers = $derived(store.disconnectedPlayers);
+const didReconnect = $derived(store.didReconnect);
 
 // Active player's dice (show opponent's dice when watching their turn)
 const activeDice = $derived(
@@ -315,6 +321,10 @@ function handleCloseGameOver(): void {
 	// Could navigate away or show rematch options
 	onLeave?.();
 }
+
+function handleDismissReconnect(): void {
+	store.clearReconnectionBanner();
+}
 </script>
 
 <!-- Show Waiting Room or Game View based on phase -->
@@ -339,6 +349,13 @@ function handleCloseGameOver(): void {
 				<span class="error-message">{error}</span>
 			</div>
 		{/if}
+
+		<!-- Connection Status Banners (Phase 3 - Reconnection) -->
+		<ConnectionStatusBanner
+			{didReconnect}
+			onDismissReconnect={handleDismissReconnect}
+		/>
+		<DisconnectedPlayersBanner {disconnectedPlayers} />
 
 		<!-- Scoring Notifications -->
 		{#if scoringNotifications.length > 0}

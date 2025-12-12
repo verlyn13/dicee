@@ -5,6 +5,7 @@ import { onMount } from 'svelte';
 import { afterNavigate, invalidate } from '$app/navigation';
 import { preloadEngine } from '$lib/services/engine';
 import { preferencesService } from '$lib/services/preferences.svelte';
+import { roomService } from '$lib/services/roomService.svelte';
 import {
 	initializeTelemetry,
 	setUserId,
@@ -13,6 +14,7 @@ import {
 } from '$lib/services/telemetry';
 import { audioStore } from '$lib/stores/audio.svelte';
 import { auth } from '$lib/stores/auth.svelte';
+import { lobby } from '$lib/stores/lobby.svelte';
 import { initKeyboardHandler } from '$lib/utils/keyboard';
 
 let { data, children } = $props();
@@ -61,11 +63,19 @@ onMount(() => {
 			setUserId(null);
 			// Stop syncing on logout
 			preferencesService.onLogout();
+			// Disconnect from room first (if in one), then lobby
+			// This ensures proper cleanup order: room → lobby
+			roomService.disconnect();
+			lobby.disconnect();
 		}
 	});
 
 	// Preload WASM engine for faster first-use
 	preloadEngine();
+
+	// Connect lobby WebSocket (persists for app lifetime)
+	// This keeps the lobby connection alive across navigation
+	lobby.connect();
 
 	// Initialize mobile keyboard handler (Safari VisualViewport fallback)
 	const cleanupKeyboard = initKeyboardHandler();

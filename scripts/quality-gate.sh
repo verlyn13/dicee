@@ -45,8 +45,8 @@ echo "┌───────────────────────�
 echo "│ 2/7 AKG Architectural Invariants                            │"
 echo "└──────────────────────────────────────────────────────────────┘"
 # Run AKG check and capture result (warnings OK, errors fail)
-# Filter out pnpm header lines (start with >) before JSON parsing
-AKG_OUTPUT=$(pnpm akg:check --json 2>&1 | grep -v "^>") || true
+# Filter out pnpm header lines and graph validation warnings before JSON parsing
+AKG_OUTPUT=$(pnpm akg:check --json 2>&1 | grep -v "^>" | grep -v "^Graph validation" | grep -v "^  -" | grep -v "^$") || true
 AKG_EXIT_CODE=$(echo "$AKG_OUTPUT" | jq -r '.exitCode // "success"')
 if [ "$AKG_EXIT_CODE" = "errors" ]; then
     echo -e "${RED}✗ AKG check found error-severity violations${NC}"

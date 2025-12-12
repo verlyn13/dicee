@@ -39,6 +39,8 @@ interface UserPresence {
 	avatarSeed: string;
 	connectedAt: number;
 	lastSeen: number;
+	/** Room code the user is currently in (null if just in lobby) */
+	currentRoomCode: string | null;
 }
 
 /** Message sent/received through the lobby */
@@ -154,6 +156,13 @@ export class GlobalLobby extends DurableObject<Env> {
 			return this.handleWebSocketUpgrade(request);
 		}
 
+		// POST endpoints (called by GameRoom via RPC)
+		if (request.method === 'POST') {
+			if (url.pathname === '/user-room-status') {
+				return this.handleUserRoomStatus(request);
+			}
+		}
+
 		// REST endpoints
 		switch (url.pathname) {
 			case '/lobby':
@@ -198,6 +207,7 @@ export class GlobalLobby extends DurableObject<Env> {
 			avatarSeed,
 			connectedAt: Date.now(),
 			lastSeen: Date.now(),
+			currentRoomCode: null, // Will be updated when user enters a room
 		};
 		server.serializeAttachment(presence);
 
@@ -227,6 +237,10 @@ export class GlobalLobby extends DurableObject<Env> {
 				},
 				server,
 			);
+
+			// Broadcast updated online users list to ALL clients
+			// This enables features like the invite modal showing current online users
+			this.broadcastOnlineUsers();
 		}
 
 		return new Response(null, { status: 101, webSocket: client });
@@ -376,6 +390,10 @@ export class GlobalLobby extends DurableObject<Env> {
 					},
 					ws,
 				);
+
+				// Broadcast updated online users list to ALL clients
+				// This ensures features like invite modal stay current
+				this.broadcastOnlineUsers();
 			}
 			// If user has other tabs open, no presence change - silent close
 		}
@@ -506,6 +524,7 @@ export class GlobalLobby extends DurableObject<Env> {
 			userId: u.userId,
 			displayName: u.displayName,
 			avatarSeed: u.avatarSeed,
+			currentRoomCode: u.currentRoomCode,
 		}));
 		console.log('[GlobalLobby] sendOnlineUsers - sending users:', users);
 
@@ -516,6 +535,29 @@ export class GlobalLobby extends DurableObject<Env> {
 				timestamp: Date.now(),
 			}),
 		);
+	}
+
+	/**
+	 * Broadcast online users list to ALL connected clients.
+	 * Called after presence changes (join/leave/room status) so all clients stay up-to-date.
+	 * This enables features like the invite modal showing current online users.
+	 */
+	private broadcastOnlineUsers(): void {
+		const rawUsers = this.getOnlineUsers();
+		const users = rawUsers.map((u) => ({
+			userId: u.userId,
+			displayName: u.displayName,
+			avatarSeed: u.avatarSeed,
+			currentRoomCode: u.currentRoomCode,
+		}));
+
+		this.broadcast({
+			type: 'online_users',
+			payload: { users, count: users.length },
+			timestamp: Date.now(),
+		});
+
+		console.log(`[GlobalLobby] Broadcast online users: ${users.length} users to all clients`);
 	}
 
 	// =========================================================================
@@ -582,6 +624,68 @@ export class GlobalLobby extends DurableObject<Env> {
 			}
 		}
 		return Array.from(seenUsers.values());
+	}
+
+	// =========================================================================
+	// User Room Status (RPC for GameRoom)
+	// =========================================================================
+
+	/**
+	 * Update user's room status.
+	 * Updates the user's currentRoomCode in their WebSocket attachment and
+	 * broadcasts updated online users list to all clients.
+	 *
+	 * Called by GameRoom when a user enters or leaves a room.
+	 *
+	 * @param userId - The user whose room status changed
+	 * @param roomCode - The room code
+	 * @param action - 'entered' when joining a room, 'left' when leaving
+	 */
+	updateUserRoomStatus(userId: string, roomCode: string, action: 'entered' | 'left'): void {
+		// Find all WebSocket connections for this user
+		const userConnections = this.ctx.getWebSockets(`user:${userId}`);
+
+		if (userConnections.length === 0) {
+			console.log(`[GlobalLobby] User ${userId} not connected, skipping room status update`);
+			return;
+		}
+
+		// Update the user's attachment with their current room code
+		for (const ws of userConnections) {
+			const attachment = ws.deserializeAttachment() as UserPresence | null;
+			if (attachment) {
+				ws.serializeAttachment({
+					...attachment,
+					currentRoomCode: action === 'entered' ? roomCode : null,
+				});
+			}
+		}
+
+		// Broadcast updated online users list to all clients
+		this.broadcastOnlineUsers();
+
+		console.log(
+			`[GlobalLobby] User ${userId} ${action} room ${roomCode}, broadcast updated online users`,
+		);
+	}
+
+	/**
+	 * HTTP handler for user room status (fallback for non-RPC callers).
+	 */
+	private async handleUserRoomStatus(request: Request): Promise<Response> {
+		try {
+			const body = (await request.json()) as {
+				userId: string;
+				roomCode: string;
+				action: 'entered' | 'left';
+			};
+
+			this.updateUserRoomStatus(body.userId, body.roomCode, body.action);
+			return new Response('OK');
+		} catch (err) {
+			console.error('[GlobalLobby] handleUserRoomStatus error:', err);
+			return new Response('Bad Request', { status: 400 });
+		}
 	}
 
 	// =========================================================================

@@ -43,6 +43,8 @@ export interface OnlineUser {
 	userId: string;
 	displayName: string;
 	avatarSeed: string;
+	/** Room code if user is currently in a room (null if just in lobby) */
+	currentRoomCode: string | null;
 }
 
 /**
@@ -107,54 +109,98 @@ class LobbyState {
 	private ws: WebSocket | null = null;
 	private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 	private pingInterval: ReturnType<typeof setInterval> | null = null;
+	private connectPromise: Promise<void> | null = null;
+	private intentionalDisconnect = false;
 	private readonly MAX_MESSAGES = 100;
 	private readonly MAX_TICKER = 10;
 	private readonly RECONNECT_DELAYS = [1000, 2000, 5000, 10000, 30000];
 	private readonly PING_INTERVAL = 30000; // 30 seconds
 
-	connect() {
-		if (!browser || this.ws?.readyState === WebSocket.OPEN) return;
+	/**
+	 * Connect to the lobby WebSocket.
+	 * Idempotent - returns existing promise if already connecting/connected.
+	 */
+	connect(): Promise<void> {
+		// Reset intentional flag on new connect attempt
+		this.intentionalDisconnect = false;
 
-		this.connectionState = 'connecting';
+		// Return existing promise if already connecting
+		if (this.connectPromise) return this.connectPromise;
 
-		const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-		this.ws = new WebSocket(`${protocol}//${location.host}/ws/lobby`);
+		// Already connected - return resolved promise
+		if (this.ws?.readyState === WebSocket.OPEN) {
+			return Promise.resolve();
+		}
 
-		this.ws.onopen = () => {
-			this.connectionState = 'connected';
-			this.reconnectAttempts = 0;
-			this.clearReconnectTimer();
-			this.startPingInterval();
-		};
-
-		this.ws.onmessage = (event) => {
-			try {
-				const data = JSON.parse(event.data);
-				this.handleMessage(data);
-			} catch (e) {
-				console.error('[lobby] Failed to parse message:', e);
-			}
-		};
-
-		this.ws.onclose = (event) => {
-			this.connectionState = 'disconnected';
-			this.stopPingInterval();
-			if (!event.wasClean) {
-				this.scheduleReconnect();
-			}
-		};
-
-		this.ws.onerror = () => {
-			// Error will trigger close, which handles reconnect
-		};
+		// Create new connection
+		this.connectPromise = this.connectToServer();
+		return this.connectPromise;
 	}
 
+	/**
+	 * Internal connection method.
+	 */
+	private connectToServer(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			if (!browser) {
+				this.connectPromise = null;
+				reject(new Error('Not in browser'));
+				return;
+			}
+
+			this.connectionState = 'connecting';
+
+			const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+			this.ws = new WebSocket(`${protocol}//${location.host}/ws/lobby`);
+
+			this.ws.onopen = () => {
+				this.connectionState = 'connected';
+				this.reconnectAttempts = 0;
+				this.clearReconnectTimer();
+				this.startPingInterval();
+				resolve();
+			};
+
+			this.ws.onmessage = (event) => {
+				try {
+					const data = JSON.parse(event.data);
+					this.handleMessage(data);
+				} catch (e) {
+					console.error('[lobby] Failed to parse message:', e);
+				}
+			};
+
+			this.ws.onclose = (event) => {
+				this.connectionState = 'disconnected';
+				this.connectPromise = null;
+				this.stopPingInterval();
+				if (!event.wasClean && !this.intentionalDisconnect) {
+					this.scheduleReconnect();
+				}
+			};
+
+			this.ws.onerror = (error) => {
+				// Error will trigger close, which handles reconnect
+				// Only reject if this is the initial connection attempt
+				if (this.connectionState === 'connecting') {
+					reject(error);
+				}
+			};
+		});
+	}
+
+	/**
+	 * Disconnect from the lobby WebSocket.
+	 * Sets intentionalDisconnect to prevent auto-reconnect (e.g., on logout).
+	 */
 	disconnect() {
+		this.intentionalDisconnect = true;
 		this.clearReconnectTimer();
 		this.stopPingInterval();
 		this.ws?.close(1000, 'User disconnect');
 		this.ws = null;
 		this.connectionState = 'disconnected';
+		this.connectPromise = null;
 	}
 
 	private handleMessage(data: { type: string; payload: unknown; timestamp?: number }) {
@@ -325,6 +371,8 @@ class LobbyState {
 	}
 
 	private scheduleReconnect() {
+		// Don't reconnect after intentional disconnect (logout)
+		if (this.intentionalDisconnect) return;
 		if (this.reconnectTimer) return;
 
 		const delay =

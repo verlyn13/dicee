@@ -138,22 +138,13 @@ export class AIRoomManager {
 		executeCommand: GameCommandExecutor,
 		broadcast: EventBroadcaster,
 	): Promise<void> {
-		console.log(`[AIRoomManager] executeAITurn called for ${playerId}`);
-		console.log(`[AIRoomManager] AI players registered: ${Array.from(this.aiPlayers).join(', ')}`);
-		console.log(
-			`[AIRoomManager] turnInProgress=${this.turnInProgress}, turnStartedAt=${this.turnStartedAt}`,
-		);
-
 		if (!this.isAIPlayer(playerId)) {
-			console.error(`[AIRoomManager] Player ${playerId} is not registered as AI`);
 			throw new Error(`Player ${playerId} is not an AI`);
 		}
 
 		// Check for stale turn and force reset if needed
 		if (this.isTurnStale()) {
-			console.warn(
-				`[AIRoomManager] Detected stale turnInProgress flag (started ${Date.now() - (this.turnStartedAt ?? 0)}ms ago). Force resetting.`,
-			);
+			console.warn(`[AIRoomManager] Stale turn detected, force resetting`);
 			this.turnInProgress = false;
 			this.turnStartedAt = null;
 		}
@@ -168,14 +159,11 @@ export class AIRoomManager {
 			if (!this.turnInProgress) {
 				break;
 			}
-			console.log(
-				`[AIRoomManager] Waiting for previous turn to complete (attempt ${attempt + 1}/${MAX_WAIT_ATTEMPTS})`,
-			);
 			await new Promise((resolve) => setTimeout(resolve, WAIT_INTERVAL_MS));
 
 			// Re-check staleness during wait
 			if (this.isTurnStale()) {
-				console.warn(`[AIRoomManager] Turn became stale during wait. Force resetting.`);
+				console.warn(`[AIRoomManager] Turn became stale during wait, force resetting`);
 				this.turnInProgress = false;
 				this.turnStartedAt = null;
 				break;
@@ -183,39 +171,32 @@ export class AIRoomManager {
 		}
 
 		if (this.turnInProgress) {
-			console.error(
-				`[AIRoomManager] Timeout waiting for previous turn to complete, skipping turn for ${playerId}`,
-			);
+			console.error(`[AIRoomManager] Timeout waiting for previous turn, skipping ${playerId}`);
 			return;
 		}
 
 		this.turnInProgress = true;
 		this.turnStartedAt = Date.now();
-		console.log(`[AIRoomManager] Starting AI turn for ${playerId} at ${this.turnStartedAt}`);
 
 		try {
 			// Create command executor wrapper
 			const executor = async (command: AICommand) => {
-				console.log(`[AIRoomManager] Executing command: ${command.type}`);
 				await executeCommand(playerId, command);
 			};
 
 			// Create event emitter wrapper
 			const emitter = (event: AIEvent) => {
-				console.log(`[AIRoomManager] Emitting event: ${event.type}`);
 				this.handleAIEvent(event, broadcast);
 			};
 
 			// Execute the turn with state getter
 			await this.controller.executeTurn(playerId, getGameState, executor, emitter);
-			console.log(`[AIRoomManager] AI turn completed for ${playerId}`);
 		} catch (error) {
-			console.error(`[AIRoomManager] AI turn failed for ${playerId}:`, error);
+			console.error(`[AIRoomManager] Turn execution failed for ${playerId}:`, error);
 			throw error;
 		} finally {
 			this.turnInProgress = false;
 			this.turnStartedAt = null;
-			console.log(`[AIRoomManager] turnInProgress reset to false, turnStartedAt cleared`);
 		}
 	}
 

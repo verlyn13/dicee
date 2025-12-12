@@ -13,7 +13,7 @@
  * - Online presence
  */
 
-import { onDestroy, onMount } from 'svelte';
+import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
 import GoogleButton from '$lib/components/auth/GoogleButton.svelte';
 import MagicLinkForm from '$lib/components/auth/MagicLinkForm.svelte';
@@ -60,15 +60,6 @@ import Ticker from './Ticker.svelte';
 // Friends modal state
 let showCreateModal = $state(false);
 let showJoinModal = $state(false);
-
-// Connect to lobby on mount
-onMount(() => {
-	lobby.connect();
-});
-
-onDestroy(() => {
-	lobby.disconnect();
-});
 
 // Check if on mobile for responsive layout
 let isMobile = $state(false);

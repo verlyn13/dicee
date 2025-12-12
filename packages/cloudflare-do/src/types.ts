@@ -70,6 +70,87 @@ export interface ConnectionState {
 }
 
 // =============================================================================
+// Seat Reservation System (Phase 3 - Reconnection)
+// =============================================================================
+
+/**
+ * Reconnection window duration (5 minutes).
+ * Players who disconnect have this long to reclaim their seat.
+ */
+export const RECONNECT_WINDOW_MS = 5 * 60 * 1000;
+
+/**
+ * Player seat state - tracks player presence and reconnection.
+ * Stored in DO storage, survives hibernation.
+ */
+export interface PlayerSeat {
+	/** User ID (Supabase auth.users.id) */
+	userId: string;
+
+	/** Display name at time of joining */
+	displayName: string;
+
+	/** Avatar seed for DiceBear */
+	avatarSeed: string;
+
+	/** When player first joined (epoch ms) */
+	joinedAt: number;
+
+	/** Whether player is currently connected */
+	isConnected: boolean;
+
+	/** When player disconnected (null if connected) */
+	disconnectedAt: number | null;
+
+	/** Deadline to reconnect (null if connected or expired) */
+	reconnectDeadline: number | null;
+
+	/** Whether this player is the room host */
+	isHost: boolean;
+
+	/** Turn order position (0-indexed) */
+	turnOrder: number;
+}
+
+/**
+ * Reconnection state sent to clients.
+ * Tells them whether they can reconnect and why/why not.
+ */
+export interface ReconnectionState {
+	/** Whether reconnection is possible */
+	canReconnect: boolean;
+
+	/** When reconnection window expires (null if not applicable) */
+	deadline: number | null;
+
+	/** Reason for current state */
+	reason: 'seat_available' | 'seat_expired' | 'game_over' | 'kicked' | 'room_closed';
+}
+
+/**
+ * Create initial seat for a joining player
+ */
+export function createPlayerSeat(
+	userId: string,
+	displayName: string,
+	avatarSeed: string,
+	isHost: boolean,
+	turnOrder: number,
+): PlayerSeat {
+	return {
+		userId,
+		displayName,
+		avatarSeed,
+		joinedAt: Date.now(),
+		isConnected: true,
+		disconnectedAt: null,
+		reconnectDeadline: null,
+		isHost,
+		turnOrder,
+	};
+}
+
+// =============================================================================
 // Room State (persisted to storage)
 // =============================================================================
 
@@ -196,7 +277,7 @@ export interface SpectatorInfo {
 /**
  * Types of alarms that can be scheduled
  */
-export type AlarmType = 'TURN_TIMEOUT' | 'AFK_CHECK' | 'ROOM_CLEANUP';
+export type AlarmType = 'TURN_TIMEOUT' | 'AFK_CHECK' | 'ROOM_CLEANUP' | 'SEAT_EXPIRATION';
 
 /**
  * Data stored with scheduled alarms

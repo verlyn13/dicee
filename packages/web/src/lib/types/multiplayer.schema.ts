@@ -653,6 +653,45 @@ export const InviteCancelledEventSchema = BaseEventSchema.extend({
 	}),
 });
 
+// =============================================================================
+// Reconnection Events (Phase 3)
+// =============================================================================
+
+/**
+ * Player disconnected from game (seat reserved for reconnection window)
+ */
+export const PlayerDisconnectedEventSchema = BaseEventSchema.extend({
+	type: z.literal('PLAYER_DISCONNECTED'),
+	payload: z.object({
+		userId: z.uuid(),
+		displayName: DisplayNameSchema,
+		reconnectDeadline: z.number(), // Unix timestamp ms when seat expires
+	}),
+});
+
+/**
+ * Player reconnected to game (reclaimed their seat)
+ */
+export const PlayerReconnectedEventSchema = BaseEventSchema.extend({
+	type: z.literal('PLAYER_RECONNECTED'),
+	payload: z.object({
+		userId: z.uuid(),
+		displayName: DisplayNameSchema,
+		avatarSeed: z.string().optional(),
+	}),
+});
+
+/**
+ * Player's seat expired (they were removed from game)
+ */
+export const PlayerSeatExpiredEventSchema = BaseEventSchema.extend({
+	type: z.literal('PLAYER_SEAT_EXPIRED'),
+	payload: z.object({
+		userId: z.uuid(),
+		displayName: DisplayNameSchema,
+	}),
+});
+
 /**
  * All server events - discriminated union
  */
@@ -693,6 +732,10 @@ export const ServerEventSchema = z.discriminatedUnion('type', [
 	InviteExpiredEventSchema,
 	InviteReceivedEventSchema,
 	InviteCancelledEventSchema,
+	// Reconnection events (Phase 3)
+	PlayerDisconnectedEventSchema,
+	PlayerReconnectedEventSchema,
+	PlayerSeatExpiredEventSchema,
 ]);
 
 /** Server event input type (before validation) */

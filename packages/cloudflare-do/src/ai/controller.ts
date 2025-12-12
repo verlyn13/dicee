@@ -179,19 +179,12 @@ export class AIController {
 		execute: CommandExecutor,
 		emit: EventEmitter,
 	): Promise<void> {
-		console.log(`[AIController] executeTurn starting for ${playerId}`);
-
 		const playerState = this.players.get(playerId);
 		const brain = this.brains.get(playerId);
 
 		if (!playerState || !brain) {
-			console.error(
-				`[AIController] AI player not found: ${playerId}, registered players: ${Array.from(this.players.keys()).join(', ')}`,
-			);
 			throw new Error(`AI player not found: ${playerId}`);
 		}
-
-		console.log(`[AIController] Found player state and brain for ${playerId}`);
 
 		// Reset turn state
 		playerState.turnStep = 0;
@@ -200,35 +193,32 @@ export class AIController {
 		// Execute turn steps until we score
 		let turnComplete = false;
 		let maxSteps = 10; // Safety limit
-		let stepCount = 0;
 
 		while (!turnComplete && maxSteps > 0) {
-			stepCount++;
-			console.log(`[AIController] Turn step ${stepCount} for ${playerId}`);
-
 			// Get fresh game state for each step
 			const gameState = await getGameState();
 			if (!gameState) {
-				console.error('[AIController] No game state available');
 				return;
 			}
 
-			console.log(`[AIController] Got game state, executing step ${stepCount}`);
+			const currentPlayer = gameState.playerOrder[gameState.currentPlayerIndex];
+
+			// Verify it's still this player's turn
+			if (currentPlayer !== playerId) {
+				return;
+			}
+
 			const decision = await this.executeTurnStep(playerId, gameState, execute, emit);
-			console.log(`[AIController] Step ${stepCount} decision: ${decision.action}`);
 
 			if (decision.action === 'score') {
 				turnComplete = true;
-				console.log(`[AIController] Turn complete after ${stepCount} steps`);
 			}
 
 			maxSteps--;
 		}
 
 		if (!turnComplete) {
-			console.error(
-				`[AIController] Turn did not complete after ${stepCount} steps (maxSteps reached)`,
-			);
+			console.error(`[AIController] Turn did not complete for ${playerId} (maxSteps reached)`);
 		}
 	}
 
@@ -256,7 +246,44 @@ export class AIController {
 		// Build game context
 		const context = this.buildGameContext(playerId, gameState);
 
-		// Get thinking time estimate
+		// CONTROLLER-LEVEL CHECK: If no valid dice, immediately roll
+		// This protects against any brain implementation that might not handle null dice
+		// Dice are null/undefined at turn start before first roll
+		const hasValidDice =
+			context.dice && context.dice.length === 5 && context.dice.some((d) => d >= 1 && d <= 6);
+
+		if (!hasValidDice) {
+			console.log(`[AIController] No valid dice for ${playerId} - issuing roll without brain consultation`);
+			const rollDecision: TurnDecision = {
+				action: 'roll',
+				reasoning: 'Turn start - must roll first',
+				confidence: 1.0,
+			};
+
+			// Minimal think time for initial roll
+			const minThinkTime = Math.max(this.config.minDelayMs, 300);
+			if (this.config.emitThinkingEvents) {
+				emit({
+					type: 'ai_thinking',
+					playerId,
+					estimatedMs: minThinkTime,
+				});
+			}
+			await this.delay(minThinkTime);
+
+			// Execute the roll
+			await this.executeDecision(playerId, rollDecision, execute, emit);
+
+			// Update state
+			playerState.isThinking = false;
+			playerState.lastActionAt = Date.now();
+			playerState.turnStep++;
+			playerState.accumulatedThinkTime += minThinkTime;
+
+			return rollDecision;
+		}
+
+		// Get thinking time estimate (only for valid dice scenarios)
 		const thinkTime = brain.estimateThinkingTime(context, playerState.profile);
 		const clampedThinkTime = Math.max(
 			this.config.minDelayMs,

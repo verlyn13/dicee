@@ -48,6 +48,16 @@ export interface ScoringNotification {
 }
 
 // =============================================================================
+// Disconnected Player Tracking (Phase 3 Reconnection)
+// =============================================================================
+
+export interface DisconnectedPlayer {
+	userId: string;
+	displayName: string;
+	reconnectDeadline: number;
+}
+
+// =============================================================================
 // Store Factory
 // =============================================================================
 
@@ -68,6 +78,10 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 	// Scoring notifications (for opponent score announcements)
 	let scoringNotifications = $state<ScoringNotification[]>([]);
 	const NOTIFICATION_DURATION = 3000; // 3 seconds
+
+	// Disconnected players tracking (Phase 3 - Reconnection)
+	let disconnectedPlayers = $state<DisconnectedPlayer[]>([]);
+	let didReconnect = $state(false); // True if we reconnected (reclaimed seat)
 
 	// ==========================================================================
 	// Derived States
@@ -194,6 +208,26 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 
 			case 'AI_SCORING':
 				handleAIScoring(event as unknown as Parameters<typeof handleAIScoring>[0]);
+				break;
+
+			// Connection event - check for reconnection
+			case 'CONNECTED':
+				handleConnected(event as unknown as Parameters<typeof handleConnected>[0]);
+				break;
+
+			// Player Reconnection Events (Phase 3)
+			case 'PLAYER_DISCONNECTED':
+				handlePlayerDisconnected(
+					event as unknown as Parameters<typeof handlePlayerDisconnected>[0],
+				);
+				break;
+
+			case 'PLAYER_RECONNECTED':
+				handlePlayerReconnected(event as unknown as Parameters<typeof handlePlayerReconnected>[0]);
+				break;
+
+			case 'PLAYER_SEAT_EXPIRED':
+				handlePlayerSeatExpired(event as unknown as Parameters<typeof handlePlayerSeatExpired>[0]);
 				break;
 		}
 	}
@@ -602,6 +636,119 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 	}
 
 	// ==========================================================================
+	// Connection Handler (Phase 3 - Reconnection Detection)
+	// ==========================================================================
+
+	function handleConnected(event: {
+		reconnected?: boolean;
+		payload?: { reconnected?: boolean };
+	}): void {
+		const data = event.payload ?? event;
+		const reconnected = data.reconnected ?? false;
+
+		if (reconnected) {
+			didReconnect = true;
+			// Auto-dismiss after 5 seconds
+			setTimeout(() => {
+				didReconnect = false;
+			}, 5000);
+		}
+	}
+
+	// ==========================================================================
+	// Player Reconnection Handlers (Phase 3)
+	// ==========================================================================
+
+	function handlePlayerDisconnected(event: {
+		userId?: string;
+		displayName?: string;
+		reconnectDeadline?: number;
+		payload?: { userId?: string; displayName?: string; reconnectDeadline?: number };
+	}): void {
+		const data = event.payload ?? event;
+		const userId = data.userId ?? '';
+		const displayName = data.displayName ?? 'Player';
+		const reconnectDeadline = data.reconnectDeadline ?? Date.now() + 5 * 60 * 1000;
+
+		// Add to disconnected players list (avoid duplicates)
+		const existing = disconnectedPlayers.find((p) => p.userId === userId);
+		if (!existing) {
+			disconnectedPlayers = [...disconnectedPlayers, { userId, displayName, reconnectDeadline }];
+		}
+
+		// Update player connection status in game state
+		if (gameState) {
+			const player = gameState.players[userId];
+			if (player) {
+				gameState = {
+					...gameState,
+					players: {
+						...gameState.players,
+						[userId]: {
+							...player,
+							isConnected: false,
+						},
+					},
+				};
+			}
+		}
+	}
+
+	function handlePlayerReconnected(event: {
+		userId?: string;
+		displayName?: string;
+		avatarSeed?: string;
+		payload?: { userId?: string; displayName?: string; avatarSeed?: string };
+	}): void {
+		const data = event.payload ?? event;
+		const userId = data.userId ?? '';
+
+		// Remove from disconnected players
+		disconnectedPlayers = disconnectedPlayers.filter((p) => p.userId !== userId);
+
+		// Update player connection status in game state
+		if (gameState) {
+			const player = gameState.players[userId];
+			if (player) {
+				gameState = {
+					...gameState,
+					players: {
+						...gameState.players,
+						[userId]: {
+							...player,
+							isConnected: true,
+						},
+					},
+				};
+			}
+		}
+	}
+
+	function handlePlayerSeatExpired(event: {
+		userId?: string;
+		displayName?: string;
+		payload?: { userId?: string; displayName?: string };
+	}): void {
+		const data = event.payload ?? event;
+		const userId = data.userId ?? '';
+
+		// Remove from disconnected players
+		disconnectedPlayers = disconnectedPlayers.filter((p) => p.userId !== userId);
+
+		// Remove player from game state entirely
+		if (gameState) {
+			const newPlayers = { ...gameState.players };
+			delete newPlayers[userId];
+
+			gameState = {
+				...gameState,
+				players: newPlayers,
+				playerOrder: gameState.playerOrder.filter((id) => id !== userId),
+			};
+		}
+	}
+
+	// ==========================================================================
 	// Scoring Notification Helpers
 	// ==========================================================================
 
@@ -694,6 +841,8 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		error = null;
 		afkWarning = null;
 		pending = false;
+		disconnectedPlayers = [];
+		didReconnect = false;
 	}
 
 	// ==========================================================================
@@ -791,6 +940,14 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 			return scoringNotifications;
 		},
 
+		// Reconnection state (Phase 3)
+		get disconnectedPlayers() {
+			return disconnectedPlayers;
+		},
+		get didReconnect() {
+			return didReconnect;
+		},
+
 		// Commands
 		rollDice,
 		keepDice,
@@ -801,6 +958,14 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		// Notification helpers
 		dismissNotification,
 		clearAIActivity,
+
+		// Reconnection helpers
+		setReconnected(value: boolean) {
+			didReconnect = value;
+		},
+		clearReconnectionBanner() {
+			didReconnect = false;
+		},
 
 		// Subscription
 		subscribe,
