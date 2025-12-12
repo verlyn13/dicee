@@ -729,6 +729,17 @@ class SpectatorService {
 		this.setStatus('disconnected');
 	}
 
+	/**
+	 * Trigger reconnection if socket exists.
+	 * Used for visibility change handling (phone wake).
+	 */
+	triggerReconnect(): void {
+		if (this.socket && this._status !== 'connected' && this._status !== 'connecting') {
+			console.log('[SpectatorService] Triggering reconnect due to visibility change');
+			this.socket.reconnect();
+		}
+	}
+
 	// =========================================================================
 	// Chat Commands (Spectators can chat and react)
 	// =========================================================================

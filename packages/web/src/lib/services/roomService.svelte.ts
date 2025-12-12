@@ -173,6 +173,17 @@ class RoomService {
 	}
 
 	/**
+	 * Trigger reconnection if socket exists.
+	 * Used for visibility change handling (phone wake).
+	 */
+	triggerReconnect(): void {
+		if (this.socket && this._status !== 'connected' && this._status !== 'connecting') {
+			console.log('[RoomService] Triggering reconnect due to visibility change');
+			this.socket.reconnect();
+		}
+	}
+
+	/**
 	 * Create a new room and connect to it
 	 *
 	 * @param accessToken - Supabase access token

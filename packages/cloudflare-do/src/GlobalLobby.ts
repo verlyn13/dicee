@@ -20,6 +20,7 @@
 
 import { DurableObject } from 'cloudflare:workers';
 import { createLogger, type Logger } from './lib/logger';
+import { createRoomDirectory, type RoomDirectory, type RoomInfo } from './lib/room-directory';
 import type {
 	Env,
 	GameHighlight,
@@ -72,24 +73,7 @@ interface ChatMessage {
 	timestamp: number;
 }
 
-/** Enhanced room info for room browser - now based on RoomStatusUpdate */
-interface RoomInfo {
-	code: string;
-	game: string;
-	hostName: string;
-	hostId: string;
-	playerCount: number;
-	spectatorCount: number;
-	maxPlayers: number;
-	isPublic: boolean;
-	allowSpectators: boolean;
-	status: 'waiting' | 'playing' | 'finished';
-	roundNumber: number;
-	totalRounds: number;
-	players: PlayerSummary[];
-	createdAt: number;
-	updatedAt: number;
-}
+// RoomInfo is imported from './lib/room-directory'
 
 /** Client command structure */
 interface LobbyCommand {
@@ -133,8 +117,8 @@ export class GlobalLobby extends DurableObject<Env> {
 	/** Structured logger for observability */
 	private logger: Logger = createLogger({ component: 'GlobalLobby' });
 
-	/** Active game rooms (in-memory, rebuilt from notifications) */
-	private activeRooms: Map<string, RoomInfo> = new Map();
+	/** Storage-first room directory (survives hibernation) */
+	private roomDirectory: RoomDirectory;
 
 	/** Recent chat messages (in-memory cache, persisted to storage) */
 	private chatHistory: ChatMessage[] = [];
@@ -152,12 +136,15 @@ export class GlobalLobby extends DurableObject<Env> {
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
 
+		// Initialize storage-first room directory (survives hibernation)
+		this.roomDirectory = createRoomDirectory(ctx.storage);
+
 		// Set up auto ping/pong without waking the DO
 		// This handles keepalive efficiently - no compute charge for pings
 		this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
 
-		// Note: In-memory state (activeRooms, rateLimits) is lost on hibernation.
-		// - activeRooms: Rebuilt from room notifications (acceptable for lobby)
+		// Note: In-memory state (rateLimits) is lost on hibernation.
+		// - roomDirectory: Persisted to storage, survives hibernation
 		// - chatHistory: Persisted to storage, loaded lazily on first access
 		// - rateLimits: Ephemeral by design - resets on wake (acceptable)
 		//
@@ -187,9 +174,9 @@ export class GlobalLobby extends DurableObject<Env> {
 		switch (url.pathname) {
 			case '/lobby':
 			case '/lobby/':
-				return this.getLobbyInfo();
+				return await this.getLobbyInfo();
 			case '/lobby/rooms':
-				return this.getPublicRooms();
+				return await this.getPublicRooms();
 			case '/lobby/online':
 				return this.getOnlineCount();
 			default:
@@ -295,8 +282,8 @@ export class GlobalLobby extends DurableObject<Env> {
 			);
 		}
 
-		// Send current rooms list
-		const publicRooms = Array.from(this.activeRooms.values()).filter((r) => r.isPublic);
+		// Send current rooms list (storage-first: survives hibernation)
+		const publicRooms = await this.roomDirectory.getPublic();
 		if (publicRooms.length > 0) {
 			ws.send(
 				JSON.stringify({
@@ -329,7 +316,7 @@ export class GlobalLobby extends DurableObject<Env> {
 				// Note: 'ping' is handled automatically by setWebSocketAutoResponse
 				// No need for manual ping handler - saves compute costs
 				case 'get_rooms':
-					this.sendRoomsList(ws);
+					await this.sendRoomsList(ws);
 					break;
 				case 'get_online_users':
 					console.log('[GlobalLobby] Received get_online_users request');
@@ -337,7 +324,8 @@ export class GlobalLobby extends DurableObject<Env> {
 					break;
 				case 'room_created':
 					if (data.room) {
-						this.activeRooms.set(data.room.code, data.room);
+						// Storage-first: persist BEFORE broadcast
+						await this.roomDirectory.upsert(data.room);
 						this.broadcast({
 							type: 'room_update',
 							payload: { action: 'created', room: data.room },
@@ -347,7 +335,8 @@ export class GlobalLobby extends DurableObject<Env> {
 					break;
 				case 'room_updated':
 					if (data.room) {
-						this.activeRooms.set(data.room.code, data.room);
+						// Storage-first: persist BEFORE broadcast
+						await this.roomDirectory.upsert(data.room);
 						this.broadcast({
 							type: 'room_update',
 							payload: { action: 'updated', room: data.room },
@@ -357,7 +346,8 @@ export class GlobalLobby extends DurableObject<Env> {
 					break;
 				case 'room_closed':
 					if (data.code) {
-						this.activeRooms.delete(data.code);
+						// Storage-first: persist BEFORE broadcast
+						await this.roomDirectory.remove(data.code);
 						this.broadcast({
 							type: 'room_update',
 							payload: { action: 'closed', code: data.code },
@@ -565,23 +555,21 @@ export class GlobalLobby extends DurableObject<Env> {
 	// Room Management
 	// =========================================================================
 
-	private sendRoomsList(ws: WebSocket): void {
-		// Get all public rooms (both waiting and playing)
-		const publicRooms = Array.from(this.activeRooms.values())
-			.filter((r) => r.isPublic)
-			.sort((a, b) => {
-				// Playing games first, then waiting, then by activity
-				if (a.status !== b.status) {
-					if (a.status === 'playing') return -1;
-					if (b.status === 'playing') return 1;
-				}
-				// Then by spectator count (more popular first)
-				if (a.spectatorCount !== b.spectatorCount) {
-					return b.spectatorCount - a.spectatorCount;
-				}
-				// Then by most recent
-				return b.updatedAt - a.updatedAt;
-			});
+	private async sendRoomsList(ws: WebSocket): Promise<void> {
+		// Get all public rooms (both waiting and playing) - storage-first
+		const publicRooms = (await this.roomDirectory.getPublic()).sort((a, b) => {
+			// Playing games first, then waiting, then by activity
+			if (a.status !== b.status) {
+				if (a.status === 'playing') return -1;
+				if (b.status === 'playing') return 1;
+			}
+			// Then by spectator count (more popular first)
+			if (a.spectatorCount !== b.spectatorCount) {
+				return b.spectatorCount - a.spectatorCount;
+			}
+			// Then by most recent
+			return b.updatedAt - a.updatedAt;
+		});
 
 		ws.send(
 			JSON.stringify({
@@ -643,20 +631,22 @@ export class GlobalLobby extends DurableObject<Env> {
 	// REST Endpoints
 	// =========================================================================
 
-	private getLobbyInfo(): Response {
+	private async getLobbyInfo(): Promise<Response> {
+		const allRooms = await this.roomDirectory.getAll();
+		const publicRooms = await this.roomDirectory.getPublic();
 		return Response.json({
 			service: 'Game Lobby',
 			onlineCount: this.getUniqueUserCount(),
 			connectionCount: this.ctx.getWebSockets().length,
-			roomCount: this.activeRooms.size,
-			publicRoomCount: Array.from(this.activeRooms.values()).filter((r) => r.isPublic).length,
+			roomCount: allRooms.length,
+			publicRoomCount: publicRooms.length,
 		});
 	}
 
-	private getPublicRooms(): Response {
-		const rooms = Array.from(this.activeRooms.values())
-			.filter((r) => r.isPublic)
-			.sort((a, b) => b.createdAt - a.createdAt);
+	private async getPublicRooms(): Promise<Response> {
+		const rooms = (await this.roomDirectory.getPublic()).sort(
+			(a, b) => b.createdAt - a.createdAt,
+		);
 
 		return Response.json({ rooms });
 	}
@@ -776,7 +766,10 @@ export class GlobalLobby extends DurableObject<Env> {
 	 * Called by GameRoom on: player join/leave, spectator join/leave,
 	 * game start, round change, game end.
 	 */
-	updateRoomStatus(update: RoomStatusUpdate): void {
+	async updateRoomStatus(update: RoomStatusUpdate): Promise<void> {
+		// Get existing room to preserve createdAt timestamp
+		const existingRoom = await this.roomDirectory.get(update.roomCode);
+
 		const roomInfo: RoomInfo = {
 			code: update.roomCode,
 			game: update.game,
@@ -791,7 +784,7 @@ export class GlobalLobby extends DurableObject<Env> {
 			roundNumber: update.roundNumber,
 			totalRounds: update.totalRounds,
 			players: update.players,
-			createdAt: this.activeRooms.get(update.roomCode)?.createdAt ?? update.updatedAt,
+			createdAt: existingRoom?.createdAt ?? update.updatedAt,
 			updatedAt: update.updatedAt,
 		};
 
@@ -801,7 +794,8 @@ export class GlobalLobby extends DurableObject<Env> {
 			this.scheduleRoomRemoval(update.roomCode, 60_000);
 		}
 
-		this.activeRooms.set(update.roomCode, roomInfo);
+		// Storage-first: persist BEFORE broadcast
+		await this.roomDirectory.upsert(roomInfo);
 
 		// Broadcast to lobby clients
 		this.broadcast({
@@ -810,13 +804,14 @@ export class GlobalLobby extends DurableObject<Env> {
 			timestamp: Date.now(),
 		});
 
+		const roomCount = await this.roomDirectory.size();
 		this.logger.info('Room status update received', {
 			operation: 'room_update',
 			roomCode: update.roomCode,
 			status: update.status,
 			playerCount: update.playerCount,
 			spectatorCount: update.spectatorCount,
-			activeRoomsCount: this.activeRooms.size,
+			activeRoomsCount: roomCount,
 		});
 	}
 
@@ -838,8 +833,9 @@ export class GlobalLobby extends DurableObject<Env> {
 	 * Remove a room from the directory.
 	 * Called when a room closes or is abandoned.
 	 */
-	removeRoom(roomCode: string): void {
-		this.activeRooms.delete(roomCode);
+	async removeRoom(roomCode: string): Promise<void> {
+		// Storage-first: persist BEFORE broadcast
+		await this.roomDirectory.remove(roomCode);
 
 		this.broadcast({
 			type: 'room_update',
@@ -856,10 +852,10 @@ export class GlobalLobby extends DurableObject<Env> {
 	 */
 	private scheduleRoomRemoval(roomCode: string, delayMs: number): void {
 		// Note: Using setTimeout for simplicity. Could use DO alarms for persistence.
-		setTimeout(() => {
-			const room = this.activeRooms.get(roomCode);
+		setTimeout(async () => {
+			const room = await this.roomDirectory.get(roomCode);
 			if (room?.status === 'finished') {
-				this.removeRoom(roomCode);
+				await this.removeRoom(roomCode);
 			}
 		}, delayMs);
 	}
@@ -1030,8 +1026,8 @@ export class GlobalLobby extends DurableObject<Env> {
 			roomCode,
 		});
 
-		// Validate room exists in directory
-		const room = this.activeRooms.get(roomCode);
+		// Validate room exists in directory (storage-first)
+		const room = await this.roomDirectory.get(roomCode);
 		if (!room) {
 			ws.send(
 				JSON.stringify({

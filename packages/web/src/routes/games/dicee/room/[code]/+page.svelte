@@ -172,6 +172,30 @@ function setupQuickPlayHandler(): void {
 }
 
 // =============================================================================
+// Visibility Handler (Phone Wake Reconnection)
+// =============================================================================
+
+$effect(() => {
+	// Handle visibility changes for immediate reconnection on phone wake
+	const handleVisibilityChange = () => {
+		if (document.visibilityState === 'visible') {
+			console.log('[Room] Page visible - checking connection');
+			if (actualRole === 'spectator') {
+				spectatorService.triggerReconnect();
+			} else {
+				roomService.triggerReconnect();
+			}
+		}
+	};
+
+	document.addEventListener('visibilitychange', handleVisibilityChange);
+
+	return () => {
+		document.removeEventListener('visibilitychange', handleVisibilityChange);
+	};
+});
+
+// =============================================================================
 // Cleanup
 // =============================================================================
 
