@@ -52,6 +52,7 @@ import ChatPanel from './ChatPanel.svelte';
 import CreateRoomModal from './CreateRoomModal.svelte';
 import EmptyRooms from './EmptyRooms.svelte';
 import InvitePopup from './InvitePopup.svelte';
+import JoinRequestPending from './JoinRequestPending.svelte';
 import JoinRoomModal from './JoinRoomModal.svelte';
 import MobileTabToggle from './MobileTabToggle.svelte';
 import RoomCard from './RoomCard.svelte';
@@ -437,6 +438,11 @@ function handleDeclineInvite(inviteId: string) {
 		onAccept={handleAcceptInvite}
 		onDecline={handleDeclineInvite}
 	/>
+{/if}
+
+<!-- Join Request Pending - shown when user has an active join request -->
+{#if lobby.activeJoinRequest}
+	<JoinRequestPending request={lobby.activeJoinRequest} />
 {/if}
 
 <style>

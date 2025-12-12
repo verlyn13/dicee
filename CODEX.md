@@ -1,6 +1,6 @@
 # Dicee Project – Codex CLI Playbook
 
-_Last updated: 2025-12-09 • Model: o3/GPT-5.1_
+_Last updated: 2025-12-12 • Model: ChatGPT 5.2 / Codex CLI v0.71.0_
 
 ## Mission
 Codex CLI is our fast-execution agent for boilerplate-heavy tasks (CRUD APIs, Supabase helpers, integration tests). It runs the latest ChatGPT models, benefiting from deeper planning, larger scratchpads, and native MCP support. This playbook mirrors the guardrails established for Claude Code and Windsurf while focusing on Codex's strengths.
@@ -44,12 +44,19 @@ codex mcp list  # All 3 servers should show connected
 ## Configuration Highlights
 | Feature | Setting | Benefit |
 |---------|---------|---------|
-| Planner | `gpt-5.1-mini` with 12-step cap | Forces explicit plan before edits |
+| Planner | `gpt-5-mini` with 12-step cap | Forces explicit plan before edits |
 | Scratchpad | 16k tokens | Rich reasoning transcripts for review |
 | Analysis budget | 32k tokens | Handles probability proofs / Supabase query reviews |
 | Auto-plan | Enabled | Aligns with agentic workflow orchestration doc |
 | Slash commands | `/status`, `/task`, `/verify`, `/handoff`, `/awaken`, `/tidyup` | Shared muscle memory with Claude |
 | Workflows | `/phase-manager`, `/verify-backend` | Phase-specific guidance |
+
+### GPT-5.2 defaults (Codex CLI v0.71.0)
+- Default model: `gpt-5.2` (knowledge cutoff Aug 2025)
+- Planner: `gpt-5-mini`; Reviewer/Auditor: `gpt-5.2-pro`
+- Reasoning effort: `none` by default — bump to `medium`/`high`/`xhigh` for deep refactors
+- Verbosity: `medium` default — lower for terse SQL/codegen, raise for walkthroughs
+- Tool calls: keep preambles on (explain before calling) and favor MCP tools over guesses
 
 ## Task Protocol
 1. **Awaken**: Start session with `/awaken` to load context and verify MCP

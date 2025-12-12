@@ -9,11 +9,19 @@ import { DurableObject } from 'cloudflare:workers';
 import { type AICommand, AIRoomManager, createAIPlayerState, getProfile } from './ai';
 import { extractAvatarUrl, extractDisplayName, verifySupabaseJWT } from './auth';
 import {
+	createJoinRequestManager,
+	JOIN_REQUEST_TTL_MS,
+	type JoinRequestManager,
+} from './lib/join-request';
+import { createLogger, type Logger } from './lib/logger';
+import {
 	ChatManager,
 	createChatErrorResponse,
 	createChatHistoryResponse,
 	createChatMessageResponse,
 	createReactionUpdateResponse,
+	createShoutCooldownResponse,
+	createShoutReceivedResponse,
 	createTypingUpdateResponse,
 	isChatMessageType,
 	type QuickChatKey,
@@ -43,6 +51,10 @@ import type {
 	InviteDeliveryRequest,
 	InviteResponsePayload,
 	JoinQueueEntry,
+	JoinRequestEntity,
+	JoinRequestResponseDelivery,
+	JoinRequestRPCInput,
+	JoinRequestRPCResponse,
 	JoinQueueState,
 	JoinQueueUpdate,
 	KibitzOption,
@@ -100,6 +112,9 @@ import {
  * - Alarm-based turn timeouts and cleanup
  */
 export class GameRoom extends DurableObject<Env> {
+	/** Structured logger for observability */
+	private logger: Logger = createLogger({ component: 'GameRoom' });
+
 	/** Chat manager for lobby chat system */
 	private chatManager: ChatManager;
 
@@ -154,6 +169,9 @@ export class GameRoom extends DurableObject<Env> {
 	/** Pending invites (key: targetUserId, value: PendingInvite) */
 	private pendingInvites: Map<string, PendingInvite> = new Map();
 
+	/** Join request manager for pending join requests */
+	private joinRequestManager: JoinRequestManager;
+
 	/** Maximum predictions per spectator per turn */
 	private static readonly MAX_PREDICTIONS_PER_TURN = 3;
 
@@ -187,6 +205,9 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Initialize AI room manager
 		this.aiManager = new AIRoomManager();
+
+		// Initialize join request manager
+		this.joinRequestManager = createJoinRequestManager();
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -349,6 +370,9 @@ export class GameRoom extends DurableObject<Env> {
 				break;
 			case 'SEAT_EXPIRATION':
 				await this.handleSeatExpiration();
+				break;
+			case 'JOIN_REQUEST_EXPIRATION':
+				await this.handleJoinRequestExpiration(alarmData.metadata?.requestId as string);
 				break;
 		}
 
@@ -848,8 +872,20 @@ export class GameRoom extends DurableObject<Env> {
 
 			// Call GlobalLobby RPC
 			this.lobbyStub.updateRoomStatus(update);
+
+			this.logger.info('Notified lobby of room update', {
+				operation: 'notify_lobby',
+				roomCode,
+				status: lobbyStatus,
+				playerCount: players.length,
+				spectatorCount: update.spectatorCount,
+			});
 		} catch (error) {
-			console.error('[GameRoom] Failed to notify lobby:', error);
+			this.logger.error('Failed to notify lobby', {
+				operation: 'notify_lobby',
+				roomCode: this.getRoomCode(),
+				error: String(error),
+			});
 		}
 	}
 
@@ -1273,6 +1309,18 @@ export class GameRoom extends DurableObject<Env> {
 				await this.handleCancelInvite(ws, connState, payload as { targetUserId: string });
 				break;
 
+			// ─────────────────────────────────────────────────────────────────────────
+			// Join Request Messages (host response to join requests)
+			// ─────────────────────────────────────────────────────────────────────────
+
+			case 'JOIN_REQUEST_RESPONSE':
+				await this.handleJoinRequestResponse(
+					ws,
+					connState,
+					payload as { requestId: string; approved: boolean }
+				);
+				break;
+
 			case 'PING':
 				ws.send(JSON.stringify({ type: 'PONG', payload: Date.now() }));
 				break;
@@ -1672,6 +1720,426 @@ export class GameRoom extends DurableObject<Env> {
 				console.log(`[GameRoom] Invite ${inviteId} expired for ${targetUserId}`);
 			}
 		}, delayMs);
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────────
+	// Join Request Handlers (Phase D)
+	// ─────────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * Handle a join request from GlobalLobby (RPC).
+	 * Called when a user requests to join this room from the lobby.
+	 *
+	 * @param input - The join request input from GlobalLobby
+	 * @returns Response with created request or error
+	 */
+	async handleJoinRequest(input: JoinRequestRPCInput): Promise<JoinRequestRPCResponse> {
+		const roomCode = this.getRoomCode();
+
+		this.logger.info('Processing join request', {
+			operation: 'join_request_receive',
+			roomCode,
+			requesterId: input.requesterId,
+		});
+
+		// Check room state
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (!roomState || roomState.status !== 'waiting') {
+			this.logger.info('Join request rejected - room not accepting', {
+				operation: 'join_request_reject',
+				roomCode,
+				requesterId: input.requesterId,
+				reason: 'room_not_accepting',
+				roomStatus: roomState?.status,
+			});
+			return {
+				success: false,
+				errorCode: 'ROOM_NOT_ACCEPTING',
+				errorMessage: 'Room is not accepting new players',
+			};
+		}
+
+		// Check capacity
+		const playerCount = this.getConnectedPlayerCount();
+		if (playerCount >= roomState.settings.maxPlayers) {
+			this.logger.info('Join request rejected - room full', {
+				operation: 'join_request_reject',
+				roomCode,
+				requesterId: input.requesterId,
+				reason: 'room_full',
+				playerCount,
+				maxPlayers: roomState.settings.maxPlayers,
+			});
+			return {
+				success: false,
+				errorCode: 'ROOM_FULL',
+				errorMessage: 'Room is full',
+			};
+		}
+
+		// Create the join request
+		const result = this.joinRequestManager.addRequest({
+			roomCode,
+			requesterId: input.requesterId,
+			requesterDisplayName: input.requesterDisplayName,
+			requesterAvatarSeed: input.requesterAvatarSeed,
+		});
+
+		if (!result.success) {
+			this.logger.info('Join request creation failed', {
+				operation: 'join_request_create_failed',
+				roomCode,
+				requesterId: input.requesterId,
+				errorCode: result.error.code,
+			});
+			return {
+				success: false,
+				errorCode: result.error.code,
+				errorMessage: result.error.message,
+			};
+		}
+
+		const request = result.value;
+
+		// Schedule expiration alarm
+		await this.scheduleJoinRequestExpiration(request.id, request.expiresAt);
+
+		// Notify host via WebSocket
+		this.notifyHostOfJoinRequest(request);
+
+		this.logger.info('Join request created', {
+			operation: 'join_request_create',
+			roomCode,
+			requestId: request.id,
+			requesterId: input.requesterId,
+			expiresAt: request.expiresAt,
+		});
+
+		// Return entity format expected by types
+		const entity: JoinRequestEntity = {
+			id: request.id,
+			roomCode: request.roomCode,
+			requesterId: request.requesterId,
+			requesterDisplayName: request.requesterDisplayName,
+			requesterAvatarSeed: request.requesterAvatarSeed,
+			createdAt: request.createdAt,
+			expiresAt: request.expiresAt,
+			status: request.status,
+		};
+
+		return {
+			success: true,
+			request: entity,
+		};
+	}
+
+	/**
+	 * Cancel a join request (RPC from GlobalLobby).
+	 * Only the requester can cancel their own pending request.
+	 */
+	async cancelJoinRequest(requestId: string, userId: string): Promise<JoinRequestRPCResponse> {
+		const roomCode = this.getRoomCode();
+
+		this.logger.info('Processing join request cancellation', {
+			operation: 'join_request_cancel',
+			roomCode,
+			requestId,
+			userId,
+		});
+
+		// Get the request
+		const request = this.joinRequestManager.getRequest(requestId);
+		if (!request) {
+			return {
+				success: false,
+				errorCode: 'REQUEST_NOT_FOUND',
+				errorMessage: 'Join request not found',
+			};
+		}
+
+		// Verify the canceller is the requester
+		if (request.requesterId !== userId) {
+			this.logger.warn('Join request cancellation rejected - not requester', {
+				operation: 'join_request_cancel_reject',
+				roomCode,
+				requestId,
+				attemptedBy: userId,
+				actualRequester: request.requesterId,
+			});
+			return {
+				success: false,
+				errorCode: 'NOT_REQUESTER',
+				errorMessage: 'Only the requester can cancel their request',
+			};
+		}
+
+		// Cancel the request
+		const result = this.joinRequestManager.cancel(requestId, userId);
+		if (!result.success) {
+			return {
+				success: false,
+				errorCode: result.error.code,
+				errorMessage: result.error.message,
+			};
+		}
+
+		this.logger.info('Join request cancelled', {
+			operation: 'join_request_cancelled',
+			roomCode,
+			requestId,
+			requesterId: userId,
+		});
+
+		// Notify host that request was cancelled
+		this.notifyHostOfJoinRequestCancellation(requestId, request.requesterDisplayName);
+
+		// Clean up
+		this.joinRequestManager.remove(requestId);
+
+		return { success: true };
+	}
+
+	/**
+	 * Handle host's response to a join request (WebSocket message).
+	 */
+	private async handleJoinRequestResponse(
+		ws: WebSocket,
+		connState: ConnectionState,
+		payload: { requestId: string; approved: boolean }
+	): Promise<void> {
+		// Only host can respond to join requests
+		if (!connState.isHost) {
+			this.sendError(ws, 'NOT_HOST', 'Only the host can respond to join requests');
+			return;
+		}
+
+		const { requestId, approved } = payload;
+		const roomCode = this.getRoomCode();
+
+		this.logger.info('Processing join request response', {
+			operation: 'join_request_response',
+			roomCode,
+			requestId,
+			approved,
+			hostId: connState.userId,
+		});
+
+		// Get the request
+		const request = this.joinRequestManager.getRequest(requestId);
+		if (!request) {
+			this.sendError(ws, 'REQUEST_NOT_FOUND', 'Join request not found');
+			return;
+		}
+
+		// Process the response
+		const result = approved
+			? this.joinRequestManager.approve(requestId)
+			: this.joinRequestManager.decline(requestId);
+
+		if (!result.success) {
+			this.logger.warn('Join request response failed', {
+				operation: 'join_request_response_failed',
+				roomCode,
+				requestId,
+				errorCode: result.error.code,
+			});
+			this.sendError(ws, result.error.code, result.error.message);
+			return;
+		}
+
+		// Deliver response to requester via GlobalLobby
+		const delivery: JoinRequestResponseDelivery = {
+			requestId,
+			requesterId: request.requesterId,
+			roomCode,
+			status: approved ? 'approved' : 'declined',
+			reason: approved ? undefined : 'Host declined your request',
+		};
+
+		await this.lobbyStub.deliverJoinRequestResponse(delivery);
+
+		this.logger.info('Join request response delivered', {
+			operation: 'join_request_response_delivered',
+			roomCode,
+			requestId,
+			status: delivery.status,
+			requesterId: request.requesterId,
+		});
+
+		// Clean up the request
+		this.joinRequestManager.remove(requestId);
+	}
+
+	/**
+	 * Handle join request expiration (alarm handler).
+	 */
+	private async handleJoinRequestExpiration(requestId: string | undefined): Promise<void> {
+		if (!requestId) return;
+
+		const request = this.joinRequestManager.getRequest(requestId);
+		if (!request || request.status !== 'pending') {
+			return; // Already processed
+		}
+
+		const roomCode = this.getRoomCode();
+
+		this.logger.info('Join request expired', {
+			operation: 'join_request_expire',
+			roomCode,
+			requestId,
+			requesterId: request.requesterId,
+		});
+
+		// Mark as expired
+		const result = this.joinRequestManager.expire(requestId);
+		if (!result.success) {
+			return;
+		}
+
+		// Notify requester via GlobalLobby
+		const delivery: JoinRequestResponseDelivery = {
+			requestId,
+			requesterId: request.requesterId,
+			roomCode,
+			status: 'expired',
+			reason: 'Request timed out',
+		};
+
+		await this.lobbyStub.deliverJoinRequestResponse(delivery);
+
+		// Notify host
+		this.notifyHostOfJoinRequestExpiration(requestId);
+
+		// Clean up
+		this.joinRequestManager.remove(requestId);
+	}
+
+	/**
+	 * Schedule an alarm for join request expiration.
+	 */
+	private async scheduleJoinRequestExpiration(requestId: string, expiresAt: number): Promise<void> {
+		// Note: DO alarms can only have one active alarm at a time.
+		// For multiple concurrent requests, we'll use setTimeout as a fallback.
+		// The alarm system handles the critical path, setTimeout handles additional requests.
+
+		// Check if there's already a pending alarm
+		const existingAlarm = await this.ctx.storage.getAlarm();
+		if (existingAlarm) {
+			// Use setTimeout for this request
+			const delay = Math.max(0, expiresAt - Date.now());
+			setTimeout(() => {
+				this.handleJoinRequestExpiration(requestId);
+			}, delay);
+			return;
+		}
+
+		// Schedule the alarm
+		const alarmData: AlarmData = {
+			type: 'JOIN_REQUEST_EXPIRATION',
+			metadata: { requestId },
+		};
+		await this.ctx.storage.put('alarm_data', alarmData);
+		await this.ctx.storage.setAlarm(expiresAt);
+	}
+
+	/**
+	 * Notify host of a new join request via WebSocket.
+	 */
+	private notifyHostOfJoinRequest(request: JoinRequestEntity): void {
+		const roomCode = this.getRoomCode();
+		const hostWs = this.ctx
+			.getWebSockets(`player:${roomCode}`)
+			.find((ws) => {
+				const state = ws.deserializeAttachment() as ConnectionState | null;
+				return state?.isHost === true;
+			});
+
+		if (hostWs) {
+			hostWs.send(
+				JSON.stringify({
+					type: 'JOIN_REQUEST_RECEIVED',
+					payload: { request },
+					timestamp: Date.now(),
+				})
+			);
+		}
+	}
+
+	/**
+	 * Notify host that a join request expired.
+	 */
+	private notifyHostOfJoinRequestExpiration(requestId: string): void {
+		const roomCode = this.getRoomCode();
+		const hostWs = this.ctx
+			.getWebSockets(`player:${roomCode}`)
+			.find((ws) => {
+				const state = ws.deserializeAttachment() as ConnectionState | null;
+				return state?.isHost === true;
+			});
+
+		if (hostWs) {
+			hostWs.send(
+				JSON.stringify({
+					type: 'JOIN_REQUEST_EXPIRED',
+					payload: { requestId },
+					timestamp: Date.now(),
+				})
+			);
+		}
+	}
+
+	/**
+	 * Notify host that a join request was cancelled by the requester.
+	 */
+	private notifyHostOfJoinRequestCancellation(requestId: string, requesterDisplayName: string): void {
+		const roomCode = this.getRoomCode();
+		const hostWs = this.ctx
+			.getWebSockets(`player:${roomCode}`)
+			.find((ws) => {
+				const state = ws.deserializeAttachment() as ConnectionState | null;
+				return state?.isHost === true;
+			});
+
+		if (hostWs) {
+			hostWs.send(
+				JSON.stringify({
+					type: 'JOIN_REQUEST_CANCELLED',
+					payload: { requestId, requesterDisplayName },
+					timestamp: Date.now(),
+				})
+			);
+		}
+	}
+
+	/**
+	 * Cancel all pending join requests (called when room closes/fills/game starts).
+	 */
+	private async cancelAllJoinRequests(reason: string): Promise<void> {
+		const pendingRequests = this.joinRequestManager.getPendingRequests();
+		if (pendingRequests.length === 0) return;
+
+		const roomCode = this.getRoomCode();
+
+		for (const request of pendingRequests) {
+			// Notify requester
+			const delivery: JoinRequestResponseDelivery = {
+				requestId: request.id,
+				requesterId: request.requesterId,
+				roomCode,
+				status: 'declined',
+				reason,
+			};
+			await this.lobbyStub.deliverJoinRequestResponse(delivery);
+		}
+
+		this.logger.info('Cancelled all pending join requests', {
+			operation: 'join_requests_cancel_all',
+			roomCode,
+			count: pendingRequests.length,
+			reason,
+		});
+
+		this.joinRequestManager.clear();
 	}
 
 	/**
@@ -2693,6 +3161,10 @@ export class GameRoom extends DurableObject<Env> {
 			case 'TYPING_STOP':
 				this.handleTypingStop(connState);
 				break;
+
+			case 'SHOUT':
+				this.handleShout(ws, connState, validated.payload.content);
+				break;
 		}
 	}
 
@@ -2704,6 +3176,13 @@ export class GameRoom extends DurableObject<Env> {
 		connState: ConnectionState,
 		content: string,
 	): Promise<void> {
+		this.logger.debug('Processing chat message', {
+			operation: 'chat_receive',
+			roomCode: this.getRoomCode(),
+			userId: connState.userId,
+			contentLength: content.length,
+		});
+
 		const result = await this.chatManager.handleTextMessage(
 			connState.userId,
 			connState.displayName,
@@ -2711,12 +3190,25 @@ export class GameRoom extends DurableObject<Env> {
 		);
 
 		if (!result.success) {
+			this.logger.warn('Chat message rejected', {
+				operation: 'chat_reject',
+				roomCode: this.getRoomCode(),
+				userId: connState.userId,
+				error: result.error,
+			});
 			ws.send(JSON.stringify(createChatErrorResponse(result.error, result.errorMessage)));
 			return;
 		}
 
 		// Broadcast the message to all connected clients
 		this.broadcast(createChatMessageResponse(result.message));
+
+		this.logger.debug('Chat message broadcast', {
+			operation: 'chat_broadcast',
+			roomCode: this.getRoomCode(),
+			userId: connState.userId,
+			messageId: result.message.id,
+		});
 
 		// Broadcast updated typing status (user stopped typing)
 		this.broadcastTypingUpdate();
@@ -2794,6 +3286,64 @@ export class GameRoom extends DurableObject<Env> {
 		if (shouldBroadcast) {
 			this.broadcastTypingUpdate();
 		}
+	}
+
+	/**
+	 * Handle shout message (ephemeral broadcast with cooldown)
+	 *
+	 * Shouts appear as speech bubbles above player avatars.
+	 * They are not persisted and auto-dismiss after 5 seconds.
+	 * Users have a 30-second cooldown between shouts.
+	 */
+	private handleShout(ws: WebSocket, connState: ConnectionState, content: string): void {
+		this.logger.debug('Processing shout message', {
+			operation: 'shout_receive',
+			roomCode: this.getRoomCode(),
+			userId: connState.userId,
+			contentLength: content.length,
+		});
+
+		const result = this.chatManager.handleShout(
+			connState.userId,
+			connState.displayName,
+			connState.avatarSeed,
+			content,
+		);
+
+		if (!result.success) {
+			const error = result.error;
+			this.logger.debug('Shout rejected', {
+				operation: 'shout_reject',
+				roomCode: this.getRoomCode(),
+				userId: connState.userId,
+				errorCode: error.code,
+			});
+
+			if (error.code === 'RATE_LIMITED') {
+				// Send cooldown response
+				const remainingMs =
+					typeof error.context?.remainingMs === 'number' ? error.context.remainingMs : 0;
+				ws.send(JSON.stringify(createShoutCooldownResponse(remainingMs)));
+			} else {
+				// Map ShoutErrorCode to ChatErrorCode for consistent client handling
+				const chatErrorCode =
+					error.code === 'CONTENT_TOO_LONG' ? 'MESSAGE_TOO_LONG' : 'INVALID_MESSAGE';
+				ws.send(JSON.stringify(createChatErrorResponse(chatErrorCode, error.message)));
+			}
+			return;
+		}
+
+		const shout = result.value;
+
+		this.logger.info('Shout broadcast', {
+			operation: 'shout_broadcast',
+			roomCode: this.getRoomCode(),
+			userId: connState.userId,
+			shoutId: shout.id,
+		});
+
+		// Broadcast to ALL clients (including sender - they see their own bubble)
+		this.broadcast(createShoutReceivedResponse(shout));
 	}
 
 	/**

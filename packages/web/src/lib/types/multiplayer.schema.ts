@@ -230,6 +230,102 @@ export const InviteResponseCommandSchema = z.object({
 	}),
 });
 
+// =============================================================================
+// Join Request Command Schemas (Client → Server)
+// =============================================================================
+
+/** Time-to-live for join requests (2 minutes) */
+export const JOIN_REQUEST_TTL_MS = 2 * 60 * 1000;
+
+/** Join request status */
+export const JoinRequestStatusSchema = z.enum([
+	'pending',
+	'approved',
+	'declined',
+	'expired',
+	'cancelled',
+]);
+export type JoinRequestStatus = z.infer<typeof JoinRequestStatusSchema>;
+
+/** Join request entity */
+export const JoinRequestSchema = z.object({
+	id: z.uuid(),
+	roomCode: RoomCodeSchema,
+	requesterId: z.uuid(),
+	requesterDisplayName: DisplayNameSchema,
+	requesterAvatarSeed: z.string(),
+	createdAt: z.number().int().positive(),
+	expiresAt: z.number().int().positive(),
+	status: JoinRequestStatusSchema,
+});
+export type JoinRequest = z.infer<typeof JoinRequestSchema>;
+
+/**
+ * Request to join a room (from lobby)
+ */
+export const RequestJoinCommandSchema = z.object({
+	type: z.literal('REQUEST_JOIN'),
+	payload: z.object({
+		roomCode: RoomCodeSchema,
+	}),
+});
+
+/**
+ * Cancel a pending join request
+ */
+export const CancelJoinRequestCommandSchema = z.object({
+	type: z.literal('CANCEL_JOIN_REQUEST'),
+	payload: z.object({
+		requestId: z.uuid(),
+	}),
+});
+
+/**
+ * Host response to join request (approve/decline)
+ */
+export const JoinRequestResponseCommandSchema = z.object({
+	type: z.literal('JOIN_REQUEST_RESPONSE'),
+	payload: z.object({
+		requestId: z.uuid(),
+		approved: z.boolean(),
+	}),
+});
+
+// =============================================================================
+// Shout Command Schemas (Client → Server)
+// =============================================================================
+
+/** Shout cooldown period (30 seconds) */
+export const SHOUT_COOLDOWN_MS = 30_000;
+
+/** Maximum shout message length */
+export const SHOUT_MAX_LENGTH = 100;
+
+/** Shout display duration (5 seconds) */
+export const SHOUT_DISPLAY_DURATION_MS = 5_000;
+
+/** Shout message entity */
+export const ShoutMessageSchema = z.object({
+	id: z.uuid(),
+	userId: z.uuid(),
+	displayName: DisplayNameSchema,
+	avatarSeed: z.string(),
+	content: z.string().max(SHOUT_MAX_LENGTH),
+	timestamp: z.number().int().positive(),
+	expiresAt: z.number().int().positive(),
+});
+export type ShoutMessage = z.infer<typeof ShoutMessageSchema>;
+
+/**
+ * Send a shout (ephemeral broadcast message)
+ */
+export const ShoutCommandSchema = z.object({
+	type: z.literal('SHOUT'),
+	payload: z.object({
+		content: z.string().min(1).max(SHOUT_MAX_LENGTH),
+	}),
+});
+
 /**
  * All commands - discriminated union
  */
@@ -252,6 +348,12 @@ export const CommandSchema = z.discriminatedUnion('type', [
 	SendInviteCommandSchema,
 	CancelInviteCommandSchema,
 	InviteResponseCommandSchema,
+	// Join request commands
+	RequestJoinCommandSchema,
+	CancelJoinRequestCommandSchema,
+	JoinRequestResponseCommandSchema,
+	// Shout command
+	ShoutCommandSchema,
 ]);
 
 /** Command input type (before validation) */
@@ -692,6 +794,97 @@ export const PlayerSeatExpiredEventSchema = BaseEventSchema.extend({
 	}),
 });
 
+// =============================================================================
+// Join Request Event Schemas (Server → Client)
+// =============================================================================
+
+/**
+ * Join request submitted successfully (to requester)
+ */
+export const JoinRequestSentEventSchema = BaseEventSchema.extend({
+	type: z.literal('JOIN_REQUEST_SENT'),
+	payload: z.object({
+		requestId: z.uuid(),
+		roomCode: RoomCodeSchema,
+		expiresAt: z.number().int().positive(),
+	}),
+});
+
+/**
+ * Join request received (to host)
+ */
+export const JoinRequestReceivedEventSchema = BaseEventSchema.extend({
+	type: z.literal('JOIN_REQUEST_RECEIVED'),
+	payload: z.object({
+		request: JoinRequestSchema,
+	}),
+});
+
+/**
+ * Join request approved (to requester)
+ */
+export const JoinApprovedEventSchema = BaseEventSchema.extend({
+	type: z.literal('JOIN_APPROVED'),
+	payload: z.object({
+		requestId: z.uuid(),
+		roomCode: RoomCodeSchema,
+	}),
+});
+
+/**
+ * Join request declined (to requester)
+ */
+export const JoinDeclinedEventSchema = BaseEventSchema.extend({
+	type: z.literal('JOIN_DECLINED'),
+	payload: z.object({
+		requestId: z.uuid(),
+		reason: z.string().optional(),
+	}),
+});
+
+/**
+ * Join request expired (to requester and host)
+ */
+export const JoinRequestExpiredEventSchema = BaseEventSchema.extend({
+	type: z.literal('JOIN_REQUEST_EXPIRED'),
+	payload: z.object({
+		requestId: z.uuid(),
+	}),
+});
+
+/**
+ * Join request error (to requester)
+ */
+export const JoinRequestErrorEventSchema = BaseEventSchema.extend({
+	type: z.literal('JOIN_REQUEST_ERROR'),
+	payload: z.object({
+		code: z.string(),
+		message: z.string(),
+	}),
+});
+
+// =============================================================================
+// Shout Event Schemas (Server → Client)
+// =============================================================================
+
+/**
+ * Shout received (broadcast to all in room except sender)
+ */
+export const ShoutReceivedEventSchema = BaseEventSchema.extend({
+	type: z.literal('SHOUT_RECEIVED'),
+	payload: ShoutMessageSchema,
+});
+
+/**
+ * Shout cooldown active (to sender when rate limited)
+ */
+export const ShoutCooldownEventSchema = BaseEventSchema.extend({
+	type: z.literal('SHOUT_COOLDOWN'),
+	payload: z.object({
+		remainingMs: z.number().int().nonnegative(),
+	}),
+});
+
 /**
  * All server events - discriminated union
  */
@@ -736,6 +929,16 @@ export const ServerEventSchema = z.discriminatedUnion('type', [
 	PlayerDisconnectedEventSchema,
 	PlayerReconnectedEventSchema,
 	PlayerSeatExpiredEventSchema,
+	// Join request events
+	JoinRequestSentEventSchema,
+	JoinRequestReceivedEventSchema,
+	JoinApprovedEventSchema,
+	JoinDeclinedEventSchema,
+	JoinRequestExpiredEventSchema,
+	JoinRequestErrorEventSchema,
+	// Shout events
+	ShoutReceivedEventSchema,
+	ShoutCooldownEventSchema,
 ]);
 
 /** Server event input type (before validation) */

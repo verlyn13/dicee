@@ -20,6 +20,13 @@ import {
 	type ReactionEmoji,
 	type TypingState,
 } from './types';
+import {
+	createShoutCooldownManager,
+	type ShoutCooldownManager,
+	type ShoutMessage,
+	type ShoutErrorCode,
+} from '../lib/shout-cooldown';
+import { type Result, err } from '@dicee/shared';
 
 // =============================================================================
 // Storage Keys
@@ -52,11 +59,15 @@ export class ChatManager {
 	/** Active typing indicators */
 	private typingUsers: Map<string, TypingState> = new Map();
 
+	/** Shout cooldown state (ephemeral, not persisted) */
+	private shoutCooldownManager: ShoutCooldownManager;
+
 	/** Whether state has been loaded from storage */
 	private initialized = false;
 
 	constructor(ctx: DurableObjectState) {
 		this.ctx = ctx;
+		this.shoutCooldownManager = createShoutCooldownManager();
 	}
 
 	// ===========================================================================
@@ -406,6 +417,36 @@ export class ChatManager {
 	}
 
 	// ===========================================================================
+	// Shout System (Ephemeral)
+	// ===========================================================================
+
+	/**
+	 * Handle a shout message (ephemeral broadcast with cooldown)
+	 *
+	 * Shouts are not persisted - they display briefly above player avatars.
+	 * Rate limited to prevent spam (30 second cooldown per user).
+	 *
+	 * @returns Result with ShoutMessage to broadcast, or error code
+	 */
+	handleShout(
+		userId: string,
+		displayName: string,
+		avatarSeed: string,
+		content: string,
+	): Result<ShoutMessage, ShoutErrorCode> {
+		return this.shoutCooldownManager.processShout(userId, displayName, avatarSeed, content);
+	}
+
+	/**
+	 * Check if a user can shout (for UI feedback)
+	 * @returns remaining cooldown in milliseconds (0 if can shout)
+	 */
+	getShoutCooldownMs(userId: string): number {
+		const check = this.shoutCooldownManager.canShout(userId);
+		return check.remainingMs;
+	}
+
+	// ===========================================================================
 	// System Messages
 	// ===========================================================================
 
@@ -496,3 +537,31 @@ export function createTypingUpdateResponse(typing: TypingState[]): ChatServerMes
 export function createChatErrorResponse(code: ChatErrorCode, message: string): ChatServerMessage {
 	return { type: 'CHAT_ERROR', payload: { code, message } };
 }
+
+// =============================================================================
+// Shout Message Helpers
+// =============================================================================
+
+/**
+ * Server → Client shout message types
+ */
+export type ShoutServerMessage =
+	| { type: 'SHOUT_RECEIVED'; payload: ShoutMessage }
+	| { type: 'SHOUT_COOLDOWN'; payload: { remainingMs: number } };
+
+/**
+ * Create SHOUT_RECEIVED server message
+ */
+export function createShoutReceivedResponse(shout: ShoutMessage): ShoutServerMessage {
+	return { type: 'SHOUT_RECEIVED', payload: shout };
+}
+
+/**
+ * Create SHOUT_COOLDOWN server message
+ */
+export function createShoutCooldownResponse(remainingMs: number): ShoutServerMessage {
+	return { type: 'SHOUT_COOLDOWN', payload: { remainingMs } };
+}
+
+// Re-export ShoutMessage type for consumers
+export type { ShoutMessage, ShoutErrorCode } from '../lib/shout-cooldown';

@@ -25,11 +25,18 @@ import {
 	type ChatServerEvent,
 	createEmptyReactions,
 	isChatEvent,
+	isShoutEvent,
 	type MessageReactions,
 	QUICK_CHAT_MESSAGES,
 	type QuickChatKey,
 	REACTION_EMOJIS,
 	type ReactionEmoji,
+	SHOUT_COOLDOWN_MS,
+	SHOUT_DISPLAY_DURATION_MS,
+	SHOUT_MAX_LENGTH,
+	type ShoutCooldownEvent,
+	type ShoutMessage,
+	type ShoutReceivedEvent,
 	type TypingState,
 } from '$lib/types/multiplayer';
 
@@ -89,6 +96,10 @@ export interface ChatStore {
 	readonly isOpen: boolean;
 	/** Current user's preferences */
 	readonly preferences: ChatPreferences;
+	/** Active shout bubbles by user ID */
+	readonly activeShouts: Map<string, ShoutMessage>;
+	/** Shout cooldown remaining (milliseconds) */
+	readonly shoutCooldownMs: number;
 
 	// -------------------------------------------------------------------------
 	// Derived State
@@ -108,6 +119,12 @@ export interface ChatStore {
 	readonly maxMessageLength: number;
 	/** Whether currently typing (own state) */
 	readonly isTyping: boolean;
+	/** Whether user can send a shout (cooldown check) */
+	readonly canShout: boolean;
+	/** Shout cooldown remaining (seconds) */
+	readonly shoutCooldownSeconds: number;
+	/** Maximum shout length */
+	readonly maxShoutLength: number;
 
 	// -------------------------------------------------------------------------
 	// Actions
@@ -135,6 +152,10 @@ export interface ChatStore {
 	retryMessage: (messageId: string) => void;
 	/** Remove a failed message */
 	removeFailedMessage: (messageId: string) => void;
+	/** Send a shout (ephemeral speech bubble) */
+	sendShout: (content: string) => void;
+	/** Get active shout for a user */
+	getShoutForUser: (userId: string) => ShoutMessage | undefined;
 	/** Cleanup (call on unmount) */
 	destroy: () => void;
 }
@@ -183,10 +204,16 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 	let _lastMessageTime = $state(0);
 	let preferences = $state<ChatPreferences>(loadPreferences());
 
+	// Shout state
+	let activeShouts = $state<Map<string, ShoutMessage>>(new Map());
+	let shoutCooldownMs = $state(0);
+
 	// Internal state
 	let typingTimeout: ReturnType<typeof setTimeout> | null = null;
 	let typingDebounce: ReturnType<typeof setTimeout> | null = null;
 	let cooldownInterval: ReturnType<typeof setInterval> | null = null;
+	let shoutCooldownInterval: ReturnType<typeof setInterval> | null = null;
+	const shoutDismissTimeouts: Map<string, ReturnType<typeof setTimeout>> = new Map();
 	let sendCooldownValue = $state(0);
 	let pendingMessageId = 0;
 
@@ -217,11 +244,32 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 
 	const maxMessageLength = CHAT_RATE_LIMITS.MAX_MESSAGE_LENGTH;
 
+	// Shout derived state
+	const canShout = $derived(shoutCooldownMs <= 0 && roomService.isConnected);
+	const shoutCooldownSeconds = $derived(Math.ceil(shoutCooldownMs / 1000));
+	const maxShoutLength = SHOUT_MAX_LENGTH;
+
 	// -------------------------------------------------------------------------
 	// Event Handler
 	// -------------------------------------------------------------------------
 
 	const handleServerEvent: ServerEventHandler = (event) => {
+		// Handle shout events first
+		if (isShoutEvent(event)) {
+			const shoutEvent = event as ShoutReceivedEvent | ShoutCooldownEvent;
+
+			switch (shoutEvent.type) {
+				case 'SHOUT_RECEIVED':
+					handleShoutReceived(shoutEvent.payload);
+					break;
+
+				case 'SHOUT_COOLDOWN':
+					handleShoutCooldown(shoutEvent.payload.remainingMs);
+					break;
+			}
+			return;
+		}
+
 		// Only handle chat events
 		if (!isChatEvent(event)) return;
 
@@ -317,6 +365,62 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 				error = null;
 			}
 		}, 5000);
+	}
+
+	// -------------------------------------------------------------------------
+	// Shout Event Handlers
+	// -------------------------------------------------------------------------
+
+	function handleShoutReceived(shout: ShoutMessage): void {
+		// Clear any existing timeout for this user
+		const existingTimeout = shoutDismissTimeouts.get(shout.userId);
+		if (existingTimeout) {
+			clearTimeout(existingTimeout);
+		}
+
+		// Add the shout to active shouts
+		const newShouts = new Map(activeShouts);
+		newShouts.set(shout.userId, shout);
+		activeShouts = newShouts;
+
+		// Schedule auto-dismiss based on expiration time
+		const dismissIn = Math.max(0, shout.expiresAt - Date.now());
+		const timeout = setTimeout(() => {
+			dismissShout(shout.userId, shout.id);
+		}, dismissIn);
+		shoutDismissTimeouts.set(shout.userId, timeout);
+	}
+
+	function handleShoutCooldown(remainingMs: number): void {
+		// Set cooldown from server response
+		startShoutCooldown(remainingMs);
+	}
+
+	function dismissShout(userId: string, shoutId: string): void {
+		// Only dismiss if the shout ID matches (hasn't been replaced)
+		const current = activeShouts.get(userId);
+		if (current?.id === shoutId) {
+			const newShouts = new Map(activeShouts);
+			newShouts.delete(userId);
+			activeShouts = newShouts;
+		}
+		shoutDismissTimeouts.delete(userId);
+	}
+
+	function startShoutCooldown(initialMs: number = SHOUT_COOLDOWN_MS): void {
+		shoutCooldownMs = initialMs;
+
+		if (shoutCooldownInterval) {
+			clearInterval(shoutCooldownInterval);
+		}
+
+		shoutCooldownInterval = setInterval(() => {
+			shoutCooldownMs = Math.max(0, shoutCooldownMs - 1000);
+			if (shoutCooldownMs <= 0 && shoutCooldownInterval) {
+				clearInterval(shoutCooldownInterval);
+				shoutCooldownInterval = null;
+			}
+		}, 1000);
 	}
 
 	// -------------------------------------------------------------------------
@@ -494,6 +598,13 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 		typingUsers = [];
 		unreadCount = 0;
 		error = null;
+		// Clear shout state
+		activeShouts = new Map();
+		shoutCooldownMs = 0;
+		for (const timeout of shoutDismissTimeouts.values()) {
+			clearTimeout(timeout);
+		}
+		shoutDismissTimeouts.clear();
 	}
 
 	function retryMessage(messageId: string): void {
@@ -523,11 +634,35 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 		messages = messages.filter((m) => m.id !== messageId);
 	}
 
+	function sendShout(content: string): void {
+		const trimmed = content.trim();
+		if (!trimmed || !canShout) return;
+		if (trimmed.length > maxShoutLength) return;
+
+		try {
+			roomService.sendShout(trimmed);
+			// Start cooldown optimistically
+			startShoutCooldown();
+		} catch (_e) {
+			console.error('[ChatStore] Failed to send shout:', _e);
+		}
+	}
+
+	function getShoutForUser(userId: string): ShoutMessage | undefined {
+		return activeShouts.get(userId);
+	}
+
 	function destroy(): void {
 		roomService.removeEventHandler(handleServerEvent);
 		if (typingTimeout) clearTimeout(typingTimeout);
 		if (typingDebounce) clearTimeout(typingDebounce);
 		if (cooldownInterval) clearInterval(cooldownInterval);
+		if (shoutCooldownInterval) clearInterval(shoutCooldownInterval);
+		// Clear all shout dismiss timeouts
+		for (const timeout of shoutDismissTimeouts.values()) {
+			clearTimeout(timeout);
+		}
+		shoutDismissTimeouts.clear();
 	}
 
 	// -------------------------------------------------------------------------
@@ -602,6 +737,12 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 		get preferences() {
 			return preferences;
 		},
+		get activeShouts() {
+			return activeShouts;
+		},
+		get shoutCooldownMs() {
+			return shoutCooldownMs;
+		},
 
 		// Derived
 		get canSendMessage() {
@@ -625,6 +766,15 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 		get isTyping() {
 			return isTyping;
 		},
+		get canShout() {
+			return canShout;
+		},
+		get shoutCooldownSeconds() {
+			return shoutCooldownSeconds;
+		},
+		get maxShoutLength() {
+			return maxShoutLength;
+		},
 
 		// Actions
 		sendMessage,
@@ -638,6 +788,8 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 		clear,
 		retryMessage,
 		removeFailedMessage,
+		sendShout,
+		getShoutForUser,
 		destroy,
 	};
 }
@@ -743,4 +895,5 @@ export function getChatStoreOptional(): ChatStore | undefined {
 // =============================================================================
 
 export { QUICK_CHAT_MESSAGES, REACTION_EMOJIS, CHAT_RATE_LIMITS };
-export type { QuickChatKey, ReactionEmoji, ChatMessage, TypingState };
+export { SHOUT_COOLDOWN_MS, SHOUT_DISPLAY_DURATION_MS, SHOUT_MAX_LENGTH };
+export type { QuickChatKey, ReactionEmoji, ChatMessage, TypingState, ShoutMessage };

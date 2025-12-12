@@ -19,11 +19,14 @@
  */
 
 import { DurableObject } from 'cloudflare:workers';
+import { createLogger, type Logger } from './lib/logger';
 import type {
 	Env,
 	GameHighlight,
+	GameRoomRpcStub,
 	InviteCancellationRequest,
 	InviteDeliveryRequest,
+	JoinRequestResponseDelivery,
 	PlayerSummary,
 	RoomStatusUpdate,
 } from './types';
@@ -97,10 +100,16 @@ interface LobbyCommand {
 		| 'get_online_users'
 		| 'room_created'
 		| 'room_updated'
-		| 'room_closed';
+		| 'room_closed'
+		| 'request_join'
+		| 'cancel_join_request';
 	content?: string;
 	room?: RoomInfo;
 	code?: string;
+	/** Room code for join requests */
+	roomCode?: string;
+	/** Request ID for cancellation */
+	requestId?: string;
 }
 
 // =============================================================================
@@ -121,6 +130,9 @@ const STORAGE_KEYS = {
 // =============================================================================
 
 export class GlobalLobby extends DurableObject<Env> {
+	/** Structured logger for observability */
+	private logger: Logger = createLogger({ component: 'GlobalLobby' });
+
 	/** Active game rooms (in-memory, rebuilt from notifications) */
 	private activeRooms: Map<string, RoomInfo> = new Map();
 
@@ -351,6 +363,32 @@ export class GlobalLobby extends DurableObject<Env> {
 							payload: { action: 'closed', code: data.code },
 							timestamp: Date.now(),
 						});
+					}
+					break;
+				case 'request_join':
+					if (data.roomCode) {
+						await this.handleRequestJoin(ws, attachment, data.roomCode);
+					} else {
+						ws.send(
+							JSON.stringify({
+								type: 'error',
+								payload: { message: 'roomCode is required for join requests' },
+								timestamp: Date.now(),
+							}),
+						);
+					}
+					break;
+				case 'cancel_join_request':
+					if (data.requestId && data.roomCode) {
+						await this.handleCancelJoinRequest(ws, attachment, data.requestId, data.roomCode);
+					} else {
+						ws.send(
+							JSON.stringify({
+								type: 'error',
+								payload: { message: 'requestId and roomCode are required' },
+								timestamp: Date.now(),
+							}),
+						);
 					}
 					break;
 				default:
@@ -772,9 +810,14 @@ export class GlobalLobby extends DurableObject<Env> {
 			timestamp: Date.now(),
 		});
 
-		console.log(
-			`[GlobalLobby] Room ${update.roomCode} updated: ${update.status}, ${update.playerCount} players, ${update.spectatorCount} spectators`,
-		);
+		this.logger.info('Room status update received', {
+			operation: 'room_update',
+			roomCode: update.roomCode,
+			status: update.status,
+			playerCount: update.playerCount,
+			spectatorCount: update.spectatorCount,
+			activeRoomsCount: this.activeRooms.size,
+		});
 	}
 
 	/**
@@ -866,9 +909,13 @@ export class GlobalLobby extends DurableObject<Env> {
 		const connections = this.ctx.getWebSockets(`user:${request.targetUserId}`);
 
 		if (connections.length === 0) {
-			console.log(
-				`[GlobalLobby] Cannot deliver invite - user ${request.targetUserId} is offline`,
-			);
+			this.logger.info('Cannot deliver invite - user offline', {
+				operation: 'deliver_invite',
+				inviteId: request.inviteId,
+				targetUserId: request.targetUserId,
+				roomCode: request.roomCode,
+				result: 'user_offline',
+			});
 			return false;
 		}
 
@@ -899,15 +946,25 @@ export class GlobalLobby extends DurableObject<Env> {
 					ws.send(payload);
 					delivered = true;
 				} catch (e) {
-					console.error('[GlobalLobby] Failed to deliver invite:', e);
+					this.logger.error('Failed to deliver invite', {
+						operation: 'deliver_invite',
+						inviteId: request.inviteId,
+						targetUserId: request.targetUserId,
+						error: String(e),
+					});
 				}
 			}
 		}
 
 		if (delivered) {
-			console.log(
-				`[GlobalLobby] Invite ${request.inviteId} delivered to user ${request.targetUserId}`,
-			);
+			this.logger.info('Invite delivered successfully', {
+				operation: 'deliver_invite',
+				inviteId: request.inviteId,
+				targetUserId: request.targetUserId,
+				roomCode: request.roomCode,
+				connectionsFound: connections.length,
+				result: 'delivered',
+			});
 		}
 
 		return delivered;
@@ -952,6 +1009,259 @@ export class GlobalLobby extends DurableObject<Env> {
 		console.log(
 			`[GlobalLobby] Invite ${request.inviteId} cancelled for user ${request.targetUserId}: ${request.reason}`,
 		);
+	}
+
+	// =========================================================================
+	// Join Request WebSocket Handlers
+	// =========================================================================
+
+	/**
+	 * Handle a join request from a lobby user.
+	 * Routes the request to the target GameRoom via RPC.
+	 */
+	private async handleRequestJoin(
+		ws: WebSocket,
+		user: UserPresence,
+		roomCode: string,
+	): Promise<void> {
+		this.logger.info('Processing join request', {
+			operation: 'request_join',
+			requesterId: user.userId,
+			roomCode,
+		});
+
+		// Validate room exists in directory
+		const room = this.activeRooms.get(roomCode);
+		if (!room) {
+			ws.send(
+				JSON.stringify({
+					type: 'join_request_error',
+					payload: { code: 'ROOM_NOT_FOUND', message: 'Room not found' },
+					timestamp: Date.now(),
+				}),
+			);
+			return;
+		}
+
+		// Get the GameRoom stub (cast for typed RPC)
+		const roomId = this.env.GAME_ROOM.idFromName(roomCode);
+		const roomStub = this.env.GAME_ROOM.get(roomId) as unknown as GameRoomRpcStub;
+
+		try {
+			// Call GameRoom's handleJoinRequest RPC
+			const result = await roomStub.handleJoinRequest({
+				requesterId: user.userId,
+				requesterDisplayName: user.displayName,
+				requesterAvatarSeed: user.avatarSeed,
+			});
+
+			if (result.success && result.request) {
+				// Send confirmation to requester
+				ws.send(
+					JSON.stringify({
+						type: 'join_request_sent',
+						payload: {
+							requestId: result.request.id,
+							roomCode,
+							expiresAt: result.request.expiresAt,
+						},
+						timestamp: Date.now(),
+					}),
+				);
+
+				this.logger.info('Join request routed to room', {
+					operation: 'request_join',
+					requestId: result.request.id,
+					requesterId: user.userId,
+					roomCode,
+					result: 'success',
+				});
+			} else {
+				// Send error to requester
+				ws.send(
+					JSON.stringify({
+						type: 'join_request_error',
+						payload: {
+							code: result.errorCode ?? 'UNKNOWN_ERROR',
+							message: result.errorMessage ?? 'Failed to create join request',
+						},
+						timestamp: Date.now(),
+					}),
+				);
+
+				this.logger.info('Join request failed', {
+					operation: 'request_join',
+					requesterId: user.userId,
+					roomCode,
+					errorCode: result.errorCode,
+					result: 'error',
+				});
+			}
+		} catch (error) {
+			this.logger.error('Join request RPC error', {
+				operation: 'request_join',
+				requesterId: user.userId,
+				roomCode,
+				error: String(error),
+			});
+
+			ws.send(
+				JSON.stringify({
+					type: 'join_request_error',
+					payload: { code: 'RPC_ERROR', message: 'Failed to contact game room' },
+					timestamp: Date.now(),
+				}),
+			);
+		}
+	}
+
+	/**
+	 * Handle a join request cancellation from the requester.
+	 * Routes the cancellation to the target GameRoom via RPC.
+	 */
+	private async handleCancelJoinRequest(
+		ws: WebSocket,
+		user: UserPresence,
+		requestId: string,
+		roomCode: string,
+	): Promise<void> {
+		this.logger.info('Processing join request cancellation', {
+			operation: 'cancel_join_request',
+			requestId,
+			requesterId: user.userId,
+			roomCode,
+		});
+
+		// Get the GameRoom stub (cast for typed RPC)
+		const roomId = this.env.GAME_ROOM.idFromName(roomCode);
+		const roomStub = this.env.GAME_ROOM.get(roomId) as unknown as GameRoomRpcStub;
+
+		try {
+			// Call GameRoom's cancelJoinRequest RPC
+			const result = await roomStub.cancelJoinRequest(requestId, user.userId);
+
+			if (result.success) {
+				ws.send(
+					JSON.stringify({
+						type: 'join_request_cancelled',
+						payload: { requestId },
+						timestamp: Date.now(),
+					}),
+				);
+
+				this.logger.info('Join request cancelled', {
+					operation: 'cancel_join_request',
+					requestId,
+					requesterId: user.userId,
+					result: 'success',
+				});
+			} else {
+				ws.send(
+					JSON.stringify({
+						type: 'error',
+						payload: {
+							code: result.errorCode ?? 'CANCEL_FAILED',
+							message: result.errorMessage ?? 'Failed to cancel request',
+						},
+						timestamp: Date.now(),
+					}),
+				);
+			}
+		} catch (error) {
+			this.logger.error('Cancel join request RPC error', {
+				operation: 'cancel_join_request',
+				requestId,
+				roomCode,
+				error: String(error),
+			});
+
+			ws.send(
+				JSON.stringify({
+					type: 'error',
+					payload: { code: 'RPC_ERROR', message: 'Failed to contact game room' },
+					timestamp: Date.now(),
+				}),
+			);
+		}
+	}
+
+	// =========================================================================
+	// Join Request System RPC Methods
+	// =========================================================================
+
+	/**
+	 * Deliver a join request response to a specific user.
+	 * Called by GameRoom when host approves/declines or request expires.
+	 *
+	 * @returns true if delivered successfully, false if user is offline
+	 */
+	deliverJoinRequestResponse(response: JoinRequestResponseDelivery): boolean {
+		const connections = this.ctx.getWebSockets(`user:${response.requesterId}`);
+
+		if (connections.length === 0) {
+			this.logger.info('Cannot deliver join request response - user offline', {
+				operation: 'deliver_join_response',
+				requestId: response.requestId,
+				requesterId: response.requesterId,
+				roomCode: response.roomCode,
+				status: response.status,
+				result: 'user_offline',
+			});
+			return false;
+		}
+
+		// Determine event type based on status
+		const eventType =
+			response.status === 'approved'
+				? 'join_approved'
+				: response.status === 'declined'
+					? 'join_declined'
+					: 'join_request_expired';
+
+		// Build the event payload
+		const joinResponseEvent = {
+			type: eventType,
+			payload: {
+				requestId: response.requestId,
+				roomCode: response.roomCode,
+				...(response.reason && { reason: response.reason }),
+			},
+			timestamp: Date.now(),
+		};
+
+		// Send to all of user's connections
+		const payload = JSON.stringify(joinResponseEvent);
+		let delivered = false;
+
+		for (const ws of connections) {
+			if (ws.readyState === WebSocket.OPEN) {
+				try {
+					ws.send(payload);
+					delivered = true;
+				} catch (e) {
+					this.logger.error('Failed to deliver join request response', {
+						operation: 'deliver_join_response',
+						requestId: response.requestId,
+						requesterId: response.requesterId,
+						error: String(e),
+					});
+				}
+			}
+		}
+
+		if (delivered) {
+			this.logger.info('Join request response delivered', {
+				operation: 'deliver_join_response',
+				requestId: response.requestId,
+				requesterId: response.requesterId,
+				roomCode: response.roomCode,
+				status: response.status,
+				connectionsFound: connections.length,
+				result: 'delivered',
+			});
+		}
+
+		return delivered;
 	}
 
 	// =========================================================================

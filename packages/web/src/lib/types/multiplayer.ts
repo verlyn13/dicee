@@ -27,6 +27,7 @@ import type {
 	AIScoringEventSchema,
 	AIThinkingEventSchema,
 	CancelInviteCommandSchema,
+	CancelJoinRequestCommandSchema,
 	CategoryScoredEventSchema,
 	ChatCommandSchema,
 	ChatErrorEventSchema,
@@ -47,6 +48,14 @@ import type {
 	InviteReceivedEventSchema,
 	InviteResponseCommandSchema,
 	InviteSentEventSchema,
+	JoinApprovedEventSchema,
+	JoinDeclinedEventSchema,
+	JoinRequestErrorEventSchema,
+	JoinRequestExpiredEventSchema,
+	JoinRequestReceivedEventSchema,
+	JoinRequestResponseCommandSchema,
+	JoinRequestSchema,
+	JoinRequestSentEventSchema,
 	KeepDiceCommandSchema,
 	PingCommandSchema,
 	PlayerAfkEventSchema,
@@ -60,10 +69,15 @@ import type {
 	ReactionUpdateEventSchema,
 	RematchCommandSchema,
 	RematchStartedEventSchema,
+	RequestJoinCommandSchema,
 	RollDiceCommandSchema,
 	ScoreCategoryCommandSchema,
 	SendInviteCommandSchema,
 	ServerEventSchema,
+	ShoutCommandSchema,
+	ShoutCooldownEventSchema,
+	ShoutMessageSchema,
+	ShoutReceivedEventSchema,
 	StartGameCommandSchema,
 	TurnChangedEventSchema,
 	TurnSkippedEventSchema,
@@ -71,6 +85,14 @@ import type {
 	TypingStartCommandSchema,
 	TypingStopCommandSchema,
 	TypingUpdateEventSchema,
+} from './multiplayer.schema.js';
+
+// Re-export constants from schema file
+export {
+	JOIN_REQUEST_TTL_MS,
+	SHOUT_COOLDOWN_MS,
+	SHOUT_DISPLAY_DURATION_MS,
+	SHOUT_MAX_LENGTH,
 } from './multiplayer.schema.js';
 
 // =============================================================================
@@ -212,19 +234,46 @@ export type CancelInviteCommand = z.infer<typeof CancelInviteCommandSchema>;
 export type InviteResponseCommand = z.infer<typeof InviteResponseCommandSchema>;
 
 // =============================================================================
+// Join Request Command Types (Client → Server) - Derived from Zod schemas
+// =============================================================================
+
+/** Join request entity */
+export type JoinRequest = z.infer<typeof JoinRequestSchema>;
+
+/** Request to join a room (from lobby) */
+export type RequestJoinCommand = z.infer<typeof RequestJoinCommandSchema>;
+
+/** Cancel a pending join request */
+export type CancelJoinRequestCommand = z.infer<typeof CancelJoinRequestCommandSchema>;
+
+/** Host response to join request (approve/decline) */
+export type JoinRequestResponseCommand = z.infer<typeof JoinRequestResponseCommandSchema>;
+
+// =============================================================================
+// Shout Command Types (Client → Server) - Derived from Zod schemas
+// =============================================================================
+
+/** Shout message entity */
+export type ShoutMessage = z.infer<typeof ShoutMessageSchema>;
+
+/** Send a shout (ephemeral broadcast message) */
+export type ShoutCommand = z.infer<typeof ShoutCommandSchema>;
+
+// =============================================================================
 // All Command Types - Derived from discriminated union schema
 // =============================================================================
 
 /** All command types */
 export type Command = z.infer<typeof CommandSchema>;
 
-/** All chat command types */
+/** All chat command types (including shout) */
 export type ChatCommand_Union =
 	| ChatCommand
 	| QuickChatCommand
 	| ReactionCommand
 	| TypingStartCommand
-	| TypingStopCommand;
+	| TypingStopCommand
+	| ShoutCommand;
 
 // =============================================================================
 // Server Event Types (Server → Client) - Derived from Zod schemas
@@ -342,6 +391,38 @@ export type InviteReceivedEvent = z.infer<typeof InviteReceivedEventSchema>;
 export type InviteCancelledEvent = z.infer<typeof InviteCancelledEventSchema>;
 
 // =============================================================================
+// Join Request Event Types (Server → Client) - Derived from Zod schemas
+// =============================================================================
+
+/** Join request submitted successfully (to requester) */
+export type JoinRequestSentEvent = z.infer<typeof JoinRequestSentEventSchema>;
+
+/** Join request received (to host) */
+export type JoinRequestReceivedEvent = z.infer<typeof JoinRequestReceivedEventSchema>;
+
+/** Join request approved (to requester) */
+export type JoinApprovedEvent = z.infer<typeof JoinApprovedEventSchema>;
+
+/** Join request declined (to requester) */
+export type JoinDeclinedEvent = z.infer<typeof JoinDeclinedEventSchema>;
+
+/** Join request expired (to requester and host) */
+export type JoinRequestExpiredEvent = z.infer<typeof JoinRequestExpiredEventSchema>;
+
+/** Join request error (to requester) */
+export type JoinRequestErrorEvent = z.infer<typeof JoinRequestErrorEventSchema>;
+
+// =============================================================================
+// Shout Event Types (Server → Client) - Derived from Zod schemas
+// =============================================================================
+
+/** Shout received (broadcast to all in room except sender) */
+export type ShoutReceivedEvent = z.infer<typeof ShoutReceivedEventSchema>;
+
+/** Shout cooldown active (to sender when rate limited) */
+export type ShoutCooldownEvent = z.infer<typeof ShoutCooldownEventSchema>;
+
+// =============================================================================
 // All Server Event Types - Derived from discriminated union schema
 // =============================================================================
 
@@ -405,4 +486,21 @@ export function isInviteEvent(event: { type: string }): boolean {
 		'INVITE_RECEIVED',
 		'INVITE_CANCELLED',
 	].includes(event.type);
+}
+
+/** Check if an event is a join request event */
+export function isJoinRequestEvent(event: { type: string }): boolean {
+	return [
+		'JOIN_REQUEST_SENT',
+		'JOIN_REQUEST_RECEIVED',
+		'JOIN_APPROVED',
+		'JOIN_DECLINED',
+		'JOIN_REQUEST_EXPIRED',
+		'JOIN_REQUEST_ERROR',
+	].includes(event.type);
+}
+
+/** Check if an event is a shout event */
+export function isShoutEvent(event: { type: string }): boolean {
+	return ['SHOUT_RECEIVED', 'SHOUT_COOLDOWN'].includes(event.type);
 }

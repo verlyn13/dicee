@@ -6,3 +6,4 @@
 
 export * from './schemas.js';
 export * from './preferences.js';
+export * from './result.js';

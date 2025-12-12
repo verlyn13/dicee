@@ -4,10 +4,15 @@
  *
  * Displays room info with Neo-Brutalist styling.
  * Includes join button with error animations for non-joinable rooms.
+ *
+ * Join flow:
+ * - Open rooms: Send join request, wait for host approval
+ * - Playing rooms: Navigate directly (spectator mode)
+ * - Full rooms: Show error animation
  */
 
 import { goto } from '$app/navigation';
-import type { RoomInfo } from '$lib/stores/lobby.svelte';
+import { lobby, type RoomInfo } from '$lib/stores/lobby.svelte';
 
 interface Props {
 	room: RoomInfo;
@@ -68,17 +73,31 @@ async function handleAction() {
 		return;
 	}
 
+	// Check if we already have a pending request
+	if (lobby.hasActiveJoinRequest) {
+		// Already have a pending request - can't join another room
+		isFlashing = true;
+		isShaking = true;
+		setTimeout(() => {
+			isFlashing = false;
+			isShaking = false;
+		}, 300);
+		return;
+	}
+
 	// Success haptic
 	if ('vibrate' in navigator) {
 		navigator.vibrate(100);
 	}
 
-	// Navigate to room - spectator mode if watching a live game
+	// Spectator mode - navigate directly
 	if (statusConfig.canSpectate) {
 		goto(`/games/dicee/room/${room.code}?mode=spectator`);
-	} else {
-		goto(`/games/dicee/room/${room.code}`);
+		return;
 	}
+
+	// Open room - send join request (host approval required)
+	lobby.sendJoinRequest(room.code);
 }
 
 function getButtonText(): string {

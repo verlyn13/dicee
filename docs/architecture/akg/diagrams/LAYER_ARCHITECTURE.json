@@ -2,19 +2,19 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "layer_architecture",
-	"generatedAt": "2025-12-12T03:12:20.957Z",
-	"graphHash": "sha256:3845df78623a1b0446b0b88bfc5e03ab3af35e16be2bb047ea045789ff86a2bf",
-	"sourceCommit": "7a8e61cecc43a3b3b21d6183cffb3ab79ca2a966",
+	"generatedAt": "2025-12-12T06:33:28.201Z",
+	"graphHash": "sha256:553d5e84ec8d39bc56fb5ed65ac7e75e5081f46632fff99dc0236728783c0008",
+	"sourceCommit": "222ad0fddf452ad69d3413da031d082d5261fde3",
 	"nodes": [
 		{
 			"id": "layer::shared",
 			"label": "shared",
-			"nodeCount": 15
+			"nodeCount": 16
 		},
 		{
 			"id": "layer::cloudflare-do",
 			"label": "cloudflare-do",
-			"nodeCount": 30
+			"nodeCount": 33
 		},
 		{
 			"id": "layer::routes",
@@ -24,12 +24,12 @@
 		{
 			"id": "layer::components",
 			"label": "components",
-			"nodeCount": 96
+			"nodeCount": 99
 		},
 		{
 			"id": "layer::stores",
 			"label": "stores",
-			"nodeCount": 13
+			"nodeCount": 14
 		},
 		{
 			"id": "layer::services",

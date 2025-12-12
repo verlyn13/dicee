@@ -277,7 +277,12 @@ export interface SpectatorInfo {
 /**
  * Types of alarms that can be scheduled
  */
-export type AlarmType = 'TURN_TIMEOUT' | 'AFK_CHECK' | 'ROOM_CLEANUP' | 'SEAT_EXPIRATION';
+export type AlarmType =
+	| 'TURN_TIMEOUT'
+	| 'AFK_CHECK'
+	| 'ROOM_CLEANUP'
+	| 'SEAT_EXPIRATION'
+	| 'JOIN_REQUEST_EXPIRATION';
 
 /**
  * Data stored with scheduled alarms
@@ -1217,6 +1222,115 @@ export interface InviteCancellationRequest {
 
 	/** Reason for cancellation */
 	reason: 'cancelled' | 'host_left' | 'room_closed' | 'room_full' | 'expired';
+}
+
+// =============================================================================
+// Join Request RPC Types
+// =============================================================================
+
+/**
+ * RPC payload from GlobalLobby to GameRoom when user requests to join
+ */
+export interface JoinRequestRPCInput {
+	/** User ID of the requester */
+	requesterId: string;
+
+	/** Requester's display name */
+	requesterDisplayName: string;
+
+	/** Requester's avatar seed */
+	requesterAvatarSeed: string;
+}
+
+/**
+ * Join request status values
+ */
+export type JoinRequestStatus = 'pending' | 'approved' | 'declined' | 'expired' | 'cancelled';
+
+/**
+ * Join request entity
+ */
+export interface JoinRequestEntity {
+	/** Unique request ID */
+	id: string;
+
+	/** Room code being requested to join */
+	roomCode: string;
+
+	/** User ID of the requester */
+	requesterId: string;
+
+	/** Requester's display name at time of request */
+	requesterDisplayName: string;
+
+	/** Requester's avatar seed */
+	requesterAvatarSeed: string;
+
+	/** When the request was created (Unix ms) */
+	createdAt: number;
+
+	/** When the request expires (Unix ms) */
+	expiresAt: number;
+
+	/** Current status of the request */
+	status: JoinRequestStatus;
+}
+
+/**
+ * RPC response from GameRoom to GlobalLobby after creating a join request
+ */
+export interface JoinRequestRPCResponse {
+	/** Whether the request was created successfully */
+	success: boolean;
+
+	/** The created request (if successful) */
+	request?: JoinRequestEntity;
+
+	/** Error code (if failed) */
+	errorCode?: string;
+
+	/** Error message (if failed) */
+	errorMessage?: string;
+}
+
+/**
+ * RPC payload from GameRoom to GlobalLobby when delivering join request response to requester
+ */
+export interface JoinRequestResponseDelivery {
+	/** Request ID */
+	requestId: string;
+
+	/** Requester's user ID */
+	requesterId: string;
+
+	/** Room code */
+	roomCode: string;
+
+	/** Response status */
+	status: 'approved' | 'declined' | 'expired';
+
+	/** Optional reason (for decline/expire) */
+	reason?: string;
+}
+
+// =============================================================================
+// DO Stub Interfaces (for cross-DO RPC without circular imports)
+// =============================================================================
+
+/**
+ * GameRoom RPC interface for GlobalLobby to call.
+ * This allows GlobalLobby to have typed access to GameRoom methods
+ * without importing the GameRoom class directly.
+ */
+export interface GameRoomRpcStub {
+	/** Handle a join request from a lobby user */
+	handleJoinRequest(input: JoinRequestRPCInput): Promise<JoinRequestRPCResponse>;
+
+	/** Cancel a join request (called by requester via GlobalLobby) */
+	cancelJoinRequest(requestId: string, userId: string): Promise<JoinRequestRPCResponse>;
+
+	/** Fetch handler for HTTP/WebSocket requests */
+	fetch(request: Request): Promise<Response>;
 }
 
 // =============================================================================

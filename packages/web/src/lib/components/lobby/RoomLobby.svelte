@@ -11,10 +11,12 @@ import { ChatPanel } from '$lib/components/chat';
 import { Avatar } from '$lib/components/ui';
 import { auth } from '$lib/stores/auth.svelte';
 import type { ChatStore } from '$lib/stores/chat.svelte';
+import { joinRequestsStore } from '$lib/stores/joinRequests.svelte';
 import { lobby } from '$lib/stores/lobby.svelte';
 import { getRoomStore } from '$lib/stores/room.svelte';
 import AIOpponentSelector from './AIOpponentSelector.svelte';
 import InvitePlayerModal from './InvitePlayerModal.svelte';
+import JoinRequestNotification from './JoinRequestNotification.svelte';
 import PlayerListItem from './PlayerListItem.svelte';
 
 interface Props {
@@ -82,6 +84,16 @@ $effect(() => {
 	});
 
 	return unsubscribe;
+});
+
+// Start/stop listening for join requests based on host status
+$effect(() => {
+	if (room.isHost) {
+		joinRequestsStore.startListening();
+		return () => {
+			joinRequestsStore.stopListening();
+		};
+	}
 });
 
 function handleLeave() {
@@ -198,6 +210,20 @@ const playerIds = $derived(room.room?.players.map((p) => p.id) ?? []);
 				<span class="action-icon">🤖</span>
 				<span class="action-label">Add AI</span>
 			</button>
+		</section>
+	{/if}
+
+	<!-- Join Requests (Host only) -->
+	{#if room.isHost && joinRequestsStore.hasPendingRequests}
+		<section class="join-requests-section">
+			<h2 class="section-title requests-title">
+				Join Requests ({joinRequestsStore.pendingCount})
+			</h2>
+			<div class="join-requests-list">
+				{#each joinRequestsStore.pendingRequests as request (request.id)}
+					<JoinRequestNotification {request} compact />
+				{/each}
+			</div>
 		</section>
 	{/if}
 
@@ -859,5 +885,26 @@ const playerIds = $derived(room.room?.players.map((p) => p.id) ?? []);
 		.keyboard-hints {
 			display: none;
 		}
+	}
+
+	/* Join Requests Section */
+	.join-requests-section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		padding: var(--space-2);
+		background: var(--color-warning-subtle, rgba(255, 193, 7, 0.1));
+		border: var(--border-medium);
+		border-color: var(--color-warning, #ffc107);
+	}
+
+	.requests-title {
+		color: var(--color-warning-dark, #856404);
+	}
+
+	.join-requests-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
 	}
 </style>

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Generate ~/.codex/config.toml for Dicee using the ChatGPT 5.1-optimized template
+# Generate ~/.codex/config.toml for Dicee using the ChatGPT 5.2-optimized template
 # Usage: ./scripts/setup-codex-cli.sh [--dry-run]
 set -euo pipefail
 

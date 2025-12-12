@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 7a8e61cecc43a3b3b21d6183cffb3ab79ca2a966
-> Generated: 2025-12-12T03:12:20.958Z
+> Commit: 222ad0fddf452ad69d3413da031d082d5261fde3
+> Generated: 2025-12-12T06:33:28.201Z
 
 ## Store Dependency Diagram
 
@@ -25,6 +25,7 @@ flowchart LR
     store__index___lib_stores_index_ts[("index")]
     store__chat_svelte__tores_chat_svelte_ts[("chat.svelte")]
     store__audio_svelte__ores_audio_svelte_t[("audio.svelte")]
+    store__joinRequests_svelte__inRequests_s[("joinRequests.svelte")]
     store__useKeyboardNavigation_svelte__Nav[("useKeyboardNavigation.svelte")]
     store__preferences_svelte__references_sv[("preferences.svelte")]
     store__spectatorService_svelte__torServi[("spectatorService.svelte")]
@@ -49,6 +50,9 @@ flowchart LR
     store__chat_svelte__tores_chat_svelte_ts --> store__roomService_svelte__oomService_sv
     store__chat_svelte__tores_chat_svelte_ts --> store__roomService_svelte__oomService_sv
     store__chat_svelte__tores_chat_svelte_ts --> store__roomService_svelte__oomService_sv
+    store__joinRequests_svelte__inRequests_s --> store__roomService_svelte__oomService_sv
+    store__joinRequests_svelte__inRequests_s --> store__roomService_svelte__oomService_sv
+    store__joinRequests_svelte__inRequests_s --> store__roomService_svelte__oomService_sv
 ```
 
 ## Store List
@@ -66,6 +70,7 @@ flowchart LR
 - **index**: `packages/web/src/lib/stores/index.ts`
 - **chat.svelte**: `packages/web/src/lib/stores/chat.svelte.ts`
 - **audio.svelte**: `packages/web/src/lib/stores/audio.svelte.ts`
+- **joinRequests.svelte**: `packages/web/src/lib/stores/joinRequests.svelte.ts`
 - **useKeyboardNavigation.svelte**: `packages/web/src/lib/hooks/useKeyboardNavigation.svelte.ts`
 - **preferences.svelte**: `packages/web/src/lib/services/preferences.svelte.ts`
 - **spectatorService.svelte**: `packages/web/src/lib/services/spectatorService.svelte.ts`

@@ -10,4 +10,5 @@ export { default as MultiplayerGameOverModal } from './MultiplayerGameOverModal.
 export { default as MultiplayerGameView } from './MultiplayerGameView.svelte';
 export { default as MultiplayerScorecard } from './MultiplayerScorecard.svelte';
 export { default as OpponentPanel } from './OpponentPanel.svelte';
+export { default as ShoutBubble } from './ShoutBubble.svelte';
 export { default as TurnIndicator } from './TurnIndicator.svelte';

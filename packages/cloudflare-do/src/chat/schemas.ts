@@ -6,6 +6,7 @@
 
 import { z } from 'zod';
 import { QUICK_CHAT_KEYS, RATE_LIMITS, REACTION_EMOJIS } from './types';
+import { SHOUT_MAX_LENGTH } from '../lib/shout-cooldown';
 
 // =============================================================================
 // Individual Message Schemas
@@ -61,6 +62,20 @@ export const typingStopSchema = z.object({
 	type: z.literal('TYPING_STOP'),
 });
 
+/**
+ * Shout message schema (ephemeral broadcast)
+ */
+export const shoutSchema = z.object({
+	type: z.literal('SHOUT'),
+	payload: z.object({
+		content: z
+			.string()
+			.min(1, 'Shout cannot be empty')
+			.max(SHOUT_MAX_LENGTH, `Shout cannot exceed ${SHOUT_MAX_LENGTH} characters`)
+			.transform((s) => s.trim()),
+	}),
+});
+
 // =============================================================================
 // Combined Schema
 // =============================================================================
@@ -74,6 +89,7 @@ export const chatClientMessageSchema = z.discriminatedUnion('type', [
 	reactionSchema,
 	typingStartSchema,
 	typingStopSchema,
+	shoutSchema,
 ]);
 
 export type ValidatedChatMessage = z.infer<typeof chatClientMessageSchema>;
@@ -94,5 +110,5 @@ export function validateChatMessage(input: unknown) {
  * Check if a message type is chat-related
  */
 export function isChatMessageType(type: string): boolean {
-	return ['CHAT', 'QUICK_CHAT', 'REACTION', 'TYPING_START', 'TYPING_STOP'].includes(type);
+	return ['CHAT', 'QUICK_CHAT', 'REACTION', 'TYPING_START', 'TYPING_STOP', 'SHOUT'].includes(type);
 }

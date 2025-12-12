@@ -4,16 +4,19 @@
  * Lobby chat system: messages, reactions, typing indicators, rate limiting.
  */
 
-// Manager
-// Server Message Helpers
+// Manager and Server Message Helpers
 export {
 	ChatManager,
 	createChatErrorResponse,
 	createChatHistoryResponse,
 	createChatMessageResponse,
 	createReactionUpdateResponse,
+	createShoutCooldownResponse,
+	createShoutReceivedResponse,
 	createTypingUpdateResponse,
 } from './ChatManager';
+// Shout types re-exported from ChatManager
+export type { ShoutErrorCode, ShoutMessage, ShoutServerMessage } from './ChatManager';
 export type { ValidatedChatMessage } from './schemas';
 // Schemas
 export {
@@ -22,6 +25,7 @@ export {
 	isChatMessageType,
 	quickChatSchema,
 	reactionSchema,
+	shoutSchema,
 	typingStartSchema,
 	typingStopSchema,
 	validateChatMessage,

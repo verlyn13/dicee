@@ -63,6 +63,30 @@ export interface PendingInvite {
 	expiresAt: number;
 }
 
+/**
+ * Status of an active join request sent by this user.
+ * Used to show pending/approved/declined UI in the lobby.
+ */
+export type JoinRequestStatus =
+	| 'pending'
+	| 'approved'
+	| 'declined'
+	| 'expired'
+	| 'cancelled'
+	| 'error';
+
+/**
+ * Active join request sent by this user.
+ * Only one can be active at a time.
+ */
+export interface ActiveJoinRequest {
+	requestId: string;
+	roomCode: string;
+	status: JoinRequestStatus;
+	expiresAt: number;
+	errorMessage?: string;
+}
+
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
 
 // Reactive state with Svelte 5 runes
@@ -87,6 +111,9 @@ class LobbyState {
 	// Invite system
 	pendingInvites = $state<PendingInvite[]>([]);
 
+	// Join request system (requester side)
+	activeJoinRequest = $state<ActiveJoinRequest | null>(null);
+
 	// Derived
 	openRooms = $derived(this.rooms.filter((r) => r.status === 'open'));
 
@@ -96,6 +123,21 @@ class LobbyState {
 	/** Whether there are any pending invites */
 	hasInvites = $derived(this.pendingInvites.length > 0);
 	playingRooms = $derived(this.rooms.filter((r) => r.status === 'playing'));
+
+	/** Whether we have an active pending join request */
+	hasActiveJoinRequest = $derived(
+		this.activeJoinRequest !== null && this.activeJoinRequest.status === 'pending',
+	);
+
+	/** Seconds remaining until join request expires */
+	joinRequestSecondsRemaining = $derived.by(() => {
+		if (!this.activeJoinRequest || this.activeJoinRequest.status !== 'pending') return null;
+		const remaining = Math.max(
+			0,
+			Math.ceil((this.activeJoinRequest.expiresAt - Date.now()) / 1000),
+		);
+		return remaining;
+	});
 
 	// Show online count with appropriate label
 	onlineDisplay = $derived(
@@ -358,6 +400,141 @@ class LobbyState {
 				);
 				break;
 			}
+
+			// Join request responses (requester side) - delegated to reduce complexity
+			case 'join_request_sent':
+			case 'join_request_error':
+			case 'join_approved':
+			case 'join_declined':
+			case 'join_request_expired':
+			case 'join_request_cancelled':
+				this.handleJoinRequestMessage(data.type, data.payload);
+				break;
+		}
+	}
+
+	/**
+	 * Handle join request-related messages.
+	 * Extracted from handleMessage to reduce cognitive complexity.
+	 */
+	private handleJoinRequestMessage(type: string, payload: unknown) {
+		switch (type) {
+			case 'join_request_sent': {
+				const sentPayload = payload as {
+					requestId: string;
+					roomCode: string;
+					expiresAt: number;
+				};
+				this.activeJoinRequest = {
+					requestId: sentPayload.requestId,
+					roomCode: sentPayload.roomCode,
+					status: 'pending',
+					expiresAt: sentPayload.expiresAt,
+				};
+				console.log('[lobby] Join request sent:', this.activeJoinRequest);
+				break;
+			}
+
+			case 'join_request_error': {
+				const errorPayload = payload as {
+					code: string;
+					message: string;
+				};
+				// If we have an active request, mark it as error
+				if (this.activeJoinRequest) {
+					this.activeJoinRequest = {
+						...this.activeJoinRequest,
+						status: 'error',
+						errorMessage: errorPayload.message,
+					};
+				} else {
+					// No active request, create a temporary error state
+					this.activeJoinRequest = {
+						requestId: '',
+						roomCode: '',
+						status: 'error',
+						expiresAt: 0,
+						errorMessage: errorPayload.message,
+					};
+				}
+				// Auto-clear error after 3 seconds
+				setTimeout(() => {
+					if (this.activeJoinRequest?.status === 'error') {
+						this.activeJoinRequest = null;
+					}
+				}, 3000);
+				console.log('[lobby] Join request error:', errorPayload);
+				break;
+			}
+
+			case 'join_approved': {
+				const approvedPayload = payload as {
+					requestId: string;
+					roomCode: string;
+				};
+				if (this.activeJoinRequest?.requestId === approvedPayload.requestId) {
+					this.activeJoinRequest = {
+						...this.activeJoinRequest,
+						status: 'approved',
+					};
+					console.log('[lobby] Join request approved:', approvedPayload.roomCode);
+					// Note: Navigation to room should be handled by the UI component
+				}
+				break;
+			}
+
+			case 'join_declined': {
+				const declinedPayload = payload as {
+					requestId: string;
+					reason?: string;
+				};
+				if (this.activeJoinRequest?.requestId === declinedPayload.requestId) {
+					this.activeJoinRequest = {
+						...this.activeJoinRequest,
+						status: 'declined',
+						errorMessage: declinedPayload.reason ?? 'Host declined your request',
+					};
+					// Auto-clear after 3 seconds
+					setTimeout(() => {
+						if (this.activeJoinRequest?.status === 'declined') {
+							this.activeJoinRequest = null;
+						}
+					}, 3000);
+					console.log('[lobby] Join request declined:', declinedPayload);
+				}
+				break;
+			}
+
+			case 'join_request_expired': {
+				const expiredPayload = payload as {
+					requestId: string;
+				};
+				if (this.activeJoinRequest?.requestId === expiredPayload.requestId) {
+					this.activeJoinRequest = {
+						...this.activeJoinRequest,
+						status: 'expired',
+					};
+					// Auto-clear after 3 seconds
+					setTimeout(() => {
+						if (this.activeJoinRequest?.status === 'expired') {
+							this.activeJoinRequest = null;
+						}
+					}, 3000);
+					console.log('[lobby] Join request expired');
+				}
+				break;
+			}
+
+			case 'join_request_cancelled': {
+				const cancelledPayload = payload as {
+					requestId: string;
+				};
+				if (this.activeJoinRequest?.requestId === cancelledPayload.requestId) {
+					this.activeJoinRequest = null;
+					console.log('[lobby] Join request cancelled');
+				}
+				break;
+			}
 		}
 	}
 
@@ -526,6 +703,88 @@ class LobbyState {
 			}
 		}
 		this.pendingInvites = [];
+	}
+
+	// =========================================================================
+	// Join Request Actions (Requester Side)
+	// =========================================================================
+
+	/**
+	 * Send a join request to a room.
+	 * Can only have one active request at a time.
+	 *
+	 * @param roomCode - The room code to request to join
+	 */
+	sendJoinRequest(roomCode: string) {
+		// Can't send if already have an active pending request
+		if (this.hasActiveJoinRequest) {
+			console.warn('[lobby] Already have an active join request');
+			return;
+		}
+
+		if (this.ws?.readyState !== WebSocket.OPEN) {
+			console.warn('[lobby] Cannot send join request - WebSocket not open');
+			return;
+		}
+
+		console.log('[lobby] Sending join request to room:', roomCode);
+		this.ws.send(
+			JSON.stringify({
+				type: 'request_join',
+				roomCode: roomCode.toUpperCase(),
+			}),
+		);
+	}
+
+	/**
+	 * Cancel the active join request.
+	 */
+	cancelJoinRequest() {
+		if (!this.activeJoinRequest || this.activeJoinRequest.status !== 'pending') {
+			console.warn('[lobby] No active pending join request to cancel');
+			return;
+		}
+
+		if (this.ws?.readyState !== WebSocket.OPEN) {
+			// Just clear locally if can't reach server
+			this.activeJoinRequest = null;
+			return;
+		}
+
+		console.log('[lobby] Cancelling join request:', this.activeJoinRequest.requestId);
+		this.ws.send(
+			JSON.stringify({
+				type: 'cancel_join_request',
+				requestId: this.activeJoinRequest.requestId,
+				roomCode: this.activeJoinRequest.roomCode,
+			}),
+		);
+
+		// Clear optimistically (server will confirm)
+		this.activeJoinRequest = { ...this.activeJoinRequest, status: 'cancelled' };
+	}
+
+	/**
+	 * Clear the join request state (e.g., after navigation).
+	 */
+	clearJoinRequest() {
+		// If pending, cancel it on the server
+		if (this.activeJoinRequest?.status === 'pending') {
+			this.cancelJoinRequest();
+		} else {
+			this.activeJoinRequest = null;
+		}
+	}
+
+	/**
+	 * Get the active join request for a specific room.
+	 * Returns null if no request or request is for a different room.
+	 */
+	getJoinRequestForRoom(roomCode: string): ActiveJoinRequest | null {
+		if (this.activeJoinRequest?.roomCode?.toUpperCase() === roomCode.toUpperCase()) {
+			return this.activeJoinRequest;
+		}
+		return null;
 	}
 }
 

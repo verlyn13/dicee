@@ -345,6 +345,13 @@ class RoomService {
 		this.sendChat({ type: 'TYPING_STOP' });
 	}
 
+	/**
+	 * Send a shout message (ephemeral broadcast with speech bubble)
+	 */
+	sendShout(content: string): void {
+		this.sendChat({ type: 'SHOUT', payload: { content } });
+	}
+
 	// =========================================================================
 	// Event Handling
 	// =========================================================================
