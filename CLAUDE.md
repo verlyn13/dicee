@@ -517,6 +517,36 @@ export CLOUDFLARE_API_TOKEN=$(gopass show -o dicee/cloudflare/api-token)
 
 These patterns were discovered during production debugging and are documented in MCP Memory for future agent reference.
 
+#### LobbyUXPatternsSet (2024-12-16)
+**Problem**: Lobby lacked visual diversity, player visibility, and clear navigation.
+
+**Solution**: Implemented three major patterns (see `docs/architecture/LOBBY_UX_PATTERNS.md`):
+
+1. **CartridgeColorExpansion** - 6 → 12 colors (60+ combinations)
+2. **PlayerAvatarDisplay** - Show up to 4 avatars with host badge (★) and round progress
+3. **HorizontalCarousel** - Scroll-snap carousel with sticky footer
+
+**Key Patterns**:
+```typescript
+// Always use gameStateManager.getState() not gameState.getGameState()
+roundNumber: (await this.gameStateManager.getState())?.roundNumber ?? 0,
+
+// Grid expansion for avatar column
+grid-template-columns: auto 1fr auto auto;
+grid-template-areas: 'status content players action';
+
+// Horizontal carousel with scroll-snap
+display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+scrollbar-width: none;  /* Hide but keep functionality */
+
+// Sticky footer pattern
+.modal-content { display: flex; flex-direction: column; }
+.modal-body { flex: 1; overflow-y: auto; }
+.modal-footer { flex-shrink: 0; position: sticky; bottom: 0; }
+```
+
+**Files**: RoomCartridge.svelte, AIOpponentSelector.svelte, LobbyLanding.svelte, cartridge-tokens.css, room-identity-generator.ts, GameRoom.ts
+
 #### CloudflareWebSocketAuthPattern
 **Problem**: Cloudflare Pages doesn't reliably pass cookies with WebSocket upgrade requests.
 
