@@ -2,228 +2,32 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "dataflow",
-	"generatedAt": "2025-12-16T06:46:49.736Z",
-	"graphHash": "sha256:3b9ce41c2cd2ca92698d97f14ade302e1eae5e3152cc1ba6b217446aa12331cf",
-	"sourceCommit": "5bce86f",
+	"generatedAt": "2025-12-16T17:30:14.405Z",
+	"graphHash": "sha256:2d322e52cc62291b72f31a46e7c510d9182fb06df209d8f41ac8cb460ed56af6",
+	"sourceCommit": "15b429f",
 	"nodes": [
 		{
-			"id": "module::+layout::rc_routes__layout_ts",
-			"label": "layout",
-			"type": "Module",
-			"layer": "routes"
-		},
-		{
-			"id": "module::+server::_callback__server_ts",
-			"label": "+server",
-			"type": "Module",
-			"layer": "routes"
-		},
-		{
-			"id": "module::+page.server::obby__page_server_ts",
-			"label": "+page.server",
-			"type": "Module",
-			"layer": "routes"
-		},
-		{
-			"id": "module::+page.server::_id___page_server_ts",
-			"label": "+page.server",
-			"type": "Module",
-			"layer": "routes"
-		},
-		{
-			"id": "module::+page.server::ode___page_server_ts",
-			"label": "+page.server",
-			"type": "Module",
-			"layer": "routes"
-		},
-		{
-			"id": "module::index::mponents_ui_index_ts",
-			"label": "index",
-			"type": "Module",
+			"id": "smartcontainer::LobbyLanding::_LobbyLanding_svelte",
+			"label": "LobbyLanding",
+			"type": "SmartContainer",
 			"layer": "components"
 		},
 		{
-			"id": "module::index::ts_settings_index_ts",
-			"label": "index",
-			"type": "Module",
+			"id": "component::AIOpponentSelector::onentSelector_svelte",
+			"label": "AIOpponentSelector",
+			"type": "Component",
 			"layer": "components"
 		},
 		{
-			"id": "module::index::onents_chat_index_ts",
-			"label": "index",
-			"type": "Module",
+			"id": "smartcontainer::RoomCartridge::RoomCartridge_svelte",
+			"label": "RoomCartridge",
+			"type": "SmartContainer",
 			"layer": "components"
-		},
-		{
-			"id": "module::index::onents_auth_index_ts",
-			"label": "index",
-			"type": "Module",
-			"layer": "components"
-		},
-		{
-			"id": "module::index::ts_skeleton_index_ts",
-			"label": "index",
-			"type": "Module",
-			"layer": "components"
-		},
-		{
-			"id": "store::game.svelte::tores_game_svelte_ts",
-			"label": "game",
-			"type": "Store",
-			"layer": "stores"
-		},
-		{
-			"id": "store::profile.svelte::es_profile_svelte_ts",
-			"label": "profile",
-			"type": "Store",
-			"layer": "stores"
-		},
-		{
-			"id": "store::lobby.svelte::ores_lobby_svelte_ts",
-			"label": "lobby",
-			"type": "Store",
-			"layer": "stores"
-		},
-		{
-			"id": "store::room.svelte::tores_room_svelte_ts",
-			"label": "room",
-			"type": "Store",
-			"layer": "stores"
-		},
-		{
-			"id": "store::multiplayerGame.svelte::playerGame_svelte_ts",
-			"label": "multiplayerGame",
-			"type": "Store",
-			"layer": "stores"
-		},
-		{
-			"id": "service::audio::ib_services_audio_ts",
-			"label": "audio",
-			"type": "Service",
-			"layer": "services"
-		},
-		{
-			"id": "store::preferences.svelte::references_svelte_ts",
-			"label": "preferences",
-			"type": "Store",
-			"layer": "services"
-		},
-		{
-			"id": "service::engine::b_services_engine_ts",
-			"label": "engine",
-			"type": "Service",
-			"layer": "services"
-		},
-		{
-			"id": "store::spectatorService.svelte::torService_svelte_ts",
-			"label": "spectatorService",
-			"type": "Store",
-			"layer": "services"
-		},
-		{
-			"id": "service::telemetry::ervices_telemetry_ts",
-			"label": "telemetry",
-			"type": "Service",
-			"layer": "services"
-		},
-		{
-			"id": "supabasemodule::profiles::supabase_profiles_ts",
-			"label": "profiles",
-			"type": "SupabaseModule",
-			"layer": "supabase"
-		},
-		{
-			"id": "supabasemodule::stats::ib_supabase_stats_ts",
-			"label": "stats",
-			"type": "SupabaseModule",
-			"layer": "supabase"
-		},
-		{
-			"id": "supabasemodule::client::b_supabase_client_ts",
-			"label": "client",
-			"type": "SupabaseModule",
-			"layer": "supabase"
-		},
-		{
-			"id": "supabasemodule::flags::ib_supabase_flags_ts",
-			"label": "flags",
-			"type": "SupabaseModule",
-			"layer": "supabase"
-		},
-		{
-			"id": "supabasemodule::index::ib_supabase_index_ts",
-			"label": "index",
-			"type": "SupabaseModule",
-			"layer": "supabase"
-		},
-		{
-			"id": "wasmbridge::dicee_engine.d::sm_dicee_engine_d_ts",
-			"label": "dicee_engine.d",
-			"type": "WASMBridge",
-			"layer": "wasm"
-		},
-		{
-			"id": "wasmbridge::dicee_engine_bg.wasm.d::_engine_bg_wasm_d_ts",
-			"label": "dicee_engine_bg.wasm.d",
-			"type": "WASMBridge",
-			"layer": "wasm"
-		},
-		{
-			"id": "wasmbridge::engine::eb_src_lib_engine_ts",
-			"label": "engine",
-			"type": "WASMBridge",
-			"layer": "wasm"
 		}
 	],
-	"edges": [
-		{
-			"from": "store::game.svelte::tores_game_svelte_ts",
-			"to": "service::engine::b_services_engine_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::game.svelte::tores_game_svelte_ts",
-			"to": "service::engine::b_services_engine_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::game.svelte::tores_game_svelte_ts",
-			"to": "service::engine::b_services_engine_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::profile.svelte::es_profile_svelte_ts",
-			"to": "supabasemodule::profiles::supabase_profiles_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::multiplayerGame.svelte::playerGame_svelte_ts",
-			"to": "store::preferences.svelte::references_svelte_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::multiplayerGame.svelte::playerGame_svelte_ts",
-			"to": "store::preferences.svelte::references_svelte_ts",
-			"type": "imports"
-		},
-		{
-			"from": "service::engine::b_services_engine_ts",
-			"to": "wasmbridge::engine::eb_src_lib_engine_ts",
-			"type": "imports"
-		},
-		{
-			"from": "service::engine::b_services_engine_ts",
-			"to": "wasmbridge::engine::eb_src_lib_engine_ts",
-			"type": "imports"
-		},
-		{
-			"from": "service::engine::b_services_engine_ts",
-			"to": "wasmbridge::engine::eb_src_lib_engine_ts",
-			"type": "imports"
-		}
-	],
+	"edges": [],
 	"metadata": {
-		"totalNodes": 28,
-		"totalEdges": 9
+		"totalNodes": 3,
+		"totalEdges": 0
 	}
 }

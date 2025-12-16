@@ -3,28 +3,28 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 5bce86f
-> Generated: 2025-12-16T06:46:49.734Z
+> Commit: 15b429f
+> Generated: 2025-12-16T17:30:14.404Z
 
 ## Overview
 
 The Dicee architecture enforces a strict layered dependency model with 9 layers
-and 299 code nodes.
+and 6 code nodes.
 
 ## Layer Dependency Diagram
 
 ```mermaid
 flowchart TB
     subgraph "Dicee Architecture"
-        shared["📦 shared (25)"]
-        cloudflare_do["📦 cloudflare-do (34)"]
-        routes["🛣️ routes (29)"]
-        components["🧩 components (103)"]
-        stores["🗄️ stores (15)"]
-        services["⚙️ services (7)"]
-        types["📝 types (11)"]
-        supabase["🔌 supabase (7)"]
-        wasm["🦀 wasm (3)"]
+        shared["📦 shared (2)"]
+        cloudflare_do["📦 cloudflare-do (1)"]
+        routes["🛣️ routes (0)"]
+        components["🧩 components (3)"]
+        stores["🗄️ stores (0)"]
+        services["⚙️ services (0)"]
+        types["📝 types (0)"]
+        supabase["🔌 supabase (0)"]
+        wasm["🦀 wasm (0)"]
     end
 
     cloudflare_do --> shared

@@ -2,194 +2,20 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "component_dependencies",
-	"generatedAt": "2025-12-16T06:46:49.735Z",
-	"graphHash": "sha256:3b9ce41c2cd2ca92698d97f14ade302e1eae5e3152cc1ba6b217446aa12331cf",
-	"sourceCommit": "5bce86f",
+	"generatedAt": "2025-12-16T17:30:14.405Z",
+	"graphHash": "sha256:2d322e52cc62291b72f31a46e7c510d9182fb06df209d8f41ac8cb460ed56af6",
+	"sourceCommit": "15b429f",
 	"nodes": [
-		{
-			"id": "component::Avatar::nts_ui_Avatar_svelte",
-			"label": "Avatar",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::BottomSheet::i_BottomSheet_svelte",
-			"label": "BottomSheet",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::SettingsPanel::SettingsPanel_svelte",
-			"label": "SettingsPanel",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::SettingsButton::ettingsButton_svelte",
-			"label": "SettingsButton",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::ReactionFloat::ReactionFloat_svelte",
-			"label": "ReactionFloat",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::ScorecardSkeleton::ecardSkeleton_svelte",
-			"label": "ScorecardSkeleton",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::GameViewSkeleton::eViewSkeleton_svelte",
-			"label": "GameViewSkeleton",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::GalleryLeaderboard::ryLeaderboard_svelte",
-			"label": "GalleryLeaderboard",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::PlayerListItem::layerListItem_svelte",
-			"label": "PlayerListItem",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::EmptyRooms::by_EmptyRooms_svelte",
-			"label": "EmptyRooms",
-			"type": "Component",
-			"layer": "components"
-		},
 		{
 			"id": "component::AIOpponentSelector::onentSelector_svelte",
 			"label": "AIOpponentSelector",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::CreateRoomModal::eateRoomModal_svelte",
-			"label": "CreateRoomModal",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::JoinRoomModal::JoinRoomModal_svelte",
-			"label": "JoinRoomModal",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::OpponentPanel::OpponentPanel_svelte",
-			"label": "OpponentPanel",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::MultiplayerGameOverModal::GameOverModal_svelte",
-			"label": "MultiplayerGameOverModal",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::GameOverModal::GameOverModal_svelte",
-			"label": "GameOverModal",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::EndGameSummary::ndGameSummary_svelte",
-			"label": "EndGameSummary",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::MultiplayerScorecard::ayerScorecard_svelte",
-			"label": "MultiplayerScorecard",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::AIBadge::_game_AIBadge_svelte",
-			"label": "AIBadge",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::GameHistory::e_GameHistory_svelte",
-			"label": "GameHistory",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::SetupModal::le_SetupModal_svelte",
-			"label": "SetupModal",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::StatsDashboard::tatsDashboard_svelte",
-			"label": "StatsDashboard",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::ProfileForm::e_ProfileForm_svelte",
-			"label": "ProfileForm",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::AllScorecards::AllScorecards_svelte",
-			"label": "AllScorecards",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::SpectatorHeader::ectatorHeader_svelte",
-			"label": "SpectatorHeader",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::ScorecardLegend::orecardLegend_svelte",
-			"label": "ScorecardLegend",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::HeroGame::_hub_HeroGame_svelte",
-			"label": "HeroGame",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::NewsDev::s_hub_NewsDev_svelte",
-			"label": "NewsDev",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::Hub::nents_hub_Hub_svelte",
-			"label": "Hub",
-			"type": "Component",
-			"layer": "components"
-		},
-		{
-			"id": "component::LobbyGate::hub_LobbyGate_svelte",
-			"label": "LobbyGate",
 			"type": "Component",
 			"layer": "components"
 		}
 	],
 	"edges": [],
 	"metadata": {
-		"totalNodes": 30,
+		"totalNodes": 1,
 		"totalEdges": 0
 	}
 }

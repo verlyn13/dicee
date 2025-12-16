@@ -2,54 +2,54 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "layer_architecture",
-	"generatedAt": "2025-12-16T06:46:49.734Z",
-	"graphHash": "sha256:3b9ce41c2cd2ca92698d97f14ade302e1eae5e3152cc1ba6b217446aa12331cf",
-	"sourceCommit": "5bce86f",
+	"generatedAt": "2025-12-16T17:30:14.404Z",
+	"graphHash": "sha256:2d322e52cc62291b72f31a46e7c510d9182fb06df209d8f41ac8cb460ed56af6",
+	"sourceCommit": "15b429f",
 	"nodes": [
 		{
 			"id": "layer::shared",
 			"label": "shared",
-			"nodeCount": 25
+			"nodeCount": 2
 		},
 		{
 			"id": "layer::cloudflare-do",
 			"label": "cloudflare-do",
-			"nodeCount": 34
+			"nodeCount": 1
 		},
 		{
 			"id": "layer::routes",
 			"label": "routes",
-			"nodeCount": 29
+			"nodeCount": 0
 		},
 		{
 			"id": "layer::components",
 			"label": "components",
-			"nodeCount": 103
+			"nodeCount": 3
 		},
 		{
 			"id": "layer::stores",
 			"label": "stores",
-			"nodeCount": 15
+			"nodeCount": 0
 		},
 		{
 			"id": "layer::services",
 			"label": "services",
-			"nodeCount": 7
+			"nodeCount": 0
 		},
 		{
 			"id": "layer::types",
 			"label": "types",
-			"nodeCount": 11
+			"nodeCount": 0
 		},
 		{
 			"id": "layer::supabase",
 			"label": "supabase",
-			"nodeCount": 7
+			"nodeCount": 0
 		},
 		{
 			"id": "layer::wasm",
 			"label": "wasm",
-			"nodeCount": 3
+			"nodeCount": 0
 		}
 	],
 	"edges": [
