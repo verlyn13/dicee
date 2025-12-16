@@ -18,11 +18,10 @@ import type { z } from 'zod';
 // Import all schemas for z.infer derivation
 // =============================================================================
 import type {
-	// Command schemas
 	AddAIPlayerCommandSchema,
-	// Event schemas
 	AIKeepingEventSchema,
 	AIPlayerJoinedEventSchema,
+	AIPlayerRemovedEventSchema,
 	AIRollingEventSchema,
 	AIScoringEventSchema,
 	AIThinkingEventSchema,
@@ -69,6 +68,7 @@ import type {
 	ReactionUpdateEventSchema,
 	RematchCommandSchema,
 	RematchStartedEventSchema,
+	RemoveAIPlayerCommandSchema,
 	RequestJoinCommandSchema,
 	RollDiceCommandSchema,
 	ScoreCategoryCommandSchema,
@@ -198,6 +198,9 @@ export type RematchCommand = z.infer<typeof RematchCommandSchema>;
 /** Add AI player to room (host only, during waiting) */
 export type AddAIPlayerCommand = z.infer<typeof AddAIPlayerCommandSchema>;
 
+/** Remove AI player from room (host only, during waiting) */
+export type RemoveAIPlayerCommand = z.infer<typeof RemoveAIPlayerCommandSchema>;
+
 /** Heartbeat ping */
 export type PingCommand = z.infer<typeof PingCommandSchema>;
 
@@ -290,6 +293,9 @@ export type PlayerLeftEvent = z.infer<typeof PlayerLeftEventSchema>;
 
 /** AI player joined the room */
 export type AIPlayerJoinedEvent = z.infer<typeof AIPlayerJoinedEventSchema>;
+
+/** AI player removed from the room */
+export type AIPlayerRemovedEvent = z.infer<typeof AIPlayerRemovedEventSchema>;
 
 /** Game is starting */
 export type GameStartingEvent = z.infer<typeof GameStartingEventSchema>;

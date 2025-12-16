@@ -63,6 +63,7 @@ export interface RoomStore {
 	leaveRoom: () => void;
 	startGame: () => void;
 	addAIPlayer: (profileId: string) => void;
+	removeAIPlayer: (playerId: string) => void;
 
 	// Invite actions (host only)
 	sendInvite: (targetUserId: string) => void;
@@ -228,6 +229,14 @@ export function createRoomStore(userId: string): RoomStore {
 		roomService.sendAddAIPlayer(profileId);
 	}
 
+	function removeAIPlayer(playerId: string): void {
+		if (!isHost) {
+			error = 'Only the host can remove AI players';
+			return;
+		}
+		roomService.sendRemoveAIPlayer(playerId);
+	}
+
 	function sendInvite(targetUserId: string): void {
 		if (!isHost) {
 			error = 'Only the host can send invites';
@@ -308,6 +317,7 @@ export function createRoomStore(userId: string): RoomStore {
 		leaveRoom,
 		startGame,
 		addAIPlayer,
+		removeAIPlayer,
 		sendInvite,
 		cancelInvite,
 		subscribe,

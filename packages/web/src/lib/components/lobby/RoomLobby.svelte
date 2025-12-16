@@ -262,6 +262,16 @@ const playerIds = $derived(room.room?.players.map((p) => p.id) ?? []);
 					<span class="player-avatar">🤖</span>
 					<span class="player-name">{aiPlayer.displayName}</span>
 					<span class="player-badge ai-badge">AI</span>
+					{#if room.isHost && room.room?.state === 'waiting'}
+						<button
+							type="button"
+							class="remove-ai-btn"
+							onclick={() => room.removeAIPlayer(aiPlayer.id)}
+							title="Remove AI player"
+						>
+							✕
+						</button>
+					{/if}
 				</div>
 			{/each}
 			
@@ -769,6 +779,22 @@ const playerIds = $derived(room.room?.players.map((p) => p.id) ?? []);
 		font-size: var(--text-tiny);
 		font-weight: var(--weight-bold);
 		text-transform: uppercase;
+	}
+
+	.remove-ai-btn {
+		padding: var(--space-1);
+		background: transparent;
+		border: none;
+		color: var(--color-signal-busy);
+		cursor: pointer;
+		font-size: var(--text-base);
+		line-height: 1;
+		opacity: 0.6;
+		transition: opacity var(--transition-fast);
+	}
+
+	.remove-ai-btn:hover {
+		opacity: 1;
 	}
 
 	/* Modal styles */

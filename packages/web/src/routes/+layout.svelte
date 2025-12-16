@@ -15,6 +15,7 @@ import {
 import { audioStore } from '$lib/stores/audio.svelte';
 import { auth } from '$lib/stores/auth.svelte';
 import { lobby } from '$lib/stores/lobby.svelte';
+import { profileStore } from '$lib/stores/profile.svelte';
 import { initKeyboardHandler } from '$lib/utils/keyboard';
 
 let { data, children } = $props();
@@ -37,11 +38,16 @@ onMount(() => {
 	preferencesService.init();
 	preferencesService.setSupabase(data.supabase);
 
+	// Initialize profile store with Supabase client
+	profileStore.init(data.supabase);
+
 	// Set user ID if already authenticated
 	if (data.user?.id) {
 		setUserId(data.user.id);
 		// Sync preferences on initial load if authenticated
 		preferencesService.onLogin(data.user.id);
+		// Load user profile (includes admin role)
+		profileStore.loadProfile(data.user.id);
 	}
 
 	// Listen for auth changes and invalidate the layout data
@@ -59,10 +65,14 @@ onMount(() => {
 			setUserId(session.user.id);
 			// Sync preferences on login
 			preferencesService.onLogin(session.user.id);
+			// Load user profile (includes admin role)
+			profileStore.loadProfile(session.user.id);
 		} else if (event === 'SIGNED_OUT') {
 			setUserId(null);
 			// Stop syncing on logout
 			preferencesService.onLogout();
+			// Clear profile state
+			profileStore.clear();
 			// Disconnect from room first (if in one), then lobby
 			// This ensures proper cleanup order: room → lobby
 			roomService.disconnect();

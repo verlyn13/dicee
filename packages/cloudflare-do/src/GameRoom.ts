@@ -1331,6 +1331,10 @@ export class GameRoom extends DurableObject<Env> {
 				await this.handleAddAIPlayer(ws, connState, payload as { profileId: string });
 				break;
 
+			case 'REMOVE_AI_PLAYER':
+				await this.handleRemoveAIPlayer(ws, connState, payload as { playerId: string });
+				break;
+
 			// ─────────────────────────────────────────────────────────────────────────
 			// Core Game Loop Commands (DO-4)
 			// ─────────────────────────────────────────────────────────────────────────
@@ -2661,6 +2665,58 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Notify lobby
 		await this.notifyLobbyOfUpdate();
+	}
+
+	/**
+	 * Handle remove AI player command (host only, waiting phase only)
+	 */
+	private async handleRemoveAIPlayer(
+		ws: WebSocket,
+		connState: ConnectionState,
+		payload: { playerId: string },
+	): Promise<void> {
+		// Only host can remove AI players
+		if (!connState.isHost) {
+			this.sendError(ws, 'NOT_HOST', 'Only the host can remove AI players');
+			return;
+		}
+
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (!roomState) {
+			this.sendError(ws, 'ROOM_NOT_FOUND', 'Room not found');
+			return;
+		}
+
+		// Can only remove AI during waiting phase
+		if (roomState.status !== 'waiting') {
+			this.sendError(ws, 'GAME_IN_PROGRESS', 'Cannot remove AI players after game has started');
+			return;
+		}
+
+		// Find and remove the AI player
+		const aiIndex = roomState.aiPlayers?.findIndex((p) => p.id === payload.playerId) ?? -1;
+		if (aiIndex === -1) {
+			this.sendError(ws, 'PLAYER_NOT_FOUND', 'AI player not found');
+			return;
+		}
+
+		const removedPlayer = roomState.aiPlayers![aiIndex];
+		roomState.aiPlayers!.splice(aiIndex, 1);
+		await this.ctx.storage.put('room', roomState);
+
+		// Broadcast AI player removed
+		this.broadcast({
+			type: 'AI_PLAYER_REMOVED',
+			payload: {
+				playerId: payload.playerId,
+				displayName: removedPlayer.displayName,
+			},
+		});
+
+		// Notify lobby of updated player count
+		await this.notifyLobbyOfUpdate();
+
+		console.log(`[GameRoom] AI player removed: ${removedPlayer.displayName} (${payload.playerId})`);
 	}
 
 	/**

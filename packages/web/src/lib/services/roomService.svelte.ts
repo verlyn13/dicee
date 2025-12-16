@@ -292,6 +292,13 @@ class RoomService {
 		this.send({ type: 'ADD_AI_PLAYER', payload: { profileId } });
 	}
 
+	/**
+	 * Send remove AI player command (host only, during waiting)
+	 */
+	sendRemoveAIPlayer(playerId: string): void {
+		this.send({ type: 'REMOVE_AI_PLAYER', payload: { playerId } });
+	}
+
 	// =========================================================================
 	// Invite Commands
 	// =========================================================================
@@ -608,6 +615,17 @@ class RoomService {
 							],
 						};
 					}
+				}
+				break;
+			}
+
+			case 'AI_PLAYER_REMOVED': {
+				if (this._room) {
+					const payload = (event as { payload: { playerId: string } }).payload;
+					this._room = {
+						...this._room,
+						aiPlayers: this._room.aiPlayers?.filter((p) => p.id !== payload.playerId) ?? [],
+					};
 				}
 				break;
 			}

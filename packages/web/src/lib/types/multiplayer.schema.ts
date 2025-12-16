@@ -150,6 +150,13 @@ export const AddAIPlayerCommandSchema = z.object({
 	}),
 });
 
+export const RemoveAIPlayerCommandSchema = z.object({
+	type: z.literal('REMOVE_AI_PLAYER'),
+	payload: z.object({
+		playerId: z.string().min(1),
+	}),
+});
+
 export const PingCommandSchema = z.object({
 	type: z.literal('PING'),
 });
@@ -337,6 +344,7 @@ export const CommandSchema = z.discriminatedUnion('type', [
 	ScoreCategoryCommandSchema,
 	RematchCommandSchema,
 	AddAIPlayerCommandSchema,
+	RemoveAIPlayerCommandSchema,
 	PingCommandSchema,
 	// Chat commands
 	ChatCommandSchema,
@@ -427,6 +435,14 @@ export const PlayerLeftEventSchema = BaseEventSchema.extend({
 export const AIPlayerJoinedEventSchema = BaseEventSchema.extend({
 	type: z.literal('AI_PLAYER_JOINED'),
 	payload: AIPlayerInfoSchema,
+});
+
+export const AIPlayerRemovedEventSchema = BaseEventSchema.extend({
+	type: z.literal('AI_PLAYER_REMOVED'),
+	payload: z.object({
+		playerId: z.string(),
+		displayName: z.string(),
+	}),
 });
 
 export const GameStartingEventSchema = BaseEventSchema.extend({
@@ -893,6 +909,7 @@ export const ServerEventSchema = z.discriminatedUnion('type', [
 	PlayerJoinedEventSchema,
 	PlayerLeftEventSchema,
 	AIPlayerJoinedEventSchema,
+	AIPlayerRemovedEventSchema,
 	GameStartingEventSchema,
 	GameStartedEventSchema,
 	QuickPlayStartedEventSchema,

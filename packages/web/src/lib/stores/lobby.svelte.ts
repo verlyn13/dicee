@@ -374,7 +374,18 @@ class LobbyState {
 					this.rooms = this.rooms.filter((r) => r.code !== update.code);
 				} else if (update.action === 'updated' && update.room) {
 					const updatedRoom = update.room;
-					this.rooms = this.rooms.map((r) => (r.code === updatedRoom.code ? updatedRoom : r));
+					const existingIndex = this.rooms.findIndex((r) => r.code === updatedRoom.code);
+					if (existingIndex >= 0) {
+						// Update existing room
+						this.rooms = this.rooms.map((r) => (r.code === updatedRoom.code ? updatedRoom : r));
+					} else {
+						// Room not in list yet (new room via RPC) - add it
+						this.rooms = [updatedRoom, ...this.rooms];
+						this.addTickerEvent({
+							type: 'room_created',
+							message: `Room #${updatedRoom.code} created`,
+						});
+					}
 				}
 				break;
 			}

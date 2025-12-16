@@ -54,9 +54,11 @@ class ProfileState {
 	async loadProfile(userId: string): Promise<void> {
 		if (!this.#supabase) {
 			this.#error = 'Supabase not initialized';
+			console.warn('[ProfileStore] loadProfile failed: Supabase not initialized');
 			return;
 		}
 
+		console.log('[ProfileStore] loadProfile starting for userId:', userId);
 		this.#loading = true;
 		this.#error = null;
 
@@ -64,17 +66,30 @@ class ProfileState {
 			const { data, error } = await getProfile(this.#supabase, userId);
 
 			if (error) {
+				console.error('[ProfileStore] loadProfile error:', error.message);
 				this.#error = error.message;
 				this.#profile = null;
 			} else {
+				console.log('[ProfileStore] loadProfile success:', {
+					id: data?.id,
+					role: data?.role,
+					displayName: data?.display_name,
+				});
 				this.#profile = data;
 			}
 		} catch (e) {
-			this.#error = e instanceof Error ? e.message : 'Unknown error loading profile';
+			const errorMsg = e instanceof Error ? e.message : 'Unknown error loading profile';
+			console.error('[ProfileStore] loadProfile exception:', errorMsg);
+			this.#error = errorMsg;
 			this.#profile = null;
 		} finally {
 			this.#loading = false;
 			this.#initialized = true;
+			console.log('[ProfileStore] loadProfile complete:', {
+				initialized: this.#initialized,
+				hasProfile: !!this.#profile,
+				role: this.#profile?.role,
+			});
 		}
 	}
 

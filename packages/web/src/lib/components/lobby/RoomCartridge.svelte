@@ -16,6 +16,7 @@
 
 import { generateRoomIdentity, getColorVar, getPatternClass } from '@dicee/shared';
 import { goto } from '$app/navigation';
+import { auth } from '$lib/stores/auth.svelte';
 import { lobby, type RoomInfo } from '$lib/stores/lobby.svelte';
 
 interface Props {
@@ -64,6 +65,10 @@ const rotation = $derived(identity.baseRotation * (index % 2 === 0 ? 1 : -1));
 const bgColor = $derived(getColorVar(identity.color));
 const patternClass = $derived(getPatternClass(identity.pattern));
 
+// Check if current user is host or already a player (for direct rejoin)
+const isHost = $derived(auth.userId === room.hostId);
+const isExistingPlayer = $derived(room.players?.some((p) => p.userId === auth.userId) ?? false);
+
 // Accessibility description
 const ariaLabel = $derived(
 	`${identity.hypeName} room, code ${room.code}. ` +
@@ -97,6 +102,12 @@ async function handleAction() {
 		return;
 	}
 
+	// Host or existing player - navigate directly to rejoin
+	if (isHost || isExistingPlayer) {
+		goto(`/games/dicee/room/${room.code}`);
+		return;
+	}
+
 	// Open room - use callback if provided, otherwise send join request
 	if (onJoin) {
 		onJoin(room.code);
@@ -124,6 +135,7 @@ function triggerErrorFeedback() {
 }
 
 function getButtonText(): string {
+	if (isHost || isExistingPlayer) return 'REJOIN';
 	if (statusConfig.canJoin) return 'JOIN';
 	if (statusConfig.canSpectate) return 'WATCH';
 	return 'FULL';
