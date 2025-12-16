@@ -33,12 +33,16 @@ docs/architecture/akg/graph/history/
 # Temporary files
 temp-*.md
 
+# Cached external documentation
+docs/references/
+
 # Logs
 *.log
 logs/
 
 # Test coverage
 coverage/
+.coverage
 .nyc_output/
 
 # Cache
@@ -55,8 +59,19 @@ venv/
 # Rust
 Cargo.lock
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+
 # Claude Code state (session-specific, not shared)
 .claude/state/
+.claude/debug/
+.claude/AGENT-*.md
+
+# Development tools (local analysis)
+packages/web/src/tools/log-analyzer/
+
+# Editor configs (personal preference)
+.cursorrules
 
 # Biome docs (temporary)
 biome-config-docs-current.md
@@ -68,3 +83,9 @@ test-results/
 # Windsurf temp files
 temp-windsurf-config.md
 .vercel
+
+# Development scripts (local tooling)
+scripts/dicee-adb.*
+
+# Supabase local seed data
+supabase/seed/
