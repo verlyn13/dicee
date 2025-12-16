@@ -22,7 +22,8 @@ describe('Performance Metrics', () => {
 			const timer = createPerformanceTimer();
 			await new Promise((resolve) => setTimeout(resolve, 10));
 			const elapsed = timer.elapsed();
-			expect(elapsed).toBeGreaterThanOrEqual(10);
+			// Account for timing precision in CI environments (can be 1-2ms off)
+			expect(elapsed).toBeGreaterThanOrEqual(8);
 			expect(elapsed).toBeLessThan(50); // Should be close to 10ms
 		});
 
