@@ -111,7 +111,6 @@ class JoinRequestsStore {
 	// =========================================================================
 
 	private handleServerEvent(event: ServerEvent): void {
-		// Handle both uppercase (DO format) and lowercase event types
 		const eventType = event.type as string;
 
 		switch (eventType) {
@@ -136,8 +135,6 @@ class JoinRequestsStore {
 	}
 
 	private handleJoinRequestReceived(request: JoinRequest): void {
-		console.log('[JoinRequestsStore] Received join request:', request);
-
 		// Add to pending list if not already present
 		const exists = this.pendingRequests.some((r) => r.id === request.id);
 		if (!exists) {
@@ -146,12 +143,10 @@ class JoinRequestsStore {
 	}
 
 	private handleJoinRequestCancelled(requestId: string): void {
-		console.log('[JoinRequestsStore] Request cancelled:', requestId);
 		this.pendingRequests = this.pendingRequests.filter((r) => r.id !== requestId);
 	}
 
 	private handleJoinRequestExpired(requestId: string): void {
-		console.log('[JoinRequestsStore] Request expired:', requestId);
 		this.pendingRequests = this.pendingRequests.filter((r) => r.id !== requestId);
 	}
 
@@ -169,8 +164,6 @@ class JoinRequestsStore {
 			console.warn('[JoinRequestsStore] Cannot approve - request not found:', requestId);
 			return;
 		}
-
-		console.log('[JoinRequestsStore] Approving request:', requestId);
 
 		// Send to server via roomService
 		roomService.send({
@@ -195,8 +188,6 @@ class JoinRequestsStore {
 			console.warn('[JoinRequestsStore] Cannot decline - request not found:', requestId);
 			return;
 		}
-
-		console.log('[JoinRequestsStore] Declining request:', requestId);
 
 		// Send to server via roomService
 		roomService.send({

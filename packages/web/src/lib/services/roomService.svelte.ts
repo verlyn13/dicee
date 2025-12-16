@@ -4,11 +4,8 @@
  * Manages WebSocket connection to multiplayer server (Cloudflare Durable Objects).
  * Uses same-origin WebSocket proxy (/ws/room/[code]) for zero-CORS connections.
  * Handles room creation, joining, game commands, and chat.
- *
- * Uses @dicee/shared validation schemas for protocol compliance.
  */
 
-import { parseServerEvent } from '@dicee/shared';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { browser } from '$app/environment';
 import type {
@@ -418,23 +415,10 @@ class RoomService {
 		try {
 			const raw = JSON.parse(event.data);
 
-			// Debug: Log all raw messages during AI turn debugging
-			console.log('[RoomService] RAW WS message:', raw.type ?? 'unknown', raw);
-
-			// Validate with @dicee/shared schema for protocol compliance
-			// PONG events are filtered, other events may have extra fields not in schema
-			const parsed = parseServerEvent(raw);
-			if (!parsed.success && raw.type !== 'PONG') {
-				console.debug('[RoomService] Event validation note:', raw.type, parsed.error?.issues);
-			}
-
 			// Handle both PartyKit and Durable Objects message formats
 			const serverEvent = this.normalizeServerEvent(raw);
 
-			if (!serverEvent) {
-				console.warn('[RoomService] Could not normalize server event:', raw);
-				return;
-			}
+			if (!serverEvent) return;
 
 			// Update local room state
 			this.processEvent(serverEvent);

@@ -887,7 +887,8 @@ export class GlobalLobby extends DurableObject<Env> {
 		const existingRoom = await this.roomDirectory.get(update.roomCode);
 
 		// Lazy fallback: use provided identity, existing identity, or generate new
-		const identity = update.identity ?? existingRoom?.identity ?? generateRoomIdentity(update.roomCode);
+		const identity =
+			update.identity ?? existingRoom?.identity ?? generateRoomIdentity(update.roomCode);
 
 		const roomInfo: RoomInfo = {
 			code: update.roomCode,

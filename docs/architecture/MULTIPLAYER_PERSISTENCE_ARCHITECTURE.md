@@ -457,6 +457,175 @@ Shows opponent disconnection status with countdown:
 
 ---
 
+## Debugging Lessons & Critical Patterns
+
+> **Updated**: 2025-12-15 (from production debugging session)
+
+### 1. Room Settings Persistence
+
+**Critical**: Room settings are **stored at creation time** and persist indefinitely.
+
+```typescript
+// When a room is created, settings are stored once:
+roomState = createInitialRoomState(roomCode, connState.userId);
+await this.ctx.storage.put('room', roomState);
+
+// These settings NEVER update automatically after creation
+```
+
+**Implications**:
+- Changing `DEFAULT_ROOM_SETTINGS` only affects **new** rooms
+- Existing rooms keep their original settings (e.g., `maxPlayers: 2`)
+- To fix old rooms: create new rooms or implement migration logic
+
+**Pattern**: When fixing default values, consider:
+1. The fix only applies to newly created resources
+2. Existing resources may need explicit migration
+
+### 2. Chat History Persistence
+
+Chat messages are persisted server-side and loaded on every connection:
+
+```typescript
+// ChatManager.ts - Initialization on every connection
+async initialize(): Promise<void> {
+  if (this.initialized) return;  // Idempotent
+
+  const [messages, rateLimits] = await Promise.all([
+    this.ctx.storage.get<ChatMessage[]>(STORAGE_KEYS.MESSAGES),
+    this.ctx.storage.get<Record<string, RateLimitState>>(STORAGE_KEYS.RATE_LIMITS),
+  ]);
+
+  this.messages = messages ?? [];
+  this.initialized = true;
+}
+
+// GameRoom.ts - Every player connection receives history
+private sendChatHistory(ws: WebSocket): void {
+  const history = this.chatManager.getHistory();
+  ws.send(JSON.stringify(createChatHistoryResponse(history)));
+}
+```
+
+**Flow**: Player connects → DO wakes from hibernation → ChatManager loads from storage → History sent to player
+
+### 3. Host Flag Tracking
+
+The `isHost` flag is stored in the `PlayerSeat` and restored on reconnection:
+
+```typescript
+// Seat creation stores isHost
+const seat = createPlayerSeat(userId, displayName, avatarSeed, isHost, turnOrder);
+
+// Reconnection restores from seat
+if (reconnectionResult.success && reconnectionResult.seat) {
+  connState.isHost = reconnectedSeat.isHost;  // From seat
+  ws.serializeAttachment(connState);
+}
+
+// Fallback: check against roomState.hostUserId
+connState.isHost = connState.userId === roomState.hostUserId;
+```
+
+**Pattern**: Host identification has three layers:
+1. `PlayerSeat.isHost` - persisted in storage
+2. `ConnectionState.isHost` - attached to WebSocket
+3. `RoomState.hostUserId` - authoritative source
+
+### 4. Join Request Flow
+
+```
+┌──────────────┐    REQUEST_JOIN     ┌──────────────┐
+│  GlobalLobby │ ──────────────────► │   GameRoom   │
+│  (Router)    │    via RPC          │  (Handler)   │
+└──────────────┘                     └──────┬───────┘
+                                            │
+                        ┌───────────────────┴───────────────────┐
+                        │                                       │
+                        ▼                                       ▼
+              ┌─────────────────┐                    ┌─────────────────┐
+              │ Capacity Check  │                    │ Host Notification│
+              │ maxPlayers vs   │                    │ notifyHostOf... │
+              │ connectedPlayers│                    │ finds host WS   │
+              └─────────────────┘                    └─────────────────┘
+```
+
+**Capacity Check** (`handleJoinRequest`):
+- Counts `getConnectedPlayerCount()` - number of WebSockets with `player:${roomCode}` tag
+- Adds AI players: `connectedPlayers + (roomState.aiPlayers?.length ?? 0)`
+- Compares against `roomState.settings.maxPlayers`
+
+**Host Notification** (`notifyHostOfJoinRequest`):
+- Gets all player WebSockets: `ctx.getWebSockets('player:${roomCode}')`
+- Finds host via attachment: `ws.deserializeAttachment().isHost === true`
+- Sends `JOIN_REQUEST_RECEIVED` event to host
+
+### 5. WebSocket Close Code 1006
+
+```
+WebSocket closed: 1006 - WebSocket disconnected without sending Close frame.
+```
+
+**Causes**:
+- Browser tab backgrounding (mobile/laptop sleep)
+- Network interruption
+- Cloudflare WebSocket timeout
+- User closing browser abruptly
+
+**Handling**: The reconnection system handles this via:
+1. 5-minute seat reservation
+2. Automatic reconnect via ReconnectingWebSocket
+3. Seat reclamation on reconnect
+
+### 6. Debug Logging Pattern
+
+When debugging multiplayer issues, add comprehensive logging at key points:
+
+```typescript
+// Capacity check logging
+console.log(`[GameRoom] JOIN REQUEST - Room capacity check:`, {
+  maxPlayers: roomState.settings.maxPlayers,
+  connectedPlayers,
+  totalPlayerCount: playerCount,
+  seatsSize: seats.size,
+  roomStatus: roomState.status,
+  hostUserId: roomState.hostUserId,
+});
+
+// Seat state logging
+for (const [id, seat] of seats) {
+  console.log(`[GameRoom] Seat ${id}:`, {
+    displayName: seat.displayName,
+    isConnected: seat.isConnected,
+    isHost: seat.isHost,
+    reconnectDeadline: seat.reconnectDeadline,
+  });
+}
+```
+
+**Deploy and tail**: `wrangler deploy && wrangler tail --format json`
+
+---
+
+## Common Debugging Checklist
+
+| Issue | Investigation Steps |
+|-------|---------------------|
+| "Room is full" error | 1. Check `maxPlayers` in room state (may be old default) |
+|                      | 2. Count seats vs WebSocket connections |
+|                      | 3. Check for stale seats with expired reconnect windows |
+| Host not receiving events | 1. Verify `isHost` in seat storage |
+|                           | 2. Check WebSocket attachment has `isHost: true` |
+|                           | 3. Verify host WS found in `getWebSockets()` |
+| Chat history lost | 1. Verify `ChatManager.initialize()` called |
+|                   | 2. Check storage has `chat:messages` key |
+|                   | 3. Confirm `sendChatHistory()` called on connect |
+| Reconnection fails | 1. Check seat exists in storage |
+|                    | 2. Verify `reconnectDeadline` not expired |
+|                    | 3. Confirm `handleReconnection()` called |
+
+---
+
 ## Related Documentation
 
 - `/docs/multiplayer-state-machines.md` - Detailed state machine diagrams

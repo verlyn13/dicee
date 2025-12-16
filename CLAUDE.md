@@ -611,6 +611,64 @@ sendChat(content: string) {
 }
 ```
 
+#### RoomSettingsPersistencePattern (2025-12-15)
+**Problem**: Fixing default room settings (e.g., `maxPlayers: 2` → `4`) doesn't affect existing rooms.
+
+**Cause**: Room settings are stored at creation time and persist indefinitely in DO storage.
+
+**Solution**: When changing defaults, understand:
+1. Fix only affects **newly created** rooms
+2. Existing rooms keep their original settings
+3. Users must create new rooms to get the new defaults
+4. Or implement explicit migration logic for existing rooms
+
+```typescript
+// This change only affects NEW rooms:
+export const DEFAULT_ROOM_SETTINGS: RoomSettings = {
+  maxPlayers: 4,  // Changed from 2
+  // ...
+};
+
+// Existing rooms still have maxPlayers: 2 in storage!
+```
+
+#### HostFlagRestorationPattern (2025-12-15)
+**Problem**: Host loses `isHost` flag after browser refresh.
+
+**Solution**: `isHost` is stored in three places with fallback chain:
+1. `PlayerSeat.isHost` - persisted in DO storage
+2. `ConnectionState.isHost` - attached to WebSocket
+3. `RoomState.hostUserId` - authoritative source for fallback
+
+```typescript
+// On reconnection, restore from seat:
+if (reconnectionResult.success && reconnectionResult.seat) {
+  connState.isHost = reconnectedSeat.isHost;
+  ws.serializeAttachment(connState);
+}
+
+// Fallback if seat expired:
+connState.isHost = connState.userId === roomState.hostUserId;
+```
+
+#### ChatHistoryPersistencePattern (2025-12-15)
+**Problem**: Chat history lost on page refresh.
+
+**Solution**: Chat is persisted server-side in ChatManager, loaded on every connection.
+```typescript
+// ChatManager.initialize() - called on every connection
+async initialize(): Promise<void> {
+  if (this.initialized) return;  // Idempotent
+  this.messages = await this.ctx.storage.get<ChatMessage[]>(STORAGE_KEYS.MESSAGES) ?? [];
+  this.initialized = true;
+}
+
+// GameRoom.onConnect() - send history to new connections
+this.sendChatHistory(ws);  // Sends CHAT_HISTORY event
+```
+
+**Full documentation**: `docs/architecture/MULTIPLAYER_PERSISTENCE_ARCHITECTURE.md`
+
 ## MCP-First Workflow
 
 This project uses Model Context Protocol for persistent state and tool access.

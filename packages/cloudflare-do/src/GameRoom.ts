@@ -1880,31 +1880,12 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	async handleJoinRequest(input: JoinRequestRPCInput): Promise<JoinRequestRPCResponse> {
 		const roomCode = this.getRoomCode();
-
-		// Get seat count for enhanced debugging
-		const seats = await this.getSeats();
 		const connectedPlayers = this.getConnectedPlayerCount();
-		const aiPlayerCount =
-			(await this.ctx.storage.get<RoomState>('room'))?.aiPlayers?.length ?? 0;
 
 		this.logger.info('Processing join request', {
 			operation: 'join_request_receive',
 			roomCode,
 			requesterId: input.requesterId,
-		});
-
-		// DEBUG: Log all capacity info
-		console.log(`[GameRoom] JOIN REQUEST DEBUG:`, {
-			roomCode,
-			requesterId: input.requesterId,
-			connectedPlayers,
-			aiPlayerCount,
-			totalSeats: seats.size,
-			seatDetails: [...seats.entries()].map(([id, seat]) => ({
-				id,
-				connected: seat.isConnected,
-				hasReconnectDeadline: !!seat.reconnectDeadline,
-			})),
 		});
 
 		// Check room state
@@ -1923,13 +1904,6 @@ export class GameRoom extends DurableObject<Env> {
 				errorMessage: 'Room is not accepting new players',
 			};
 		}
-
-		// DEBUG: Log settings
-		console.log(`[GameRoom] JOIN REQUEST - Room settings:`, {
-			maxPlayers: roomState.settings.maxPlayers,
-			isPublic: roomState.settings.isPublic,
-			aiPlayersInState: roomState.aiPlayers?.length ?? 0,
-		});
 
 		// Check capacity - include AI players in count
 		const playerCount = connectedPlayers + (roomState.aiPlayers?.length ?? 0);
@@ -2221,7 +2195,9 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	private notifyHostOfJoinRequest(request: JoinRequestEntity): void {
 		const roomCode = this.getRoomCode();
-		const hostWs = this.ctx.getWebSockets(`player:${roomCode}`).find((ws) => {
+		const allPlayerWs = this.ctx.getWebSockets(`player:${roomCode}`);
+
+		const hostWs = allPlayerWs.find((ws) => {
 			const state = ws.deserializeAttachment() as ConnectionState | null;
 			return state?.isHost === true;
 		});
@@ -2234,6 +2210,12 @@ export class GameRoom extends DurableObject<Env> {
 					timestamp: Date.now(),
 				}),
 			);
+		} else {
+			this.logger.warn('No host WebSocket found for join request notification', {
+				operation: 'notify_host_join_request',
+				roomCode,
+				requestId: request.id,
+			});
 		}
 	}
 
@@ -2723,14 +2705,16 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		// Find and remove the AI player
-		const aiIndex = roomState.aiPlayers?.findIndex((p) => p.id === payload.playerId) ?? -1;
+		const aiPlayers = roomState.aiPlayers ?? [];
+		const aiIndex = aiPlayers.findIndex((p) => p.id === payload.playerId);
 		if (aiIndex === -1) {
 			this.sendError(ws, 'PLAYER_NOT_FOUND', 'AI player not found');
 			return;
 		}
 
-		const removedPlayer = roomState.aiPlayers![aiIndex];
-		roomState.aiPlayers!.splice(aiIndex, 1);
+		const removedPlayer = aiPlayers[aiIndex];
+		aiPlayers.splice(aiIndex, 1);
+		roomState.aiPlayers = aiPlayers;
 		await this.ctx.storage.put('room', roomState);
 
 		// Broadcast AI player removed
@@ -3592,6 +3576,7 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	private sendChatHistory(ws: WebSocket): void {
 		const history = this.chatManager.getHistory();
+		console.log(`[GameRoom] Sending CHAT_HISTORY with ${history.length} messages`);
 		ws.send(JSON.stringify(createChatHistoryResponse(history)));
 	}
 
