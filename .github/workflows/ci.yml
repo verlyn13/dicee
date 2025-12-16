@@ -189,15 +189,25 @@ jobs:
         run: |
           # Run directly with bun to avoid pnpm output prefix in SARIF
           bun run packages/web/src/tools/akg/cli/check.ts --sarif > akg-results.sarif
-          echo "exit_code=$?" >> $GITHUB_OUTPUT
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+
+          # Check if SARIF has results (GitHub Code Scanning requires at least one location)
+          RESULT_COUNT=$(jq '[.runs[].results[]] | length' akg-results.sarif 2>/dev/null || echo "0")
+          echo "result_count=$RESULT_COUNT" >> $GITHUB_OUTPUT
+          echo "AKG found $RESULT_COUNT violations"
         continue-on-error: true
 
       - name: Upload SARIF to Code Scanning
         uses: github/codeql-action/upload-sarif@v4
-        if: always()
+        if: steps.akg-check.outputs.result_count != '0'
         with:
           sarif_file: akg-results.sarif
           category: architecture
+
+      - name: Log clean architecture status
+        if: steps.akg-check.outputs.result_count == '0'
+        run: echo "✅ No architectural violations found - SARIF upload skipped"
 
       - name: Check for errors
         if: steps.akg-check.outputs.exit_code == '1'
