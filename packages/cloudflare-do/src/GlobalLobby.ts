@@ -28,7 +28,6 @@ import type {
 	InviteCancellationRequest,
 	InviteDeliveryRequest,
 	JoinRequestResponseDelivery,
-	PlayerSummary,
 	RoomStatusUpdate,
 } from './types';
 
@@ -47,21 +46,32 @@ interface UserPresence {
 	currentRoomCode: string | null;
 }
 
-/** Message sent/received through the lobby */
+/**
+ * Message sent/received through the lobby.
+ * UPPERCASE_SNAKE_CASE format (Phase 3 protocol).
+ */
 interface LobbyMessage {
 	type:
-		| 'chat'
-		| 'presence'
-		| 'room_update'
-		| 'rooms_list'
-		| 'online_users'
-		| 'highlight'
-		| 'error'
-		| 'pong'
-		| 'invite_received'
-		| 'invite_cancelled';
+		| 'PRESENCE_INIT'
+		| 'PRESENCE_JOIN'
+		| 'PRESENCE_LEAVE'
+		| 'LOBBY_ROOMS_LIST'
+		| 'LOBBY_ROOM_UPDATE'
+		| 'LOBBY_CHAT_MESSAGE'
+		| 'LOBBY_CHAT_HISTORY'
+		| 'LOBBY_ONLINE_USERS'
+		| 'LOBBY_HIGHLIGHT'
+		| 'LOBBY_ERROR'
+		| 'INVITE_RECEIVED'
+		| 'INVITE_CANCELLED'
+		| 'JOIN_REQUEST_SENT'
+		| 'JOIN_REQUEST_CANCELLED'
+		| 'JOIN_REQUEST_ERROR'
+		| 'JOIN_APPROVED'
+		| 'JOIN_DECLINED'
+		| 'JOIN_REQUEST_EXPIRED';
 	payload: unknown;
-	timestamp: number;
+	timestamp: string;
 }
 
 /** Chat message structure */
@@ -75,25 +85,29 @@ interface ChatMessage {
 
 // RoomInfo is imported from './lib/room-directory'
 
-/** Client command structure */
+/**
+ * Client command structure.
+ * UPPERCASE_SNAKE_CASE format (Phase 3 protocol).
+ */
 interface LobbyCommand {
 	type:
-		| 'chat'
-		| 'ping'
-		| 'get_rooms'
-		| 'get_online_users'
-		| 'room_created'
-		| 'room_updated'
-		| 'room_closed'
-		| 'request_join'
-		| 'cancel_join_request';
-	content?: string;
-	room?: RoomInfo;
-	code?: string;
-	/** Room code for join requests */
-	roomCode?: string;
-	/** Request ID for cancellation */
-	requestId?: string;
+		| 'LOBBY_CHAT'
+		| 'GET_ROOMS'
+		| 'GET_ONLINE_USERS'
+		| 'ROOM_CREATED'
+		| 'ROOM_UPDATED'
+		| 'ROOM_CLOSED'
+		| 'REQUEST_JOIN'
+		| 'CANCEL_JOIN_REQUEST'
+		| 'SEND_INVITE'
+		| 'CANCEL_INVITE';
+	payload?: {
+		content?: string;
+		room?: RoomInfo;
+		code?: string;
+		roomCode?: string;
+		requestId?: string;
+	};
 }
 
 // =============================================================================
@@ -179,9 +193,114 @@ export class GlobalLobby extends DurableObject<Env> {
 				return await this.getPublicRooms();
 			case '/lobby/online':
 				return this.getOnlineCount();
+
+			// Debug endpoints for observability
+			case '/_debug/rooms': {
+				const rooms = await this.roomDirectory.getAll();
+				return Response.json({
+					rooms,
+					count: rooms.length,
+					timestamp: new Date().toISOString(),
+				});
+			}
+			case '/_debug/connections': {
+				const sockets = this.ctx.getWebSockets();
+				const connections = sockets.map((ws) => {
+					const presence = ws.deserializeAttachment() as UserPresence | null;
+					return {
+						userId: presence?.userId,
+						displayName: presence?.displayName,
+						connectedAt: presence?.connectedAt,
+						currentRoomCode: presence?.currentRoomCode,
+						readyState: ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][ws.readyState],
+					};
+				});
+				return Response.json({
+					connections,
+					count: connections.length,
+					timestamp: new Date().toISOString(),
+				});
+			}
+			case '/_debug/storage': {
+				const activeRooms = await this.ctx.storage.get('lobby:activeRooms');
+				const chatHistory = await this.ctx.storage.get('lobby:chatHistory');
+				return Response.json({
+					'lobby:activeRooms': activeRooms,
+					'lobby:chatHistory': Array.isArray(chatHistory) ? chatHistory.length : 0,
+					timestamp: new Date().toISOString(),
+				});
+			}
+
 			default:
+				// Handle parameterized debug routes
+				if (url.pathname.startsWith('/_debug/rooms/')) {
+					return this.handleDebugRoomAction(request, url);
+				}
 				return new Response('Not Found', { status: 404 });
 		}
+	}
+
+	/**
+	 * Handle admin actions on specific rooms.
+	 * DELETE /_debug/rooms/:code - Remove a specific room
+	 * DELETE /_debug/rooms/all - Clear all rooms (nuclear option)
+	 */
+	private async handleDebugRoomAction(request: Request, url: URL): Promise<Response> {
+		const pathParts = url.pathname.split('/');
+		const roomCode = pathParts[3]?.toUpperCase();
+
+		if (request.method === 'DELETE') {
+			if (roomCode === 'ALL') {
+				// Nuclear option: clear all rooms
+				const rooms = await this.roomDirectory.getAll();
+				const count = rooms.length;
+
+				for (const room of rooms) {
+					await this.roomDirectory.remove(room.code);
+					// Broadcast removal to connected clients
+					this.broadcast({
+						type: 'LOBBY_ROOM_UPDATE',
+						payload: { action: 'closed', code: room.code },
+						timestamp: new Date().toISOString(),
+					});
+				}
+
+				return Response.json({
+					success: true,
+					message: `Cleared ${count} rooms`,
+					timestamp: new Date().toISOString(),
+				});
+			}
+
+			if (roomCode) {
+				// Remove specific room
+				const room = await this.roomDirectory.get(roomCode);
+				if (!room) {
+					return Response.json(
+						{ success: false, error: `Room ${roomCode} not found` },
+						{ status: 404 },
+					);
+				}
+
+				await this.roomDirectory.remove(roomCode);
+
+				// Broadcast removal to connected clients
+				this.broadcast({
+					type: 'LOBBY_ROOM_UPDATE',
+					payload: { action: 'closed', code: roomCode },
+					timestamp: new Date().toISOString(),
+				});
+
+				return Response.json({
+					success: true,
+					message: `Room ${roomCode} removed`,
+					room,
+					timestamp: new Date().toISOString(),
+				});
+			}
+		}
+
+		return new Response('Method not allowed', { status: 405 });
 	}
 
 	// =========================================================================
@@ -232,15 +351,14 @@ export class GlobalLobby extends DurableObject<Env> {
 		if (isNewUser) {
 			this.broadcast(
 				{
-					type: 'presence',
+					type: 'PRESENCE_JOIN',
 					payload: {
-						action: 'join',
 						userId,
 						displayName,
 						avatarSeed,
 						onlineCount: this.getUniqueUserCount(),
 					},
-					timestamp: Date.now(),
+					timestamp: new Date().toISOString(),
 				},
 				server,
 			);
@@ -258,12 +376,11 @@ export class GlobalLobby extends DurableObject<Env> {
 		// Derived from WebSocket tags - hibernation safe
 		ws.send(
 			JSON.stringify({
-				type: 'presence',
+				type: 'PRESENCE_INIT',
 				payload: {
-					action: 'init',
 					onlineCount: this.getUniqueUserCount(),
 				},
-				timestamp: Date.now(),
+				timestamp: new Date().toISOString(),
 			}),
 		);
 
@@ -272,12 +389,11 @@ export class GlobalLobby extends DurableObject<Env> {
 		if (chatHistory.length > 0) {
 			ws.send(
 				JSON.stringify({
-					type: 'chat',
+					type: 'LOBBY_CHAT_HISTORY',
 					payload: {
-						action: 'history',
 						messages: chatHistory.slice(-20),
 					},
-					timestamp: Date.now(),
+					timestamp: new Date().toISOString(),
 				}),
 			);
 		}
@@ -287,9 +403,9 @@ export class GlobalLobby extends DurableObject<Env> {
 		if (publicRooms.length > 0) {
 			ws.send(
 				JSON.stringify({
-					type: 'rooms_list',
+					type: 'LOBBY_ROOMS_LIST',
 					payload: { rooms: publicRooms },
-					timestamp: Date.now(),
+					timestamp: new Date().toISOString(),
 				}),
 			);
 		}
@@ -309,78 +425,80 @@ export class GlobalLobby extends DurableObject<Env> {
 		try {
 			const data = JSON.parse(message as string) as LobbyCommand;
 
+			// Extract from payload (UPPERCASE protocol)
+			const content = data.payload?.content ?? '';
+			const room = data.payload?.room;
+			const code = data.payload?.code;
+			const roomCode = data.payload?.roomCode;
+			const requestId = data.payload?.requestId;
+
 			switch (data.type) {
-				case 'chat':
-					await this.handleChat(ws, attachment, data.content || '');
+				case 'LOBBY_CHAT':
+					await this.handleChat(ws, attachment, content);
 					break;
-				// Note: 'ping' is handled automatically by setWebSocketAutoResponse
-				// No need for manual ping handler - saves compute costs
-				case 'get_rooms':
+				case 'GET_ROOMS':
 					await this.sendRoomsList(ws);
 					break;
-				case 'get_online_users':
-					console.log('[GlobalLobby] Received get_online_users request');
+				case 'GET_ONLINE_USERS':
 					this.sendOnlineUsers(ws);
 					break;
-				case 'room_created':
-					if (data.room) {
-						// Storage-first: persist BEFORE broadcast
-						await this.roomDirectory.upsert(data.room);
+				case 'ROOM_CREATED':
+					if (room) {
+						await this.roomDirectory.upsert(room);
 						this.broadcast({
-							type: 'room_update',
-							payload: { action: 'created', room: data.room },
-							timestamp: Date.now(),
+							type: 'LOBBY_ROOM_UPDATE',
+							payload: { action: 'created', room },
+							timestamp: new Date().toISOString(),
 						});
 					}
 					break;
-				case 'room_updated':
-					if (data.room) {
-						// Storage-first: persist BEFORE broadcast
-						await this.roomDirectory.upsert(data.room);
+				case 'ROOM_UPDATED':
+					if (room) {
+						await this.roomDirectory.upsert(room);
 						this.broadcast({
-							type: 'room_update',
-							payload: { action: 'updated', room: data.room },
-							timestamp: Date.now(),
+							type: 'LOBBY_ROOM_UPDATE',
+							payload: { action: 'updated', room },
+							timestamp: new Date().toISOString(),
 						});
 					}
 					break;
-				case 'room_closed':
-					if (data.code) {
-						// Storage-first: persist BEFORE broadcast
-						await this.roomDirectory.remove(data.code);
+				case 'ROOM_CLOSED':
+					if (code) {
+						await this.roomDirectory.remove(code);
 						this.broadcast({
-							type: 'room_update',
-							payload: { action: 'closed', code: data.code },
-							timestamp: Date.now(),
+							type: 'LOBBY_ROOM_UPDATE',
+							payload: { action: 'closed', code },
+							timestamp: new Date().toISOString(),
 						});
 					}
 					break;
-				case 'request_join':
-					if (data.roomCode) {
-						await this.handleRequestJoin(ws, attachment, data.roomCode);
+				case 'REQUEST_JOIN':
+					if (roomCode) {
+						await this.handleRequestJoin(ws, attachment, roomCode);
 					} else {
 						ws.send(
 							JSON.stringify({
-								type: 'error',
+								type: 'JOIN_REQUEST_ERROR',
 								payload: { message: 'roomCode is required for join requests' },
-								timestamp: Date.now(),
+								timestamp: new Date().toISOString(),
 							}),
 						);
 					}
 					break;
-				case 'cancel_join_request':
-					if (data.requestId && data.roomCode) {
-						await this.handleCancelJoinRequest(ws, attachment, data.requestId, data.roomCode);
+				case 'CANCEL_JOIN_REQUEST':
+					if (requestId && roomCode) {
+						await this.handleCancelJoinRequest(ws, attachment, requestId, roomCode);
 					} else {
 						ws.send(
 							JSON.stringify({
-								type: 'error',
+								type: 'LOBBY_ERROR',
 								payload: { message: 'requestId and roomCode are required' },
-								timestamp: Date.now(),
+								timestamp: new Date().toISOString(),
 							}),
 						);
 					}
 					break;
+
 				default:
 					console.warn('[GlobalLobby] Unknown command type:', data.type);
 			}
@@ -388,9 +506,9 @@ export class GlobalLobby extends DurableObject<Env> {
 			console.error('[GlobalLobby] Message parse error:', e);
 			ws.send(
 				JSON.stringify({
-					type: 'error',
-					payload: { message: 'Invalid message format' },
-					timestamp: Date.now(),
+					type: 'LOBBY_ERROR',
+					payload: { message: 'Invalid message format', code: 'INVALID_FORMAT' },
+					timestamp: new Date().toISOString(),
 				}),
 			);
 		}
@@ -415,15 +533,14 @@ export class GlobalLobby extends DurableObject<Env> {
 				// Broadcast leave only when user's last connection closes
 				this.broadcast(
 					{
-						type: 'presence',
+						type: 'PRESENCE_LEAVE',
 						payload: {
-							action: 'leave',
 							userId,
 							displayName,
 							// Subtract 1 because closing connection is still counted
 							onlineCount: this.getUniqueUserCount() - 1,
 						},
-						timestamp: Date.now(),
+						timestamp: new Date().toISOString(),
 					},
 					ws,
 				);
@@ -491,9 +608,12 @@ export class GlobalLobby extends DurableObject<Env> {
 		if (content.length > MAX_CHAT_MESSAGE_LENGTH) {
 			ws.send(
 				JSON.stringify({
-					type: 'error',
-					payload: { message: `Message too long (max ${MAX_CHAT_MESSAGE_LENGTH} chars)` },
-					timestamp: Date.now(),
+					type: 'LOBBY_ERROR',
+					payload: {
+						message: `Message too long (max ${MAX_CHAT_MESSAGE_LENGTH} chars)`,
+						code: 'MESSAGE_TOO_LONG',
+					},
+					timestamp: new Date().toISOString(),
 				}),
 			);
 			return;
@@ -503,9 +623,9 @@ export class GlobalLobby extends DurableObject<Env> {
 		if (!this.checkRateLimit(user.userId)) {
 			ws.send(
 				JSON.stringify({
-					type: 'error',
-					payload: { message: 'Rate limit exceeded. Please slow down.' },
-					timestamp: Date.now(),
+					type: 'LOBBY_ERROR',
+					payload: { message: 'Rate limit exceeded. Please slow down.', code: 'RATE_LIMITED' },
+					timestamp: new Date().toISOString(),
 				}),
 			);
 			return;
@@ -524,12 +644,9 @@ export class GlobalLobby extends DurableObject<Env> {
 
 		// Broadcast to all
 		this.broadcast({
-			type: 'chat',
-			payload: {
-				action: 'message',
-				message: chatMessage,
-			},
-			timestamp: Date.now(),
+			type: 'LOBBY_CHAT_MESSAGE',
+			payload: chatMessage,
+			timestamp: new Date().toISOString(),
 		});
 	}
 
@@ -573,9 +690,9 @@ export class GlobalLobby extends DurableObject<Env> {
 
 		ws.send(
 			JSON.stringify({
-				type: 'rooms_list',
+				type: 'LOBBY_ROOMS_LIST',
 				payload: { rooms: publicRooms },
-				timestamp: Date.now(),
+				timestamp: new Date().toISOString(),
 			}),
 		);
 	}
@@ -597,9 +714,9 @@ export class GlobalLobby extends DurableObject<Env> {
 
 		ws.send(
 			JSON.stringify({
-				type: 'online_users',
-				payload: { users, count: users.length },
-				timestamp: Date.now(),
+				type: 'LOBBY_ONLINE_USERS',
+				payload: { users },
+				timestamp: new Date().toISOString(),
 			}),
 		);
 	}
@@ -619,9 +736,9 @@ export class GlobalLobby extends DurableObject<Env> {
 		}));
 
 		this.broadcast({
-			type: 'online_users',
-			payload: { users, count: users.length },
-			timestamp: Date.now(),
+			type: 'LOBBY_ONLINE_USERS',
+			payload: { users },
+			timestamp: new Date().toISOString(),
 		});
 
 		console.log(`[GlobalLobby] Broadcast online users: ${users.length} users to all clients`);
@@ -644,9 +761,7 @@ export class GlobalLobby extends DurableObject<Env> {
 	}
 
 	private async getPublicRooms(): Promise<Response> {
-		const rooms = (await this.roomDirectory.getPublic()).sort(
-			(a, b) => b.createdAt - a.createdAt,
-		);
+		const rooms = (await this.roomDirectory.getPublic()).sort((a, b) => b.createdAt - a.createdAt);
 
 		return Response.json({ rooms });
 	}
@@ -799,9 +914,9 @@ export class GlobalLobby extends DurableObject<Env> {
 
 		// Broadcast to lobby clients
 		this.broadcast({
-			type: 'room_update',
+			type: 'LOBBY_ROOM_UPDATE',
 			payload: { action: 'updated', room: roomInfo },
-			timestamp: Date.now(),
+			timestamp: new Date().toISOString(),
 		});
 
 		const roomCount = await this.roomDirectory.size();
@@ -821,9 +936,9 @@ export class GlobalLobby extends DurableObject<Env> {
 	 */
 	sendHighlight(highlight: GameHighlight): void {
 		this.broadcast({
-			type: 'highlight',
+			type: 'LOBBY_HIGHLIGHT',
 			payload: highlight,
-			timestamp: Date.now(),
+			timestamp: new Date().toISOString(),
 		});
 
 		console.log(`[GlobalLobby] Highlight: ${highlight.type} in room ${highlight.roomCode}`);
@@ -838,9 +953,9 @@ export class GlobalLobby extends DurableObject<Env> {
 		await this.roomDirectory.remove(roomCode);
 
 		this.broadcast({
-			type: 'room_update',
+			type: 'LOBBY_ROOM_UPDATE',
 			payload: { action: 'closed', code: roomCode },
-			timestamp: Date.now(),
+			timestamp: new Date().toISOString(),
 		});
 
 		console.log(`[GlobalLobby] Room ${roomCode} removed from directory`);
@@ -917,7 +1032,7 @@ export class GlobalLobby extends DurableObject<Env> {
 
 		// Build INVITE_RECEIVED event payload
 		const inviteEvent = {
-			type: 'invite_received',
+			type: 'INVITE_RECEIVED',
 			payload: {
 				inviteId: request.inviteId,
 				roomCode: request.roomCode,
@@ -929,7 +1044,7 @@ export class GlobalLobby extends DurableObject<Env> {
 				maxPlayers: request.maxPlayers,
 				expiresAt: request.expiresAt,
 			},
-			timestamp: Date.now(),
+			timestamp: new Date().toISOString(),
 		};
 
 		// Send to all of user's connections (they might have multiple tabs)
@@ -980,13 +1095,13 @@ export class GlobalLobby extends DurableObject<Env> {
 
 		// Build INVITE_CANCELLED event payload
 		const cancelEvent = {
-			type: 'invite_cancelled',
+			type: 'INVITE_CANCELLED',
 			payload: {
 				inviteId: request.inviteId,
 				roomCode: request.roomCode,
 				reason: request.reason,
 			},
-			timestamp: Date.now(),
+			timestamp: new Date().toISOString(),
 		};
 
 		// Send to all of user's connections
@@ -1031,9 +1146,9 @@ export class GlobalLobby extends DurableObject<Env> {
 		if (!room) {
 			ws.send(
 				JSON.stringify({
-					type: 'join_request_error',
+					type: 'JOIN_REQUEST_ERROR',
 					payload: { code: 'ROOM_NOT_FOUND', message: 'Room not found' },
-					timestamp: Date.now(),
+					timestamp: new Date().toISOString(),
 				}),
 			);
 			return;
@@ -1055,13 +1170,13 @@ export class GlobalLobby extends DurableObject<Env> {
 				// Send confirmation to requester
 				ws.send(
 					JSON.stringify({
-						type: 'join_request_sent',
+						type: 'JOIN_REQUEST_SENT',
 						payload: {
 							requestId: result.request.id,
 							roomCode,
 							expiresAt: result.request.expiresAt,
 						},
-						timestamp: Date.now(),
+						timestamp: new Date().toISOString(),
 					}),
 				);
 
@@ -1076,12 +1191,12 @@ export class GlobalLobby extends DurableObject<Env> {
 				// Send error to requester
 				ws.send(
 					JSON.stringify({
-						type: 'join_request_error',
+						type: 'JOIN_REQUEST_ERROR',
 						payload: {
 							code: result.errorCode ?? 'UNKNOWN_ERROR',
 							message: result.errorMessage ?? 'Failed to create join request',
 						},
-						timestamp: Date.now(),
+						timestamp: new Date().toISOString(),
 					}),
 				);
 
@@ -1103,9 +1218,9 @@ export class GlobalLobby extends DurableObject<Env> {
 
 			ws.send(
 				JSON.stringify({
-					type: 'join_request_error',
+					type: 'JOIN_REQUEST_ERROR',
 					payload: { code: 'RPC_ERROR', message: 'Failed to contact game room' },
-					timestamp: Date.now(),
+					timestamp: new Date().toISOString(),
 				}),
 			);
 		}
@@ -1139,9 +1254,9 @@ export class GlobalLobby extends DurableObject<Env> {
 			if (result.success) {
 				ws.send(
 					JSON.stringify({
-						type: 'join_request_cancelled',
+						type: 'JOIN_REQUEST_CANCELLED',
 						payload: { requestId },
-						timestamp: Date.now(),
+						timestamp: new Date().toISOString(),
 					}),
 				);
 
@@ -1154,12 +1269,12 @@ export class GlobalLobby extends DurableObject<Env> {
 			} else {
 				ws.send(
 					JSON.stringify({
-						type: 'error',
+						type: 'LOBBY_ERROR',
 						payload: {
 							code: result.errorCode ?? 'CANCEL_FAILED',
 							message: result.errorMessage ?? 'Failed to cancel request',
 						},
-						timestamp: Date.now(),
+						timestamp: new Date().toISOString(),
 					}),
 				);
 			}
@@ -1173,9 +1288,9 @@ export class GlobalLobby extends DurableObject<Env> {
 
 			ws.send(
 				JSON.stringify({
-					type: 'error',
+					type: 'LOBBY_ERROR',
 					payload: { code: 'RPC_ERROR', message: 'Failed to contact game room' },
-					timestamp: Date.now(),
+					timestamp: new Date().toISOString(),
 				}),
 			);
 		}
@@ -1206,13 +1321,13 @@ export class GlobalLobby extends DurableObject<Env> {
 			return false;
 		}
 
-		// Determine event type based on status
+		// Determine event type based on status (UPPERCASE format)
 		const eventType =
 			response.status === 'approved'
-				? 'join_approved'
+				? 'JOIN_APPROVED'
 				: response.status === 'declined'
-					? 'join_declined'
-					: 'join_request_expired';
+					? 'JOIN_DECLINED'
+					: 'JOIN_REQUEST_EXPIRED';
 
 		// Build the event payload
 		const joinResponseEvent = {
@@ -1222,7 +1337,7 @@ export class GlobalLobby extends DurableObject<Env> {
 				roomCode: response.roomCode,
 				...(response.reason && { reason: response.reason }),
 			},
-			timestamp: Date.now(),
+			timestamp: new Date().toISOString(),
 		};
 
 		// Send to all of user's connections

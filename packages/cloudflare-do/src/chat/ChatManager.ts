@@ -5,7 +5,14 @@
  * All state persists via DurableObject storage.
  */
 
+import type { Result } from '@dicee/shared';
 import { nanoid } from 'nanoid';
+import {
+	createShoutCooldownManager,
+	type ShoutCooldownManager,
+	type ShoutErrorCode,
+	type ShoutMessage,
+} from '../lib/shout-cooldown';
 import {
 	type ChatErrorCode,
 	type ChatMessage,
@@ -20,13 +27,6 @@ import {
 	type ReactionEmoji,
 	type TypingState,
 } from './types';
-import {
-	createShoutCooldownManager,
-	type ShoutCooldownManager,
-	type ShoutMessage,
-	type ShoutErrorCode,
-} from '../lib/shout-cooldown';
-import { type Result, err } from '@dicee/shared';
 
 // =============================================================================
 // Storage Keys
@@ -564,4 +564,4 @@ export function createShoutCooldownResponse(remainingMs: number): ShoutServerMes
 }
 
 // Re-export ShoutMessage type for consumers
-export type { ShoutMessage, ShoutErrorCode } from '../lib/shout-cooldown';
+export type { ShoutErrorCode, ShoutMessage } from '../lib/shout-cooldown';

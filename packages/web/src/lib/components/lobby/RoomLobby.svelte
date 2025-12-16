@@ -35,8 +35,15 @@ let { chatStore, onleave, ongamestart, class: className = '' }: Props = $props()
 const room = getRoomStore();
 
 let countdown = $state<number | null>(null);
-let chatCollapsed = $state(false); // Chat visible by default in waiting room
+let chatCollapsed = $state(true); // Start closed, only open when 2+ players
 let showAISelector = $state(false);
+
+// Open chat automatically ONLY when there are 2+ players in the room
+$effect(() => {
+	if (room.isConnected && room.playerCount >= 2) {
+		chatCollapsed = false;
+	}
+});
 let showInviteModal = $state(false);
 let showExternalShare = $state(false);
 let selectedAIProfiles = $state<string[]>([]);
@@ -198,6 +205,16 @@ const playerIds = $derived(room.room?.players.map((p) => p.id) ?? []);
 			</button>
 		{/if}
 	</header>
+
+	<!-- Welcome Banner (Host only, when alone in room) -->
+	{#if room.isHost && room.playerCount === 1}
+		<section class="welcome-banner">
+			<h2 class="welcome-title">Welcome to Dicee!</h2>
+			<p class="welcome-text">
+				Room <strong>{room.roomCode}</strong> is ready. Invite friends to play or add an AI opponent to practice.
+			</p>
+		</section>
+	{/if}
 
 	<!-- Primary Actions (Host only, when room not full) -->
 	{#if room.isHost && !room.isFull}
@@ -906,5 +923,35 @@ const playerIds = $derived(room.room?.players.map((p) => p.id) ?? []);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-2);
+	}
+
+	/* Welcome Banner */
+	.welcome-banner {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		padding: var(--space-3);
+		background: var(--color-primary);
+		border: var(--border-thick);
+		text-align: center;
+	}
+
+	.welcome-title {
+		font-size: var(--text-h2);
+		font-weight: var(--weight-black);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
+		margin: 0;
+	}
+
+	.welcome-text {
+		font-size: var(--text-body);
+		margin: 0;
+		line-height: 1.5;
+	}
+
+	.welcome-text strong {
+		font-family: var(--font-mono);
+		letter-spacing: 0.1em;
 	}
 </style>

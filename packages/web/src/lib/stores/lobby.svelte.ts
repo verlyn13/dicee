@@ -7,7 +7,15 @@
  * - Room browser
  * - Global chat
  * - Ticker events
+ *
+ * Uses @dicee/shared validation schemas for protocol compliance.
  */
+
+import {
+	isValidLobbyChatContent,
+	type LobbyServerEventInput,
+	parseLobbyServerEvent,
+} from '@dicee/shared';
 import { browser } from '$app/environment';
 
 // Types
@@ -22,14 +30,26 @@ export interface ChatMessage {
 
 export interface RoomInfo {
 	code: string;
-	game: 'dicee';
-	mode: 'classic' | 'blitz' | 'hardcore';
-	host: string;
+	game: string;
+	hostName: string;
+	hostId: string;
 	playerCount: number;
+	spectatorCount: number;
 	maxPlayers: number;
 	isPublic: boolean;
-	status: 'open' | 'playing' | 'full';
+	allowSpectators: boolean;
+	status: 'waiting' | 'playing' | 'finished';
+	roundNumber: number;
+	totalRounds: number;
+	players: Array<{
+		userId: string;
+		displayName: string;
+		avatarSeed: string;
+		score: number;
+		isHost: boolean;
+	}>;
 	createdAt: number;
+	updatedAt: number;
 }
 
 export interface TickerEvent {
@@ -115,7 +135,7 @@ class LobbyState {
 	activeJoinRequest = $state<ActiveJoinRequest | null>(null);
 
 	// Derived
-	openRooms = $derived(this.rooms.filter((r) => r.status === 'open'));
+	openRooms = $derived(this.rooms.filter((r) => r.status === 'waiting'));
 
 	/** The current invite to display (first in queue, or null) */
 	currentInvite = $derived(this.pendingInvites[0] ?? null);
@@ -245,73 +265,101 @@ class LobbyState {
 		this.connectPromise = null;
 	}
 
-	private handleMessage(data: { type: string; payload: unknown; timestamp?: number }) {
+	private handleMessage(data: { type: string; payload: unknown; timestamp?: string | number }) {
 		console.log('[lobby] handleMessage:', data.type, data);
+
+		// Validate with @dicee/shared schema for protocol compliance
+		// Non-standard events (pong, legacy) are handled after validation attempt
+		const parsed = parseLobbyServerEvent(data as LobbyServerEventInput);
+		if (!parsed.success && data.type !== 'pong') {
+			// Log validation warnings for debugging but continue processing
+			// Server events may have fields not yet in schema
+			console.debug('[lobby] Event validation note:', data.type, parsed.error?.issues);
+		}
+
 		switch (data.type) {
-			case 'chat': {
-				// Handle both history and single message formats from DO
-				const chatPayload = data.payload as {
-					action: 'history' | 'message';
-					messages?: Array<{
+			// =============================================
+			// UPPERCASE events (new protocol - Phase 3)
+			// =============================================
+			case 'PRESENCE_INIT': {
+				const p = data.payload as { onlineCount: number };
+				this.onlineCount = p.onlineCount;
+				break;
+			}
+
+			case 'PRESENCE_JOIN': {
+				const p = data.payload as {
+					userId: string;
+					displayName: string;
+					avatarSeed: string;
+					onlineCount: number;
+				};
+				this.onlineCount = p.onlineCount;
+				this.addTickerEvent({
+					type: 'join',
+					message: `${p.displayName} joined`,
+				});
+				break;
+			}
+
+			case 'PRESENCE_LEAVE': {
+				const p = data.payload as { userId: string; displayName: string; onlineCount: number };
+				this.onlineCount = p.onlineCount;
+				break;
+			}
+
+			case 'LOBBY_CHAT_MESSAGE': {
+				const msg = data.payload as {
+					id: string;
+					userId: string;
+					displayName: string;
+					content: string;
+					timestamp: number;
+				};
+				const chatMessage: ChatMessage = {
+					id: msg.id,
+					userId: msg.userId,
+					username: msg.displayName,
+					content: msg.content,
+					timestamp: msg.timestamp,
+					type: 'user',
+				};
+				this.messages = [...this.messages.slice(-(this.MAX_MESSAGES - 1)), chatMessage];
+				if (this.activeTab !== 'chat') {
+					this.unreadCount++;
+				}
+				break;
+			}
+
+			case 'LOBBY_CHAT_HISTORY': {
+				const historyPayload = data.payload as {
+					messages: Array<{
 						id: string;
 						userId: string;
 						displayName: string;
 						content: string;
 						timestamp: number;
 					}>;
-					message?: {
-						id: string;
-						userId: string;
-						displayName: string;
-						content: string;
-						timestamp: number;
-					};
 				};
-
-				if (chatPayload.action === 'history' && chatPayload.messages) {
-					// Initial history load - map displayName to username
-					const mapped = chatPayload.messages.map((m) => ({
-						id: m.id,
-						userId: m.userId,
-						username: m.displayName,
-						content: m.content,
-						timestamp: m.timestamp,
-						type: 'user' as const,
-					}));
-					this.messages = mapped.slice(-this.MAX_MESSAGES);
-				} else if (chatPayload.action === 'message' && chatPayload.message) {
-					// New message - map displayName to username
-					const msg: ChatMessage = {
-						id: chatPayload.message.id,
-						userId: chatPayload.message.userId,
-						username: chatPayload.message.displayName,
-						content: chatPayload.message.content,
-						timestamp: chatPayload.message.timestamp,
-						type: 'user',
-					};
-					this.messages = [...this.messages.slice(-(this.MAX_MESSAGES - 1)), msg];
-					if (this.activeTab !== 'chat') {
-						this.unreadCount++;
-					}
-				}
+				const mapped = historyPayload.messages.map((m) => ({
+					id: m.id,
+					userId: m.userId,
+					username: m.displayName,
+					content: m.content,
+					timestamp: m.timestamp,
+					type: 'user' as const,
+				}));
+				this.messages = mapped.slice(-this.MAX_MESSAGES);
 				break;
 			}
 
-			case 'presence': {
-				const p = data.payload as { action: string; onlineCount: number; displayName?: string };
-				this.onlineCount = p.onlineCount;
-
-				// Add to ticker
-				if (p.action === 'join' && p.displayName) {
-					this.addTickerEvent({
-						type: 'join',
-						message: `${p.displayName} joined`,
-					});
-				}
+			case 'LOBBY_ROOMS_LIST': {
+				const roomsPayload = data.payload as { rooms: RoomInfo[] };
+				this.rooms = roomsPayload.rooms;
 				break;
 			}
 
-			case 'room_update': {
+			case 'LOBBY_ROOM_UPDATE': {
 				const update = data.payload as { action: string; room?: RoomInfo; code?: string };
 				if (update.action === 'created' && update.room) {
 					this.rooms = [update.room, ...this.rooms];
@@ -328,33 +376,35 @@ class LobbyState {
 				break;
 			}
 
-			case 'rooms': {
-				// Initial room list
-				const roomList = data.payload as RoomInfo[];
-				this.rooms = roomList;
-				break;
-			}
-
-			case 'history': {
-				// Initial chat history
-				const history = data.payload as ChatMessage[];
-				this.messages = history.slice(-this.MAX_MESSAGES);
-				break;
-			}
-
-			case 'pong':
-				// Heartbeat acknowledged
-				break;
-
-			case 'online_users': {
-				console.log('[lobby] Received online_users:', data.payload);
-				const usersPayload = data.payload as { users: OnlineUser[]; count: number };
+			case 'LOBBY_ONLINE_USERS': {
+				const usersPayload = data.payload as { users: OnlineUser[] };
 				this.onlineUsers = usersPayload.users;
 				console.log('[lobby] Set onlineUsers to:', this.onlineUsers);
 				break;
 			}
 
-			case 'invite_received': {
+			case 'LOBBY_HIGHLIGHT': {
+				// Game highlight for ticker (Dicee, high score, etc.)
+				const highlight = data.payload as {
+					type: string;
+					roomCode: string;
+					playerName: string;
+					details?: string;
+				};
+				this.addTickerEvent({
+					type: 'jackpot',
+					message: `${highlight.playerName} ${highlight.type} in room #${highlight.roomCode}`,
+				});
+				break;
+			}
+
+			case 'LOBBY_ERROR': {
+				const errorPayload = data.payload as { message: string; code?: string };
+				console.error('[lobby] Server error:', errorPayload.code, errorPayload.message);
+				break;
+			}
+
+			case 'INVITE_RECEIVED': {
 				const invitePayload = data.payload as {
 					inviteId: string;
 					roomCode: string;
@@ -377,10 +427,7 @@ class LobbyState {
 					maxPlayers: invitePayload.maxPlayers,
 					expiresAt: invitePayload.expiresAt,
 				};
-				// Add to beginning of queue
 				this.pendingInvites = [invite, ...this.pendingInvites];
-
-				// Add to ticker
 				this.addTickerEvent({
 					type: 'join',
 					message: `${invite.hostDisplayName} invited you to play`,
@@ -388,38 +435,48 @@ class LobbyState {
 				break;
 			}
 
-			case 'invite_cancelled': {
+			case 'INVITE_CANCELLED': {
 				const cancelPayload = data.payload as {
 					inviteId: string;
 					roomCode: string;
 					reason: string;
 				};
-				// Remove the invite from pending list
 				this.pendingInvites = this.pendingInvites.filter(
 					(inv) => inv.inviteId !== cancelPayload.inviteId,
 				);
 				break;
 			}
 
-			// Join request responses (requester side) - delegated to reduce complexity
-			case 'join_request_sent':
-			case 'join_request_error':
-			case 'join_approved':
-			case 'join_declined':
-			case 'join_request_expired':
-			case 'join_request_cancelled':
+			// UPPERCASE join request events
+			case 'JOIN_REQUEST_SENT':
+			case 'JOIN_REQUEST_ERROR':
+			case 'JOIN_APPROVED':
+			case 'JOIN_DECLINED':
+			case 'JOIN_REQUEST_EXPIRED':
+			case 'JOIN_REQUEST_CANCELLED':
 				this.handleJoinRequestMessage(data.type, data.payload);
 				break;
+
+			// Heartbeat response (auto-handled by server, but client may receive it)
+			case 'pong':
+				break;
+
+			default:
+				console.warn('[lobby] Unknown message type:', data.type);
 		}
 	}
 
 	/**
 	 * Handle join request-related messages.
 	 * Extracted from handleMessage to reduce cognitive complexity.
+	 * Supports both UPPERCASE (new) and lowercase (legacy) event types.
 	 */
 	private handleJoinRequestMessage(type: string, payload: unknown) {
-		switch (type) {
-			case 'join_request_sent': {
+		// Normalize type to handle both UPPERCASE and lowercase
+		const normalizedType = type.toUpperCase();
+
+		switch (normalizedType) {
+			case 'JOIN_REQUEST_SENT': {
 				const sentPayload = payload as {
 					requestId: string;
 					roomCode: string;
@@ -435,7 +492,7 @@ class LobbyState {
 				break;
 			}
 
-			case 'join_request_error': {
+			case 'JOIN_REQUEST_ERROR': {
 				const errorPayload = payload as {
 					code: string;
 					message: string;
@@ -467,7 +524,7 @@ class LobbyState {
 				break;
 			}
 
-			case 'join_approved': {
+			case 'JOIN_APPROVED': {
 				const approvedPayload = payload as {
 					requestId: string;
 					roomCode: string;
@@ -483,7 +540,7 @@ class LobbyState {
 				break;
 			}
 
-			case 'join_declined': {
+			case 'JOIN_DECLINED': {
 				const declinedPayload = payload as {
 					requestId: string;
 					reason?: string;
@@ -505,7 +562,7 @@ class LobbyState {
 				break;
 			}
 
-			case 'join_request_expired': {
+			case 'JOIN_REQUEST_EXPIRED': {
 				const expiredPayload = payload as {
 					requestId: string;
 				};
@@ -525,7 +582,7 @@ class LobbyState {
 				break;
 			}
 
-			case 'join_request_cancelled': {
+			case 'JOIN_REQUEST_CANCELLED': {
 				const cancelledPayload = payload as {
 					requestId: string;
 				};
@@ -589,11 +646,24 @@ class LobbyState {
 
 	// Actions
 	sendChat(content: string) {
-		if (!content.trim() || this.ws?.readyState !== WebSocket.OPEN) return;
+		const trimmed = content.trim();
+		if (!trimmed || this.ws?.readyState !== WebSocket.OPEN) return;
+
+		// Validate content using @dicee/shared schema
+		if (!isValidLobbyChatContent(trimmed)) {
+			console.warn('[lobby] Invalid chat content length');
+			return;
+		}
 
 		// Send to server - no optimistic update to avoid duplicate messages
 		// Server will broadcast back to all users including sender
-		this.ws.send(JSON.stringify({ type: 'chat', content: content.trim() }));
+		// Using UPPERCASE command format (Phase 3)
+		this.ws.send(
+			JSON.stringify({
+				type: 'LOBBY_CHAT',
+				payload: { content: trimmed },
+			}),
+		);
 	}
 
 	markChatRead() {
@@ -609,7 +679,8 @@ class LobbyState {
 
 	requestRooms() {
 		if (this.ws?.readyState === WebSocket.OPEN) {
-			this.ws.send(JSON.stringify({ type: 'get_rooms' }));
+			// Using UPPERCASE command format (Phase 3)
+			this.ws.send(JSON.stringify({ type: 'GET_ROOMS' }));
 		}
 	}
 
@@ -620,8 +691,9 @@ class LobbyState {
 	requestOnlineUsers() {
 		console.log('[lobby] requestOnlineUsers called, ws state:', this.ws?.readyState);
 		if (this.ws?.readyState === WebSocket.OPEN) {
-			console.log('[lobby] Sending get_online_users');
-			this.ws.send(JSON.stringify({ type: 'get_online_users' }));
+			// Using UPPERCASE command format (Phase 3)
+			console.log('[lobby] Sending GET_ONLINE_USERS');
+			this.ws.send(JSON.stringify({ type: 'GET_ONLINE_USERS' }));
 		} else {
 			console.warn('[lobby] Cannot request online users - WebSocket not open');
 		}
@@ -727,11 +799,12 @@ class LobbyState {
 			return;
 		}
 
-		console.log('[lobby] Sending join request to room:', roomCode);
+		// Using UPPERCASE command format (Phase 3)
+		console.log('[lobby] Sending REQUEST_JOIN to room:', roomCode);
 		this.ws.send(
 			JSON.stringify({
-				type: 'request_join',
-				roomCode: roomCode.toUpperCase(),
+				type: 'REQUEST_JOIN',
+				payload: { roomCode: roomCode.toUpperCase() },
 			}),
 		);
 	}
@@ -751,12 +824,15 @@ class LobbyState {
 			return;
 		}
 
+		// Using UPPERCASE command format (Phase 3)
 		console.log('[lobby] Cancelling join request:', this.activeJoinRequest.requestId);
 		this.ws.send(
 			JSON.stringify({
-				type: 'cancel_join_request',
-				requestId: this.activeJoinRequest.requestId,
-				roomCode: this.activeJoinRequest.roomCode,
+				type: 'CANCEL_JOIN_REQUEST',
+				payload: {
+					requestId: this.activeJoinRequest.requestId,
+					roomCode: this.activeJoinRequest.roomCode,
+				},
 			}),
 		);
 

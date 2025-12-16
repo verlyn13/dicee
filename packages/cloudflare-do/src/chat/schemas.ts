@@ -5,8 +5,8 @@
  */
 
 import { z } from 'zod';
-import { QUICK_CHAT_KEYS, RATE_LIMITS, REACTION_EMOJIS } from './types';
 import { SHOUT_MAX_LENGTH } from '../lib/shout-cooldown';
+import { QUICK_CHAT_KEYS, RATE_LIMITS, REACTION_EMOJIS } from './types';
 
 // =============================================================================
 // Individual Message Schemas

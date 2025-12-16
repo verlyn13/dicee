@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 3955727ce55493a363d1ef3ac41a464a35f2daff
-> Generated: 2025-12-12T21:08:52.946Z
+> Commit: 738b368
+> Generated: 2025-12-16T02:10:16.998Z
 
 ## Data Flow Diagram
 
@@ -35,10 +35,10 @@ flowchart TB
 
     subgraph stores["🗄️ STORES"]
         store__game_svelte__tores_game_svelte_ts[("game")]
+        store__profile_svelte__es_profile_svelte[("profile")]
         store__lobby_svelte__ores_lobby_svelte_t[("lobby")]
         store__room_svelte__tores_room_svelte_ts[("room")]
         store__multiplayerGame_svelte__playerGam[("multiplayerGame")]
-        store__scorecard_svelte___scorecard_svel[("scorecard")]
     end
 
     subgraph services["⚙️ SERVICES"]
@@ -64,9 +64,9 @@ flowchart TB
     end
 
     store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
-    store__game_svelte__tores_game_svelte_ts --> store__scorecard_svelte___scorecard_svel
     store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
     store__game_svelte__tores_game_svelte_ts --> service__engine__b_services_engine_ts
+    store__profile_svelte__es_profile_svelte --> supabasemodule__profiles__supabase_profi
     store__multiplayerGame_svelte__playerGam --> store__preferences_svelte__references_sv
     store__multiplayerGame_svelte__playerGam --> store__preferences_svelte__references_sv
     service__engine__b_services_engine_ts --> wasmbridge__engine__eb_src_lib_engine_ts

@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 3955727ce55493a363d1ef3ac41a464a35f2daff
-> Generated: 2025-12-12T21:08:52.946Z
+> Commit: 738b368
+> Generated: 2025-12-16T02:10:16.998Z
 
 ## Component Dependency Diagram
 

@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "component_dependencies",
-	"generatedAt": "2025-12-12T21:08:52.946Z",
-	"graphHash": "sha256:70f74843f6721cf3cadf1e91afbc7774a698b6d75694b66f214fdd15b9ba975a",
-	"sourceCommit": "3955727ce55493a363d1ef3ac41a464a35f2daff",
+	"generatedAt": "2025-12-16T02:10:16.998Z",
+	"graphHash": "sha256:a305a69cdfe0b281e6ed2088a65ffb605c3c09bc6c41453d345f5aa22a1d31de",
+	"sourceCommit": "738b368",
 	"nodes": [
 		{
 			"id": "component::Avatar::nts_ui_Avatar_svelte",

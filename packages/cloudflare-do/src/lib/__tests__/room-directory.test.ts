@@ -5,8 +5,8 @@
  * Verifies hibernation safety, lazy loading, and persistence semantics.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createRoomDirectory, type RoomInfo, type RoomDirectory } from '../room-directory';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createRoomDirectory, type RoomDirectory, type RoomInfo } from '../room-directory';
 
 // =============================================================================
 // Test Fixtures
@@ -354,13 +354,15 @@ describe('RoomDirectory', () => {
 			expect(result.success).toBe(true);
 
 			const retrieved = await directory.get('FULL01');
-			expect(retrieved).toEqual(expect.objectContaining({
-				code: 'FULL01',
-				playerCount: 3,
-				spectatorCount: 2,
-				status: 'playing',
-				roundNumber: 7,
-			}));
+			expect(retrieved).toEqual(
+				expect.objectContaining({
+					code: 'FULL01',
+					playerCount: 3,
+					spectatorCount: 2,
+					status: 'playing',
+					roundNumber: 7,
+				}),
+			);
 			expect(retrieved?.players).toHaveLength(3);
 		});
 

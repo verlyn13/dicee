@@ -4,29 +4,29 @@
  * Comprehensive tests for join request lifecycle management.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
+	approveRequest,
+	cancelRequest,
+	countPendingRequests,
+	createJoinRequest,
+	// Manager
+	createJoinRequestManager,
+	declineRequest,
+	expireRequest,
+	findPendingRequestByUser,
+	// Pure functions
+	isExpired,
+	isValidTransition,
 	// Constants
 	JOIN_REQUEST_TTL_MS,
-	MAX_PENDING_REQUESTS_PER_USER,
-	MAX_PENDING_REQUESTS_PER_ROOM,
 	// Types
 	type JoinRequest,
 	type JoinRequestInput,
 	type JoinRequestStatus,
-	// Pure functions
-	isExpired,
-	isValidTransition,
-	findPendingRequestByUser,
-	countPendingRequests,
-	createJoinRequest,
+	MAX_PENDING_REQUESTS_PER_ROOM,
+	MAX_PENDING_REQUESTS_PER_USER,
 	transitionRequest,
-	approveRequest,
-	declineRequest,
-	cancelRequest,
-	expireRequest,
-	// Manager
-	createJoinRequestManager,
 } from '../join-request';
 
 // =============================================================================
@@ -984,14 +984,14 @@ describe('Join Request Flow Integration', () => {
 		// First request
 		const first = manager.addRequest(
 			createTestInput({ requesterId: user, roomCode: 'ROOM1' }),
-			NOW
+			NOW,
 		);
 		expect(first.success).toBe(true);
 
 		// Second request to different room - should fail
 		const second = manager.addRequest(
 			createTestInput({ requesterId: user, roomCode: 'ROOM2' }),
-			NOW
+			NOW,
 		);
 		expect(second.success).toBe(false);
 		if (!second.success) {
@@ -1005,7 +1005,7 @@ describe('Join Request Flow Integration', () => {
 
 		const third = manager.addRequest(
 			createTestInput({ requesterId: user, roomCode: 'ROOM2' }),
-			NOW
+			NOW,
 		);
 		expect(third.success).toBe(true);
 	});

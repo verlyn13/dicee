@@ -3,8 +3,8 @@
 
 > Auto-generated from AKG Graph
 > Source: docs/architecture/akg/graph/current.json
-> Commit: 3955727ce55493a363d1ef3ac41a464a35f2daff
-> Generated: 2025-12-12T21:08:52.945Z
+> Commit: 738b368
+> Generated: 2025-12-16T02:10:16.997Z
 
 ## Store Dependency Diagram
 
@@ -13,6 +13,7 @@ Shows how Svelte stores depend on each other.
 ```mermaid
 flowchart LR
     store__game_svelte__tores_game_svelte_ts[("game.svelte")]
+    store__profile_svelte__es_profile_svelte[("profile.svelte")]
     store__lobby_svelte__ores_lobby_svelte_t[("lobby.svelte")]
     store__room_svelte__tores_room_svelte_ts[("room.svelte")]
     store__multiplayerGame_svelte__playerGam[("multiplayerGame.svelte")]
@@ -58,6 +59,7 @@ flowchart LR
 ## Store List
 
 - **game.svelte**: `packages/web/src/lib/stores/game.svelte.ts`
+- **profile.svelte**: `packages/web/src/lib/stores/profile.svelte.ts`
 - **lobby.svelte**: `packages/web/src/lib/stores/lobby.svelte.ts`
 - **room.svelte**: `packages/web/src/lib/stores/room.svelte.ts`
 - **multiplayerGame.svelte**: `packages/web/src/lib/stores/multiplayerGame.svelte.ts`

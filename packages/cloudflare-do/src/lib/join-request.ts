@@ -126,7 +126,10 @@ export function isExpired(request: JoinRequest, now: number = Date.now()): Expir
  * @param newStatus - Proposed new status
  * @returns Whether the transition is valid
  */
-export function isValidTransition(currentStatus: JoinRequestStatus, newStatus: JoinRequestStatus): boolean {
+export function isValidTransition(
+	currentStatus: JoinRequestStatus,
+	newStatus: JoinRequestStatus,
+): boolean {
 	// Only pending requests can transition
 	if (currentStatus !== 'pending') {
 		return false;
@@ -146,7 +149,7 @@ export function isValidTransition(currentStatus: JoinRequestStatus, newStatus: J
  */
 export function findPendingRequestByUser(
 	requests: readonly JoinRequest[],
-	requesterId: string
+	requesterId: string,
 ): JoinRequest | undefined {
 	return requests.find((r) => r.requesterId === requesterId && r.status === 'pending');
 }
@@ -196,7 +199,7 @@ export function createJoinRequest(input: JoinRequestInput, now: number = Date.no
 export function transitionRequest(
 	request: JoinRequest,
 	newStatus: JoinRequestStatus,
-	now: number = Date.now()
+	now: number = Date.now(),
 ): Result<JoinRequest, JoinRequestErrorCode> {
 	// Check if already expired (unless we're marking it as expired)
 	if (newStatus !== 'expired') {
@@ -210,7 +213,7 @@ export function transitionRequest(
 	if (!isValidTransition(request.status, newStatus)) {
 		return err(
 			'INVALID_STATUS_TRANSITION',
-			`Cannot transition from '${request.status}' to '${newStatus}'`
+			`Cannot transition from '${request.status}' to '${newStatus}'`,
 		);
 	}
 
@@ -229,7 +232,7 @@ export function transitionRequest(
  */
 export function approveRequest(
 	request: JoinRequest,
-	now: number = Date.now()
+	now: number = Date.now(),
 ): Result<JoinRequest, JoinRequestErrorCode> {
 	return transitionRequest(request, 'approved', now);
 }
@@ -243,7 +246,7 @@ export function approveRequest(
  */
 export function declineRequest(
 	request: JoinRequest,
-	now: number = Date.now()
+	now: number = Date.now(),
 ): Result<JoinRequest, JoinRequestErrorCode> {
 	return transitionRequest(request, 'declined', now);
 }
@@ -259,7 +262,7 @@ export function declineRequest(
 export function cancelRequest(
 	request: JoinRequest,
 	requesterId: string,
-	now: number = Date.now()
+	now: number = Date.now(),
 ): Result<JoinRequest, JoinRequestErrorCode> {
 	// Verify ownership
 	if (request.requesterId !== requesterId) {
@@ -281,7 +284,7 @@ export function expireRequest(request: JoinRequest): Result<JoinRequest, JoinReq
 	if (!isValidTransition(request.status, 'expired')) {
 		return err(
 			'INVALID_STATUS_TRANSITION',
-			`Cannot expire request with status '${request.status}'`
+			`Cannot expire request with status '${request.status}'`,
 		);
 	}
 
@@ -340,7 +343,7 @@ export function createJoinRequestManager() {
 		 */
 		addRequest(
 			input: JoinRequestInput,
-			now: number = Date.now()
+			now: number = Date.now(),
 		): Result<JoinRequest, JoinRequestErrorCode> {
 			// Check for duplicate pending request from this user
 			const existing = this.findPendingByRequester(input.requesterId);
@@ -362,7 +365,10 @@ export function createJoinRequestManager() {
 		/**
 		 * Approve a join request
 		 */
-		approve(requestId: string, now: number = Date.now()): Result<JoinRequest, JoinRequestErrorCode> {
+		approve(
+			requestId: string,
+			now: number = Date.now(),
+		): Result<JoinRequest, JoinRequestErrorCode> {
 			const request = requests.get(requestId);
 			if (!request) {
 				return err('REQUEST_NOT_FOUND', 'Join request not found');
@@ -378,7 +384,10 @@ export function createJoinRequestManager() {
 		/**
 		 * Decline a join request
 		 */
-		decline(requestId: string, now: number = Date.now()): Result<JoinRequest, JoinRequestErrorCode> {
+		decline(
+			requestId: string,
+			now: number = Date.now(),
+		): Result<JoinRequest, JoinRequestErrorCode> {
 			const request = requests.get(requestId);
 			if (!request) {
 				return err('REQUEST_NOT_FOUND', 'Join request not found');
@@ -397,7 +406,7 @@ export function createJoinRequestManager() {
 		cancel(
 			requestId: string,
 			requesterId: string,
-			now: number = Date.now()
+			now: number = Date.now(),
 		): Result<JoinRequest, JoinRequestErrorCode> {
 			const request = requests.get(requestId);
 			if (!request) {

@@ -19,6 +19,10 @@ import './callback-prop-naming.js';
 // Consistency invariants
 import './type-schema-consistency.js';
 
+// Protocol invariants
+import './globallobby-uses-shared.js';
+import './websocket-uses-shared-validation.js';
+
 // Export list of built-in invariant IDs
 export const BUILTIN_INVARIANTS = [
 	'wasm_single_entry',
@@ -29,6 +33,8 @@ export const BUILTIN_INVARIANTS = [
 	'store_file_naming',
 	'callback_prop_naming',
 	'type_schema_consistency',
+	'globallobby_uses_shared',
+	'websocket_uses_shared_validation',
 ] as const;
 
 export type BuiltinInvariantId = (typeof BUILTIN_INVARIANTS)[number];

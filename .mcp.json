@@ -24,7 +24,8 @@
       ],
       "env": {
         "AKG_GRAPH_PATH": "./docs/architecture/akg/graph/current.json",
-        "AKG_DIAGRAMS_PATH": "./docs/architecture/akg/diagrams"
+        "AKG_DIAGRAMS_PATH": "./docs/architecture/akg/diagrams",
+        "AKG_PROJECT_ROOT": "/Users/verlyn13/Development/personal/dicee"
       }
     }
   }

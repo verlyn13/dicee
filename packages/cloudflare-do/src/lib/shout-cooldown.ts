@@ -75,7 +75,11 @@ export interface ShoutMessage {
 /**
  * Error codes for shout operations
  */
-export type ShoutErrorCode = 'RATE_LIMITED' | 'INVALID_CONTENT' | 'CONTENT_TOO_LONG' | 'CONTENT_EMPTY';
+export type ShoutErrorCode =
+	| 'RATE_LIMITED'
+	| 'INVALID_CONTENT'
+	| 'CONTENT_TOO_LONG'
+	| 'CONTENT_EMPTY';
 
 // =============================================================================
 // Pure Functions
@@ -88,7 +92,10 @@ export type ShoutErrorCode = 'RATE_LIMITED' | 'INVALID_CONTENT' | 'CONTENT_TOO_L
  * @param now - Current timestamp (injectable for testing)
  * @returns Check result with allowed status and remaining cooldown
  */
-export function canShout(state: ShoutCooldownState | undefined, now: number = Date.now()): ShoutCheckResult {
+export function canShout(
+	state: ShoutCooldownState | undefined,
+	now: number = Date.now(),
+): ShoutCheckResult {
 	if (!state) {
 		return { allowed: true, remainingMs: 0 };
 	}
@@ -160,7 +167,7 @@ export function createShoutMessage(
 	displayName: string,
 	avatarSeed: string,
 	content: string,
-	now: number = Date.now()
+	now: number = Date.now(),
 ): ShoutMessage {
 	return {
 		id: crypto.randomUUID(),
@@ -190,7 +197,7 @@ export function processShout(
 	avatarSeed: string,
 	content: string,
 	cooldownState: ShoutCooldownState | undefined,
-	now: number = Date.now()
+	now: number = Date.now(),
 ): Result<{ message: ShoutMessage; newCooldownState: ShoutCooldownState }, ShoutErrorCode> {
 	// Validate content first
 	const contentResult = validateShoutContent(content);
@@ -254,9 +261,16 @@ export function createShoutCooldownManager() {
 			displayName: string,
 			avatarSeed: string,
 			content: string,
-			now: number = Date.now()
+			now: number = Date.now(),
 		): Result<ShoutMessage, ShoutErrorCode> {
-			const result = processShout(userId, displayName, avatarSeed, content, states.get(userId), now);
+			const result = processShout(
+				userId,
+				displayName,
+				avatarSeed,
+				content,
+				states.get(userId),
+				now,
+			);
 
 			if (result.success) {
 				states.set(result.value.newCooldownState.userId, result.value.newCooldownState);

@@ -9,7 +9,7 @@
  * - Edge cases and error handling
  */
 
-import { describe, expect, it, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
 	canShout,
 	createShoutCooldownManager,
@@ -19,8 +19,8 @@ import {
 	SHOUT_COOLDOWN_MS,
 	SHOUT_DISPLAY_DURATION_MS,
 	SHOUT_MAX_LENGTH,
-	validateShoutContent,
 	type ShoutCooldownState,
+	validateShoutContent,
 } from '../shout-cooldown';
 
 // =============================================================================
@@ -238,7 +238,7 @@ describe('createShoutMessage', () => {
 			TEST_USER.displayName,
 			TEST_USER.avatarSeed,
 			'Test shout!',
-			FIXED_NOW
+			FIXED_NOW,
 		);
 
 		expect(message.userId).toBe(TEST_USER.userId);
@@ -255,14 +255,14 @@ describe('createShoutMessage', () => {
 			TEST_USER.displayName,
 			TEST_USER.avatarSeed,
 			'Shout 1',
-			FIXED_NOW
+			FIXED_NOW,
 		);
 		const message2 = createShoutMessage(
 			TEST_USER.userId,
 			TEST_USER.displayName,
 			TEST_USER.avatarSeed,
 			'Shout 2',
-			FIXED_NOW
+			FIXED_NOW,
 		);
 
 		expect(message1.id).not.toBe(message2.id);
@@ -275,7 +275,7 @@ describe('createShoutMessage', () => {
 			TEST_USER.displayName,
 			TEST_USER.avatarSeed,
 			'Test',
-			FIXED_NOW
+			FIXED_NOW,
 		);
 
 		expect(message.expiresAt - message.timestamp).toBe(SHOUT_DISPLAY_DURATION_MS);
@@ -294,7 +294,7 @@ describe('processShout', () => {
 			TEST_USER.avatarSeed,
 			'First shout!',
 			undefined,
-			FIXED_NOW
+			FIXED_NOW,
 		);
 
 		expect(result.success).toBe(true);
@@ -318,7 +318,7 @@ describe('processShout', () => {
 			TEST_USER.avatarSeed,
 			'Second shout!',
 			activeState,
-			FIXED_NOW
+			FIXED_NOW,
 		);
 
 		expect(result.success).toBe(false);
@@ -336,7 +336,7 @@ describe('processShout', () => {
 			TEST_USER.avatarSeed,
 			'', // Empty content
 			undefined,
-			FIXED_NOW
+			FIXED_NOW,
 		);
 
 		expect(result.success).toBe(false);
@@ -358,7 +358,7 @@ describe('processShout', () => {
 			TEST_USER.avatarSeed,
 			'Another shout!',
 			expiredState,
-			FIXED_NOW
+			FIXED_NOW,
 		);
 
 		expect(result.success).toBe(true);
@@ -371,7 +371,7 @@ describe('processShout', () => {
 			TEST_USER.avatarSeed,
 			'  Trimmed content  ',
 			undefined,
-			FIXED_NOW
+			FIXED_NOW,
 		);
 
 		expect(result.success).toBe(true);
@@ -403,7 +403,7 @@ describe('createShoutCooldownManager', () => {
 				TEST_USER.displayName,
 				TEST_USER.avatarSeed,
 				'Test',
-				FIXED_NOW
+				FIXED_NOW,
 			);
 
 			const state = manager.getState(TEST_USER.userId);
@@ -426,7 +426,7 @@ describe('createShoutCooldownManager', () => {
 				TEST_USER.displayName,
 				TEST_USER.avatarSeed,
 				'First',
-				FIXED_NOW
+				FIXED_NOW,
 			);
 
 			const result = manager.canShout(TEST_USER.userId, FIXED_NOW);
@@ -441,7 +441,7 @@ describe('createShoutCooldownManager', () => {
 				TEST_USER.displayName,
 				TEST_USER.avatarSeed,
 				'First',
-				FIXED_NOW
+				FIXED_NOW,
 			);
 
 			const result = manager.canShout(TEST_USER.userId, FIXED_NOW + SHOUT_COOLDOWN_MS);
@@ -457,7 +457,7 @@ describe('createShoutCooldownManager', () => {
 				TEST_USER.displayName,
 				TEST_USER.avatarSeed,
 				'Test shout',
-				FIXED_NOW
+				FIXED_NOW,
 			);
 
 			expect(result.success).toBe(true);
@@ -480,7 +480,7 @@ describe('createShoutCooldownManager', () => {
 				user2.displayName,
 				user2.avatarSeed,
 				'Hello',
-				FIXED_NOW
+				FIXED_NOW,
 			);
 
 			expect(result.success).toBe(true);
@@ -492,7 +492,7 @@ describe('createShoutCooldownManager', () => {
 				TEST_USER.displayName,
 				TEST_USER.avatarSeed,
 				'First',
-				FIXED_NOW
+				FIXED_NOW,
 			);
 
 			const state = manager.getState(TEST_USER.userId);
@@ -507,7 +507,7 @@ describe('createShoutCooldownManager', () => {
 				TEST_USER.displayName,
 				TEST_USER.avatarSeed,
 				'First',
-				FIXED_NOW
+				FIXED_NOW,
 			);
 
 			const stateAfterFirst = manager.getState(TEST_USER.userId);
@@ -518,7 +518,7 @@ describe('createShoutCooldownManager', () => {
 				TEST_USER.displayName,
 				TEST_USER.avatarSeed,
 				'Second',
-				FIXED_NOW + 1000
+				FIXED_NOW + 1000,
 			);
 
 			const stateAfterSecond = manager.getState(TEST_USER.userId);
@@ -530,7 +530,13 @@ describe('createShoutCooldownManager', () => {
 
 	describe('clear', () => {
 		it('should remove all states', () => {
-			manager.processShout(TEST_USER.userId, TEST_USER.displayName, TEST_USER.avatarSeed, 'Test', FIXED_NOW);
+			manager.processShout(
+				TEST_USER.userId,
+				TEST_USER.displayName,
+				TEST_USER.avatarSeed,
+				'Test',
+				FIXED_NOW,
+			);
 			expect(manager.size).toBe(1);
 
 			manager.clear();

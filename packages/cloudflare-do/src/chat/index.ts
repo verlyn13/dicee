@@ -4,6 +4,8 @@
  * Lobby chat system: messages, reactions, typing indicators, rate limiting.
  */
 
+// Shout types re-exported from ChatManager
+export type { ShoutErrorCode, ShoutMessage, ShoutServerMessage } from './ChatManager';
 // Manager and Server Message Helpers
 export {
 	ChatManager,
@@ -15,8 +17,6 @@ export {
 	createShoutReceivedResponse,
 	createTypingUpdateResponse,
 } from './ChatManager';
-// Shout types re-exported from ChatManager
-export type { ShoutErrorCode, ShoutMessage, ShoutServerMessage } from './ChatManager';
 export type { ValidatedChatMessage } from './schemas';
 // Schemas
 export {

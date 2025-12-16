@@ -31,28 +31,16 @@ interface StatusConfig {
 
 function getStatusConfig(status: RoomInfo['status']): StatusConfig {
 	switch (status) {
-		case 'open':
+		case 'waiting':
 			return { bg: 'bg-live', text: 'OPEN', canJoin: true, canSpectate: false };
 		case 'playing':
 			return { bg: 'bg-accent', text: 'LIVE', canJoin: false, canSpectate: true };
-		case 'full':
-			return { bg: 'bg-muted', text: 'FULL', canJoin: false, canSpectate: false };
-	}
-}
-
-function getModeEmoji(mode: RoomInfo['mode']): string {
-	switch (mode) {
-		case 'classic':
-			return '[STD]';
-		case 'blitz':
-			return '[BLZ]';
-		case 'hardcore':
-			return '[HRD]';
+		case 'finished':
+			return { bg: 'bg-muted', text: 'DONE', canJoin: false, canSpectate: false };
 	}
 }
 
 const statusConfig = $derived(getStatusConfig(room.status));
-const modeLabel = $derived(getModeEmoji(room.mode));
 
 async function handleAction() {
 	// Can't do anything with full rooms
@@ -115,7 +103,7 @@ function getButtonText(): string {
 	</div>
 
 	<div class="card-meta">
-		<span class="mode">{modeLabel} {room.mode.toUpperCase()}</span>
+		<span class="host">Host: {room.hostName}</span>
 		<span class="players">{room.playerCount}/{room.maxPlayers}</span>
 	</div>
 
@@ -221,8 +209,11 @@ function getButtonText(): string {
 		color: var(--color-signal-muted);
 	}
 
-	.mode {
+	.host {
 		color: var(--color-text);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.join-button {

@@ -9,12 +9,6 @@ import { DurableObject } from 'cloudflare:workers';
 import { type AICommand, AIRoomManager, createAIPlayerState, getProfile } from './ai';
 import { extractAvatarUrl, extractDisplayName, verifySupabaseJWT } from './auth';
 import {
-	createJoinRequestManager,
-	JOIN_REQUEST_TTL_MS,
-	type JoinRequestManager,
-} from './lib/join-request';
-import { createLogger, type Logger } from './lib/logger';
-import {
 	ChatManager,
 	createChatErrorResponse,
 	createChatHistoryResponse,
@@ -39,6 +33,8 @@ import {
 	type KeptMask,
 	type MultiplayerGameState,
 } from './game';
+import { createJoinRequestManager, type JoinRequestManager } from './lib/join-request';
+import { createLogger, type Logger } from './lib/logger';
 import type {
 	AlarmData,
 	ConnectionRole,
@@ -51,12 +47,12 @@ import type {
 	InviteDeliveryRequest,
 	InviteResponsePayload,
 	JoinQueueEntry,
+	JoinQueueState,
+	JoinQueueUpdate,
 	JoinRequestEntity,
 	JoinRequestResponseDelivery,
 	JoinRequestRPCInput,
 	JoinRequestRPCResponse,
-	JoinQueueState,
-	JoinQueueUpdate,
 	KibitzOption,
 	KibitzState,
 	KibitzUpdate,
@@ -72,7 +68,6 @@ import type {
 	PredictionType,
 	ReactionCombo,
 	ReactionRateLimit,
-	ReconnectionState,
 	RoomState,
 	RoomStatusUpdate,
 	RootingChoice,
@@ -172,6 +167,9 @@ export class GameRoom extends DurableObject<Env> {
 	/** Join request manager for pending join requests */
 	private joinRequestManager: JoinRequestManager;
 
+	/** Cached room code (extracted from URL on first fetch) */
+	private _roomCode: string | null = null;
+
 	/** Maximum predictions per spectator per turn */
 	private static readonly MAX_PREDICTIONS_PER_TURN = 3;
 
@@ -197,7 +195,7 @@ export class GameRoom extends DurableObject<Env> {
 		this.gameStateManager = new GameStateManager(ctx, roomCode);
 
 		// Get stub for GlobalLobby (singleton)
-		const lobbyId = env.GLOBAL_LOBBY.idFromName('global');
+		const lobbyId = env.GLOBAL_LOBBY.idFromName('singleton');
 		this.lobbyStub = env.GLOBAL_LOBBY.get(lobbyId) as DurableObjectStub<GlobalLobby>;
 
 		// Set up auto-response for ping/pong without waking the DO
@@ -216,6 +214,19 @@ export class GameRoom extends DurableObject<Env> {
 
 	async fetch(request: Request): Promise<Response> {
 		const url = new URL(request.url);
+
+		// Extract room code from URL path on first fetch (e.g., /room/FFDVNG or just /FFDVNG)
+		if (!this._roomCode) {
+			const pathMatch = url.pathname.match(/\/room\/([A-Z0-9]{6})|\/([A-Z0-9]{6})/i);
+			if (pathMatch) {
+				this._roomCode = (pathMatch[1] || pathMatch[2]).toUpperCase();
+				// Store in storage for persistence across hibernation
+				await this.ctx.storage.put('room_code', this._roomCode);
+			} else {
+				// Try to load from storage (hibernation recovery)
+				this._roomCode = (await this.ctx.storage.get<string>('room_code')) ?? 'UNKNOWN';
+			}
+		}
 
 		// WebSocket upgrade request
 		if (request.headers.get('Upgrade') === 'websocket') {
@@ -312,6 +323,11 @@ export class GameRoom extends DurableObject<Env> {
 	 * If DO was hibernated, it wakes up, deserializes state, handles message.
 	 */
 	async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
+		// Load room code from storage if not cached (hibernation recovery)
+		if (!this._roomCode) {
+			this._roomCode = (await this.ctx.storage.get<string>('room_code')) ?? 'UNKNOWN';
+		}
+
 		if (typeof message !== 'string') {
 			ws.close(1003, 'Binary messages not supported');
 			return;
@@ -337,6 +353,11 @@ export class GameRoom extends DurableObject<Env> {
 		reason: string,
 		_wasClean: boolean,
 	): Promise<void> {
+		// Load room code from storage if not cached (hibernation recovery)
+		if (!this._roomCode) {
+			this._roomCode = (await this.ctx.storage.get<string>('room_code')) ?? 'UNKNOWN';
+		}
+
 		const connState = ws.deserializeAttachment() as ConnectionState;
 		await this.onDisconnect(connState, code, reason);
 	}
@@ -345,6 +366,11 @@ export class GameRoom extends DurableObject<Env> {
 	 * Called on WebSocket error.
 	 */
 	async webSocketError(ws: WebSocket, error: unknown): Promise<void> {
+		// Load room code from storage if not cached (hibernation recovery)
+		if (!this._roomCode) {
+			this._roomCode = (await this.ctx.storage.get<string>('room_code')) ?? 'UNKNOWN';
+		}
+
 		const connState = ws.deserializeAttachment() as ConnectionState;
 		console.error(`WebSocket error for ${connState.userId}:`, error);
 		await this.onDisconnect(connState, 1011, 'Internal error');
@@ -355,6 +381,11 @@ export class GameRoom extends DurableObject<Env> {
 	// ─────────────────────────────────────────────────────────────────────────────
 
 	async alarm(): Promise<void> {
+		// Load room code from storage if not cached (hibernation recovery)
+		if (!this._roomCode) {
+			this._roomCode = (await this.ctx.storage.get<string>('room_code')) ?? 'UNKNOWN';
+		}
+
 		const alarmData = await this.ctx.storage.get<AlarmData>('alarm_data');
 		if (!alarmData) return;
 
@@ -374,6 +405,10 @@ export class GameRoom extends DurableObject<Env> {
 			case 'JOIN_REQUEST_EXPIRATION':
 				await this.handleJoinRequestExpiration(alarmData.metadata?.requestId as string);
 				break;
+			case 'AI_TURN_TIMEOUT':
+				await this.handleAITurnTimeout(alarmData);
+				// Don't delete alarm_data here - handler manages it for retries
+				return;
 		}
 
 		await this.ctx.storage.delete('alarm_data');
@@ -509,13 +544,131 @@ export class GameRoom extends DurableObject<Env> {
 		}
 	}
 
+	/**
+	 * Handle AI turn timeout alarm - recover stuck AI turns after hibernation.
+	 * HIBERNATION-SAFE: Reloads all state from storage before acting.
+	 */
+	private async handleAITurnTimeout(alarmData: AlarmData): Promise<void> {
+		const playerId = alarmData.playerId;
+		if (!playerId) {
+			this.logger.warn('AI turn timeout alarm with no playerId');
+			await this.ctx.storage.delete('alarm_data');
+			return;
+		}
+
+		// Check if AI turn already completed (ai_turn_state was deleted on success)
+		const aiTurnState = await this.ctx.storage.get<{
+			playerId: string;
+			scheduledAt: number;
+			status: string;
+		}>('ai_turn_state');
+		if (!aiTurnState) {
+			this.logger.info('AI turn timeout - turn already completed, alarm is stale', {
+				operation: 'ai_turn_timeout_stale',
+				playerId,
+			});
+			await this.ctx.storage.delete('alarm_data');
+			return;
+		}
+
+		// CRITICAL: Reload game state from storage (hibernation-safe)
+		const gameState = await this.gameStateManager.getState();
+		if (!gameState) {
+			this.logger.error('AI turn timeout - no game state found');
+			await this.ctx.storage.delete('alarm_data');
+			await this.ctx.storage.delete('ai_turn_state');
+			return;
+		}
+
+		// Verify it's still this player's turn
+		const currentPlayerId = gameState.playerOrder[gameState.currentPlayerIndex];
+		if (currentPlayerId !== playerId) {
+			this.logger.info('AI turn timeout - player changed, clearing stale state', {
+				expected: playerId,
+				actual: currentPlayerId,
+			});
+			await this.ctx.storage.delete('alarm_data');
+			await this.ctx.storage.delete('ai_turn_state');
+			return;
+		}
+
+		const retryCount = alarmData.retryCount ?? 0;
+		this.logger.warn('AI turn timeout - attempting recovery', {
+			operation: 'ai_turn_timeout_recovery',
+			playerId,
+			retryCount,
+		});
+
+		if (retryCount < 3) {
+			// Retry the AI turn
+			const newAlarmData: AlarmData = {
+				type: 'AI_TURN_TIMEOUT',
+				playerId,
+				retryCount: retryCount + 1,
+			};
+			await this.ctx.storage.put('alarm_data', newAlarmData);
+			await this.ctx.storage.setAlarm(Date.now() + 5000); // Retry in 5s
+
+			// Try executing turn again
+			this.ctx.waitUntil(this.executeAITurnWithRecovery(playerId));
+		} else {
+			// Give up - force a valid action
+			this.logger.error('AI turn retries exhausted - forcing action', {
+				operation: 'ai_turn_force',
+				playerId,
+			});
+			await this.forceAIAction(playerId);
+			await this.ctx.storage.delete('alarm_data');
+			await this.ctx.storage.delete('ai_turn_state');
+		}
+	}
+
+	/**
+	 * Force AI to take a valid action when all retries exhausted.
+	 * Picks the first available category and scores 0 to unstick the game.
+	 */
+	private async forceAIAction(playerId: string): Promise<void> {
+		const gameState = await this.gameStateManager.getState();
+		if (!gameState) return;
+
+		const player = gameState.players[playerId];
+		if (!player) return;
+
+		// Find first available category
+		const availableCategories = Object.entries(player.scorecard)
+			.filter(([_, score]) => score === null)
+			.map(([cat]) => cat);
+
+		if (availableCategories.length > 0) {
+			const category = availableCategories[0];
+			this.logger.info('Force-scoring category for stuck AI', {
+				playerId,
+				category,
+			});
+
+			// Execute the scoring through normal game flow
+			try {
+				await this.executeAICommand(playerId, {
+					type: 'score',
+					category: category as Category,
+				});
+			} catch (error) {
+				this.logger.error('Force AI action failed', {
+					playerId,
+					category,
+					error: error instanceof Error ? error.message : String(error),
+				});
+			}
+		}
+	}
+
 	// ─────────────────────────────────────────────────────────────────────────────
 	// Helper Methods
 	// ─────────────────────────────────────────────────────────────────────────────
 
 	private getRoomCode(): string {
-		// Extract from DO ID (set via idFromName in worker)
-		return this.ctx.id.name ?? 'UNKNOWN';
+		// Return cached room code (set in fetch() from URL or storage)
+		return this._roomCode ?? 'UNKNOWN';
 	}
 
 	/**
@@ -633,8 +786,7 @@ export class GameRoom extends DurableObject<Env> {
 		const now = Date.now();
 		const activeSeats = [...seats.values()].filter(
 			(seat) =>
-				seat.isConnected ||
-				(seat.reconnectDeadline !== null && seat.reconnectDeadline > now),
+				seat.isConnected || (seat.reconnectDeadline !== null && seat.reconnectDeadline > now),
 		);
 
 		if (activeSeats.length >= maxPlayers) {
@@ -647,7 +799,9 @@ export class GameRoom extends DurableObject<Env> {
 		seats.set(userId, seat);
 		await this.saveSeats(seats);
 
-		console.log(`[GameRoom] Reserved seat for ${displayName} (${userId}), turn order: ${turnOrder}`);
+		console.log(
+			`[GameRoom] Reserved seat for ${displayName} (${userId}), turn order: ${turnOrder}`,
+		);
 		return true;
 	}
 
@@ -684,7 +838,9 @@ export class GameRoom extends DurableObject<Env> {
 	 * Handle player reconnection - reclaim their seat.
 	 * Returns true if reconnection succeeded, false if seat expired.
 	 */
-	private async handleReconnection(userId: string): Promise<{ success: boolean; seat: PlayerSeat | null }> {
+	private async handleReconnection(
+		userId: string,
+	): Promise<{ success: boolean; seat: PlayerSeat | null }> {
 		const seats = await this.getSeats();
 		const seat = seats.get(userId);
 
@@ -713,24 +869,6 @@ export class GameRoom extends DurableObject<Env> {
 	}
 
 	/**
-	 * Remove a seat entirely (e.g., after expiration or kick).
-	 */
-	private async removeSeat(userId: string): Promise<PlayerSeat | null> {
-		const seats = await this.getSeats();
-		const seat = seats.get(userId);
-
-		if (!seat) {
-			return null;
-		}
-
-		seats.delete(userId);
-		await this.saveSeats(seats);
-
-		console.log(`[GameRoom] Removed seat for ${seat.displayName} (${userId})`);
-		return seat;
-	}
-
-	/**
 	 * Schedule seat expiration alarm.
 	 * Only sets alarm if it's sooner than existing alarm.
 	 */
@@ -742,7 +880,9 @@ export class GameRoom extends DurableObject<Env> {
 			const alarmData: AlarmData = { type: 'SEAT_EXPIRATION' };
 			await this.ctx.storage.put('alarm_data', alarmData);
 			await this.ctx.storage.setAlarm(deadline);
-			console.log(`[GameRoom] Scheduled seat expiration alarm for ${new Date(deadline).toISOString()}`);
+			console.log(
+				`[GameRoom] Scheduled seat expiration alarm for ${new Date(deadline).toISOString()}`,
+			);
 		}
 	}
 
@@ -1016,10 +1156,12 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Player connection - check for reconnection or new join
 		let isReconnection = false;
+		let isInitialCreation = false;
 		let reconnectedSeat: PlayerSeat | null = null;
 
 		if (!roomState) {
 			// First connection creates the room
+			isInitialCreation = true;
 			roomState = createInitialRoomState(this.getRoomCode(), connState.userId);
 			await this.ctx.storage.put('room', roomState);
 
@@ -1121,12 +1263,15 @@ export class GameRoom extends DurableObject<Env> {
 					avatarSeed: connState.avatarSeed,
 				},
 			});
+		} else if (isInitialCreation) {
+			// Host created the room - welcome is shown on the waiting room UI
+			// No chat message needed since the user is alone
 		} else {
-			// New join - broadcast join event
-			const systemMsg = await this.chatManager.createSystemMessage(
-				`${connState.displayName} joined the lobby`,
+			// New player joining - broadcast join event with friendly message
+			const joinMsg = await this.chatManager.createSystemMessage(
+				`${connState.displayName} joined! Welcome to the game.`,
 			);
-			this.broadcast(createChatMessageResponse(systemMsg));
+			this.broadcast(createChatMessageResponse(joinMsg));
 
 			this.broadcast(
 				{
@@ -1143,10 +1288,7 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Check if room is now full and cancel pending invites
 		const playerCount = this.getConnectedPlayerCount() + (roomState.aiPlayers?.length ?? 0);
-		if (
-			playerCount >= roomState.settings.maxPlayers &&
-			this.pendingInvites.size > 0
-		) {
+		if (playerCount >= roomState.settings.maxPlayers && this.pendingInvites.size > 0) {
 			await this.cancelAllInvites('room_full');
 		}
 
@@ -1317,7 +1459,7 @@ export class GameRoom extends DurableObject<Env> {
 				await this.handleJoinRequestResponse(
 					ws,
 					connState,
-					payload as { requestId: string; approved: boolean }
+					payload as { requestId: string; approved: boolean },
 				);
 				break;
 
@@ -1621,12 +1763,10 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Find host's WebSocket to notify
 		const roomCode = this.getRoomCode();
-		const hostWs = this.ctx
-			.getWebSockets(`player:${roomCode}`)
-			.find((ws) => {
-				const state = ws.deserializeAttachment() as ConnectionState | null;
-				return state?.isHost === true;
-			});
+		const hostWs = this.ctx.getWebSockets(`player:${roomCode}`).find((ws) => {
+			const state = ws.deserializeAttachment() as ConnectionState | null;
+			return state?.isHost === true;
+		});
 
 		if (!hostWs) {
 			console.log(`[GameRoom] Host not found to notify of invite response`);
@@ -1647,7 +1787,9 @@ export class GameRoom extends DurableObject<Env> {
 			}),
 		);
 
-		console.log(`[GameRoom] Invite ${response.inviteId} ${response.action}ed by ${response.targetUserId}`);
+		console.log(
+			`[GameRoom] Invite ${response.inviteId} ${response.action}ed by ${response.targetUserId}`,
+		);
 	}
 
 	/**
@@ -1675,11 +1817,7 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Schedule invite expiration.
 	 */
-	private scheduleInviteExpiration(
-		inviteId: string,
-		targetUserId: string,
-		delayMs: number,
-	): void {
+	private scheduleInviteExpiration(inviteId: string, targetUserId: string, delayMs: number): void {
 		setTimeout(async () => {
 			const invite = this.pendingInvites.get(targetUserId);
 			if (invite && invite.id === inviteId) {
@@ -1697,12 +1835,10 @@ export class GameRoom extends DurableObject<Env> {
 
 				// Notify host
 				const roomCode = this.getRoomCode();
-				const hostWs = this.ctx
-					.getWebSockets(`player:${roomCode}`)
-					.find((ws) => {
-						const state = ws.deserializeAttachment() as ConnectionState | null;
-						return state?.isHost === true;
-					});
+				const hostWs = this.ctx.getWebSockets(`player:${roomCode}`).find((ws) => {
+					const state = ws.deserializeAttachment() as ConnectionState | null;
+					return state?.isHost === true;
+				});
 
 				if (hostWs) {
 					hostWs.send(
@@ -1905,7 +2041,7 @@ export class GameRoom extends DurableObject<Env> {
 	private async handleJoinRequestResponse(
 		ws: WebSocket,
 		connState: ConnectionState,
-		payload: { requestId: string; approved: boolean }
+		payload: { requestId: string; approved: boolean },
 	): Promise<void> {
 		// Only host can respond to join requests
 		if (!connState.isHost) {
@@ -2047,12 +2183,10 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	private notifyHostOfJoinRequest(request: JoinRequestEntity): void {
 		const roomCode = this.getRoomCode();
-		const hostWs = this.ctx
-			.getWebSockets(`player:${roomCode}`)
-			.find((ws) => {
-				const state = ws.deserializeAttachment() as ConnectionState | null;
-				return state?.isHost === true;
-			});
+		const hostWs = this.ctx.getWebSockets(`player:${roomCode}`).find((ws) => {
+			const state = ws.deserializeAttachment() as ConnectionState | null;
+			return state?.isHost === true;
+		});
 
 		if (hostWs) {
 			hostWs.send(
@@ -2060,7 +2194,7 @@ export class GameRoom extends DurableObject<Env> {
 					type: 'JOIN_REQUEST_RECEIVED',
 					payload: { request },
 					timestamp: Date.now(),
-				})
+				}),
 			);
 		}
 	}
@@ -2070,12 +2204,10 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	private notifyHostOfJoinRequestExpiration(requestId: string): void {
 		const roomCode = this.getRoomCode();
-		const hostWs = this.ctx
-			.getWebSockets(`player:${roomCode}`)
-			.find((ws) => {
-				const state = ws.deserializeAttachment() as ConnectionState | null;
-				return state?.isHost === true;
-			});
+		const hostWs = this.ctx.getWebSockets(`player:${roomCode}`).find((ws) => {
+			const state = ws.deserializeAttachment() as ConnectionState | null;
+			return state?.isHost === true;
+		});
 
 		if (hostWs) {
 			hostWs.send(
@@ -2083,7 +2215,7 @@ export class GameRoom extends DurableObject<Env> {
 					type: 'JOIN_REQUEST_EXPIRED',
 					payload: { requestId },
 					timestamp: Date.now(),
-				})
+				}),
 			);
 		}
 	}
@@ -2091,14 +2223,15 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Notify host that a join request was cancelled by the requester.
 	 */
-	private notifyHostOfJoinRequestCancellation(requestId: string, requesterDisplayName: string): void {
+	private notifyHostOfJoinRequestCancellation(
+		requestId: string,
+		requesterDisplayName: string,
+	): void {
 		const roomCode = this.getRoomCode();
-		const hostWs = this.ctx
-			.getWebSockets(`player:${roomCode}`)
-			.find((ws) => {
-				const state = ws.deserializeAttachment() as ConnectionState | null;
-				return state?.isHost === true;
-			});
+		const hostWs = this.ctx.getWebSockets(`player:${roomCode}`).find((ws) => {
+			const state = ws.deserializeAttachment() as ConnectionState | null;
+			return state?.isHost === true;
+		});
 
 		if (hostWs) {
 			hostWs.send(
@@ -2106,40 +2239,9 @@ export class GameRoom extends DurableObject<Env> {
 					type: 'JOIN_REQUEST_CANCELLED',
 					payload: { requestId, requesterDisplayName },
 					timestamp: Date.now(),
-				})
+				}),
 			);
 		}
-	}
-
-	/**
-	 * Cancel all pending join requests (called when room closes/fills/game starts).
-	 */
-	private async cancelAllJoinRequests(reason: string): Promise<void> {
-		const pendingRequests = this.joinRequestManager.getPendingRequests();
-		if (pendingRequests.length === 0) return;
-
-		const roomCode = this.getRoomCode();
-
-		for (const request of pendingRequests) {
-			// Notify requester
-			const delivery: JoinRequestResponseDelivery = {
-				requestId: request.id,
-				requesterId: request.requesterId,
-				roomCode,
-				status: 'declined',
-				reason,
-			};
-			await this.lobbyStub.deliverJoinRequestResponse(delivery);
-		}
-
-		this.logger.info('Cancelled all pending join requests', {
-			operation: 'join_requests_cancel_all',
-			roomCode,
-			count: pendingRequests.length,
-			reason,
-		});
-
-		this.joinRequestManager.clear();
 	}
 
 	/**
@@ -3054,39 +3156,80 @@ export class GameRoom extends DurableObject<Env> {
 
 	/**
 	 * Trigger AI turn execution if the given player is an AI.
+	 * HIBERNATION-SAFE: Persists AI turn state and schedules alarm for recovery.
 	 */
 	private async triggerAITurnIfNeeded(playerId: string): Promise<void> {
 		if (!this.aiManager.isAIPlayer(playerId)) {
 			return;
 		}
 
-		// Execute AI turn in background (don't await to avoid blocking)
-		this.ctx.waitUntil(
-			(async () => {
-				try {
-					// Small delay to ensure previous turn's finally block completes
-					// This is critical for AI-to-AI transitions where the ctx.waitUntil
-					// callback starts executing before the previous turn releases turnInProgress
-					await new Promise((resolve) => setTimeout(resolve, 50));
+		this.logger.info('Scheduling AI turn', {
+			operation: 'ai_turn_schedule',
+			playerId,
+		});
 
-					await this.aiManager.executeAITurn(
-						playerId,
-						// Pass a getter function so AI gets fresh state each step
-						async () => this.gameStateManager.getState(),
-						async (pid, cmd) => {
-							await this.executeAICommand(pid, cmd);
-						},
-						(event) => {
-							// Broadcast AI events to all clients
-							this.broadcast(event);
-							this.broadcastToSpectators(event);
-						},
-					);
-				} catch (error) {
-					console.error(`[GameRoom] AI turn failed for ${playerId}:`, error);
-				}
-			})(),
-		);
+		// STEP 1: Persist AI turn state to storage FIRST (hibernation-safe)
+		const aiTurnState = {
+			playerId,
+			scheduledAt: Date.now(),
+			status: 'scheduled' as const,
+		};
+		await this.ctx.storage.put('ai_turn_state', aiTurnState);
+
+		// STEP 2: Schedule safety-net alarm (35 seconds)
+		// This will fire if the waitUntil callback is killed by hibernation
+		const alarmTime = Date.now() + 35000;
+		const alarmData: AlarmData = {
+			type: 'AI_TURN_TIMEOUT',
+			playerId,
+			retryCount: 0,
+		};
+		await this.ctx.storage.put('alarm_data', alarmData);
+		await this.ctx.storage.setAlarm(alarmTime);
+
+		// STEP 3: Execute AI turn in background (still use waitUntil for non-blocking)
+		this.ctx.waitUntil(this.executeAITurnWithRecovery(playerId));
+	}
+
+	/**
+	 * Execute AI turn with recovery tracking.
+	 * Clears AI turn state on success so alarm handler knows turn completed.
+	 */
+	private async executeAITurnWithRecovery(playerId: string): Promise<void> {
+		try {
+			// Small delay to ensure previous turn's finally block completes
+			// This is critical for AI-to-AI transitions
+			await new Promise((resolve) => setTimeout(resolve, 50));
+
+			await this.aiManager.executeAITurn(
+				playerId,
+				// Pass a getter function so AI gets fresh state each step
+				async () => this.gameStateManager.getState(),
+				async (pid, cmd) => {
+					await this.executeAICommand(pid, cmd);
+				},
+				(event) => {
+					// Broadcast AI events to all clients
+					this.broadcast(event);
+					this.broadcastToSpectators(event);
+				},
+			);
+
+			// SUCCESS: Clear the AI turn state (alarm handler will check this)
+			await this.ctx.storage.delete('ai_turn_state');
+
+			this.logger.info('AI turn completed successfully', {
+				operation: 'ai_turn_complete',
+				playerId,
+			});
+		} catch (error) {
+			this.logger.error('AI turn failed', {
+				operation: 'ai_turn_error',
+				playerId,
+				error: error instanceof Error ? error.message : String(error),
+			});
+			// Let the alarm handler retry if needed
+		}
 	}
 
 	/**

@@ -39,6 +39,7 @@
     "sim:run": "pnpm --filter @dicee/simulation sim:run",
     "sim:bench": "pnpm --filter @dicee/simulation sim:bench",
     "sim:test": "pnpm --filter @dicee/simulation test",
+    "web:analyze-logs": "pnpm --filter @dicee/web analyze-logs",
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {

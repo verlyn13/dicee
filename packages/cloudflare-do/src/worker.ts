@@ -42,8 +42,12 @@ export default {
 			});
 		}
 
-		// Global Lobby (singleton) - all /lobby paths
-		if (url.pathname === '/lobby' || url.pathname.startsWith('/lobby/')) {
+		// Global Lobby (singleton) - all /lobby and /_debug paths
+		if (
+			url.pathname === '/lobby' ||
+			url.pathname.startsWith('/lobby/') ||
+			url.pathname.startsWith('/_debug/')
+		) {
 			const id = env.GLOBAL_LOBBY.idFromName('singleton');
 			const stub = env.GLOBAL_LOBBY.get(id);
 			return stub.fetch(request);

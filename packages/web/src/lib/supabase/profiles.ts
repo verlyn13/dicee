@@ -4,6 +4,15 @@ import type { Database, Tables, TablesUpdate } from '$lib/types/database';
 export type Profile = Tables<'profiles'>;
 export type ProfileUpdate = TablesUpdate<'profiles'>;
 
+/** Admin role from database enum */
+export type AdminRole = Database['public']['Enums']['admin_role'];
+
+/** Admin permission record */
+export type AdminPermission = Tables<'admin_permissions'>;
+
+/** Admin audit log entry */
+export type AdminAuditLog = Tables<'admin_audit_log'>;
+
 /**
  * Get a user's profile by ID
  * Returns null data (not an error) if profile doesn't exist
@@ -112,4 +121,97 @@ export async function updateLastSeen(
 	}
 
 	return { error: null };
+}
+
+// =============================================================================
+// Admin Functions
+// =============================================================================
+
+/**
+ * Check if a user has a specific admin permission
+ * Uses the database function which supports wildcard permissions
+ */
+export async function hasAdminPermission(
+	supabase: SupabaseClient<Database>,
+	userId: string,
+	permission: string,
+): Promise<{ data: boolean; error: Error | null }> {
+	const { data, error } = await supabase.rpc('has_admin_permission', {
+		user_id: userId,
+		perm: permission,
+	});
+
+	if (error) {
+		return { data: false, error: new Error(error.message) };
+	}
+
+	return { data: data ?? false, error: null };
+}
+
+/**
+ * Get a user's admin role
+ */
+export async function getUserRole(
+	supabase: SupabaseClient<Database>,
+	userId: string,
+): Promise<{ data: AdminRole | null; error: Error | null }> {
+	const { data, error } = await supabase.rpc('get_user_role', {
+		user_id: userId,
+	});
+
+	if (error) {
+		return { data: null, error: new Error(error.message) };
+	}
+
+	return { data, error: null };
+}
+
+/**
+ * Get all permissions for a user
+ */
+export async function getUserPermissions(
+	supabase: SupabaseClient<Database>,
+	userId: string,
+): Promise<{ data: string[] | null; error: Error | null }> {
+	const { data, error } = await supabase.rpc('get_user_permissions', {
+		user_id: userId,
+	});
+
+	if (error) {
+		return { data: null, error: new Error(error.message) };
+	}
+
+	return { data: data?.map((p) => p.permission) ?? [], error: null };
+}
+
+/**
+ * Check if a user has any admin privileges (not just 'user' role)
+ */
+export function isAdmin(role: AdminRole | undefined | null): boolean {
+	return role === 'moderator' || role === 'admin' || role === 'super_admin';
+}
+
+/**
+ * Check if a user is a super admin
+ */
+export function isSuperAdmin(role: AdminRole | undefined | null): boolean {
+	return role === 'super_admin';
+}
+
+/**
+ * Admin role hierarchy for comparison
+ */
+export const ADMIN_ROLE_HIERARCHY: Record<AdminRole, number> = {
+	user: 0,
+	moderator: 1,
+	admin: 2,
+	super_admin: 3,
+};
+
+/**
+ * Check if roleA has at least the privileges of roleB
+ */
+export function hasRolePrivilege(roleA: AdminRole | undefined | null, roleB: AdminRole): boolean {
+	if (!roleA) return false;
+	return ADMIN_ROLE_HIERARCHY[roleA] >= ADMIN_ROLE_HIERARCHY[roleB];
 }

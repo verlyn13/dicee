@@ -253,7 +253,9 @@ export class AIController {
 			context.dice && context.dice.length === 5 && context.dice.some((d) => d >= 1 && d <= 6);
 
 		if (!hasValidDice) {
-			console.log(`[AIController] No valid dice for ${playerId} - issuing roll without brain consultation`);
+			console.log(
+				`[AIController] No valid dice for ${playerId} - issuing roll without brain consultation`,
+			);
 			const rollDecision: TurnDecision = {
 				action: 'roll',
 				reasoning: 'Turn start - must roll first',

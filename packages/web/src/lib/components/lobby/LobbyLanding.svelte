@@ -15,6 +15,7 @@
 
 import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
+import { AdminPanel } from '$lib/components/admin';
 import GoogleButton from '$lib/components/auth/GoogleButton.svelte';
 import MagicLinkForm from '$lib/components/auth/MagicLinkForm.svelte';
 import { SettingsButton, SettingsPanel } from '$lib/components/settings';
@@ -22,6 +23,7 @@ import { BottomSheet } from '$lib/components/ui';
 import { audioStore } from '$lib/stores/audio.svelte';
 import { auth } from '$lib/stores/auth.svelte';
 import { lobby } from '$lib/stores/lobby.svelte';
+import { profileStore } from '$lib/stores/profile.svelte';
 import AIOpponentSelector from './AIOpponentSelector.svelte';
 import ConnectionOverlay from './ConnectionOverlay.svelte';
 
@@ -47,6 +49,12 @@ const displayName = $derived(() => {
 		'Guest'
 	);
 });
+
+// Admin panel state - uses RBAC from profile store
+let showAdminPanel = $state(false);
+
+// Show admin controls if user has moderator or higher role
+const canAccessAdmin = $derived(profileStore.isModerator);
 
 import ChatPanel from './ChatPanel.svelte';
 import CreateRoomModal from './CreateRoomModal.svelte';
@@ -295,16 +303,27 @@ function handleDeclineInvite(inviteId: string) {
 			>
 				<div class="panel-header">
 					<h2>Games</h2>
-					{#if lobby.rooms.length > 0}
-						<span class="room-counts">
-							{#if lobby.openRooms.length > 0}
-								<span class="count open">{lobby.openRooms.length} open</span>
-							{/if}
-							{#if lobby.playingRooms.length > 0}
-								<span class="count live">{lobby.playingRooms.length} live</span>
-							{/if}
-						</span>
-					{/if}
+					<div class="panel-actions">
+						{#if lobby.rooms.length > 0}
+							<span class="room-counts">
+								{#if lobby.openRooms.length > 0}
+									<span class="count open">{lobby.openRooms.length} open</span>
+								{/if}
+								{#if lobby.playingRooms.length > 0}
+									<span class="count live">{lobby.playingRooms.length} live</span>
+								{/if}
+							</span>
+						{/if}
+						{#if canAccessAdmin}
+							<button
+								class="admin-btn"
+								onclick={() => (showAdminPanel = true)}
+								title="Open admin panel"
+							>
+								Admin
+							</button>
+						{/if}
+					</div>
 				</div>
 
 				{#if lobby.rooms.length === 0}
@@ -444,6 +463,9 @@ function handleDeclineInvite(inviteId: string) {
 {#if lobby.activeJoinRequest}
 	<JoinRequestPending request={lobby.activeJoinRequest} />
 {/if}
+
+<!-- Admin Panel - shown for users with moderator+ role -->
+<AdminPanel open={showAdminPanel} onClose={() => (showAdminPanel = false)} />
 
 <style>
 	.lobby-landing {
@@ -724,6 +746,34 @@ function handleDeclineInvite(inviteId: string) {
 	.room-counts .count.live {
 		background: var(--color-accent);
 		border-color: var(--color-accent);
+	}
+
+	.panel-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+	}
+
+	.admin-btn {
+		font-family: var(--font-mono);
+		font-size: var(--text-tiny);
+		font-weight: var(--weight-semibold);
+		padding: 0.25rem 0.5rem;
+		background: var(--color-danger);
+		color: white;
+		border: var(--border-thin);
+		border-color: var(--color-danger);
+		cursor: pointer;
+		transition: opacity var(--transition-fast);
+	}
+
+	.admin-btn:hover:not(:disabled) {
+		opacity: 0.8;
+	}
+
+	.admin-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 
 	.room-grid {

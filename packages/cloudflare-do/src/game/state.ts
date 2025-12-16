@@ -45,12 +45,21 @@ const ALARM_DATA_KEY = 'alarm_data';
 // Alarm Types
 // =============================================================================
 
-export type AlarmType = 'afk_warning' | 'afk_timeout' | 'room_cleanup' | 'game_start';
+export type AlarmType =
+	| 'afk_warning'
+	| 'afk_timeout'
+	| 'room_cleanup'
+	| 'game_start'
+	| 'ai_turn_timeout';
 
 export interface AlarmData {
 	type: AlarmType;
 	playerId?: string;
 	scheduledAt: string;
+	/** Room code for AI turn recovery */
+	roomCode?: string;
+	/** Retry count for AI turn timeout */
+	retryCount?: number;
 }
 
 // =============================================================================

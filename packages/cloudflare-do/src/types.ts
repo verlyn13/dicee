@@ -184,8 +184,8 @@ export interface RoomSettings {
 export const DEFAULT_ROOM_SETTINGS: RoomSettings = {
 	maxPlayers: 2,
 	turnTimeoutSeconds: 60,
-	isPublic: false,
-	allowSpectators: false,
+	isPublic: true,
+	allowSpectators: true,
 };
 
 /**
@@ -282,7 +282,8 @@ export type AlarmType =
 	| 'AFK_CHECK'
 	| 'ROOM_CLEANUP'
 	| 'SEAT_EXPIRATION'
-	| 'JOIN_REQUEST_EXPIRATION';
+	| 'JOIN_REQUEST_EXPIRATION'
+	| 'AI_TURN_TIMEOUT';
 
 /**
  * Data stored with scheduled alarms
@@ -291,6 +292,10 @@ export interface AlarmData {
 	type: AlarmType;
 	userId?: string;
 	metadata?: Record<string, unknown>;
+	/** Player ID for AI turn recovery */
+	playerId?: string;
+	/** Retry count for AI turn timeout (max 3) */
+	retryCount?: number;
 }
 
 // =============================================================================

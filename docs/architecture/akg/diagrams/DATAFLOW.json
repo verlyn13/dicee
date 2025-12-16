@@ -2,9 +2,9 @@
 	"$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
 	"version": "1.0.0",
 	"diagramType": "dataflow",
-	"generatedAt": "2025-12-12T21:08:52.946Z",
-	"graphHash": "sha256:70f74843f6721cf3cadf1e91afbc7774a698b6d75694b66f214fdd15b9ba975a",
-	"sourceCommit": "3955727ce55493a363d1ef3ac41a464a35f2daff",
+	"generatedAt": "2025-12-16T02:10:16.998Z",
+	"graphHash": "sha256:a305a69cdfe0b281e6ed2088a65ffb605c3c09bc6c41453d345f5aa22a1d31de",
+	"sourceCommit": "738b368",
 	"nodes": [
 		{
 			"id": "module::+layout::rc_routes__layout_ts",
@@ -73,6 +73,12 @@
 			"layer": "stores"
 		},
 		{
+			"id": "store::profile.svelte::es_profile_svelte_ts",
+			"label": "profile",
+			"type": "Store",
+			"layer": "stores"
+		},
+		{
 			"id": "store::lobby.svelte::ores_lobby_svelte_ts",
 			"label": "lobby",
 			"type": "Store",
@@ -87,12 +93,6 @@
 		{
 			"id": "store::multiplayerGame.svelte::playerGame_svelte_ts",
 			"label": "multiplayerGame",
-			"type": "Store",
-			"layer": "stores"
-		},
-		{
-			"id": "store::scorecard.svelte::_scorecard_svelte_ts",
-			"label": "scorecard",
 			"type": "Store",
 			"layer": "stores"
 		},
@@ -183,17 +183,17 @@
 		},
 		{
 			"from": "store::game.svelte::tores_game_svelte_ts",
-			"to": "store::scorecard.svelte::_scorecard_svelte_ts",
-			"type": "imports"
-		},
-		{
-			"from": "store::game.svelte::tores_game_svelte_ts",
 			"to": "service::engine::b_services_engine_ts",
 			"type": "imports"
 		},
 		{
 			"from": "store::game.svelte::tores_game_svelte_ts",
 			"to": "service::engine::b_services_engine_ts",
+			"type": "imports"
+		},
+		{
+			"from": "store::profile.svelte::es_profile_svelte_ts",
+			"to": "supabasemodule::profiles::supabase_profiles_ts",
 			"type": "imports"
 		},
 		{

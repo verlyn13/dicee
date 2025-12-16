@@ -36,6 +36,7 @@ function createMockProfile(overrides: Partial<Profile> = {}): Profile {
 		rating_volatility: 0.06,
 		badges: [],
 		preferences: null,
+		role: 'user',
 		created_at: new Date().toISOString(),
 		updated_at: new Date().toISOString(),
 		last_seen_at: new Date().toISOString(),

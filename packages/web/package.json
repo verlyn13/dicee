@@ -26,7 +26,8 @@
 		"qr": "node scripts/qr.mjs",
 		"pages:dev": "wrangler pages dev .svelte-kit/cloudflare --local-protocol https --port 8788",
 		"pages:deploy": "wrangler pages deploy .svelte-kit/cloudflare --project-name dicee",
-		"pages:deploy:preview": "wrangler pages deploy .svelte-kit/cloudflare --project-name dicee --branch preview"
+		"pages:deploy:preview": "wrangler pages deploy .svelte-kit/cloudflare --project-name dicee --branch preview",
+		"analyze-logs": "npx tsx src/tools/log-analyzer/cli.ts"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.8",

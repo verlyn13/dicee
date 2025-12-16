@@ -88,3 +88,44 @@ export {
 	CHAT_RATE_LIMITS,
 	createEmptyReactions,
 } from './chat.js';
+
+// Lobby types
+export type {
+	LobbyUser,
+	LobbyUserPresence,
+	LobbyRoomInfo,
+	LobbyChatMessage,
+	GameInvite,
+	JoinRequest,
+} from './lobby.js';
+export {
+	LOBBY_CHAT_MAX_LENGTH,
+	LOBBY_CHAT_HISTORY_SIZE,
+	LOBBY_CHAT_RATE_LIMIT,
+	INVITE_EXPIRATION_MS,
+} from './lobby.js';
+
+// Admin types
+export type {
+	AdminRole,
+	AdminPermission,
+	AdminPermissionKey,
+	AdminPermissionRecord,
+	AdminAction,
+	AdminAuditEntry,
+	AdminInfo,
+	AdminProfile,
+	AdminErrorResponse,
+	AdminSuccessResponse,
+	AdminRoomsResponse,
+	AdminConnectionsResponse,
+	AdminAuditLogResponse,
+} from './admin.js';
+export {
+	ADMIN_ROLE_HIERARCHY,
+	ADMIN_PERMISSIONS,
+	DEFAULT_ROLE_PERMISSIONS,
+	hasRolePrivilege,
+	roleHasPermission,
+	createAuditEntry,
+} from './admin.js';

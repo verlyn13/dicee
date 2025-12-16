@@ -75,3 +75,58 @@ export {
 	isDiceEvent,
 	isRoomEvent,
 } from './server-events.js';
+
+// Lobby Events (Server → Client)
+export type {
+	PresenceInitEvent,
+	PresenceJoinEvent,
+	PresenceLeaveEvent,
+	LobbyRoomsListEvent,
+	LobbyRoomUpdateEvent,
+	LobbyChatMessageEvent,
+	LobbyChatHistoryEvent,
+	LobbyOnlineUsersEvent,
+	InviteReceivedEvent,
+	InviteCancelledEvent,
+	JoinRequestSentEvent,
+	JoinRequestCancelledEvent,
+	JoinRequestErrorEvent,
+	LobbyHighlightEvent,
+	LobbyErrorEvent,
+	LobbyPresenceEvent,
+	LobbyRoomEvent,
+	LobbyChatEvent,
+	LobbyInviteEvent,
+	LobbyJoinRequestEvent,
+	LobbyServerEvent,
+	LobbyServerEventType,
+	GetLobbyEvent,
+} from './lobby-events.js';
+export {
+	LOBBY_SERVER_EVENT_TYPES,
+	isValidLobbyServerEventType,
+	isPresenceEvent,
+	isLobbyRoomEvent,
+	isLobbyChatEvent,
+} from './lobby-events.js';
+
+// Lobby Commands (Client → Server)
+export type {
+	LobbyChatCommand,
+	GetRoomsCommand,
+	RoomCreatedCommand,
+	RoomUpdatedCommand,
+	RoomClosedCommand,
+	GetOnlineUsersCommand,
+	RequestJoinCommand,
+	CancelJoinRequestCommand,
+	SendInviteCommand,
+	CancelInviteCommand,
+	LobbyCommand,
+	LobbyCommandType,
+	GetLobbyCommand,
+} from './lobby-commands.js';
+export {
+	LOBBY_COMMAND_TYPES,
+	isValidLobbyCommandType,
+} from './lobby-commands.js';
