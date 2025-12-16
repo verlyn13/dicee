@@ -88,8 +88,8 @@ test-results/
 temp-windsurf-config.md
 .vercel
 
-# Development scripts (local tooling)
-scripts/dicee-adb.*
+# Development scripts (local logs only)
+~/Desktop/dicee-logs/
 
 # Supabase local seed data
 supabase/seed/

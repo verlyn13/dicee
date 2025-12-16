@@ -27,11 +27,14 @@
 		"pages:dev": "wrangler pages dev .svelte-kit/cloudflare --local-protocol https --port 8788",
 		"pages:deploy": "wrangler pages deploy .svelte-kit/cloudflare --project-name dicee",
 		"pages:deploy:preview": "wrangler pages deploy .svelte-kit/cloudflare --project-name dicee --branch preview",
-		"analyze-logs": "npx tsx src/tools/log-analyzer/cli.ts"
+		"analyze-logs": "npx tsx src/tools/log-analyzer/cli.ts",
+		"cdp:list": "node scripts/cdp-console-monitor.mjs --list",
+		"cdp:local": "node scripts/cdp-console-monitor.mjs --local",
+		"cdp:prod": "node scripts/cdp-console-monitor.mjs --production",
+		"cdp:monitor": "node scripts/cdp-console-monitor.mjs"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.8",
-		"wrangler": "^4.51.0",
 		"@modelcontextprotocol/sdk": "^1.24.3",
 		"@playwright/test": "^1.49.0",
 		"@sveltejs/adapter-cloudflare": "^7.2.4",
@@ -49,7 +52,9 @@
 		"vite": "^7.2.2",
 		"vite-plugin-wasm": "^3.4.1",
 		"vitest": "^4.0.14",
-		"vitest-axe": "^0.1.0"
+		"vitest-axe": "^0.1.0",
+		"wrangler": "^4.51.0",
+		"ws": "^8.18.3"
 	},
 	"dependencies": {
 		"@dicebear/collection": "^9.2.4",

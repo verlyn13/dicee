@@ -40,6 +40,10 @@
     "sim:bench": "pnpm --filter @dicee/simulation sim:bench",
     "sim:test": "pnpm --filter @dicee/simulation test",
     "web:analyze-logs": "pnpm --filter @dicee/web analyze-logs",
+    "cdp:list": "node packages/web/scripts/cdp-console-monitor.mjs --list",
+    "cdp:local": "node packages/web/scripts/cdp-console-monitor.mjs --local",
+    "cdp:prod": "node packages/web/scripts/cdp-console-monitor.mjs --production",
+    "cdp:monitor": "node packages/web/scripts/cdp-console-monitor.mjs",
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {
