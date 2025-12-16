@@ -69,6 +69,15 @@ defineInvariant(
 			violation.businessRule =
 				'Protocol consistency requires shared type definitions between client and server.';
 
+			// Add evidence with file location for SARIF compliance
+			if (globalLobbyNode.filePath) {
+				violation.evidence.push({
+					filePath: globalLobbyNode.filePath,
+					line: 1, // Top of file where imports should be added
+					column: 1,
+				});
+			}
+
 			violations.push(violation);
 		}
 

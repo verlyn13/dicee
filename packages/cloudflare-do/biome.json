@@ -1,4 +1,5 @@
 {
+	"root": true,
 	"$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
 	"vcs": {
 		"enabled": true,
@@ -7,14 +8,7 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": [
-			"**/*.ts",
-			"**/*.js",
-			"**/*.json",
-			"!**/node_modules",
-			"!**/dist",
-			"!**/.wrangler"
-		]
+		"includes": ["**/*.ts", "**/*.js", "**/*.json", "!**/node_modules", "!**/dist", "!**/.wrangler"]
 	},
 	"formatter": {
 		"enabled": true,

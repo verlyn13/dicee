@@ -262,6 +262,29 @@ function evidenceToLocation(evidence: ViolationEvidence, uriBaseId?: string): Sa
 }
 
 /**
+ * Generate a synthetic location when no evidence is available.
+ * GitHub Code Scanning requires at least one location per result.
+ */
+function createSyntheticLocation(violation: InvariantViolation, uriBaseId?: string): SarifLocation {
+	// Use a fallback path that indicates this is an architectural issue
+	// The actual source node info is preserved in the location message and result properties
+	return {
+		physicalLocation: {
+			artifactLocation: {
+				uri: 'docs/architecture/akg/README.md',
+				...(uriBaseId && { uriBaseId }),
+			},
+			region: {
+				startLine: 1,
+			},
+		},
+		message: {
+			text: `Source: ${violation.sourceNode}${violation.targetNode ? `, Target: ${violation.targetNode}` : ''}`,
+		},
+	};
+}
+
+/**
  * Convert a violation to a SARIF result
  */
 function violationToResult(
@@ -281,9 +304,12 @@ function violationToResult(
 		},
 	};
 
-	// Add locations from evidence
+	// Add locations from evidence, or create synthetic location for SARIF compliance
 	if (violation.evidence.length > 0) {
 		result.locations = violation.evidence.map((e) => evidenceToLocation(e, uriBaseId));
+	} else {
+		// GitHub Code Scanning requires at least one location per result
+		result.locations = [createSyntheticLocation(violation, uriBaseId)];
 	}
 
 	// Add context as properties
