@@ -70,9 +70,8 @@ Cargo.lock
 # Development tools (local analysis)
 packages/web/src/tools/log-analyzer/
 
-# Mobile testing infrastructure (WIP)
-docs/testing/ANDROID-TESTING-WORKFLOW.md
-packages/web/src/lib/types/device-testing.schema.ts
+# Mobile testing logs (local captures)
+dicee-logs/
 
 # Editor configs (personal preference)
 .cursorrules
