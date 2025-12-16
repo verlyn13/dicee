@@ -15,6 +15,12 @@
 	--cartridge-sherbet: #ffb870; /* Warm orange */
 	--cartridge-slime: #c5f25e; /* Acid green */
 	--cartridge-concrete: #d4d4d4; /* Neutral fallback */
+	--cartridge-coral: #ff7a7a; /* Warm pink-orange */
+	--cartridge-teal: #5ed4c7; /* Cool cyan */
+	--cartridge-lavender: #c8b3f0; /* Soft purple */
+	--cartridge-peach: #ffad8a; /* Warm apricot */
+	--cartridge-sage: #b3d8a4; /* Muted green */
+	--cartridge-plum: #d89fc9; /* Deep purple-pink */
 
 	/* NOTE: No yellow - conflicts with --color-accent (#ffd700) */
 
@@ -56,6 +62,12 @@
 	--cartridge-sherbet: #d4854a; /* Burnt orange */
 	--cartridge-slime: #8bbf3a; /* Olive lime */
 	--cartridge-concrete: #4a4a4a; /* Dark neutral */
+	--cartridge-coral: #d45454; /* Deep rose */
+	--cartridge-teal: #3aa897; /* Deep cyan */
+	--cartridge-lavender: #9f7cc6; /* Rich purple */
+	--cartridge-peach: #d4825a; /* Burnt peach */
+	--cartridge-sage: #8ba876; /* Forest sage */
+	--cartridge-plum: #b86fa9; /* Burgundy plum */
 
 	/* Patterns need more contrast in dark mode */
 	--cartridge-pattern-opacity: 0.12;

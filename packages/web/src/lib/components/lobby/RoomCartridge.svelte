@@ -16,6 +16,7 @@
 
 import { generateRoomIdentity, getColorVar, getPatternClass } from '@dicee/shared';
 import { goto } from '$app/navigation';
+import Avatar from '$lib/components/ui/Avatar.svelte';
 import { auth } from '$lib/stores/auth.svelte';
 import { lobby, type RoomInfo } from '$lib/stores/lobby.svelte';
 
@@ -157,13 +158,35 @@ function getButtonText(): string {
 	<!-- Main content: hype name and room code -->
 	<div class="content">
 		<h3 class="hype-name">{identity.hypeName}</h3>
-		<span class="room-code">#{room.code}</span>
+		<div class="room-info">
+			<span class="room-code">#{room.code}</span>
+			{#if room.status === 'playing' && room.roundNumber > 0}
+				<span class="round-progress">Round {room.roundNumber}/{room.totalRounds}</span>
+			{/if}
+		</div>
 	</div>
 
 	<!-- Meta info: host and player count -->
 	<div class="meta">
 		<span class="host">{room.hostName}</span>
 		<span class="players">{room.playerCount}/{room.maxPlayers}</span>
+	</div>
+
+	<!-- Player avatars (max 4 displayed) -->
+	<div class="players-display">
+		{#each room.players?.slice(0, 4) ?? [] as player (player.userId)}
+			<div class="player-avatar" title={player.displayName}>
+				<Avatar seed={player.avatarSeed} size="sm" alt={player.displayName} />
+				{#if player.isHost}
+					<span class="host-badge" aria-label="Host">★</span>
+				{/if}
+			</div>
+		{/each}
+		{#if (room.players?.length ?? 0) > 4}
+			<div class="overflow-indicator" title="{(room.players?.length ?? 0) - 4} more">
+				+{(room.players?.length ?? 0) - 4}
+			</div>
+		{/if}
 	</div>
 
 	<!-- Action button -->
@@ -182,11 +205,11 @@ function getButtonText(): string {
 	.cartridge {
 		position: relative;
 		display: grid;
-		grid-template-columns: auto 1fr auto;
+		grid-template-columns: auto 1fr auto auto;
 		grid-template-rows: auto auto;
 		grid-template-areas:
-			'status content action'
-			'status meta action';
+			'status content players action'
+			'status meta players action';
 		gap: var(--space-1);
 		align-items: center;
 
@@ -261,11 +284,25 @@ function getButtonText(): string {
 		white-space: nowrap;
 	}
 
+	.room-info {
+		display: flex;
+		gap: var(--space-1);
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
 	.room-code {
 		font-family: var(--font-mono);
 		font-size: var(--cartridge-code-size);
 		font-weight: var(--weight-semibold);
 		color: var(--color-signal-muted);
+	}
+
+	.round-progress {
+		font-family: var(--font-mono);
+		font-size: var(--text-small);
+		font-weight: var(--weight-semibold);
+		color: var(--color-accent);
 	}
 
 	/* Meta information */
@@ -288,6 +325,39 @@ function getButtonText(): string {
 	.players {
 		font-family: var(--font-mono);
 		font-weight: var(--weight-bold);
+	}
+
+	/* Player avatars display */
+	.players-display {
+		grid-area: players;
+		display: flex;
+		gap: 4px;
+		align-items: center;
+		padding: 0 var(--space-1);
+	}
+
+	.player-avatar {
+		position: relative;
+		width: 24px;
+		height: 24px;
+	}
+
+	.host-badge {
+		position: absolute;
+		top: -4px;
+		right: -4px;
+		font-size: 10px;
+		background: var(--color-accent);
+		color: var(--color-text);
+		border: 1px solid var(--color-text);
+		padding: 0 2px;
+		line-height: 1;
+	}
+
+	.overflow-indicator {
+		font-size: var(--text-small);
+		font-weight: var(--weight-bold);
+		color: var(--color-signal-muted);
 	}
 
 	/* Action button */
@@ -332,11 +402,16 @@ function getButtonText(): string {
 	@media (max-width: 480px) {
 		.cartridge {
 			grid-template-columns: auto 1fr;
-			grid-template-rows: auto auto auto;
+			grid-template-rows: auto auto auto auto;
 			grid-template-areas:
 				'status content'
+				'players players'
 				'meta meta'
 				'action action';
+		}
+
+		.players-display {
+			justify-content: center;
 		}
 
 		.status {

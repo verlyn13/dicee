@@ -110,6 +110,12 @@ const WEIGHTED_COLORS: CartridgeColor[] = [
 	'orchid',
 	'sherbet',
 	'slime',
+	'coral',
+	'teal',
+	'lavender',
+	'peach',
+	'sage',
+	'plum',
 	// 'concrete' excluded for more vibrant defaults
 ];
 

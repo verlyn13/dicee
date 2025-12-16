@@ -151,6 +151,10 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 		</span>
 	</div>
 
+	<div class="carousel-hint" aria-hidden="true">
+		← Scroll to see all AI opponents →
+	</div>
+
 	<div class="ai-selector__grid">
 		{#each AI_PROFILES as profile (profile.id)}
 			{@const profileSelected = isSelected(profile.id)}
@@ -234,9 +238,20 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 	}
 
 	.ai-selector__grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+		display: flex;
 		gap: var(--spacing-md);
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		padding-bottom: var(--spacing-sm);
+
+		/* Hide scrollbar, keep functionality */
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
+
+	.ai-selector__grid::-webkit-scrollbar {
+		display: none;
 	}
 
 	.ai-selector__hint {
@@ -244,6 +259,14 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 		font-size: var(--font-size-sm);
 		color: var(--color-text-muted);
 		text-align: center;
+	}
+
+	.carousel-hint {
+		text-align: center;
+		font-size: var(--font-size-sm);
+		color: var(--color-text-muted);
+		margin-bottom: var(--spacing-sm);
+		font-style: italic;
 	}
 
 	.ai-card {
@@ -263,6 +286,12 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 		gap: var(--spacing-sm);
 		padding: var(--spacing-md);
 		padding-top: calc(var(--spacing-md) + 8px);
+
+		/* Fixed width for carousel */
+		min-width: 180px;
+		max-width: 180px;
+		flex-shrink: 0;
+		scroll-snap-align: start;
 
 		/* Neo-Brutalist */
 		background: var(--color-surface);
@@ -436,17 +465,19 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 
 	/* Responsive */
 	@media (max-width: 480px) {
-		.ai-selector__grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-
 		.ai-card {
 			padding: var(--spacing-sm);
 			padding-top: calc(var(--spacing-sm) + 8px);
+			min-width: 160px;
+			max-width: 160px;
 		}
 
 		.ai-card__tagline {
 			display: none;
+		}
+
+		.carousel-hint {
+			font-size: var(--font-size-xs);
 		}
 	}
 </style>

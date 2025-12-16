@@ -1000,7 +1000,7 @@ export class GameRoom extends DurableObject<Env> {
 				playerCount: players.length,
 				spectatorCount: this.getSpectatorCount(),
 				maxPlayers: roomState.settings.maxPlayers,
-				roundNumber: 0, // TODO: Get from game state
+				roundNumber: (await this.gameStateManager.getState())?.roundNumber ?? 0,
 				totalRounds: 13,
 				isPublic: roomState.settings.isPublic,
 				allowSpectators: roomState.settings.allowSpectators,

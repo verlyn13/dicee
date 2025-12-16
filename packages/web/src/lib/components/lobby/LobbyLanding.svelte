@@ -899,10 +899,12 @@ function handleDeclineInvite(inviteId: string) {
 	}
 
 	.modal-content {
+		display: flex;
+		flex-direction: column;
 		width: 100%;
 		max-width: 600px;
 		max-height: 90vh;
-		overflow-y: auto;
+		overflow: hidden;
 		background: var(--color-background);
 		border: var(--border-thick);
 		box-shadow: 8px 8px 0 var(--color-border);
@@ -940,6 +942,8 @@ function handleDeclineInvite(inviteId: string) {
 	}
 
 	.modal-body {
+		flex: 1;
+		overflow-y: auto;
 		padding: var(--space-3);
 	}
 
@@ -951,6 +955,10 @@ function handleDeclineInvite(inviteId: string) {
 	}
 
 	.modal-footer {
+		flex-shrink: 0;
+		position: sticky;
+		bottom: 0;
+		z-index: 1;
 		display: flex;
 		gap: var(--space-2);
 		justify-content: flex-end;

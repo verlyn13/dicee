@@ -21,6 +21,12 @@ export const CARTRIDGE_COLORS = [
 	'sherbet',
 	'slime',
 	'concrete',
+	'coral',
+	'teal',
+	'lavender',
+	'peach',
+	'sage',
+	'plum',
 ] as const;
 
 export type CartridgeColor = (typeof CARTRIDGE_COLORS)[number];
