@@ -184,7 +184,7 @@ export interface RoomSettings {
  * Default room configuration
  */
 export const DEFAULT_ROOM_SETTINGS: RoomSettings = {
-	maxPlayers: 2,
+	maxPlayers: 4,
 	turnTimeoutSeconds: 60,
 	isPublic: true,
 	allowSpectators: true,

@@ -1881,10 +1881,30 @@ export class GameRoom extends DurableObject<Env> {
 	async handleJoinRequest(input: JoinRequestRPCInput): Promise<JoinRequestRPCResponse> {
 		const roomCode = this.getRoomCode();
 
+		// Get seat count for enhanced debugging
+		const seats = await this.getSeats();
+		const connectedPlayers = this.getConnectedPlayerCount();
+		const aiPlayerCount =
+			(await this.ctx.storage.get<RoomState>('room'))?.aiPlayers?.length ?? 0;
+
 		this.logger.info('Processing join request', {
 			operation: 'join_request_receive',
 			roomCode,
 			requesterId: input.requesterId,
+		});
+
+		// DEBUG: Log all capacity info
+		console.log(`[GameRoom] JOIN REQUEST DEBUG:`, {
+			roomCode,
+			requesterId: input.requesterId,
+			connectedPlayers,
+			aiPlayerCount,
+			totalSeats: seats.size,
+			seatDetails: [...seats.entries()].map(([id, seat]) => ({
+				id,
+				connected: seat.isConnected,
+				hasReconnectDeadline: !!seat.reconnectDeadline,
+			})),
 		});
 
 		// Check room state
@@ -1904,15 +1924,24 @@ export class GameRoom extends DurableObject<Env> {
 			};
 		}
 
-		// Check capacity
-		const playerCount = this.getConnectedPlayerCount();
+		// DEBUG: Log settings
+		console.log(`[GameRoom] JOIN REQUEST - Room settings:`, {
+			maxPlayers: roomState.settings.maxPlayers,
+			isPublic: roomState.settings.isPublic,
+			aiPlayersInState: roomState.aiPlayers?.length ?? 0,
+		});
+
+		// Check capacity - include AI players in count
+		const playerCount = connectedPlayers + (roomState.aiPlayers?.length ?? 0);
 		if (playerCount >= roomState.settings.maxPlayers) {
 			this.logger.info('Join request rejected - room full', {
 				operation: 'join_request_reject',
 				roomCode,
 				requesterId: input.requesterId,
 				reason: 'room_full',
-				playerCount,
+				connectedPlayers,
+				aiPlayers: roomState.aiPlayers?.length ?? 0,
+				totalPlayerCount: playerCount,
 				maxPlayers: roomState.settings.maxPlayers,
 			});
 			return {

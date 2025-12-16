@@ -33,7 +33,7 @@ export const DEFAULT_ROOM_CONFIG: RoomConfig = {
 	isPublic: false,
 	allowSpectators: false,
 	turnTimeoutSeconds: 60,
-	maxPlayers: 2,
+	maxPlayers: 4,
 };
 
 /**

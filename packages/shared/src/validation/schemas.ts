@@ -168,7 +168,7 @@ export const RoomConfigSchema = z.object({
 	isPublic: z.boolean().default(false),
 	allowSpectators: z.boolean().default(false),
 	turnTimeoutSeconds: z.number().int().min(0).max(300).default(60),
-	maxPlayers: z.union([z.literal(2), z.literal(3), z.literal(4)]).default(2),
+	maxPlayers: z.union([z.literal(2), z.literal(3), z.literal(4)]).default(4),
 });
 
 export const RoomStateValueSchema = z.enum(['waiting', 'starting', 'playing', 'completed', 'abandoned']);

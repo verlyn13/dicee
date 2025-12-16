@@ -482,6 +482,9 @@ class RoomService {
 			? (rawStatus as (typeof validStates)[number])
 			: 'waiting';
 
+		// Extract config from payload (server sends settings object)
+		const settings = payload.settings as Record<string, unknown> | undefined;
+
 		return {
 			code: ((payload.roomCode as string) ??
 				this._roomCode ??
@@ -489,10 +492,10 @@ class RoomService {
 			hostId: (players.find((p) => p.isHost)?.userId as string) ?? '',
 			state,
 			config: {
-				isPublic: false,
-				allowSpectators: false,
-				turnTimeoutSeconds: 60,
-				maxPlayers: 4,
+				isPublic: (settings?.isPublic as boolean) ?? false,
+				allowSpectators: (settings?.allowSpectators as boolean) ?? false,
+				turnTimeoutSeconds: (settings?.turnTimeoutSeconds as number) ?? 60,
+				maxPlayers: ((settings?.maxPlayers as number) ?? 4) as 2 | 3 | 4,
 			},
 			players: players.map((p) => this.convertDOPlayer(p)),
 			aiPlayers: aiPlayers.map((ai) => ({
