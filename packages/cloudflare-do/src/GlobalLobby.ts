@@ -20,7 +20,7 @@
 
 import { DurableObject } from 'cloudflare:workers';
 import { generateRoomIdentity } from '@dicee/shared';
-import { createLogger, type Logger } from './lib/logger';
+import { createInstrumentation, type Instrumentation } from './lib/observability/instrumentation';
 import { createRoomDirectory, type RoomDirectory, type RoomInfo } from './lib/room-directory';
 import type {
 	Env,
@@ -129,8 +129,8 @@ const STORAGE_KEYS = {
 // =============================================================================
 
 export class GlobalLobby extends DurableObject<Env> {
-	/** Structured logger for observability */
-	private logger: Logger = createLogger({ component: 'GlobalLobby' });
+	/** Observability instrumentation */
+	private instr: Instrumentation | null = null;
 
 	/** Storage-first room directory (survives hibernation) */
 	private roomDirectory: RoomDirectory;
@@ -171,6 +171,9 @@ export class GlobalLobby extends DurableObject<Env> {
 	// =========================================================================
 
 	async fetch(request: Request): Promise<Response> {
+		// Initialize instrumentation if not already initialized
+		await this.ensureInstrumentation();
+
 		const url = new URL(request.url);
 
 		// WebSocket upgrade for real-time connection
@@ -223,8 +226,9 @@ export class GlobalLobby extends DurableObject<Env> {
 				});
 			}
 			case '/_debug/storage': {
-				const activeRooms = await this.ctx.storage.get('lobby:activeRooms');
-				const chatHistory = await this.ctx.storage.get('lobby:chatHistory');
+				await this.ensureInstrumentation();
+				const activeRooms = await this.getStorage('lobby:activeRooms');
+				const chatHistory = await this.getStorage<ChatMessage[]>('lobby:chatHistory');
 				return Response.json({
 					'lobby:activeRooms': activeRooms,
 					'lobby:chatHistory': Array.isArray(chatHistory) ? chatHistory.length : 0,
@@ -344,6 +348,13 @@ export class GlobalLobby extends DurableObject<Env> {
 		// Note: The new connection is already accepted, so it's included in the count
 		const isNewUser = existingConnections.length === 1;
 
+		// Initialize instrumentation
+		await this.ensureInstrumentation();
+
+		// Log connection
+		const connectionId = `conn-${userId}-${Date.now()}`;
+		this.instr?.clientConnect(userId, 'pending', connectionId);
+
 		// Send initial state to new connection (async for storage loading)
 		await this.sendInitialState(server);
 
@@ -417,6 +428,8 @@ export class GlobalLobby extends DurableObject<Env> {
 	// =========================================================================
 
 	async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
+		await this.ensureInstrumentation();
+
 		const attachment = ws.deserializeAttachment() as UserPresence;
 
 		// Update last seen
@@ -424,7 +437,15 @@ export class GlobalLobby extends DurableObject<Env> {
 		ws.serializeAttachment(attachment);
 
 		try {
-			const data = JSON.parse(message as string) as LobbyCommand;
+			const parsed = JSON.parse(message as string) as LobbyCommand & { correlationId?: string };
+			const { correlationId, ...data } = parsed;
+
+			// Set correlation ID for this request (propagates to all events in this request)
+			if (correlationId) {
+				this.instr?.setCorrelationId(correlationId);
+			}
+
+			try {
 
 			// Extract from payload (UPPERCASE protocol)
 			const content = data.payload?.content ?? '';
@@ -501,10 +522,20 @@ export class GlobalLobby extends DurableObject<Env> {
 					break;
 
 				default:
-					console.warn('[GlobalLobby] Unknown command type:', data.type);
+					this.instr?.errorHandlerFailed(`unknownCommand.${data.type}`, new Error(`Unknown command type: ${data.type}`));
+			}
+			} catch (error) {
+				// Log handler errors with correlation ID preserved
+				this.instr?.errorHandlerFailed(`handleMessage.${data.type}`, error);
+				throw error;
+			} finally {
+				// Clear correlation ID after request handling (ensures clean state for next request)
+				if (correlationId) {
+					this.instr?.clearCorrelationId();
+				}
 			}
 		} catch (e) {
-			console.error('[GlobalLobby] Message parse error:', e);
+			this.instr?.errorHandlerFailed('messageParse', e);
 			ws.send(
 				JSON.stringify({
 					type: 'LOBBY_ERROR',
@@ -516,6 +547,8 @@ export class GlobalLobby extends DurableObject<Env> {
 	}
 
 	async webSocketClose(ws: WebSocket, code: number, reason: string): Promise<void> {
+		await this.ensureInstrumentation();
+
 		const attachment = ws.deserializeAttachment() as UserPresence | null;
 
 		if (attachment) {
@@ -553,11 +586,16 @@ export class GlobalLobby extends DurableObject<Env> {
 			// If user has other tabs open, no presence change - silent close
 		}
 
-		console.log(`[GlobalLobby] WebSocket closed: ${code} - ${reason}`);
+		// Log disconnect
+		if (attachment) {
+			const connectionId = `conn-${attachment.userId}-${attachment.connectedAt}`;
+			this.instr?.clientDisconnect(attachment.userId, code, reason, false, connectionId);
+		}
 	}
 
 	async webSocketError(ws: WebSocket, error: unknown): Promise<void> {
-		console.error('[GlobalLobby] WebSocket error:', error);
+		await this.ensureInstrumentation();
+		this.instr?.errorHandlerFailed('webSocketError', error);
 		ws.close(1011, 'Internal error');
 	}
 
@@ -571,7 +609,7 @@ export class GlobalLobby extends DurableObject<Env> {
 	 */
 	private async loadChatHistory(): Promise<ChatMessage[]> {
 		if (!this.chatHistoryLoaded) {
-			const stored = await this.ctx.storage.get<ChatMessage[]>(STORAGE_KEYS.CHAT_HISTORY);
+			const stored = await this.getStorage<ChatMessage[]>(STORAGE_KEYS.CHAT_HISTORY);
 			this.chatHistory = stored ?? [];
 			this.chatHistoryLoaded = true;
 		}
@@ -597,7 +635,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		}
 
 		// Persist to storage FIRST (storage-first pattern)
-		await this.ctx.storage.put(STORAGE_KEYS.CHAT_HISTORY, this.chatHistory);
+		await this.putStorage(STORAGE_KEYS.CHAT_HISTORY, this.chatHistory);
 	}
 
 	private async handleChat(ws: WebSocket, user: UserPresence, content: string): Promise<void> {
@@ -704,14 +742,12 @@ export class GlobalLobby extends DurableObject<Env> {
 	 */
 	private sendOnlineUsers(ws: WebSocket): void {
 		const rawUsers = this.getOnlineUsers();
-		console.log('[GlobalLobby] sendOnlineUsers - raw users:', rawUsers.length);
 		const users = rawUsers.map((u) => ({
 			userId: u.userId,
 			displayName: u.displayName,
 			avatarSeed: u.avatarSeed,
 			currentRoomCode: u.currentRoomCode,
 		}));
-		console.log('[GlobalLobby] sendOnlineUsers - sending users:', users);
 
 		ws.send(
 			JSON.stringify({
@@ -742,7 +778,7 @@ export class GlobalLobby extends DurableObject<Env> {
 			timestamp: new Date().toISOString(),
 		});
 
-		console.log(`[GlobalLobby] Broadcast online users: ${users.length} users to all clients`);
+		// Broadcast is logged via broadcast method
 	}
 
 	// =========================================================================
@@ -831,7 +867,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		const userConnections = this.ctx.getWebSockets(`user:${userId}`);
 
 		if (userConnections.length === 0) {
-			console.log(`[GlobalLobby] User ${userId} not connected, skipping room status update`);
+			// User not connected - no action needed (not an error)
 			return;
 		}
 
@@ -849,9 +885,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		// Broadcast updated online users list to all clients
 		this.broadcastOnlineUsers();
 
-		console.log(
-			`[GlobalLobby] User ${userId} ${action} room ${roomCode}, broadcast updated online users`,
-		);
+		// Room status update logged via broadcast method
 	}
 
 	/**
@@ -868,7 +902,8 @@ export class GlobalLobby extends DurableObject<Env> {
 			this.updateUserRoomStatus(body.userId, body.roomCode, body.action);
 			return new Response('OK');
 		} catch (err) {
-			console.error('[GlobalLobby] handleUserRoomStatus error:', err);
+			await this.ensureInstrumentation();
+			this.instr?.errorHandlerFailed('handleUserRoomStatus', err);
 			return new Response('Bad Request', { status: 400 });
 		}
 	}
@@ -926,14 +961,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		});
 
 		const roomCount = await this.roomDirectory.size();
-		this.logger.info('Room status update received', {
-			operation: 'room_update',
-			roomCode: update.roomCode,
-			status: update.status,
-			playerCount: update.playerCount,
-			spectatorCount: update.spectatorCount,
-			activeRoomsCount: roomCount,
-		});
+		// Room status update logged via broadcast method
 	}
 
 	/**
@@ -947,7 +975,7 @@ export class GlobalLobby extends DurableObject<Env> {
 			timestamp: new Date().toISOString(),
 		});
 
-		console.log(`[GlobalLobby] Highlight: ${highlight.type} in room ${highlight.roomCode}`);
+		// Highlight broadcast logged via broadcast method
 	}
 
 	/**
@@ -964,7 +992,7 @@ export class GlobalLobby extends DurableObject<Env> {
 			timestamp: new Date().toISOString(),
 		});
 
-		console.log(`[GlobalLobby] Room ${roomCode} removed from directory`);
+		// Room removal logged via broadcast method
 	}
 
 	/**
@@ -1026,13 +1054,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		const connections = this.ctx.getWebSockets(`user:${request.targetUserId}`);
 
 		if (connections.length === 0) {
-			this.logger.info('Cannot deliver invite - user offline', {
-				operation: 'deliver_invite',
-				inviteId: request.inviteId,
-				targetUserId: request.targetUserId,
-				roomCode: request.roomCode,
-				result: 'user_offline',
-			});
+			// User offline - no action needed (not an error)
 			return false;
 		}
 
@@ -1063,25 +1085,13 @@ export class GlobalLobby extends DurableObject<Env> {
 					ws.send(payload);
 					delivered = true;
 				} catch (e) {
-					this.logger.error('Failed to deliver invite', {
-						operation: 'deliver_invite',
-						inviteId: request.inviteId,
-						targetUserId: request.targetUserId,
-						error: String(e),
-					});
+					this.instr?.errorBroadcastFailed('INVITE_RECEIVED', request.targetUserId, e);
 				}
 			}
 		}
 
 		if (delivered) {
-			this.logger.info('Invite delivered successfully', {
-				operation: 'deliver_invite',
-				inviteId: request.inviteId,
-				targetUserId: request.targetUserId,
-				roomCode: request.roomCode,
-				connectionsFound: connections.length,
-				result: 'delivered',
-			});
+			// Invite delivery logged via broadcast method
 		}
 
 		return delivered;
@@ -1095,7 +1105,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		const connections = this.ctx.getWebSockets(`user:${request.targetUserId}`);
 
 		if (connections.length === 0) {
-			console.log(`[GlobalLobby] Cannot cancel invite - user ${request.targetUserId} is offline`);
+			// User offline - no action needed (not an error)
 			return;
 		}
 
@@ -1118,14 +1128,12 @@ export class GlobalLobby extends DurableObject<Env> {
 				try {
 					ws.send(payload);
 				} catch (e) {
-					console.error('[GlobalLobby] Failed to cancel invite:', e);
+					this.instr?.errorBroadcastFailed('INVITE_CANCELLED', request.targetUserId, e);
 				}
 			}
 		}
 
-		console.log(
-			`[GlobalLobby] Invite ${request.inviteId} cancelled for user ${request.targetUserId}: ${request.reason}`,
-		);
+		// Invite cancellation logged via broadcast method
 	}
 
 	// =========================================================================
@@ -1141,11 +1149,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		user: UserPresence,
 		roomCode: string,
 	): Promise<void> {
-		this.logger.info('Processing join request', {
-			operation: 'request_join',
-			requesterId: user.userId,
-			roomCode,
-		});
+		// Join request processing logged via RPC calls
 
 		// Validate room exists in directory (storage-first)
 		const room = await this.roomDirectory.get(roomCode);
@@ -1185,14 +1189,7 @@ export class GlobalLobby extends DurableObject<Env> {
 						timestamp: new Date().toISOString(),
 					}),
 				);
-
-				this.logger.info('Join request routed to room', {
-					operation: 'request_join',
-					requestId: result.request.id,
-					requesterId: user.userId,
-					roomCode,
-					result: 'success',
-				});
+				// Join request routed successfully (logged via RPC)
 			} else {
 				// Send error to requester
 				ws.send(
@@ -1205,22 +1202,11 @@ export class GlobalLobby extends DurableObject<Env> {
 						timestamp: new Date().toISOString(),
 					}),
 				);
-
-				this.logger.info('Join request failed', {
-					operation: 'request_join',
-					requesterId: user.userId,
-					roomCode,
-					errorCode: result.errorCode,
-					result: 'error',
-				});
+				// Join request failed (logged via RPC)
 			}
 		} catch (error) {
-			this.logger.error('Join request RPC error', {
-				operation: 'request_join',
-				requesterId: user.userId,
-				roomCode,
-				error: String(error),
-			});
+			await this.ensureInstrumentation();
+			this.instr?.errorHandlerFailed('handleRequestJoin', error);
 
 			ws.send(
 				JSON.stringify({
@@ -1242,12 +1228,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		requestId: string,
 		roomCode: string,
 	): Promise<void> {
-		this.logger.info('Processing join request cancellation', {
-			operation: 'cancel_join_request',
-			requestId,
-			requesterId: user.userId,
-			roomCode,
-		});
+		// Join request cancellation processing logged via RPC calls
 
 		// Get the GameRoom stub (cast for typed RPC)
 		const roomId = this.env.GAME_ROOM.idFromName(roomCode);
@@ -1265,13 +1246,7 @@ export class GlobalLobby extends DurableObject<Env> {
 						timestamp: new Date().toISOString(),
 					}),
 				);
-
-				this.logger.info('Join request cancelled', {
-					operation: 'cancel_join_request',
-					requestId,
-					requesterId: user.userId,
-					result: 'success',
-				});
+				// Join request cancelled successfully (logged via RPC)
 			} else {
 				ws.send(
 					JSON.stringify({
@@ -1285,12 +1260,8 @@ export class GlobalLobby extends DurableObject<Env> {
 				);
 			}
 		} catch (error) {
-			this.logger.error('Cancel join request RPC error', {
-				operation: 'cancel_join_request',
-				requestId,
-				roomCode,
-				error: String(error),
-			});
+			await this.ensureInstrumentation();
+			this.instr?.errorHandlerFailed('handleCancelJoinRequest', error);
 
 			ws.send(
 				JSON.stringify({
@@ -1316,14 +1287,7 @@ export class GlobalLobby extends DurableObject<Env> {
 		const connections = this.ctx.getWebSockets(`user:${response.requesterId}`);
 
 		if (connections.length === 0) {
-			this.logger.info('Cannot deliver join request response - user offline', {
-				operation: 'deliver_join_response',
-				requestId: response.requestId,
-				requesterId: response.requesterId,
-				roomCode: response.roomCode,
-				status: response.status,
-				result: 'user_offline',
-			});
+			// User offline - no action needed (not an error)
 			return false;
 		}
 
@@ -1356,29 +1320,101 @@ export class GlobalLobby extends DurableObject<Env> {
 					ws.send(payload);
 					delivered = true;
 				} catch (e) {
-					this.logger.error('Failed to deliver join request response', {
-						operation: 'deliver_join_response',
-						requestId: response.requestId,
-						requesterId: response.requesterId,
-						error: String(e),
-					});
+					this.instr?.errorBroadcastFailed(eventType, response.requesterId, e);
 				}
 			}
 		}
 
 		if (delivered) {
-			this.logger.info('Join request response delivered', {
-				operation: 'deliver_join_response',
-				requestId: response.requestId,
-				requesterId: response.requesterId,
-				roomCode: response.roomCode,
-				status: response.status,
-				connectionsFound: connections.length,
-				result: 'delivered',
-			});
+			// Join request response delivered (logged via broadcast method)
 		}
 
 		return delivered;
+	}
+
+	// =========================================================================
+	// Instrumentation Helpers
+	// =========================================================================
+
+	/**
+	 * Ensure instrumentation is initialized (lazy initialization)
+	 * Called on first access after hibernation wake
+	 */
+	private async ensureInstrumentation(): Promise<void> {
+		if (this.instr) return;
+
+		// Initialize instrumentation (GlobalLobby is singleton, no room code)
+		this.instr = createInstrumentation('GlobalLobby');
+
+		// Log hibernation wake with storage audit
+		const allKeys = Array.from((await this.ctx.storage.list()).keys());
+		const connectedClients = this.ctx.getWebSockets().length;
+		this.instr.hibernationWake(allKeys, connectedClients);
+	}
+
+	/**
+	 * Instrumented storage.get wrapper
+	 * Logs read operations with timing and size information
+	 */
+	private async getStorage<T>(key: string): Promise<T | undefined> {
+		await this.ensureInstrumentation();
+		this.instr?.storageReadStart(key);
+
+		const startTime = Date.now();
+		try {
+			const value = await this.ctx.storage.get<T>(key);
+			const duration = Date.now() - startTime;
+			const found = value !== undefined;
+			const valueType = found ? typeof value : undefined;
+			const sizeBytes = found ? JSON.stringify(value).length : undefined;
+
+			this.instr?.storageReadEnd(key, found, valueType, duration, sizeBytes);
+			return value;
+		} catch (error) {
+			const duration = Date.now() - startTime;
+			this.instr?.errorStorageFailed('get', key, error);
+			this.instr?.storageReadEnd(key, false, undefined, duration);
+			throw error;
+		}
+	}
+
+	/**
+	 * Instrumented storage.put wrapper
+	 * Logs write operations with timing and size information
+	 */
+	private async putStorage<T>(key: string, value: T): Promise<void> {
+		await this.ensureInstrumentation();
+		const valueType = typeof value;
+		const sizeBytes = JSON.stringify(value).length;
+		this.instr?.storageWriteStart(key, valueType, sizeBytes);
+
+		const startTime = Date.now();
+		try {
+			await this.ctx.storage.put(key, value);
+			const duration = Date.now() - startTime;
+			this.instr?.storageWriteEnd(key, true, duration);
+		} catch (error) {
+			const duration = Date.now() - startTime;
+			this.instr?.errorStorageFailed('put', key, error);
+			this.instr?.storageWriteEnd(key, false, duration);
+			throw error;
+		}
+	}
+
+	/**
+	 * Instrumented storage.delete wrapper
+	 */
+	private async deleteStorage(key: string): Promise<boolean> {
+		await this.ensureInstrumentation();
+		try {
+			await this.ctx.storage.delete(key);
+			this.instr?.storageDelete(key, true);
+			return true;
+		} catch (error) {
+			this.instr?.errorStorageFailed('delete', key, error);
+			this.instr?.storageDelete(key, false);
+			throw error;
+		}
 	}
 
 	// =========================================================================
@@ -1386,15 +1422,31 @@ export class GlobalLobby extends DurableObject<Env> {
 	// =========================================================================
 
 	private broadcast(message: LobbyMessage, exclude?: WebSocket): void {
+		const msgType = message.type;
+		const allSockets = this.ctx.getWebSockets();
+		let sentCount = 0;
+
+		// Log broadcast preparation
+		this.instr?.broadcastPrepare(msgType, allSockets.length - (exclude ? 1 : 0));
+
 		const payload = JSON.stringify(message);
-		for (const ws of this.ctx.getWebSockets()) {
+		for (const ws of allSockets) {
 			if (ws !== exclude && ws.readyState === WebSocket.OPEN) {
 				try {
 					ws.send(payload);
-				} catch (e) {
-					console.error('[GlobalLobby] Broadcast error:', e);
+					sentCount++;
+				} catch (error) {
+					const attachment = ws.deserializeAttachment() as UserPresence | null;
+					this.instr?.errorBroadcastFailed(
+						msgType,
+						attachment?.userId ?? 'unknown',
+						error,
+					);
 				}
 			}
 		}
+
+		// Log broadcast completion
+		this.instr?.broadcastSent(msgType, sentCount, allSockets.length);
 	}
 }

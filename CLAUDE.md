@@ -17,9 +17,9 @@
 5. **Follow conventions** - Read `.claude/CONVENTIONS.md` for naming patterns
 
 ### Session Startup (Human)
-> **IMPORTANT**: Start Claude Code with `dicee-claude` to enable Supabase MCP.
-> This loads `SUPABASE_MCP_TOKEN` from gopass. Without it, database tools won't work.
-> Check status: `claude mcp list` should show supabase as "✓ Connected"
+> **IMPORTANT**: Ensure MCP servers are configured in `.cursor/mcp.json`.
+> Set `CONTEXT7_API_KEY` environment variable for Context7 MCP server.
+> Check status: `claude mcp list` should show available servers as "✓ Connected"
 
 ### Naming Conventions (Quick Reference)
 ```
@@ -49,19 +49,23 @@ Dicee is a dice probability engine and web application for learning probability 
 
 **Production URL**: https://gamelobby.jefahnierocks.com
 
-See `docs/` for architecture RFCs and milestone plans:
-- `docs/unified-cloudflare-stack.md` - Migration guide for CF Pages architecture
-- `docs/lobby-ux-ui-refactor.md` - Lobby UI/UX implementation guide
+See `docs/architecture/` for current production architecture:
+- `docs/architecture/MULTIPLAYER_PERSISTENCE_ARCHITECTURE.md` - Multiplayer system (5-min seats, storage-first)
+- `docs/architecture/LOBBY_UX_PATTERNS.md` - Lobby UX patterns (cartridges, colors, modals)
+- `docs/architecture/GAME_ROOM_TECHNICAL_REPORT.md` - GameRoom DO technical details
+
+Archived docs (completed migrations, past research): `docs/archive/`
 
 ## Tech Stack
 - **Frontend**: SvelteKit (Svelte 5 with runes) on Cloudflare Pages
 - **Engine**: Rust/WASM probability calculations
-- **Backend**: Supabase (Auth, Database, Edge Functions)
 - **Realtime**: Cloudflare Durable Objects (GlobalLobby singleton + GameRoom per-room)
 - **Edge Compute**: Cloudflare (Workers, Pages, D1, KV, R2)
 - **Secrets**: Infisical (self-hosted at infisical.jefahnierocks.com)
 - **Deployment**: Cloudflare (unified stack: Pages + Workers via Service Bindings)
 - **Package Manager**: pnpm (monorepo)
+
+**Note**: This project does NOT use Supabase. Supabase is used in other projects on this machine.
 
 ## Project Structure
 ```
@@ -70,9 +74,16 @@ packages/
   web/           # SvelteKit frontend (Cloudflare Pages)
   cloudflare-do/ # Durable Objects (GameRoom, GlobalLobby)
 docs/
-  m1/                          # Milestone 1 planning docs
-  unified-cloudflare-stack.md  # CF Pages migration guide
-  lobby-ux-ui-refactor.md      # Lobby UI/UX guide
+  architecture/                # Current production architecture
+    MULTIPLAYER_PERSISTENCE_ARCHITECTURE.md
+    LOBBY_UX_PATTERNS.md
+    GAME_ROOM_TECHNICAL_REPORT.md
+    akg/                       # Architectural Knowledge Graph docs
+  references/                  # CF, MCP, Zod 4 references
+  rfcs/                        # RFCs and ADRs
+  testing/                     # Testing workflows
+  planning/                    # Active planning docs
+  archive/                     # Historical docs (completed work)
 .claude/
   AGENT-GUARDRAILS.md       # CRITICAL: Mandatory rules for all agents
   CONVENTIONS.md            # Naming conventions and code patterns
@@ -107,9 +118,57 @@ scripts/
     pre-compact-archive.sh  # PreCompact: archive before compaction
 ```
 
+## MCP Tools (PRIMARY - Use First!)
+
+**CRITICAL**: MCP tools are PRIMARY tools. Always use them FIRST before falling back to other methods.
+
+**Auto-Invoke Rule**: Context7 should be automatically used for any code generation, setup steps, or library/API documentation queries. You should automatically use Context7 MCP tools (`resolve-library-id` and `get-library-docs`) without the user having to explicitly ask.
+
+### MCP Tool Priority Order
+
+1. **For Code Documentation & Library APIs**: Use `context7` MCP server
+   - **ALWAYS** use `get-library-docs` for SvelteKit, Cloudflare, Rust, or any library documentation
+   - **NEVER** search the web or guess - use Context7 first
+   - Tool: `resolve-library-id` - Find library IDs
+   - Tool: `get-library-docs` - Get up-to-date library documentation
+
+2. **For Cloudflare Queries**: Use Cloudflare MCP servers
+   - `cloudflare-docs` - Search Cloudflare documentation (use FIRST for CF docs)
+   - `cloudflare-observability` - Query Workers logs, metrics, analytics (use FIRST for telemetry)
+   - `cloudflare-builds` - Check build status and logs (use FIRST for build info)
+   - `cloudflare-bindings` - Manage KV, R2, D1, Hyperdrive (use FIRST for resources)
+   - `cloudflare-graphql` - Query Cloudflare GraphQL API (use FIRST for analytics)
+   - **ALWAYS** use Cloudflare MCP tools for Cloudflare-related queries
+   - **NEVER** use web search for Cloudflare documentation or telemetry
+
+3. **For Architecture Validation**: Use `akg` MCP server (Dicee-specific)
+   - **IMPORTANT**: This is the Dicee project AKG, NOT the budget triage AKG
+   - **ALWAYS** validate imports before adding them using `akg_check_import`
+   - **ALWAYS** check layer rules before importing between layers
+   - Tools: `akg_check_import`, `akg_layer_rules`, `akg_invariant_status`
+
+4. **For Persistent Memory**: Use `memory` MCP server
+   - Tools: `create_entities`, `search_nodes`, `read_graph`
+   - Use for storing project context, decisions, and state
+
+### MCP Server Reference
+
+| Server | Purpose | When to Use | Key Tools |
+|--------|---------|-------------|-----------|
+| `context7` | Library documentation | **FIRST** for any library/API docs | `get-library-docs`, `resolve-library-id` |
+| `cloudflare-docs` | Cloudflare docs | **FIRST** for Cloudflare questions | `search_cloudflare_documentation` |
+| `cloudflare-observability` | Workers telemetry | **FIRST** for logs/metrics | `query_worker_observability` |
+| `cloudflare-builds` | Build status | **FIRST** for build info | `workers_builds_list_builds` |
+| `cloudflare-bindings` | Workers resources | **FIRST** for KV/R2/D1 | `kv_namespaces_list`, `r2_buckets_list` |
+| `cloudflare-graphql` | Analytics queries | **FIRST** for GraphQL queries | `graphql_query` |
+| `akg` | Architecture (Dicee) | **ALWAYS** before imports | `akg_check_import`, `akg_layer_rules` |
+| `memory` | Knowledge graph | For persistent context | `create_entities`, `search_nodes` |
+
 ## CLI Tools Reference
 
-**CRITICAL**: For Supabase, Wrangler, and Infisical CLI commands, always consult `.claude/cli-reference.yaml` first. This file contains accurate, version-specific command documentation generated from actual `--help` output. Do NOT rely on training data for these CLIs as they evolve rapidly.
+**CRITICAL**: For Wrangler and Infisical CLI commands, always consult `.claude/cli-reference.yaml` first. This file contains accurate, version-specific command documentation generated from actual `--help` output. Do NOT rely on training data for these CLIs as they evolve rapidly.
+
+**Note**: This project does NOT use Supabase. Supabase CLI references in other docs are for different projects.
 
 ### Current CLI Versions
 - Supabase CLI: 2.62.10
@@ -123,12 +182,7 @@ scripts/
 - **Environments**: dev, staging, prod
 
 ### Supabase Project Configuration
-- **Project Ref**: duhsbuyxyppgbkwbbtqg
-- **Project URL**: https://duhsbuyxyppgbkwbbtqg.supabase.co
-- **Dashboard**: https://supabase.com/dashboard/project/duhsbuyxyppgbkwbbtqg
-- **Auth Callback**: https://duhsbuyxyppgbkwbbtqg.supabase.co/auth/v1/callback
-- **Local API**: http://127.0.0.1:54321
-- **Local Studio**: http://127.0.0.1:54323
+**Note**: This project does NOT use Supabase. Supabase is used in other projects on this machine. Any Supabase references in documentation are for those other projects.
 
 ### Google Cloud Project (OAuth)
 - **Project Name**: dicee
@@ -179,22 +233,8 @@ scripts/
 
 ### Quick Reference
 
-#### Supabase - Local Development
-```bash
-supabase start              # Start local dev environment
-supabase status             # Check service status
-supabase stop               # Stop containers
-supabase db reset           # Reset local database
-supabase gen types --local  # Generate TypeScript types
-```
-
-#### Supabase - Remote Operations
-```bash
-supabase link --project-ref <ref>  # Link to remote project
-supabase db push                    # Push migrations to remote
-supabase functions deploy           # Deploy edge functions
-supabase secrets set KEY=VALUE      # Set secrets
-```
+#### Supabase - Not Used in This Project
+**Note**: This project does NOT use Supabase. Supabase CLI commands are for other projects on this machine.
 
 #### Cloudflare Pages - Deployment
 ```bash

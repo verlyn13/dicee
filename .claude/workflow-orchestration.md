@@ -96,7 +96,7 @@ The Model Context Protocol provides the backbone for:
 
 ## MCP Server Configuration
 
-### Project-Level Configuration (`.mcp.json`)
+### Project-Level Configuration (`.cursor/mcp.json`)
 
 **Important**: The memory server must be installed locally (not via npx) to ensure
 environment variables are properly passed. The npx approach strips env vars.
@@ -106,25 +106,99 @@ environment variables are properly passed. The npx approach strips env vars.
 pnpm add -D @modelcontextprotocol/server-memory
 ```
 
+**Cursor Configuration**: Project-specific MCP servers are configured in `.cursor/mcp.json`.
+The root `.mcp.json` is maintained for backward compatibility.
+
 ```json
 {
   "mcpServers": {
     "memory": {
       "command": "node",
       "args": [
-        "./node_modules/@modelcontextprotocol/server-memory/dist/index.js"
+        "${workspaceFolder}/node_modules/@modelcontextprotocol/server-memory/dist/index.js"
       ],
       "env": {
-        "MEMORY_FILE_PATH": "/Users/verlyn13/Development/personal/dicee/.claude/state/memory.jsonl"
+        "MEMORY_FILE_PATH": "${workspaceFolder}/.claude/state/memory.jsonl"
       }
     },
-    "supabase": {
+    "context7": {
       "type": "http",
-      "url": "https://mcp.supabase.com/mcp?project_ref=duhsbuyxyppgbkwbbtqg&read_only=false&features=database,docs,edge-functions"
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"
+      }
+    },
+    "akg": {
+      "command": "bun",
+      "args": [
+        "run",
+        "${workspaceFolder}/packages/web/src/tools/akg/mcp/server.ts"
+      ],
+      "env": {
+        "AKG_GRAPH_PATH": "${workspaceFolder}/docs/architecture/akg/graph/current.json",
+        "AKG_DIAGRAMS_PATH": "${workspaceFolder}/docs/architecture/akg/diagrams",
+        "AKG_PROJECT_ROOT": "${workspaceFolder}"
+      }
+    },
+    "cloudflare-docs": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://docs.mcp.cloudflare.com/mcp"]
+    },
+    "cloudflare-bindings": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://bindings.mcp.cloudflare.com/mcp"]
+    },
+    "cloudflare-observability": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://observability.mcp.cloudflare.com/mcp"]
+    },
+    "cloudflare-builds": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://builds.mcp.cloudflare.com/mcp"]
+    },
+    "cloudflare-logpush": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://logs.mcp.cloudflare.com/mcp"]
+    },
+    "cloudflare-graphql": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://graphql.mcp.cloudflare.com/mcp"]
     }
   }
 }
 ```
+
+### Cloudflare MCP Servers
+
+All Cloudflare MCP servers use OAuth authentication. On first use, a browser window will open
+for authentication. After authentication, the tools become available.
+
+| Server | Description | Tools |
+|--------|-------------|-------|
+| `cloudflare-docs` | Search Cloudflare documentation | `search_cloudflare_documentation` |
+| `cloudflare-bindings` | Manage Workers bindings (KV, R2, D1, Hyperdrive) | Account, KV, Workers, R2, D1, Hyperdrive management |
+| `cloudflare-observability` | Query Workers logs and analytics | `query_worker_observability`, `observability_keys`, `observability_values` |
+| `cloudflare-builds` | Manage Workers builds | `workers_builds_set_active_worker`, `workers_builds_list_builds`, `workers_builds_get_build`, `workers_builds_get_build_logs` |
+| `cloudflare-logpush` | Monitor Logpush jobs | `logpush_jobs_by_account_id` |
+| `cloudflare-graphql` | Query Cloudflare GraphQL API | `graphql_schema_search`, `graphql_query`, `graphql_api_explorer` |
+
+**Reference Documentation**: See `docs/references/cloudflare/MCP/` for detailed tool documentation.
+
+### Context7 MCP Server
+
+Context7 provides up-to-date library documentation. **ALWAYS use this FIRST for any library or API documentation queries.**
+
+- **URL**: `https://mcp.context7.com/mcp`
+- **Authentication**: API key via `CONTEXT7_API_KEY` environment variable
+- **Tools**:
+  - `resolve-library-id` - Find library IDs (e.g., `/sveltejs/kit` for SvelteKit)
+  - `get-library-docs` - Get up-to-date library documentation with code examples
+- **When to Use**: 
+  - **FIRST** for any library documentation (SvelteKit, Cloudflare, Rust, etc.)
+  - **NEVER** search the web for library docs - use Context7
+  - **NEVER** guess API signatures - use Context7
+
+**Note**: This project does NOT use Supabase. Supabase is used in other projects on this machine.
 
 ### Global Configuration (`~/.config/claude-code/mcp_servers.json`)
 
@@ -162,10 +236,42 @@ echo ".claude/state/" >> .gitignore
 **Note**: Using `npx` for the memory server will cause `ENOENT` errors because npx
 isolates environment variables. Always use the local node_modules installation.
 
-### AKG MCP Server (ACTIVE)
+### MCP Tool Priority (CRITICAL)
+
+**ALL AGENTS must use MCP tools as PRIMARY tools, falling back to other methods only after MCP tools fail.**
+
+#### Priority Order:
+
+1. **For Code Documentation & Library APIs**: Use `context7` MCP server
+   - **ALWAYS** use `get-library-docs` for SvelteKit, Cloudflare, Rust, or any library documentation
+   - **NEVER** search the web or guess - use Context7 first
+   - Tool: `resolve-library-id` - Find library IDs
+   - Tool: `get-library-docs` - Get up-to-date library documentation
+
+2. **For Cloudflare Queries**: Use Cloudflare MCP servers
+   - `cloudflare-docs` - Search Cloudflare documentation (use FIRST for CF docs)
+   - `cloudflare-observability` - Query Workers logs, metrics, analytics (use FIRST for telemetry)
+   - `cloudflare-builds` - Check build status and logs (use FIRST for build info)
+   - `cloudflare-bindings` - Manage KV, R2, D1, Hyperdrive (use FIRST for resources)
+   - `cloudflare-graphql` - Query Cloudflare GraphQL API (use FIRST for analytics)
+   - **ALWAYS** use Cloudflare MCP tools for Cloudflare-related queries
+   - **NEVER** use web search for Cloudflare documentation or telemetry
+
+3. **For Architecture Validation**: Use `akg` MCP server (Dicee-specific)
+   - **IMPORTANT**: This is the Dicee project AKG, NOT the budget triage AKG
+   - **ALWAYS** validate imports before adding them using `akg_check_import`
+   - **ALWAYS** check layer rules before importing between layers
+
+4. **For Persistent Memory**: Use `memory` MCP server
+   - Tools: `create_entities`, `search_nodes`, `read_graph`
+   - Use for storing project context, decisions, and state
+
+### AKG MCP Server (ACTIVE - Dicee-Specific)
+
+**IMPORTANT**: This is the Dicee project AKG, NOT the budget triage AKG. This AKG is specific to the Dicee codebase architecture.
 
 The AKG MCP server provides architecture-aware queries for agents. It's configured
-in `.mcp.json` and enabled in `.claude/settings.local.json`.
+in `.cursor/mcp.json` and `.mcp.json`.
 
 **Configuration** (`.mcp.json`):
 ```json
@@ -748,4 +854,6 @@ After completing any task:
 ### MCP Servers
 - [MCP Memory Server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory)
 - [Supabase MCP](https://mcp.supabase.com)
+- [Cloudflare MCP Servers](https://github.com/cloudflare/mcp-server-cloudflare) - Documentation, Bindings, Observability, Builds, Logpush, GraphQL
 - [Anthropic MCP Docs](https://docs.anthropic.com/en/docs/mcp)
+- [Cursor MCP Configuration](docs/references/cursor-mcp.md)

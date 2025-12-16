@@ -90,6 +90,17 @@ echo "│ 4/7 Test Suite                                              │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm test 2>/dev/null; then
     echo -e "${GREEN}✓ All tests passed${NC}"
+    
+    # Observability-specific: Check for console.logs in production code
+    if [ -d "packages/cloudflare-do/src" ]; then
+        CONSOLE_COUNT=$(grep -r "console\.log\|console\.error\|console\.warn" packages/cloudflare-do/src --exclude-dir=__tests__ 2>/dev/null | wc -l | tr -d ' ')
+        if [ "$CONSOLE_COUNT" -gt 0 ]; then
+            echo -e "${YELLOW}⚠ Found $CONSOLE_COUNT console.log/error/warn statements in production code${NC}"
+            echo -e "${YELLOW}  (Expected: 0 during observability implementation phase)${NC}"
+        else
+            echo -e "${GREEN}✓ No console.log statements in production code${NC}"
+        fi
+    fi
 else
     echo -e "${RED}✗ Tests failed${NC}"
     FAILED=1

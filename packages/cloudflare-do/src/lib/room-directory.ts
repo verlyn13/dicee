@@ -21,7 +21,6 @@
  */
 
 import type { RoomIdentity } from '@dicee/shared';
-import { Loggers } from './logger';
 
 const STORAGE_KEY = 'lobby:activeRooms';
 
@@ -91,23 +90,16 @@ export interface RoomDirectory {
  * @returns RoomDirectory instance
  */
 export function createRoomDirectory(storage: DurableObjectStorage): RoomDirectory {
-	const logger = Loggers.GlobalLobby();
-
 	// In-memory cache (null = not loaded yet)
 	let rooms: Map<string, RoomInfo> | null = null;
 
 	/**
 	 * Load rooms from storage (lazy, called on first access)
 	 */
-	async function load(): Promise<Map<string, RoomInfo>> {
-		if (rooms === null) {
-			const stored = await storage.get<[string, RoomInfo][]>(STORAGE_KEY);
-			rooms = new Map(stored ?? []);
-
-			logger.info('Loaded rooms from storage', {
-				operation: 'room_directory_load',
-				roomCount: rooms.size,
-			});
+		async function load(): Promise<Map<string, RoomInfo>> {
+			if (rooms === null) {
+				const stored = await storage.get<[string, RoomInfo][]>(STORAGE_KEY);
+				rooms = new Map(stored ?? []);
 		}
 		return rooms;
 	}
@@ -139,9 +131,6 @@ export function createRoomDirectory(storage: DurableObjectStorage): RoomDirector
 		async upsert(room: RoomInfo): Promise<{ success: true } | { success: false; error: string }> {
 			// Validate required fields
 			if (!room.code || typeof room.code !== 'string') {
-				logger.warn('Invalid room data: missing code', {
-					operation: 'room_directory_upsert',
-				});
 				return { success: false, error: 'Room code is required' };
 			}
 
@@ -160,13 +149,6 @@ export function createRoomDirectory(storage: DurableObjectStorage): RoomDirector
 			// STORAGE-FIRST: Persist before returning
 			await persist();
 
-			logger.info('Upserted room', {
-				operation: 'room_directory_upsert',
-				roomCode: room.code,
-				status: room.status,
-				playerCount: room.playerCount,
-			});
-
 			return { success: true };
 		},
 
@@ -177,19 +159,11 @@ export function createRoomDirectory(storage: DurableObjectStorage): RoomDirector
 			if (existed) {
 				// STORAGE-FIRST: Persist before returning
 				await persist();
-
-				logger.info('Removed room', {
-					operation: 'room_directory_remove',
-					roomCode: code,
-				});
 			}
 		},
 
 		invalidateCache(): void {
 			rooms = null;
-			logger.debug('Cache invalidated', {
-				operation: 'room_directory_invalidate',
-			});
 		},
 
 		async size(): Promise<number> {

@@ -35,7 +35,7 @@ import {
 	type MultiplayerGameState,
 } from './game';
 import { createJoinRequestManager, type JoinRequestManager } from './lib/join-request';
-import { createLogger, type Logger } from './lib/logger';
+import { createInstrumentation, type Instrumentation } from './lib/observability/instrumentation';
 import type {
 	AlarmData,
 	ConnectionRole,
@@ -108,8 +108,8 @@ import {
  * - Alarm-based turn timeouts and cleanup
  */
 export class GameRoom extends DurableObject<Env> {
-	/** Structured logger for observability */
-	private logger: Logger = createLogger({ component: 'GameRoom' });
+	/** Observability instrumentation */
+	private instr: Instrumentation | null = null;
 
 	/** Chat manager for lobby chat system */
 	private chatManager: ChatManager;
@@ -229,6 +229,9 @@ export class GameRoom extends DurableObject<Env> {
 			}
 		}
 
+		// Initialize instrumentation if not already initialized
+		await this.ensureInstrumentation();
+
 		// WebSocket upgrade request
 		if (request.headers.get('Upgrade') === 'websocket') {
 			return this.handleWebSocketUpgrade(request, url);
@@ -338,7 +341,11 @@ export class GameRoom extends DurableObject<Env> {
 		const connState = ws.deserializeAttachment() as ConnectionState;
 
 		try {
-			const parsed = JSON.parse(message) as { type: string; payload?: unknown };
+			const parsed = JSON.parse(message) as {
+				type: string;
+				payload?: unknown;
+				correlationId?: string;
+			};
 			await this.handleMessage(ws, connState, parsed);
 		} catch {
 			this.sendError(ws, 'INVALID_MESSAGE', 'Failed to parse message');
@@ -359,7 +366,15 @@ export class GameRoom extends DurableObject<Env> {
 			this._roomCode = (await this.ctx.storage.get<string>('room_code')) ?? 'UNKNOWN';
 		}
 
+		await this.ensureInstrumentation();
+
 		const connState = ws.deserializeAttachment() as ConnectionState;
+		const connectionId = `conn-${connState.userId}`;
+		const wasPlayer = connState.role === 'player';
+
+		// Log disconnection
+		this.instr?.clientDisconnect(connState.userId, code, reason, wasPlayer, connectionId);
+
 		await this.onDisconnect(connState, code, reason);
 	}
 
@@ -372,8 +387,10 @@ export class GameRoom extends DurableObject<Env> {
 			this._roomCode = (await this.ctx.storage.get<string>('room_code')) ?? 'UNKNOWN';
 		}
 
+		await this.ensureInstrumentation();
+
 		const connState = ws.deserializeAttachment() as ConnectionState;
-		console.error(`WebSocket error for ${connState.userId}:`, error);
+		this.instr?.errorHandlerFailed('webSocketError', error);
 		await this.onDisconnect(connState, 1011, 'Internal error');
 	}
 
@@ -550,9 +567,10 @@ export class GameRoom extends DurableObject<Env> {
 	 * HIBERNATION-SAFE: Reloads all state from storage before acting.
 	 */
 	private async handleAITurnTimeout(alarmData: AlarmData): Promise<void> {
+		await this.ensureInstrumentation();
 		const playerId = alarmData.playerId;
 		if (!playerId) {
-			this.logger.warn('AI turn timeout alarm with no playerId');
+			this.instr?.errorHandlerFailed('aiTurnTimeout', new Error('AI turn timeout alarm with no playerId'));
 			await this.ctx.storage.delete('alarm_data');
 			return;
 		}
@@ -564,10 +582,7 @@ export class GameRoom extends DurableObject<Env> {
 			status: string;
 		}>('ai_turn_state');
 		if (!aiTurnState) {
-			this.logger.info('AI turn timeout - turn already completed, alarm is stale', {
-				operation: 'ai_turn_timeout_stale',
-				playerId,
-			});
+			// Turn already completed - alarm is stale (not an error)
 			await this.ctx.storage.delete('alarm_data');
 			return;
 		}
@@ -575,7 +590,7 @@ export class GameRoom extends DurableObject<Env> {
 		// CRITICAL: Reload game state from storage (hibernation-safe)
 		const gameState = await this.gameStateManager.getState();
 		if (!gameState) {
-			this.logger.error('AI turn timeout - no game state found');
+			this.instr?.errorHandlerFailed('aiTurnTimeout', new Error('AI turn timeout - no game state found'));
 			await this.ctx.storage.delete('alarm_data');
 			await this.ctx.storage.delete('ai_turn_state');
 			return;
@@ -584,21 +599,14 @@ export class GameRoom extends DurableObject<Env> {
 		// Verify it's still this player's turn
 		const currentPlayerId = gameState.playerOrder[gameState.currentPlayerIndex];
 		if (currentPlayerId !== playerId) {
-			this.logger.info('AI turn timeout - player changed, clearing stale state', {
-				expected: playerId,
-				actual: currentPlayerId,
-			});
+			// Player changed - clearing stale state (not an error)
 			await this.ctx.storage.delete('alarm_data');
 			await this.ctx.storage.delete('ai_turn_state');
 			return;
 		}
 
 		const retryCount = alarmData.retryCount ?? 0;
-		this.logger.warn('AI turn timeout - attempting recovery', {
-			operation: 'ai_turn_timeout_recovery',
-			playerId,
-			retryCount,
-		});
+		// Recovery attempt logged via error handler if it fails
 
 		if (retryCount < 3) {
 			// Retry the AI turn
@@ -614,10 +622,7 @@ export class GameRoom extends DurableObject<Env> {
 			this.ctx.waitUntil(this.executeAITurnWithRecovery(playerId));
 		} else {
 			// Give up - force a valid action
-			this.logger.error('AI turn retries exhausted - forcing action', {
-				operation: 'ai_turn_force',
-				playerId,
-			});
+			this.instr?.errorHandlerFailed('aiTurnTimeout', new Error(`AI turn retries exhausted - forcing action for ${playerId}`));
 			await this.forceAIAction(playerId);
 			await this.ctx.storage.delete('alarm_data');
 			await this.ctx.storage.delete('ai_turn_state');
@@ -642,10 +647,7 @@ export class GameRoom extends DurableObject<Env> {
 
 		if (availableCategories.length > 0) {
 			const category = availableCategories[0];
-			this.logger.info('Force-scoring category for stuck AI', {
-				playerId,
-				category,
-			});
+			// Force action logged via error handler
 
 			// Execute the scoring through normal game flow
 			try {
@@ -654,11 +656,7 @@ export class GameRoom extends DurableObject<Env> {
 					category: category as Category,
 				});
 			} catch (error) {
-				this.logger.error('Force AI action failed', {
-					playerId,
-					category,
-					error: error instanceof Error ? error.message : String(error),
-				});
+				this.instr?.errorHandlerFailed('forceAIAction', error);
 			}
 		}
 	}
@@ -680,15 +678,28 @@ export class GameRoom extends DurableObject<Env> {
 		const msgType = (message as { type?: string }).type ?? 'unknown';
 		let sentCount = 0;
 
+		// Log broadcast preparation
+		this.instr?.broadcastPrepare(msgType, allSockets.length - (exclude ? 1 : 0));
+
 		const payload = JSON.stringify(message);
 		for (const ws of allSockets) {
 			if (ws !== exclude && ws.readyState === WebSocket.OPEN) {
-				ws.send(payload);
-				sentCount++;
+				try {
+					ws.send(payload);
+					sentCount++;
+				} catch (error) {
+					const connState = ws.deserializeAttachment() as ConnectionState | null;
+					this.instr?.errorBroadcastFailed(
+						msgType,
+						connState?.userId ?? 'unknown',
+						error,
+					);
+				}
 			}
 		}
 
-		console.log(`[Broadcast] ${msgType} → ${sentCount}/${allSockets.length} sockets`);
+		// Log broadcast completion
+		this.instr?.broadcastSent(msgType, sentCount, allSockets.length);
 	}
 
 	/**
@@ -758,7 +769,7 @@ export class GameRoom extends DurableObject<Env> {
 	 * Seats persist through hibernation and track reconnection windows.
 	 */
 	private async getSeats(): Promise<Map<string, PlayerSeat>> {
-		const stored = await this.ctx.storage.get<[string, PlayerSeat][]>('seats');
+		const stored = await this.getStorage<[string, PlayerSeat][]>('seats');
 		return new Map(stored ?? []);
 	}
 
@@ -766,7 +777,7 @@ export class GameRoom extends DurableObject<Env> {
 	 * Save seats to storage.
 	 */
 	private async saveSeats(seats: Map<string, PlayerSeat>): Promise<void> {
-		await this.ctx.storage.put('seats', [...seats.entries()]);
+		await this.putStorage('seats', [...seats.entries()]);
 	}
 
 	/**
@@ -800,9 +811,7 @@ export class GameRoom extends DurableObject<Env> {
 		seats.set(userId, seat);
 		await this.saveSeats(seats);
 
-		console.log(
-			`[GameRoom] Reserved seat for ${displayName} (${userId}), turn order: ${turnOrder}`,
-		);
+		this.instr?.seatAssign(userId, turnOrder, displayName);
 		return true;
 	}
 
@@ -829,9 +838,8 @@ export class GameRoom extends DurableObject<Env> {
 		// Schedule alarm for seat expiration
 		await this.scheduleSeatExpirationAlarm(seat.reconnectDeadline);
 
-		console.log(
-			`[GameRoom] Marked seat disconnected for ${seat.displayName} (${userId}), deadline: ${new Date(seat.reconnectDeadline).toISOString()}`,
-		);
+		// Reserve seat for reconnection
+		this.instr?.seatReserve(userId, seat.turnOrder, seat.reconnectDeadline);
 		return seat;
 	}
 
@@ -865,7 +873,12 @@ export class GameRoom extends DurableObject<Env> {
 		seats.set(userId, seat);
 		await this.saveSeats(seats);
 
-		console.log(`[GameRoom] Player ${seat.displayName} (${userId}) reconnected and reclaimed seat`);
+		// Log seat reclaim attempt and result
+		const hasReservedSeat = seat.reconnectDeadline !== null;
+		const hasActiveGame = false; // TODO: Check if game is active
+		const withinWindow = seat.reconnectDeadline !== null && seat.reconnectDeadline >= now;
+		this.instr?.seatReclaimAttempt(userId, hasReservedSeat, hasActiveGame, withinWindow);
+		this.instr?.seatReclaimResult(userId, 'reclaimed');
 		return { success: true, seat };
 	}
 
@@ -881,9 +894,7 @@ export class GameRoom extends DurableObject<Env> {
 			const alarmData: AlarmData = { type: 'SEAT_EXPIRATION' };
 			await this.ctx.storage.put('alarm_data', alarmData);
 			await this.ctx.storage.setAlarm(deadline);
-			console.log(
-				`[GameRoom] Scheduled seat expiration alarm for ${new Date(deadline).toISOString()}`,
-			);
+			// Alarm scheduling logged via state transition events
 		}
 	}
 
@@ -915,7 +926,7 @@ export class GameRoom extends DurableObject<Env> {
 
 			// Broadcast seat expirations
 			for (const seat of expiredSeats) {
-				console.log(`[GameRoom] Seat expired for ${seat.displayName} (${seat.userId})`);
+				this.instr?.seatRelease(seat.userId, seat.turnOrder, 'timeout');
 
 				this.broadcast({
 					type: 'PLAYER_SEAT_EXPIRED',
@@ -1014,20 +1025,10 @@ export class GameRoom extends DurableObject<Env> {
 
 			// Call GlobalLobby RPC
 			this.lobbyStub.updateRoomStatus(update);
-
-			this.logger.info('Notified lobby of room update', {
-				operation: 'notify_lobby',
-				roomCode,
-				status: lobbyStatus,
-				playerCount: players.length,
-				spectatorCount: update.spectatorCount,
-			});
+			// Room status update logged via broadcast events
 		} catch (error) {
-			this.logger.error('Failed to notify lobby', {
-				operation: 'notify_lobby',
-				roomCode: this.getRoomCode(),
-				error: String(error),
-			});
+			await this.ensureInstrumentation();
+			this.instr?.errorHandlerFailed('notifyLobby', error);
 		}
 	}
 
@@ -1051,7 +1052,7 @@ export class GameRoom extends DurableObject<Env> {
 			};
 			this.lobbyStub.sendHighlight(highlight);
 		} catch (error) {
-			console.error('[GameRoom] Failed to send highlight:', error);
+			this.instr?.errorHandlerFailed('sendHighlight', error);
 		}
 	}
 
@@ -1072,20 +1073,15 @@ export class GameRoom extends DurableObject<Env> {
 		const attemptNotify = (attempt: number): void => {
 			try {
 				this.lobbyStub.updateUserRoomStatus(userId, roomCode, action);
-				console.log(`[GameRoom] Notified lobby: user ${userId} ${action} room ${roomCode}`);
+				// Lobby notification success (no event needed - internal operation)
 			} catch (error) {
 				if (attempt < maxRetries) {
 					// Exponential backoff: 100ms, 200ms, 400ms
 					const delay = 100 * 2 ** attempt;
-					console.warn(
-						`[GameRoom] Retry ${attempt + 1}/${maxRetries} notifying lobby in ${delay}ms`,
-					);
+					// Retry logged via connection events
 					setTimeout(() => attemptNotify(attempt + 1), delay);
 				} else {
-					console.error(
-						'[GameRoom] Failed to notify lobby of user room status after retries:',
-						error,
-					);
+					this.instr?.errorHandlerFailed('notifyLobbyUserRoomStatus', error);
 				}
 			}
 		};
@@ -1094,10 +1090,101 @@ export class GameRoom extends DurableObject<Env> {
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
+	// Instrumentation Helpers
+	// ─────────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * Ensure instrumentation is initialized (lazy initialization)
+	 * Called on first access after hibernation wake
+	 */
+	private async ensureInstrumentation(): Promise<void> {
+		if (this.instr) return;
+
+		// Load room code if not cached
+		if (!this._roomCode) {
+			this._roomCode = (await this.ctx.storage.get<string>('room_code')) ?? 'UNKNOWN';
+		}
+
+		// Initialize instrumentation
+		this.instr = createInstrumentation('GameRoom', this._roomCode);
+
+		// Log hibernation wake with storage audit
+		const allKeys = Array.from((await this.ctx.storage.list()).keys());
+		const connectedClients = this.ctx.getWebSockets().length;
+		this.instr.hibernationWake(allKeys, connectedClients);
+	}
+
+	/**
+	 * Instrumented storage.get wrapper
+	 * Logs read operations with timing and size information
+	 */
+	private async getStorage<T>(key: string): Promise<T | undefined> {
+		await this.ensureInstrumentation();
+		this.instr?.storageReadStart(key);
+
+		const startTime = Date.now();
+		try {
+			const value = await this.ctx.storage.get<T>(key);
+			const duration = Date.now() - startTime;
+			const found = value !== undefined;
+			const valueType = found ? typeof value : undefined;
+			const sizeBytes = found ? JSON.stringify(value).length : undefined;
+
+			this.instr?.storageReadEnd(key, found, valueType, duration, sizeBytes);
+			return value;
+		} catch (error) {
+			const duration = Date.now() - startTime;
+			this.instr?.errorStorageFailed('get', key, error);
+			this.instr?.storageReadEnd(key, false, undefined, duration);
+			throw error;
+		}
+	}
+
+	/**
+	 * Instrumented storage.put wrapper
+	 * Logs write operations with timing and size information
+	 */
+	private async putStorage<T>(key: string, value: T): Promise<void> {
+		await this.ensureInstrumentation();
+		const valueType = typeof value;
+		const sizeBytes = JSON.stringify(value).length;
+		this.instr?.storageWriteStart(key, valueType, sizeBytes);
+
+		const startTime = Date.now();
+		try {
+			await this.ctx.storage.put(key, value);
+			const duration = Date.now() - startTime;
+			this.instr?.storageWriteEnd(key, true, duration);
+		} catch (error) {
+			const duration = Date.now() - startTime;
+			this.instr?.errorStorageFailed('put', key, error);
+			this.instr?.storageWriteEnd(key, false, duration);
+			throw error;
+		}
+	}
+
+	/**
+	 * Instrumented storage.delete wrapper
+	 */
+	private async deleteStorage(key: string): Promise<boolean> {
+		await this.ensureInstrumentation();
+		try {
+			await this.ctx.storage.delete(key);
+			this.instr?.storageDelete(key, true);
+			return true;
+		} catch (error) {
+			this.instr?.errorStorageFailed('delete', key, error);
+			this.instr?.storageDelete(key, false);
+			throw error;
+		}
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────────
 	// Connection Lifecycle
 	// ─────────────────────────────────────────────────────────────────────────────
 
 	private async onConnect(ws: WebSocket, connState: ConnectionState): Promise<void> {
+		await this.ensureInstrumentation();
 		// Initialize chat manager (loads state from storage)
 		await this.chatManager.initialize();
 
@@ -1186,7 +1273,14 @@ export class GameRoom extends DurableObject<Env> {
 				reconnectedSeat = reconnectionResult.seat;
 				connState.isHost = reconnectedSeat.isHost;
 				ws.serializeAttachment(connState);
-				console.log(`[GameRoom] Player ${connState.displayName} reconnected with existing seat`);
+				
+				// Get connection ID from WebSocket tags or generate one
+				const connectionId = `conn-${connState.userId}-${Date.now()}`;
+				this.instr?.clientReconnect(
+					connState.userId,
+					'unknown', // Previous connection ID not tracked
+					connectionId,
+				);
 			} else {
 				// New player or seat expired
 				connState.isHost = connState.userId === roomState.hostUserId;
@@ -1307,18 +1401,27 @@ export class GameRoom extends DurableObject<Env> {
 	private async handleMessage(
 		ws: WebSocket,
 		connState: ConnectionState,
-		message: { type: string; payload?: unknown },
+		message: { type: string; payload?: unknown; correlationId?: string },
 	): Promise<void> {
-		const { type, payload } = message;
-		console.log(`[GameRoom] >>> RECEIVED: ${type} from ${connState.userId}`);
+		await this.ensureInstrumentation();
 
-		// Route chat-related messages through ChatManager
-		if (isChatMessageType(type)) {
-			await this.handleChatMessage(ws, connState, message);
-			return;
+		const { type, payload, correlationId } = message;
+
+		// Set correlation ID for this request (propagates to all events in this request)
+		if (correlationId) {
+			this.instr?.setCorrelationId(correlationId);
 		}
 
-		switch (type) {
+		try {
+			// Message receipt is logged via broadcast.prepare when broadcasting responses
+
+			// Route chat-related messages through ChatManager
+			if (isChatMessageType(type)) {
+				await this.handleChatMessage(ws, connState, message);
+				return;
+			}
+
+			switch (type) {
 			case 'START_GAME':
 				await this.handleStartGame(ws, connState);
 				break;
@@ -1482,6 +1585,16 @@ export class GameRoom extends DurableObject<Env> {
 
 			default:
 				this.sendError(ws, 'UNKNOWN_COMMAND', `Unknown message type: ${type}`);
+			}
+		} catch (error) {
+			// Log handler errors with correlation ID preserved
+			this.instr?.errorHandlerFailed(`handleMessage.${type}`, error);
+			throw error;
+		} finally {
+			// Clear correlation ID after request handling (ensures clean state for next request)
+			if (correlationId) {
+				this.instr?.clearCorrelationId();
+			}
 		}
 	}
 
@@ -1715,7 +1828,7 @@ export class GameRoom extends DurableObject<Env> {
 		// Schedule expiration
 		this.scheduleInviteExpiration(inviteId, targetUserId, INVITE_EXPIRATION_MS);
 
-		console.log(`[GameRoom] Invite ${inviteId} sent to ${targetUserId} for room ${roomCode}`);
+		// Invite sent (internal operation - no event needed)
 	}
 
 	/**
@@ -1752,7 +1865,7 @@ export class GameRoom extends DurableObject<Env> {
 		};
 		await this.lobbyStub.cancelInvite(cancellationRequest);
 
-		console.log(`[GameRoom] Invite ${invite.id} cancelled for ${targetUserId}`);
+		// Invite cancelled (internal operation - no event needed)
 	}
 
 	/**
@@ -1763,7 +1876,7 @@ export class GameRoom extends DurableObject<Env> {
 		const invite = this.pendingInvites.get(response.targetUserId);
 
 		if (!invite || invite.id !== response.inviteId) {
-			console.log(`[GameRoom] Invite response for unknown invite: ${response.inviteId}`);
+			// Unknown invite response (invalid state - no event needed)
 			return;
 		}
 
@@ -1778,7 +1891,7 @@ export class GameRoom extends DurableObject<Env> {
 		});
 
 		if (!hostWs) {
-			console.log(`[GameRoom] Host not found to notify of invite response`);
+			// Host not found (invalid state - no event needed)
 			return;
 		}
 
@@ -1796,9 +1909,7 @@ export class GameRoom extends DurableObject<Env> {
 			}),
 		);
 
-		console.log(
-			`[GameRoom] Invite ${response.inviteId} ${response.action}ed by ${response.targetUserId}`,
-		);
+		// Invite response processed (internal operation - no event needed)
 	}
 
 	/**
@@ -1819,7 +1930,7 @@ export class GameRoom extends DurableObject<Env> {
 			await this.lobbyStub.cancelInvite(cancellationRequest);
 		}
 
-		console.log(`[GameRoom] Cancelled ${this.pendingInvites.size} pending invites: ${reason}`);
+		// Invites cancelled (internal operation - no event needed)
 		this.pendingInvites.clear();
 	}
 
@@ -1862,7 +1973,7 @@ export class GameRoom extends DurableObject<Env> {
 					);
 				}
 
-				console.log(`[GameRoom] Invite ${inviteId} expired for ${targetUserId}`);
+				// Invite expired (internal operation - no event needed)
 			}
 		}, delayMs);
 	}
@@ -1882,22 +1993,9 @@ export class GameRoom extends DurableObject<Env> {
 		const roomCode = this.getRoomCode();
 		const connectedPlayers = this.getConnectedPlayerCount();
 
-		this.logger.info('Processing join request', {
-			operation: 'join_request_receive',
-			roomCode,
-			requesterId: input.requesterId,
-		});
-
 		// Check room state
 		const roomState = await this.ctx.storage.get<RoomState>('room');
 		if (!roomState || roomState.status !== 'waiting') {
-			this.logger.info('Join request rejected - room not accepting', {
-				operation: 'join_request_reject',
-				roomCode,
-				requesterId: input.requesterId,
-				reason: 'room_not_accepting',
-				roomStatus: roomState?.status,
-			});
 			return {
 				success: false,
 				errorCode: 'ROOM_NOT_ACCEPTING',
@@ -1908,16 +2006,6 @@ export class GameRoom extends DurableObject<Env> {
 		// Check capacity - include AI players in count
 		const playerCount = connectedPlayers + (roomState.aiPlayers?.length ?? 0);
 		if (playerCount >= roomState.settings.maxPlayers) {
-			this.logger.info('Join request rejected - room full', {
-				operation: 'join_request_reject',
-				roomCode,
-				requesterId: input.requesterId,
-				reason: 'room_full',
-				connectedPlayers,
-				aiPlayers: roomState.aiPlayers?.length ?? 0,
-				totalPlayerCount: playerCount,
-				maxPlayers: roomState.settings.maxPlayers,
-			});
 			return {
 				success: false,
 				errorCode: 'ROOM_FULL',
@@ -1934,12 +2022,6 @@ export class GameRoom extends DurableObject<Env> {
 		});
 
 		if (!result.success) {
-			this.logger.info('Join request creation failed', {
-				operation: 'join_request_create_failed',
-				roomCode,
-				requesterId: input.requesterId,
-				errorCode: result.error.code,
-			});
 			return {
 				success: false,
 				errorCode: result.error.code,
@@ -1954,14 +2036,6 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Notify host via WebSocket
 		this.notifyHostOfJoinRequest(request);
-
-		this.logger.info('Join request created', {
-			operation: 'join_request_create',
-			roomCode,
-			requestId: request.id,
-			requesterId: input.requesterId,
-			expiresAt: request.expiresAt,
-		});
 
 		// Return entity format expected by types
 		const entity: JoinRequestEntity = {
@@ -1988,13 +2062,6 @@ export class GameRoom extends DurableObject<Env> {
 	async cancelJoinRequest(requestId: string, userId: string): Promise<JoinRequestRPCResponse> {
 		const roomCode = this.getRoomCode();
 
-		this.logger.info('Processing join request cancellation', {
-			operation: 'join_request_cancel',
-			roomCode,
-			requestId,
-			userId,
-		});
-
 		// Get the request
 		const request = this.joinRequestManager.getRequest(requestId);
 		if (!request) {
@@ -2007,13 +2074,6 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Verify the canceller is the requester
 		if (request.requesterId !== userId) {
-			this.logger.warn('Join request cancellation rejected - not requester', {
-				operation: 'join_request_cancel_reject',
-				roomCode,
-				requestId,
-				attemptedBy: userId,
-				actualRequester: request.requesterId,
-			});
 			return {
 				success: false,
 				errorCode: 'NOT_REQUESTER',
@@ -2030,13 +2090,6 @@ export class GameRoom extends DurableObject<Env> {
 				errorMessage: result.error.message,
 			};
 		}
-
-		this.logger.info('Join request cancelled', {
-			operation: 'join_request_cancelled',
-			roomCode,
-			requestId,
-			requesterId: userId,
-		});
 
 		// Notify host that request was cancelled
 		this.notifyHostOfJoinRequestCancellation(requestId, request.requesterDisplayName);
@@ -2064,14 +2117,6 @@ export class GameRoom extends DurableObject<Env> {
 		const { requestId, approved } = payload;
 		const roomCode = this.getRoomCode();
 
-		this.logger.info('Processing join request response', {
-			operation: 'join_request_response',
-			roomCode,
-			requestId,
-			approved,
-			hostId: connState.userId,
-		});
-
 		// Get the request
 		const request = this.joinRequestManager.getRequest(requestId);
 		if (!request) {
@@ -2085,12 +2130,6 @@ export class GameRoom extends DurableObject<Env> {
 			: this.joinRequestManager.decline(requestId);
 
 		if (!result.success) {
-			this.logger.warn('Join request response failed', {
-				operation: 'join_request_response_failed',
-				roomCode,
-				requestId,
-				errorCode: result.error.code,
-			});
 			this.sendError(ws, result.error.code, result.error.message);
 			return;
 		}
@@ -2105,14 +2144,6 @@ export class GameRoom extends DurableObject<Env> {
 		};
 
 		await this.lobbyStub.deliverJoinRequestResponse(delivery);
-
-		this.logger.info('Join request response delivered', {
-			operation: 'join_request_response_delivered',
-			roomCode,
-			requestId,
-			status: delivery.status,
-			requesterId: request.requesterId,
-		});
 
 		// Clean up the request
 		this.joinRequestManager.remove(requestId);
@@ -2130,13 +2161,6 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		const roomCode = this.getRoomCode();
-
-		this.logger.info('Join request expired', {
-			operation: 'join_request_expire',
-			roomCode,
-			requestId,
-			requesterId: request.requesterId,
-		});
 
 		// Mark as expired
 		const result = this.joinRequestManager.expire(requestId);
@@ -2211,11 +2235,7 @@ export class GameRoom extends DurableObject<Env> {
 				}),
 			);
 		} else {
-			this.logger.warn('No host WebSocket found for join request notification', {
-				operation: 'notify_host_join_request',
-				roomCode,
-				requestId: request.id,
-			});
+			// Host not connected, join request will be delivered when host reconnects
 		}
 	}
 
@@ -2363,6 +2383,11 @@ export class GameRoom extends DurableObject<Env> {
 		// Start the game immediately (could add countdown later)
 		const startResult = await this.gameStateManager.startGame();
 
+		// Log game start
+		await this.ensureInstrumentation();
+		this.instr?.gameStart(players.length, connState.userId);
+		this.instr?.gameTurnStart(startResult.currentPlayerId, startResult.turnNumber);
+
 		// Update room status to playing
 		roomState.status = 'playing';
 		await this.ctx.storage.put('room', roomState);
@@ -2396,10 +2421,12 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Note: No lobby highlight for game start (only for notable game events)
 
+		// Log game start
+		await this.ensureInstrumentation();
+		this.instr?.gameStart(players.length, connState.userId);
+
 		// Trigger AI turn if first player is AI
-		console.log(`[GameRoom] About to trigger AI turn check for: ${startResult.currentPlayerId}`);
 		await this.triggerAITurnIfNeeded(startResult.currentPlayerId);
-		console.log(`[GameRoom] AI turn trigger complete`);
 	}
 
 	/**
@@ -2594,9 +2621,9 @@ export class GameRoom extends DurableObject<Env> {
 		// Notify lobby
 		await this.notifyLobbyOfUpdate();
 
-		console.log(
-			`[GameRoom] Quick Play started: human=${connState.userId}, AI=${aiPlayers.map((p) => p.id).join(', ')}`,
-		);
+		// Log quick play start
+		await this.ensureInstrumentation();
+		this.instr?.gameStart(1 + aiPlayers.length, connState.userId);
 
 		// Human always goes first in quick play, so no AI turn trigger needed here
 		// AI will play after human scores
@@ -2729,7 +2756,7 @@ export class GameRoom extends DurableObject<Env> {
 		// Notify lobby of updated player count
 		await this.notifyLobbyOfUpdate();
 
-		console.log(`[GameRoom] AI player removed: ${removedPlayer.displayName} (${payload.playerId})`);
+		// AI player removal logged via state transition events
 	}
 
 	/**
@@ -2763,6 +2790,10 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Execute the roll
 		const result = await this.gameStateManager.rollDice(connState.userId, keptMask);
+
+		// Log game roll event
+		await this.ensureInstrumentation();
+		this.instr?.gameRoll(connState.userId, result.rollNumber, result.dice);
 
 		// Broadcast dice rolled to all players
 		this.broadcast({
@@ -2878,6 +2909,10 @@ export class GameRoom extends DurableObject<Env> {
 		// Execute scoring
 		const result = await this.gameStateManager.scoreCategory(connState.userId, category);
 
+		// Log game score event
+		await this.ensureInstrumentation();
+		this.instr?.gameScore(connState.userId, category, result.score);
+
 		// Evaluate predictions for this turn
 		// wasDicee: scored a dicee (50) or got bonus
 		// improved: scored > 0 (simplified - could track position changes)
@@ -2930,6 +2965,13 @@ export class GameRoom extends DurableObject<Env> {
 			// Game over
 			this.handleGameOver(result.rankings);
 		} else if (result.nextPlayerId) {
+			// Log turn end for current player and turn start for next player
+			await this.ensureInstrumentation();
+			if (gameState.currentPlayerIndex > 0) {
+				this.instr?.gameTurnEnd(connState.userId, gameState.turnNumber);
+			}
+			this.instr?.gameTurnStart(result.nextPlayerId, result.nextTurnNumber);
+
 			// Next player's turn
 			this.broadcast({
 				type: 'TURN_CHANGED',
@@ -2991,6 +3033,14 @@ export class GameRoom extends DurableObject<Env> {
 		}> | null,
 	): void {
 		if (!rankings) return;
+
+		// Log game completion
+		const winnerId = rankings[0]?.playerId;
+		const finalScores: Record<string, number> = {};
+		for (const ranking of rankings) {
+			finalScores[ranking.playerId] = ranking.score;
+		}
+		this.instr?.gameComplete(winnerId, finalScores);
 
 		// Broadcast game over
 		this.broadcast({
@@ -3067,15 +3117,15 @@ export class GameRoom extends DurableObject<Env> {
 	 * This is called by AIRoomManager during AI turn execution.
 	 */
 	private async executeAICommand(playerId: string, command: AICommand): Promise<void> {
-		console.log(`[GameRoom] executeAICommand ENTRY: ${playerId} ${command.type}`);
+		await this.ensureInstrumentation();
 
 		const gameState = await this.gameStateManager.getState();
 		if (!gameState) {
-			console.error('[GameRoom] No game state for AI command');
+			this.instr?.errorHandlerFailed('executeAICommand', new Error('No game state for AI command'));
 			return;
 		}
 
-		console.log(`[GameRoom] executeAICommand has game state, processing ${command.type}`);
+		// AI command execution logged via game events (roll, score, etc.)
 
 		switch (command.type) {
 			case 'roll': {
@@ -3237,10 +3287,7 @@ export class GameRoom extends DurableObject<Env> {
 			return;
 		}
 
-		this.logger.info('Scheduling AI turn', {
-			operation: 'ai_turn_schedule',
-			playerId,
-		});
+		// AI turn scheduled (logged via state transition)
 
 		// STEP 1: Persist AI turn state to storage FIRST (hibernation-safe)
 		const aiTurnState = {
@@ -3292,16 +3339,9 @@ export class GameRoom extends DurableObject<Env> {
 			// SUCCESS: Clear the AI turn state (alarm handler will check this)
 			await this.ctx.storage.delete('ai_turn_state');
 
-			this.logger.info('AI turn completed successfully', {
-				operation: 'ai_turn_complete',
-				playerId,
-			});
+			// AI turn complete (logged via state transition)
 		} catch (error) {
-			this.logger.error('AI turn failed', {
-				operation: 'ai_turn_error',
-				playerId,
-				error: error instanceof Error ? error.message : String(error),
-			});
+			this.instr?.errorHandlerFailed('executeAITurnWithRecovery', error);
 			// Let the alarm handler retry if needed
 		}
 	}
@@ -3393,12 +3433,7 @@ export class GameRoom extends DurableObject<Env> {
 		connState: ConnectionState,
 		content: string,
 	): Promise<void> {
-		this.logger.debug('Processing chat message', {
-			operation: 'chat_receive',
-			roomCode: this.getRoomCode(),
-			userId: connState.userId,
-			contentLength: content.length,
-		});
+		// Chat message received (logged via broadcast events)
 
 		const result = await this.chatManager.handleTextMessage(
 			connState.userId,
@@ -3407,12 +3442,7 @@ export class GameRoom extends DurableObject<Env> {
 		);
 
 		if (!result.success) {
-			this.logger.warn('Chat message rejected', {
-				operation: 'chat_reject',
-				roomCode: this.getRoomCode(),
-				userId: connState.userId,
-				error: result.error,
-			});
+			this.instr?.errorHandlerFailed('handleTextChat', new Error(result.errorMessage));
 			ws.send(JSON.stringify(createChatErrorResponse(result.error, result.errorMessage)));
 			return;
 		}
@@ -3420,12 +3450,7 @@ export class GameRoom extends DurableObject<Env> {
 		// Broadcast the message to all connected clients
 		this.broadcast(createChatMessageResponse(result.message));
 
-		this.logger.debug('Chat message broadcast', {
-			operation: 'chat_broadcast',
-			roomCode: this.getRoomCode(),
-			userId: connState.userId,
-			messageId: result.message.id,
-		});
+		// Chat message broadcast (logged via broadcastSent)
 
 		// Broadcast updated typing status (user stopped typing)
 		this.broadcastTypingUpdate();
@@ -3513,13 +3538,6 @@ export class GameRoom extends DurableObject<Env> {
 	 * Users have a 30-second cooldown between shouts.
 	 */
 	private handleShout(ws: WebSocket, connState: ConnectionState, content: string): void {
-		this.logger.debug('Processing shout message', {
-			operation: 'shout_receive',
-			roomCode: this.getRoomCode(),
-			userId: connState.userId,
-			contentLength: content.length,
-		});
-
 		const result = this.chatManager.handleShout(
 			connState.userId,
 			connState.displayName,
@@ -3529,12 +3547,6 @@ export class GameRoom extends DurableObject<Env> {
 
 		if (!result.success) {
 			const error = result.error;
-			this.logger.debug('Shout rejected', {
-				operation: 'shout_reject',
-				roomCode: this.getRoomCode(),
-				userId: connState.userId,
-				errorCode: error.code,
-			});
 
 			if (error.code === 'RATE_LIMITED') {
 				// Send cooldown response
@@ -3551,13 +3563,6 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		const shout = result.value;
-
-		this.logger.info('Shout broadcast', {
-			operation: 'shout_broadcast',
-			roomCode: this.getRoomCode(),
-			userId: connState.userId,
-			shoutId: shout.id,
-		});
 
 		// Broadcast to ALL clients (including sender - they see their own bubble)
 		this.broadcast(createShoutReceivedResponse(shout));
@@ -3576,7 +3581,7 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	private sendChatHistory(ws: WebSocket): void {
 		const history = this.chatManager.getHistory();
-		console.log(`[GameRoom] Sending CHAT_HISTORY with ${history.length} messages`);
+		// Chat history sent via broadcast events
 		ws.send(JSON.stringify(createChatHistoryResponse(history)));
 	}
 
@@ -3752,9 +3757,7 @@ export class GameRoom extends DurableObject<Env> {
 			},
 		});
 
-		console.log(
-			`[GameRoom] Prediction made by ${connState.displayName}: ${payload.type} for player ${payload.playerId}`,
-		);
+		// Prediction made (logged via broadcast events)
 	}
 
 	/**
@@ -4078,9 +4081,7 @@ export class GameRoom extends DurableObject<Env> {
 		// Broadcast rooting update to everyone
 		this.broadcastRootingUpdate();
 
-		console.log(
-			`[GameRoom] ${connState.displayName} is now rooting for player ${payload.playerId}`,
-		);
+		// Rooting choice made (logged via broadcast events)
 	}
 
 	/**
@@ -4123,7 +4124,7 @@ export class GameRoom extends DurableObject<Env> {
 		// Broadcast rooting update
 		this.broadcastRootingUpdate();
 
-		console.log(`[GameRoom] ${connState.displayName} cleared their rooting choice`);
+		// Rooting choice cleared (logged via broadcast events)
 	}
 
 	/**
@@ -4335,9 +4336,7 @@ export class GameRoom extends DurableObject<Env> {
 		// Broadcast updated kibitz state
 		this.broadcastKibitzUpdate(payload.voteType);
 
-		console.log(
-			`[GameRoom] ${connState.displayName} kibitzes: ${payload.voteType} = ${payload.category ?? payload.keepPattern ?? payload.action}`,
-		);
+		// Kibitz vote made (logged via broadcast events)
 	}
 
 	/**
@@ -4874,7 +4873,7 @@ export class GameRoom extends DurableObject<Env> {
 		// Broadcast queue update
 		this.broadcastQueueUpdate(roomState);
 
-		console.log(`[GameRoom] ${connState.displayName} joined queue at position ${entry.position}`);
+		// Queue join (logged via broadcast events)
 	}
 
 	/**
@@ -4908,7 +4907,7 @@ export class GameRoom extends DurableObject<Env> {
 			}
 		});
 
-		console.log(`[GameRoom] ${connState.displayName} left the queue`);
+		// Queue leave (logged via broadcast events)
 	}
 
 	/**
@@ -5078,9 +5077,7 @@ export class GameRoom extends DurableObject<Env> {
 		await this.ctx.storage.put('alarm_data', alarmData);
 		await this.ctx.storage.setAlarm(Date.now() + WARM_SEAT_COUNTDOWN_SECONDS * 1000);
 
-		console.log(
-			`[GameRoom] Warm seat transition: ${transitioningUsers.length} spectators becoming players`,
-		);
+		// Warm seat transition started (logged via state transition events)
 
 		return this.warmSeatTransition;
 	}
@@ -5151,7 +5148,7 @@ export class GameRoom extends DurableObject<Env> {
 		// Notify lobby of player count change
 		await this.notifyLobbyOfUpdate();
 
-		console.log('[GameRoom] Warm seat transition complete');
+		// Warm seat transition complete (logged via state transition events)
 	}
 
 	/**

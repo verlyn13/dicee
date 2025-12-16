@@ -1,6 +1,6 @@
 # Gopass Structure for Dicee Project
 # This file documents the credential storage architecture
-# Last updated: 2024-12-02
+# Last updated: 2025-01-XX
 #
 # Passphrase for gopass: escapable diameter silk discover
 
@@ -219,6 +219,23 @@ structure:
           - path: "dicee/cloudflare/api-token-expiry"
             description: "Token expiration date (optional)"
 
+    context7:
+      description: "Context7 MCP server for up-to-date library documentation"
+      paths:
+        credentials:
+          - path: "dicee/context7/api-key"
+            value: "[STORED]"
+            description: "API key for Context7 MCP server authentication (Windsurf/Claude Code/Cursor)"
+            sensitive: true
+            usage: |
+              Enables Context7 MCP server to fetch up-to-date library documentation.
+              Used by MCP clients via CONTEXT7_API_KEY environment variable.
+              Get your API key from: https://context7.com/dashboard
+            mcp_config:
+              server: "context7"
+              env_var: "CONTEXT7_API_KEY"
+              config_path: ".mcp.json and .cursor/mcp.json"
+
 # Usage patterns for retrieval
 usage:
   cli:
@@ -292,4 +309,28 @@ usage:
           set -gx CLOUDFLARE_ACCOUNT_ID (gopass show -o dicee/cloudflare/account-id)
           echo "Loaded Cloudflare credentials"
           wrangler whoami
+      end
+
+  context7:
+    description: "Context7 MCP server authentication patterns"
+    mcp_usage: |
+      # Export for MCP server usage
+      export CONTEXT7_API_KEY=$(gopass show -o dicee/context7/api-key)
+      
+      # The MCP server will automatically use this environment variable
+      # Configured in .mcp.json and .cursor/mcp.json:
+      #   "context7": {
+      #     "type": "http",
+      #     "url": "https://mcp.context7.com/mcp",
+      #     "headers": {
+      #       "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"
+      #     }
+      #   }
+
+    fish_function: |
+      # Optional: Add to ~/.config/fish/functions/dicee-mcp.fish
+      function dicee-mcp --description "Load MCP server credentials for dicee"
+          set -gx CONTEXT7_API_KEY (gopass show -o dicee/context7/api-key)
+          set -gx SUPABASE_MCP_TOKEN (gopass show -o dicee/supabase/mcp-token)
+          echo "Loaded MCP server credentials (Context7, Supabase)"
       end

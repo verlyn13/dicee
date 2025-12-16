@@ -245,6 +245,25 @@ jobs:
       - name: Run tests
         run: pnpm --filter @dicee/cloudflare-do test -- run
 
+      - name: Check observability test coverage
+        if: github.ref == 'refs/heads/main' || contains(github.head_ref, 'observability')
+        run: |
+          pnpm --filter @dicee/cloudflare-do test --coverage || true
+          echo "::notice::Observability test coverage check (during observability implementation phase)"
+        continue-on-error: true
+
+      - name: Check for console.log statements
+        if: github.ref == 'refs/heads/main' || contains(github.head_ref, 'observability')
+        run: |
+          CONSOLE_COUNT=$(grep -r "console\.log\|console\.error\|console\.warn" packages/cloudflare-do/src --exclude-dir=__tests__ 2>/dev/null | wc -l | tr -d ' ')
+          if [ "$CONSOLE_COUNT" -gt 0 ]; then
+            echo "::warning::Found $CONSOLE_COUNT console.log/error/warn statements in production code"
+            echo "::notice::Expected: 0 during observability implementation phase"
+          else
+            echo "::notice::No console.log statements found in production code"
+          fi
+        continue-on-error: true
+
   deploy-worker:
     name: Deploy Durable Objects Worker
     runs-on: ubuntu-latest
