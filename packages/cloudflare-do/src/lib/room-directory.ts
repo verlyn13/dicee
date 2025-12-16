@@ -20,6 +20,7 @@
  * ```
  */
 
+import type { RoomIdentity } from '@dicee/shared';
 import { Loggers } from './logger';
 
 const STORAGE_KEY = 'lobby:activeRooms';
@@ -50,6 +51,8 @@ export interface RoomInfo {
 	}>;
 	createdAt: number;
 	updatedAt: number;
+	/** Visual identity for lobby display (color, pattern, hype name) */
+	identity?: RoomIdentity;
 }
 
 /**

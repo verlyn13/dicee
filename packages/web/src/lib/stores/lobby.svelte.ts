@@ -15,6 +15,7 @@ import {
 	isValidLobbyChatContent,
 	type LobbyServerEventInput,
 	parseLobbyServerEvent,
+	type RoomIdentity,
 } from '@dicee/shared';
 import { browser } from '$app/environment';
 
@@ -50,6 +51,8 @@ export interface RoomInfo {
 	}>;
 	createdAt: number;
 	updatedAt: number;
+	/** Visual identity for lobby display (color, pattern, hype name) */
+	identity?: RoomIdentity;
 }
 
 export interface TickerEvent {

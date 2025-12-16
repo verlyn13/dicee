@@ -39,3 +39,10 @@ export * from './events/index.js';
 
 // Re-export validation schemas
 export * from './validation/index.js';
+
+// =============================================================================
+// Utilities
+// =============================================================================
+
+// Re-export utility functions
+export * from './utils/index.js';

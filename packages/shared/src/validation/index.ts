@@ -56,3 +56,12 @@ export type {
 	LobbyCommandInput,
 	LobbyServerEventInput,
 } from './lobby-schemas.js';
+
+// Room identity schemas
+export {
+	CartridgeColorSchema,
+	CartridgePatternSchema,
+	RoomIdentitySchema,
+	parseRoomIdentity,
+	isValidRoomIdentity,
+} from './room-identity-schemas.js';

@@ -6,6 +6,7 @@
  */
 
 import { DurableObject } from 'cloudflare:workers';
+import { generateRoomIdentity } from '@dicee/shared';
 import { type AICommand, AIRoomManager, createAIPlayerState, getProfile } from './ai';
 import { extractAvatarUrl, extractDisplayName, verifySupabaseJWT } from './auth';
 import {
@@ -1008,6 +1009,7 @@ export class GameRoom extends DurableObject<Env> {
 				hostName: hostState?.displayName ?? 'Unknown',
 				game: 'dicee',
 				updatedAt: Date.now(),
+				identity: roomState.identity,
 			};
 
 			// Call GlobalLobby RPC
@@ -1162,7 +1164,10 @@ export class GameRoom extends DurableObject<Env> {
 		if (!roomState) {
 			// First connection creates the room
 			isInitialCreation = true;
-			roomState = createInitialRoomState(this.getRoomCode(), connState.userId);
+			const roomCode = this.getRoomCode();
+			roomState = createInitialRoomState(roomCode, connState.userId);
+			// Generate visual identity for lobby display
+			roomState.identity = generateRoomIdentity(roomCode);
 			await this.ctx.storage.put('room', roomState);
 
 			// Update connection state to mark as host

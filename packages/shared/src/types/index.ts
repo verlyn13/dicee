@@ -105,6 +105,10 @@ export {
 	INVITE_EXPIRATION_MS,
 } from './lobby.js';
 
+// Room identity types
+export type { CartridgeColor, CartridgePattern, RoomIdentity } from './room-identity.js';
+export { CARTRIDGE_COLORS, CARTRIDGE_PATTERNS, isCartridgeColor, isCartridgePattern } from './room-identity.js';
+
 // Admin types
 export type {
 	AdminRole,

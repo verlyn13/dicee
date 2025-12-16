@@ -284,12 +284,17 @@ function resolveLocalPath(
  * Resolve a monorepo package import
  */
 function resolvePackageImport(specifier: string, projectRoot: string): string | null {
+	// Monorepo package paths
 	// @dicee/web -> packages/web/src
+	// @dicee/shared -> packages/shared/src
+	// @dicee/cloudflare-do -> packages/cloudflare-do/src
 	// @dicee/partykit -> packages/partykit/src
 	// @dicee/engine -> packages/engine/src
 
 	const packageMap: Record<string, string> = {
 		'@dicee/web': 'packages/web/src',
+		'@dicee/shared': 'packages/shared/src',
+		'@dicee/cloudflare-do': 'packages/cloudflare-do/src',
 		'@dicee/partykit': 'packages/partykit/src',
 		'@dicee/engine': 'packages/engine/src',
 	};

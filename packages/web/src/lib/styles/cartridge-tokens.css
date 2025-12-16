@@ -1,0 +1,133 @@
+/* =============================================================================
+   CARTRIDGE DESIGN TOKENS
+   Neo-Brutalist room identity system for Dicee lobby
+   ============================================================================= */
+
+:root {
+	/* --- Cartridge Background Palette (Light Mode) ---
+	   High-saturation pastels optimized for #0a0a0a text
+	   Contrast ratios: All >= 7:1 (AAA compliant) */
+
+	--cartridge-flamingo: #ff9f9f; /* Warm pink-red */
+	--cartridge-mint: #7eeac4; /* Cool green */
+	--cartridge-sky: #8fc7ff; /* Soft blue */
+	--cartridge-orchid: #d89ef7; /* Purple-pink */
+	--cartridge-sherbet: #ffb870; /* Warm orange */
+	--cartridge-slime: #c5f25e; /* Acid green */
+	--cartridge-concrete: #d4d4d4; /* Neutral fallback */
+
+	/* NOTE: No yellow - conflicts with --color-accent (#ffd700) */
+
+	/* --- Pattern Opacity (Light Mode) ---
+	   Subtle enough to not compete with text */
+	--cartridge-pattern-opacity: 0.08;
+
+	/* --- Cartridge Structural Tokens --- */
+	--cartridge-border: var(--border-thick); /* 3px solid #000 */
+	--cartridge-shadow: 2px 2px 0 0 var(--color-border);
+	--cartridge-shadow-hover: 4px 4px 0 0 var(--color-border);
+	--cartridge-gap: -2px; /* Overlap for stack effect */
+	--cartridge-rotation-range: 0.7deg; /* Max tilt */
+
+	/* --- Cartridge Typography --- */
+	--cartridge-name-size: 1.25rem; /* ~20px */
+	--cartridge-name-weight: 900;
+	--cartridge-name-tracking: -0.03em;
+	--cartridge-code-size: var(--text-tiny); /* 12px */
+
+	/* --- Motion Tokens ---
+	   Centralized transition definitions for reduced-motion support.
+	   Components consume these; media query overrides at :root level. */
+	--cartridge-transition-transform:
+		transform var(--transition-fast), box-shadow var(--transition-fast);
+	--cartridge-transition-background: background var(--transition-fast);
+	--cartridge-animation-shake: shake 0.3s ease-in-out;
+}
+
+/* --- Dark Mode Adaptations ---
+   Strategy: Same hues, increased saturation, reduced lightness
+   Maintains visual identity while ensuring contrast with white text */
+
+[data-theme="dark"] {
+	--cartridge-flamingo: #c45858; /* Deeper coral */
+	--cartridge-mint: #3daa85; /* Forest teal */
+	--cartridge-sky: #4a8ed4; /* Steel blue */
+	--cartridge-orchid: #9a5cb8; /* Deep violet */
+	--cartridge-sherbet: #d4854a; /* Burnt orange */
+	--cartridge-slime: #8bbf3a; /* Olive lime */
+	--cartridge-concrete: #4a4a4a; /* Dark neutral */
+
+	/* Patterns need more contrast in dark mode */
+	--cartridge-pattern-opacity: 0.12;
+
+	/* Shadow color adapts */
+	--cartridge-shadow: 2px 2px 0 0 rgba(255, 255, 255, 0.3);
+	--cartridge-shadow-hover: 4px 4px 0 0 rgba(255, 255, 255, 0.4);
+}
+
+/* =============================================================================
+   PATTERN CLASSES
+   CSS-only textures that overlay on any background color
+   ============================================================================= */
+
+.cartridge-pattern-hazard {
+	background-image: repeating-linear-gradient(
+		45deg,
+		transparent,
+		transparent 8px,
+		rgba(0, 0, 0, var(--cartridge-pattern-opacity)) 8px,
+		rgba(0, 0, 0, var(--cartridge-pattern-opacity)) 10px
+	);
+}
+
+.cartridge-pattern-dots {
+	background-image: radial-gradient(
+		circle,
+		rgba(0, 0, 0, var(--cartridge-pattern-opacity)) 1.5px,
+		transparent 1.5px
+	);
+	background-size: 10px 10px;
+}
+
+.cartridge-pattern-grid {
+	background-image:
+		linear-gradient(rgba(0, 0, 0, var(--cartridge-pattern-opacity)) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(0, 0, 0, var(--cartridge-pattern-opacity)) 1px, transparent 1px);
+	background-size: 16px 16px;
+}
+
+.cartridge-pattern-waves {
+	background-image: repeating-linear-gradient(
+		-45deg,
+		transparent,
+		transparent 4px,
+		rgba(0, 0, 0, calc(var(--cartridge-pattern-opacity) * 0.6)) 4px,
+		rgba(0, 0, 0, calc(var(--cartridge-pattern-opacity) * 0.6)) 5px,
+		transparent 5px,
+		transparent 9px
+	);
+}
+
+/* Dark mode pattern inversion */
+[data-theme="dark"] .cartridge-pattern-hazard,
+[data-theme="dark"] .cartridge-pattern-dots,
+[data-theme="dark"] .cartridge-pattern-grid,
+[data-theme="dark"] .cartridge-pattern-waves {
+	/* Replace black patterns with white in dark mode */
+	filter: invert(1);
+	mix-blend-mode: overlay;
+}
+
+/* =============================================================================
+   REDUCED MOTION SUPPORT
+   Override motion tokens at :root level - cascade handles the rest.
+   No !important needed; components inherit disabled motion naturally.
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--cartridge-transition-transform: none;
+		--cartridge-transition-background: none;
+		--cartridge-animation-shake: none;
+	}
+}

@@ -19,6 +19,7 @@
  */
 
 import { DurableObject } from 'cloudflare:workers';
+import { generateRoomIdentity } from '@dicee/shared';
 import { createLogger, type Logger } from './lib/logger';
 import { createRoomDirectory, type RoomDirectory, type RoomInfo } from './lib/room-directory';
 import type {
@@ -882,8 +883,11 @@ export class GlobalLobby extends DurableObject<Env> {
 	 * game start, round change, game end.
 	 */
 	async updateRoomStatus(update: RoomStatusUpdate): Promise<void> {
-		// Get existing room to preserve createdAt timestamp
+		// Get existing room to preserve createdAt timestamp and identity
 		const existingRoom = await this.roomDirectory.get(update.roomCode);
+
+		// Lazy fallback: use provided identity, existing identity, or generate new
+		const identity = update.identity ?? existingRoom?.identity ?? generateRoomIdentity(update.roomCode);
 
 		const roomInfo: RoomInfo = {
 			code: update.roomCode,
@@ -901,6 +905,7 @@ export class GlobalLobby extends DurableObject<Env> {
 			players: update.players,
 			createdAt: existingRoom?.createdAt ?? update.updatedAt,
 			updatedAt: update.updatedAt,
+			identity,
 		};
 
 		// Handle finished rooms

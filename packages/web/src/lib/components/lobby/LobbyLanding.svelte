@@ -56,14 +56,13 @@ let showAdminPanel = $state(false);
 // Show admin controls if user has moderator or higher role
 const canAccessAdmin = $derived(profileStore.isModerator);
 
+import CartridgeStack from './CartridgeStack.svelte';
 import ChatPanel from './ChatPanel.svelte';
 import CreateRoomModal from './CreateRoomModal.svelte';
-import EmptyRooms from './EmptyRooms.svelte';
 import InvitePopup from './InvitePopup.svelte';
 import JoinRequestPending from './JoinRequestPending.svelte';
 import JoinRoomModal from './JoinRoomModal.svelte';
 import MobileTabToggle from './MobileTabToggle.svelte';
-import RoomCard from './RoomCard.svelte';
 import Ticker from './Ticker.svelte';
 
 // Friends modal state
@@ -326,15 +325,12 @@ function handleDeclineInvite(inviteId: string) {
 					</div>
 				</div>
 
-				{#if lobby.rooms.length === 0}
-					<EmptyRooms />
-				{:else}
-					<div class="room-grid">
-						{#each lobby.rooms as room (room.code)}
-							<RoomCard {room} />
-						{/each}
-					</div>
-				{/if}
+				<div class="room-stack-container">
+					<CartridgeStack
+						rooms={lobby.rooms}
+						emptyMessage="No games available. Create one!"
+					/>
+				</div>
 			</section>
 
 			<!-- Chat Panel -->
@@ -776,10 +772,8 @@ function handleDeclineInvite(inviteId: string) {
 		cursor: not-allowed;
 	}
 
-	.room-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-		gap: var(--space-2);
+	.room-stack-container {
+		flex: 1;
 		overflow-y: auto;
 		padding-bottom: var(--space-4);
 	}

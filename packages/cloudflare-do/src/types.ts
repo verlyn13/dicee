@@ -5,6 +5,8 @@
  * for the GameRoom Durable Object.
  */
 
+import type { RoomIdentity } from '@dicee/shared';
+
 // =============================================================================
 // Environment Bindings
 // =============================================================================
@@ -224,6 +226,9 @@ export interface RoomState {
 
 	/** AI players in the room (added during waiting phase) */
 	aiPlayers?: AIPlayerInfo[];
+
+	/** Visual identity for lobby display (color, pattern, hype name) */
+	identity?: RoomIdentity;
 }
 
 /**
@@ -359,6 +364,9 @@ export interface RoomStatusUpdate {
 
 	/** Timestamp of this update */
 	updatedAt: number;
+
+	/** Visual identity for lobby display (color, pattern, hype name) */
+	identity?: RoomIdentity;
 }
 
 /**
