@@ -52,6 +52,8 @@ function getStatusConfig(status: RoomInfo['status']): StatusConfig {
 			return { label: 'OPEN', canJoin: true, canSpectate: false };
 		case 'playing':
 			return { label: 'LIVE', canSpectate: true, canJoin: false };
+		case 'paused':
+			return { label: 'PAUSED', canJoin: true, canSpectate: true };
 		case 'finished':
 			return { label: 'DONE', canJoin: false, canSpectate: false };
 	}
@@ -68,7 +70,19 @@ const patternClass = $derived(getPatternClass(identity.pattern));
 
 // Check if current user is host or already a player (for direct rejoin)
 const isHost = $derived(auth.userId === room.hostId);
-const isExistingPlayer = $derived(room.players?.some((p) => p.userId === auth.userId) ?? false);
+const myPlayerData = $derived(room.players?.find((p) => p.userId === auth.userId) ?? null);
+
+// Determine if player can rejoin based on presence state and room status
+// - 'connected' players are actively in-game
+// - 'disconnected' players have a seat reserved (within grace period)
+// - 'abandoned' players cannot rejoin (grace period expired)
+const myPresenceState = $derived(myPlayerData?.presenceState ?? 'connected');
+const canRejoin = $derived(
+	myPlayerData !== null &&
+		myPresenceState !== 'abandoned' &&
+		['waiting', 'playing', 'paused'].includes(room.status),
+);
+const isExistingPlayer = $derived(canRejoin);
 
 // Accessibility description
 const ariaLabel = $derived(
@@ -136,7 +150,11 @@ function triggerErrorFeedback() {
 }
 
 function getButtonText(): string {
-	if (isHost || isExistingPlayer) return 'REJOIN';
+	if (canRejoin) {
+		// Show RECONNECT for disconnected players (within grace period)
+		if (myPresenceState === 'disconnected') return 'RECONNECT';
+		return 'REJOIN';
+	}
 	if (statusConfig.canJoin) return 'JOIN';
 	if (statusConfig.canSpectate) return 'WATCH';
 	return 'FULL';

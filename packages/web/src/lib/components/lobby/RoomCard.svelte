@@ -9,9 +9,11 @@
  * - Open rooms: Send join request, wait for host approval
  * - Playing rooms: Navigate directly (spectator mode)
  * - Full rooms: Show error animation
+ * - Rejoin: Player with reserved seat (within grace period) goes directly
  */
 
 import { goto } from '$app/navigation';
+import { auth } from '$lib/stores/auth.svelte';
 import { lobby, type RoomInfo } from '$lib/stores/lobby.svelte';
 
 interface Props {
@@ -21,6 +23,15 @@ interface Props {
 let { room }: Props = $props();
 let isShaking = $state(false);
 let isFlashing = $state(false);
+
+// Check if current user has a seat in this room
+const myPlayerData = $derived(room.players?.find((p) => p.userId === auth.userId) ?? null);
+const myPresenceState = $derived(myPlayerData?.presenceState ?? 'connected');
+const canRejoin = $derived(
+	myPlayerData !== null &&
+		myPresenceState !== 'abandoned' &&
+		['waiting', 'playing', 'paused'].includes(room.status),
+);
 
 interface StatusConfig {
 	bg: string;
@@ -35,6 +46,8 @@ function getStatusConfig(status: RoomInfo['status']): StatusConfig {
 			return { bg: 'bg-live', text: 'OPEN', canJoin: true, canSpectate: false };
 		case 'playing':
 			return { bg: 'bg-accent', text: 'LIVE', canJoin: false, canSpectate: true };
+		case 'paused':
+			return { bg: 'bg-warning', text: 'PAUSED', canJoin: true, canSpectate: true };
 		case 'finished':
 			return { bg: 'bg-muted', text: 'DONE', canJoin: false, canSpectate: false };
 	}
@@ -42,9 +55,20 @@ function getStatusConfig(status: RoomInfo['status']): StatusConfig {
 
 const statusConfig = $derived(getStatusConfig(room.status));
 
+function getButtonText(): string {
+	if (canRejoin) {
+		// Show RECONNECT for disconnected players (within grace period)
+		if (myPresenceState === 'disconnected') return 'RECONNECT';
+		return 'REJOIN';
+	}
+	if (statusConfig.canJoin) return 'JOIN';
+	if (statusConfig.canSpectate) return 'WATCH';
+	return 'FULL';
+}
+
 async function handleAction() {
-	// Can't do anything with full rooms
-	if (!statusConfig.canJoin && !statusConfig.canSpectate) {
+	// Can't do anything with full rooms (unless we can rejoin)
+	if (!statusConfig.canJoin && !statusConfig.canSpectate && !canRejoin) {
 		// Trigger error animation
 		isFlashing = true;
 		isShaking = true;
@@ -62,7 +86,7 @@ async function handleAction() {
 	}
 
 	// Check if we already have a pending request
-	if (lobby.hasActiveJoinRequest) {
+	if (lobby.hasActiveJoinRequest && !canRejoin) {
 		// Already have a pending request - can't join another room
 		isFlashing = true;
 		isShaking = true;
@@ -78,6 +102,12 @@ async function handleAction() {
 		navigator.vibrate(100);
 	}
 
+	// Rejoin - navigate directly (bypass join request)
+	if (canRejoin) {
+		goto(`/games/dicee/room/${room.code}`);
+		return;
+	}
+
 	// Spectator mode - navigate directly
 	if (statusConfig.canSpectate) {
 		goto(`/games/dicee/room/${room.code}?mode=spectator`);
@@ -86,11 +116,6 @@ async function handleAction() {
 
 	// Open room - send join request (host approval required)
 	lobby.sendJoinRequest(room.code);
-}
-
-function getButtonText(): string {
-	if (statusConfig.canJoin) return 'Join Game';
-	return room.status === 'playing' ? '👁 Watch' : 'Full';
 }
 </script>
 
@@ -110,8 +135,9 @@ function getButtonText(): string {
 	<button
 		class="join-button"
 		class:spectate={statusConfig.canSpectate}
+		class:rejoin={canRejoin}
 		onclick={handleAction}
-		disabled={!statusConfig.canJoin && !statusConfig.canSpectate}
+		disabled={!statusConfig.canJoin && !statusConfig.canSpectate && !canRejoin}
 	>
 		{getButtonText()}
 	</button>
@@ -199,6 +225,10 @@ function getButtonText(): string {
 		background: var(--color-disabled);
 	}
 
+	.bg-warning {
+		background: var(--color-signal-busy);
+	}
+
 	.card-meta {
 		display: flex;
 		justify-content: space-between;
@@ -247,6 +277,15 @@ function getButtonText(): string {
 
 	.join-button.spectate:hover {
 		background: var(--color-primary);
+	}
+
+	.join-button.rejoin {
+		background: var(--color-signal-live);
+		color: var(--color-text);
+	}
+
+	.join-button.rejoin:hover {
+		background: var(--color-accent);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

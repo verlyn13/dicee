@@ -16,6 +16,29 @@
 import { z } from 'zod';
 
 // =============================================================================
+// Player Presence Schemas (for reconnection UX)
+// =============================================================================
+
+/**
+ * Player presence state in a room
+ */
+export const PlayerPresenceStateSchema = z.enum(['connected', 'disconnected', 'abandoned']);
+
+/**
+ * Player summary for lobby display with presence state
+ */
+export const PlayerSummarySchema = z.object({
+	userId: z.string().min(1),
+	displayName: z.string().min(1).max(30),
+	avatarSeed: z.string(),
+	score: z.number().int().nonnegative(),
+	isHost: z.boolean(),
+	presenceState: PlayerPresenceStateSchema,
+	reconnectDeadline: z.number().int().positive().nullable(),
+	lastSeenAt: z.number().int().positive().nullable(),
+});
+
+// =============================================================================
 // Lobby-Specific Type Schemas
 // =============================================================================
 
@@ -39,7 +62,12 @@ export const LobbyUserSchema = z.object({
 });
 
 /**
- * Room info for lobby browser
+ * Room status for lobby display (includes 'paused')
+ */
+export const LobbyRoomStatusSchema = z.enum(['waiting', 'playing', 'paused', 'finished']);
+
+/**
+ * Simple room info for lobby browser (backwards compatible)
  */
 export const LobbyRoomInfoSchema = z.object({
 	code: z.string().length(6),
@@ -48,8 +76,53 @@ export const LobbyRoomInfoSchema = z.object({
 	isPublic: z.boolean(),
 	playerCount: z.number().int().min(0).max(4),
 	maxPlayers: z.union([z.literal(2), z.literal(3), z.literal(4)]),
-	status: z.enum(['waiting', 'starting', 'playing', 'completed', 'abandoned']),
+	status: z.enum(['waiting', 'starting', 'playing', 'completed', 'abandoned', 'paused', 'finished']),
 	createdAt: z.number().int().positive(),
+});
+
+/**
+ * Full room info for lobby browser with player details
+ */
+export const RoomInfoSchema = z.object({
+	code: z.string().length(6),
+	game: z.string().min(1),
+	hostName: z.string().min(1).max(30),
+	hostId: z.string().min(1),
+	playerCount: z.number().int().min(0).max(4),
+	spectatorCount: z.number().int().nonnegative(),
+	maxPlayers: z.union([z.literal(2), z.literal(3), z.literal(4)]),
+	isPublic: z.boolean(),
+	allowSpectators: z.boolean(),
+	status: LobbyRoomStatusSchema,
+	roundNumber: z.number().int().nonnegative(),
+	totalRounds: z.number().int().positive(),
+	players: z.array(PlayerSummarySchema),
+	createdAt: z.number().int().positive(),
+	updatedAt: z.number().int().positive(),
+	pausedAt: z.number().int().positive().nullable().optional(),
+	identity: z.any().optional(), // RoomIdentity - complex type, validated elsewhere
+});
+
+/**
+ * Room status update from GameRoom to GlobalLobby
+ */
+export const RoomStatusUpdateSchema = z.object({
+	roomCode: z.string().length(6),
+	status: LobbyRoomStatusSchema,
+	playerCount: z.number().int().min(0).max(4),
+	spectatorCount: z.number().int().nonnegative(),
+	maxPlayers: z.union([z.literal(2), z.literal(3), z.literal(4)]),
+	roundNumber: z.number().int().nonnegative(),
+	totalRounds: z.number().int().positive(),
+	isPublic: z.boolean(),
+	allowSpectators: z.boolean(),
+	players: z.array(PlayerSummarySchema),
+	hostId: z.string().min(1),
+	hostName: z.string().min(1).max(30),
+	game: z.string().min(1),
+	updatedAt: z.number().int().positive(),
+	pausedAt: z.number().int().positive().nullable().optional(),
+	identity: z.any().optional(),
 });
 
 /**

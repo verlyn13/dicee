@@ -59,8 +59,10 @@ import type {
 	KibitzUpdate,
 	KibitzVote,
 	KibitzVoteType,
+	LobbyRoomStatus,
 	PendingInvite,
 	PlayerInfo,
+	PlayerPresenceState,
 	PlayerRootingInfo,
 	PlayerSeat,
 	PlayerSummary,
@@ -85,6 +87,7 @@ import {
 	createEmptyGalleryPoints,
 	createInitialRoomState,
 	createPlayerSeat,
+	PAUSE_TIMEOUT_MS,
 	DEFAULT_REACTION_RATE_LIMIT,
 	GALLERY_ACHIEVEMENTS,
 	GALLERY_POINT_VALUES,
@@ -427,6 +430,9 @@ export class GameRoom extends DurableObject<Env> {
 				await this.handleAITurnTimeout(alarmData);
 				// Don't delete alarm_data here - handler manages it for retries
 				return;
+			case 'PAUSE_TIMEOUT':
+				await this.handlePauseTimeout();
+				break;
 		}
 
 		await this.ctx.storage.delete('alarm_data');
@@ -560,6 +566,141 @@ export class GameRoom extends DurableObject<Env> {
 				ws.close(1000, 'Room abandoned');
 			}
 		}
+	}
+
+	/**
+	 * Handle pause timeout - transition PAUSED room to ABANDONED.
+	 * Called when the 30-minute pause timeout expires without any players reconnecting.
+	 */
+	private async handlePauseTimeout(): Promise<void> {
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (!roomState) return;
+
+		// Only abandon if still paused
+		if (roomState.status !== 'paused') {
+			return;
+		}
+
+		// Transition to ABANDONED
+		roomState.status = 'abandoned';
+		roomState.pausedAt = null;
+		await this.ctx.storage.put('room', roomState);
+
+		// Notify lobby
+		await this.notifyLobbyOfUpdate();
+
+		// Broadcast to any connected spectators
+		this.broadcastToSpectators({
+			type: 'ROOM_STATUS',
+			payload: {
+				status: 'abandoned',
+				reason: 'pause_timeout',
+			},
+		});
+
+		// Close all spectator connections
+		const roomCode = this.getRoomCode();
+		for (const ws of this.ctx.getWebSockets(`spectator:${roomCode}`)) {
+			ws.close(1000, 'Game abandoned - all players disconnected');
+		}
+	}
+
+	/**
+	 * Check if the room should transition to PAUSED state.
+	 * Called after a player disconnects.
+	 *
+	 * Room enters PAUSED when:
+	 * - Game is in 'playing' state
+	 * - All players are disconnected (no active WebSocket connections)
+	 */
+	private async checkIfRoomShouldPause(): Promise<void> {
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (!roomState) return;
+
+		// Only pause during active gameplay
+		if (roomState.status !== 'playing') {
+			return;
+		}
+
+		// Check if ANY players are still connected
+		const roomCode = this.getRoomCode();
+		const connectedPlayers = this.ctx.getWebSockets(`player:${roomCode}`);
+
+		if (connectedPlayers.length === 0) {
+			// All players disconnected - pause the game
+			roomState.status = 'paused';
+			roomState.pausedAt = Date.now();
+			await this.ctx.storage.put('room', roomState);
+
+			// Schedule pause timeout alarm (30 minutes)
+			await this.schedulePauseTimeoutAlarm();
+
+			// Notify lobby of status change
+			await this.notifyLobbyOfUpdate();
+
+			// Notify spectators
+			this.broadcastToSpectators({
+				type: 'ROOM_STATUS',
+				payload: {
+					status: 'paused',
+					pausedAt: roomState.pausedAt,
+					reason: 'all_players_disconnected',
+				},
+			});
+		}
+	}
+
+	/**
+	 * Schedule the pause timeout alarm (30 minutes).
+	 * Imports PAUSE_TIMEOUT_MS from types.
+	 */
+	private async schedulePauseTimeoutAlarm(): Promise<void> {
+		const alarmData: AlarmData = {
+			type: 'PAUSE_TIMEOUT',
+		};
+		await this.ctx.storage.put('alarm_data', alarmData);
+		await this.ctx.storage.setAlarm(Date.now() + PAUSE_TIMEOUT_MS);
+	}
+
+	/**
+	 * Resume the room from PAUSED state when a player reconnects.
+	 * Called during handleReconnection().
+	 */
+	private async resumeFromPause(): Promise<void> {
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (!roomState || roomState.status !== 'paused') return;
+
+		// Transition back to playing
+		roomState.status = 'playing';
+		roomState.pausedAt = null;
+		await this.ctx.storage.put('room', roomState);
+
+		// Cancel the pause timeout alarm if it was the pending alarm
+		const alarmData = await this.ctx.storage.get<AlarmData>('alarm_data');
+		if (alarmData?.type === 'PAUSE_TIMEOUT') {
+			await this.ctx.storage.delete('alarm_data');
+			await this.ctx.storage.deleteAlarm();
+		}
+
+		// Notify lobby of status change
+		await this.notifyLobbyOfUpdate();
+
+		// Broadcast game resumed to all connected clients
+		this.broadcast({
+			type: 'ROOM_STATUS',
+			payload: {
+				status: 'playing',
+				reason: 'player_reconnected',
+			},
+		});
+
+		this.broadcastToSpectators({
+			type: 'ROOM_STATUS',
+			payload: {
+				status: 'playing',
+				reason: 'player_reconnected',
+			},
+		});
 	}
 
 	/**
@@ -931,6 +1072,9 @@ export class GameRoom extends DurableObject<Env> {
 		seats.set(userId, seat);
 		await this.saveSeats(seats);
 
+		// If room was paused because all players disconnected, resume
+		await this.resumeFromPause();
+
 		// Log seat reclaim attempt and result
 		this.instr?.seatReclaimAttempt(userId, hadReservedSeat, hasActiveGame, withinWindow);
 		this.instr?.seatReclaimResult(userId, 'reclaimed');
@@ -1028,53 +1172,90 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Notify GlobalLobby of room status changes.
 	 * Call on: player join/leave, spectator join/leave, game start, round change, game end.
+	 *
+	 * IMPORTANT: Uses persistent seat data (not just connected WebSockets) to include
+	 * disconnected players with their presence state for reconnection UX.
 	 */
 	private async notifyLobbyOfUpdate(): Promise<void> {
 		try {
 			const roomState = await this.ctx.storage.get<RoomState>('room');
 			if (!roomState) return;
 
-			// Get host info
+			// Get host info from connected socket OR seat data (fallback)
 			const hostConnection = this.ctx.getWebSockets(`user:${roomState.hostUserId}`)[0];
 			const hostState = hostConnection?.deserializeAttachment() as ConnectionState | undefined;
 
-			// Build player summaries
+			// Build player summaries from SEATS (not just connected WebSockets)
+			// This ensures disconnected players are included with their presence state
+			const seats = await this.getSeats();
+			const gameState = await this.gameStateManager.getState();
+			const now = Date.now();
+
 			const players: PlayerSummary[] = [];
-			const roomCode = this.getRoomCode();
-			for (const ws of this.ctx.getWebSockets(`player:${roomCode}`)) {
-				const state = ws.deserializeAttachment() as ConnectionState;
+
+			for (const [userId, seat] of seats) {
+				// Determine presence state from seat data
+				let presenceState: PlayerPresenceState = 'connected';
+				if (!seat.isConnected) {
+					if (seat.reconnectDeadline && seat.reconnectDeadline > now) {
+						presenceState = 'disconnected';
+					} else {
+						presenceState = 'abandoned';
+					}
+				}
+
+				// Get score from game state if available
+				const playerScore = gameState?.players[userId]?.totalScore ?? 0;
+
 				players.push({
-					userId: state.userId,
-					displayName: state.displayName,
-					avatarSeed: state.avatarSeed,
-					score: 0, // TODO: Get actual score from game state
-					isHost: state.isHost,
+					userId: seat.userId,
+					displayName: seat.displayName,
+					avatarSeed: seat.avatarSeed,
+					score: playerScore,
+					isHost: seat.isHost,
+					presenceState,
+					reconnectDeadline: seat.reconnectDeadline,
+					lastSeenAt: seat.disconnectedAt,
 				});
 			}
 
-			// Map room status to lobby status
-			const lobbyStatus: 'waiting' | 'playing' | 'finished' =
-				roomState.status === 'completed' || roomState.status === 'abandoned'
-					? 'finished'
-					: roomState.status === 'waiting'
-						? 'waiting'
-						: 'playing';
+			// Map room status to lobby status (including PAUSED)
+			let lobbyStatus: LobbyRoomStatus;
+			switch (roomState.status) {
+				case 'completed':
+				case 'abandoned':
+					lobbyStatus = 'finished';
+					break;
+				case 'paused':
+					lobbyStatus = 'paused';
+					break;
+				case 'waiting':
+					lobbyStatus = 'waiting';
+					break;
+				default:
+					lobbyStatus = 'playing';
+			}
+
+			// Count active players (connected + disconnected within grace period)
+			const activePlayerCount = players.filter((p) => p.presenceState !== 'abandoned').length;
 
 			const update: RoomStatusUpdate = {
 				roomCode: roomState.roomCode,
 				status: lobbyStatus,
-				playerCount: players.length,
+				playerCount: activePlayerCount,
 				spectatorCount: this.getSpectatorCount(),
 				maxPlayers: roomState.settings.maxPlayers,
-				roundNumber: (await this.gameStateManager.getState())?.roundNumber ?? 0,
+				roundNumber: gameState?.roundNumber ?? 0,
 				totalRounds: 13,
 				isPublic: roomState.settings.isPublic,
 				allowSpectators: roomState.settings.allowSpectators,
 				players,
 				hostId: roomState.hostUserId,
-				hostName: hostState?.displayName ?? 'Unknown',
+				hostName:
+					hostState?.displayName ?? seats.get(roomState.hostUserId)?.displayName ?? 'Unknown',
 				game: 'dicee',
 				updatedAt: Date.now(),
+				pausedAt: roomState.pausedAt,
 				identity: roomState.identity,
 			};
 
@@ -1767,6 +1948,9 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Notify GlobalLobby of player count change
 		await this.notifyLobbyOfUpdate();
+
+		// Check if all players are disconnected and we should pause
+		await this.checkIfRoomShouldPause();
 
 		// Notify GlobalLobby that user left this room
 		this.notifyLobbyUserRoomStatus(connState.userId, 'left');

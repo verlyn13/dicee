@@ -10,10 +10,16 @@ export * from './result.js';
 
 // Lobby schemas
 export {
+	// Presence schemas (for reconnection UX)
+	PlayerPresenceStateSchema,
+	PlayerSummarySchema,
 	// Type schemas
 	LobbyRoomCodeSchema,
 	LobbyUserSchema,
+	LobbyRoomStatusSchema,
 	LobbyRoomInfoSchema,
+	RoomInfoSchema,
+	RoomStatusUpdateSchema,
 	LobbyChatMessageSchema,
 	GameInviteSchema,
 	// Command schemas

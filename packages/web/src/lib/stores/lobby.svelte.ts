@@ -14,15 +14,21 @@
 import {
 	isValidLobbyChatContent,
 	type LobbyServerEventInput,
+	type PlayerPresenceState,
+	type PlayerSummary,
 	parseLobbyServerEvent,
-	type RoomIdentity,
+	// Import lobby types from shared (single source of truth)
+	type RoomInfo,
 } from '@dicee/shared';
 import { browser } from '$app/environment';
 import { createServiceLogger } from '$lib/utils/logger';
 
 const log = createServiceLogger('Lobby');
 
-// Types
+// Re-export RoomInfo for components that import from this store
+export type { RoomInfo, PlayerPresenceState, PlayerSummary };
+
+// Types (local to lobby store)
 export interface ChatMessage {
 	id: string;
 	userId: string;
@@ -30,32 +36,6 @@ export interface ChatMessage {
 	content: string;
 	timestamp: number;
 	type: 'user' | 'system';
-}
-
-export interface RoomInfo {
-	code: string;
-	game: string;
-	hostName: string;
-	hostId: string;
-	playerCount: number;
-	spectatorCount: number;
-	maxPlayers: number;
-	isPublic: boolean;
-	allowSpectators: boolean;
-	status: 'waiting' | 'playing' | 'finished';
-	roundNumber: number;
-	totalRounds: number;
-	players: Array<{
-		userId: string;
-		displayName: string;
-		avatarSeed: string;
-		score: number;
-		isHost: boolean;
-	}>;
-	createdAt: number;
-	updatedAt: number;
-	/** Visual identity for lobby display (color, pattern, hype name) */
-	identity?: RoomIdentity;
 }
 
 export interface TickerEvent {
@@ -179,10 +159,12 @@ class LobbyState {
 	private pingInterval: ReturnType<typeof setInterval> | null = null;
 	private connectPromise: Promise<void> | null = null;
 	private intentionalDisconnect = false;
+	private deadlineWatcherTimer: ReturnType<typeof setInterval> | null = null;
 	private readonly MAX_MESSAGES = 100;
 	private readonly MAX_TICKER = 10;
 	private readonly RECONNECT_DELAYS = [1000, 2000, 5000, 10000, 30000];
 	private readonly PING_INTERVAL = 30000; // 30 seconds
+	private readonly DEADLINE_CHECK_INTERVAL = 10000; // 10 seconds
 
 	/**
 	 * Connect to the lobby WebSocket.
@@ -265,6 +247,7 @@ class LobbyState {
 		this.intentionalDisconnect = true;
 		this.clearReconnectTimer();
 		this.stopPingInterval();
+		this.stopDeadlineWatcher();
 		this.ws?.close(1000, 'User disconnect');
 		this.ws = null;
 		this.connectionState = 'disconnected';
@@ -659,6 +642,85 @@ class LobbyState {
 			clearInterval(this.pingInterval);
 			this.pingInterval = null;
 		}
+	}
+
+	/**
+	 * Start the deadline watcher that checks for expired reconnect deadlines.
+	 * When a player's reconnect deadline passes, we optimistically update
+	 * their presence state to 'abandoned' without waiting for a server push.
+	 *
+	 * This handles the race condition where:
+	 * 1. User views lobby, sees "REJOIN" (seat expires in 30 seconds)
+	 * 2. User waits 45 seconds
+	 * 3. User clicks "REJOIN" -> Error (seat expired)
+	 *
+	 * With the watcher, the button switches from "REJOIN" to "JOIN" automatically.
+	 */
+	private startDeadlineWatcher(userId: string | null) {
+		this.stopDeadlineWatcher();
+		if (!userId) return;
+
+		this.deadlineWatcherTimer = setInterval(() => {
+			this.checkExpiredDeadlines(userId);
+		}, this.DEADLINE_CHECK_INTERVAL);
+
+		// Run immediately on start
+		this.checkExpiredDeadlines(userId);
+	}
+
+	private stopDeadlineWatcher() {
+		if (this.deadlineWatcherTimer) {
+			clearInterval(this.deadlineWatcherTimer);
+			this.deadlineWatcherTimer = null;
+		}
+	}
+
+	/**
+	 * Check if any rooms have players with expired reconnect deadlines.
+	 * If the current user's deadline has passed, update their presence to 'abandoned'.
+	 */
+	private checkExpiredDeadlines(userId: string) {
+		const now = Date.now();
+		let updated = false;
+
+		this.rooms = this.rooms.map((room) => {
+			const updatedPlayers = room.players.map((player) => {
+				// Only check if this is the current user and they have a deadline
+				if (player.userId !== userId) return player;
+				if (player.presenceState !== 'disconnected') return player;
+				if (!player.reconnectDeadline) return player;
+
+				// Check if deadline has passed
+				if (player.reconnectDeadline < now) {
+					updated = true;
+					log.debug('Optimistically marking player as abandoned', {
+						roomCode: room.code,
+						userId,
+						deadline: player.reconnectDeadline,
+					});
+					return {
+						...player,
+						presenceState: 'abandoned' as const,
+						reconnectDeadline: null,
+					};
+				}
+
+				return player;
+			});
+
+			if (updated) {
+				return { ...room, players: updatedPlayers };
+			}
+			return room;
+		});
+	}
+
+	/**
+	 * Start watching deadlines for the given user.
+	 * Should be called when user logs in or when room data is received.
+	 */
+	watchDeadlinesForUser(userId: string | null) {
+		this.startDeadlineWatcher(userId);
 	}
 
 	// Actions

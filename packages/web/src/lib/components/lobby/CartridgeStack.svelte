@@ -36,7 +36,13 @@ let {
 // Within each status, sort by most recently updated
 const sortedRooms = $derived(
 	[...rooms].sort((a, b) => {
-		const statusOrder = { waiting: 0, playing: 1, finished: 2 };
+		// Sort order: waiting first, then paused (reconnectable), then playing, then finished
+		const statusOrder: Record<RoomInfo['status'], number> = {
+			waiting: 0,
+			paused: 1,
+			playing: 2,
+			finished: 3,
+		};
 		const statusDiff = statusOrder[a.status] - statusOrder[b.status];
 		if (statusDiff !== 0) return statusDiff;
 		return b.updatedAt - a.updatedAt;

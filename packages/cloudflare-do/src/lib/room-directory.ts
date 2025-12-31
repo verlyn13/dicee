@@ -20,39 +20,12 @@
  * ```
  */
 
-import type { RoomIdentity } from '@dicee/shared';
+import type { RoomInfo } from '@dicee/shared';
+
+// Re-export RoomInfo from shared for convenience
+export type { RoomInfo };
 
 const STORAGE_KEY = 'lobby:activeRooms';
-
-/**
- * Room information displayed in the lobby browser.
- * Matches the existing RoomInfo interface from GlobalLobby.ts:76-92
- */
-export interface RoomInfo {
-	code: string;
-	game: string;
-	hostName: string;
-	hostId: string;
-	playerCount: number;
-	spectatorCount: number;
-	maxPlayers: number;
-	isPublic: boolean;
-	allowSpectators: boolean;
-	status: 'waiting' | 'playing' | 'finished';
-	roundNumber: number;
-	totalRounds: number;
-	players: Array<{
-		userId: string;
-		displayName: string;
-		avatarSeed: string;
-		score: number;
-		isHost: boolean;
-	}>;
-	createdAt: number;
-	updatedAt: number;
-	/** Visual identity for lobby display (color, pattern, hype name) */
-	identity?: RoomIdentity;
-}
 
 /**
  * RoomDirectory interface - storage-first room management

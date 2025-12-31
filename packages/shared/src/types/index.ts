@@ -91,9 +91,18 @@ export {
 
 // Lobby types
 export type {
+	// Presence types (for reconnection UX)
+	PlayerPresenceState,
+	PlayerSummary,
+	// User types
 	LobbyUser,
 	LobbyUserPresence,
+	// Room types
+	LobbyRoomStatus,
 	LobbyRoomInfo,
+	RoomInfo,
+	RoomStatusUpdate,
+	// Chat types
 	LobbyChatMessage,
 	GameInvite,
 	JoinRequest,

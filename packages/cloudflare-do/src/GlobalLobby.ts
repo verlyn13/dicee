@@ -941,6 +941,7 @@ export class GlobalLobby extends DurableObject<Env> {
 			players: update.players,
 			createdAt: existingRoom?.createdAt ?? update.updatedAt,
 			updatedAt: update.updatedAt,
+			pausedAt: update.pausedAt,
 			identity,
 		};
 

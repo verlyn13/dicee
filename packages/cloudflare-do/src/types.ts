@@ -5,7 +5,21 @@
  * for the GameRoom Durable Object.
  */
 
-import type { RoomIdentity } from '@dicee/shared';
+import type {
+	RoomIdentity,
+	// Re-export shared lobby types for use in this package
+	PlayerPresenceState as SharedPlayerPresenceState,
+	PlayerSummary as SharedPlayerSummary,
+	RoomStatusUpdate as SharedRoomStatusUpdate,
+	LobbyRoomStatus,
+	RoomInfo as SharedRoomInfo,
+} from '@dicee/shared';
+
+// Re-export shared types for internal use
+export type PlayerPresenceState = SharedPlayerPresenceState;
+export type PlayerSummary = SharedPlayerSummary;
+export type RoomStatusUpdate = SharedRoomStatusUpdate;
+export type { LobbyRoomStatus, SharedRoomInfo as RoomInfoFromShared };
 
 // =============================================================================
 // Environment Bindings
@@ -158,10 +172,12 @@ export function createPlayerSeat(
 
 /**
  * Room status progression:
- * waiting → starting → playing → completed
- *                  ↘ abandoned (if all players disconnect)
+ * waiting → starting → playing → paused → completed
+ *                  ↘ abandoned (if all players disconnect or timeout)
+ *
+ * PAUSED state added for when all players disconnect during a game.
  */
-export type RoomStatus = 'waiting' | 'starting' | 'playing' | 'completed' | 'abandoned';
+export type RoomStatus = 'waiting' | 'starting' | 'playing' | 'paused' | 'completed' | 'abandoned';
 
 /**
  * Room configuration options
@@ -224,6 +240,9 @@ export interface RoomState {
 	/** When game started (epoch ms, null if not started) */
 	startedAt: number | null;
 
+	/** When room entered PAUSED state (null if not paused) */
+	pausedAt: number | null;
+
 	/** AI players in the room (added during waiting phase) */
 	aiPlayers?: AIPlayerInfo[];
 
@@ -247,6 +266,7 @@ export function createInitialRoomState(
 		playerOrder: [hostUserId],
 		status: 'waiting',
 		startedAt: null,
+		pausedAt: null,
 	};
 }
 
@@ -288,7 +308,13 @@ export type AlarmType =
 	| 'ROOM_CLEANUP'
 	| 'SEAT_EXPIRATION'
 	| 'JOIN_REQUEST_EXPIRATION'
-	| 'AI_TURN_TIMEOUT';
+	| 'AI_TURN_TIMEOUT'
+	| 'PAUSE_TIMEOUT';
+
+/**
+ * Timeout duration for PAUSED state before room is abandoned (30 minutes)
+ */
+export const PAUSE_TIMEOUT_MS = 30 * 60 * 1000;
 
 /**
  * Data stored with scheduled alarms
@@ -307,67 +333,9 @@ export interface AlarmData {
 // GlobalLobby ↔ GameRoom Communication
 // =============================================================================
 
-/**
- * Player summary for lobby display (minimal data)
- */
-export interface PlayerSummary {
-	userId: string;
-	displayName: string;
-	avatarSeed: string;
-	score: number;
-	isHost: boolean;
-}
-
-/**
- * Room status update sent from GameRoom to GlobalLobby
- * Used for room browser and live game updates
- */
-export interface RoomStatusUpdate {
-	/** Room code (6 uppercase alphanumeric) */
-	roomCode: string;
-
-	/** Current room status for lobby display */
-	status: 'waiting' | 'playing' | 'finished';
-
-	/** Number of players */
-	playerCount: number;
-
-	/** Number of spectators watching */
-	spectatorCount: number;
-
-	/** Maximum players allowed */
-	maxPlayers: number;
-
-	/** Current round (0 if not started, 1-13 during game) */
-	roundNumber: number;
-
-	/** Total rounds in game */
-	totalRounds: number;
-
-	/** Whether room is listed publicly */
-	isPublic: boolean;
-
-	/** Allow spectators to watch */
-	allowSpectators: boolean;
-
-	/** Player summaries for display */
-	players: PlayerSummary[];
-
-	/** Host user ID */
-	hostId: string;
-
-	/** Host display name */
-	hostName: string;
-
-	/** Game name (e.g., 'dicee') */
-	game: string;
-
-	/** Timestamp of this update */
-	updatedAt: number;
-
-	/** Visual identity for lobby display (color, pattern, hype name) */
-	identity?: RoomIdentity;
-}
+// PlayerSummary, RoomStatusUpdate, and PlayerPresenceState are now imported from @dicee/shared
+// and re-exported at the top of this file. This ensures a single source of truth for
+// these types across all packages.
 
 /**
  * Game highlight event for lobby ticker
