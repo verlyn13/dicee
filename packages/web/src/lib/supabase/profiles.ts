@@ -1,5 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database, Tables, TablesUpdate } from '$lib/types/database';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('Profiles');
 
 export type Profile = Tables<'profiles'>;
 export type ProfileUpdate = TablesUpdate<'profiles'>;
@@ -37,6 +40,9 @@ export async function getProfile(
 /**
  * Update a user's profile
  * Only the profile owner can update their own profile (enforced by RLS)
+ *
+ * Also syncs display_name to auth.users.user_metadata so JWT tokens
+ * contain the correct display name for multiplayer games.
  */
 export async function updateProfile(
 	supabase: SupabaseClient<Database>,
@@ -54,6 +60,23 @@ export async function updateProfile(
 		return { data: null, error: new Error(error.message) };
 	}
 
+	// Sync display_name to auth user metadata so JWT contains it
+	// This ensures multiplayer games show the correct display name
+	if (updates.display_name !== undefined && supabase.auth?.updateUser) {
+		try {
+			const { error: authError } = await supabase.auth.updateUser({
+				data: { display_name: updates.display_name },
+			});
+
+			if (authError) {
+				// Log but don't fail - profile update succeeded
+				log.warn('Failed to sync display_name to auth metadata', { error: authError.message });
+			}
+		} catch {
+			// Silently ignore if auth.updateUser is not available (e.g., in tests)
+		}
+	}
+
 	return { data, error: null };
 }
 
@@ -61,6 +84,8 @@ export async function updateProfile(
  * Create or upsert a profile for a user
  * Note: Profiles are auto-created by trigger on auth.users insert,
  * but this can be used to ensure a profile exists or update initial values
+ *
+ * Also syncs display_name to auth.users.user_metadata if provided.
  */
 export async function createProfile(
 	supabase: SupabaseClient<Database>,
@@ -81,6 +106,21 @@ export async function createProfile(
 
 	if (error) {
 		return { data: null, error: new Error(error.message) };
+	}
+
+	// Sync display_name to auth user metadata so JWT contains it
+	if (profileData?.display_name !== undefined && supabase.auth?.updateUser) {
+		try {
+			const { error: authError } = await supabase.auth.updateUser({
+				data: { display_name: profileData.display_name },
+			});
+
+			if (authError) {
+				log.warn('Failed to sync display_name to auth metadata', { error: authError.message });
+			}
+		} catch {
+			// Silently ignore if auth.updateUser is not available (e.g., in tests)
+		}
 	}
 
 	return { data, error: null };

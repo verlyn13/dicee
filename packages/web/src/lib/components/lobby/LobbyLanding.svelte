@@ -57,15 +57,6 @@ let showAdminPanel = $state(false);
 // Only show after profile is loaded to avoid flicker
 const canAccessAdmin = $derived(profileStore.initialized && profileStore.isModerator);
 
-// DEBUG: Track profile state for troubleshooting admin visibility
-const debugProfileState = $derived({
-	initialized: profileStore.initialized,
-	loading: profileStore.loading,
-	role: profileStore.role,
-	isModerator: profileStore.isModerator,
-	error: profileStore.error,
-});
-
 import CartridgeStack from './CartridgeStack.svelte';
 import ChatPanel from './ChatPanel.svelte';
 import CreateRoomModal from './CreateRoomModal.svelte';
@@ -321,12 +312,6 @@ function handleDeclineInvite(inviteId: string) {
 								{#if lobby.playingRooms.length > 0}
 									<span class="count live">{lobby.playingRooms.length} live</span>
 								{/if}
-							</span>
-						{/if}
-						<!-- DEBUG: Temporary output to diagnose admin visibility -->
-						{#if auth.isAuthenticated}
-							<span class="debug-info" title={JSON.stringify(debugProfileState)}>
-								[role:{debugProfileState.role ?? 'null'}|init:{debugProfileState.initialized}|mod:{debugProfileState.isModerator}]
 							</span>
 						{/if}
 						{#if canAccessAdmin}
@@ -790,17 +775,6 @@ function handleDeclineInvite(inviteId: string) {
 	.admin-btn:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
-	}
-
-	/* DEBUG: Temporary styling for admin debug info */
-	.debug-info {
-		font-family: var(--font-mono);
-		font-size: 10px;
-		padding: 2px 6px;
-		background: var(--color-warning, #ffc107);
-		color: black;
-		border-radius: 2px;
-		cursor: help;
 	}
 
 	.room-stack-container {
