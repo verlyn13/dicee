@@ -252,21 +252,15 @@ describe('engine service', () => {
 			resetEngine();
 			mockEngine.initEngine.mockRejectedValueOnce(new Error('Network error'));
 
-			const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
-				/* Suppress console output in tests */
-			});
-
-			preloadEngine();
+			// preloadEngine catches errors silently to avoid blocking page load
+			// It should not throw even when initialization fails
+			expect(() => preloadEngine()).not.toThrow();
 
 			// Wait for promise to settle
 			await new Promise((resolve) => setTimeout(resolve, 10));
 
-			expect(consoleWarnSpy).toHaveBeenCalledWith(
-				expect.stringContaining('Engine preload failed'),
-				expect.any(EngineInitError),
-			);
-
-			consoleWarnSpy.mockRestore();
+			// Engine should still report as not ready after failed preload
+			expect(isEngineReady()).toBe(false);
 		});
 	});
 

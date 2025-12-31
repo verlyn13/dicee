@@ -4,17 +4,21 @@
  *
  * Displays compact scorecards for all players in a game.
  * Used by spectators to see everyone's progress.
+ *
+ * Updated in Phase 2 to accept full PlayerGameState with scorecards.
  */
-import type { RoomPlayer } from '$lib/types/multiplayer';
+import type { PlayerGameState, RoomPlayer, Scorecard } from '$lib/types/multiplayer';
 
 interface Props {
-	/** List of players in the game */
+	/** List of players in the game (for basic display) */
 	players: RoomPlayer[];
 	/** ID of the player whose turn it is */
 	currentPlayerId: string | null;
+	/** Full game state with scorecards (optional - from GAME_STATE_SYNC) */
+	playerGameStates?: Record<string, PlayerGameState>;
 }
 
-let { players, currentPlayerId }: Props = $props();
+let { players, currentPlayerId, playerGameStates }: Props = $props();
 
 // Category short labels
 const UPPER_CATEGORIES = [
@@ -36,25 +40,60 @@ const LOWER_CATEGORIES = [
 	{ key: 'chance', label: 'CH' },
 ] as const;
 
-// Player scorecards (will be populated from events)
-// For now, use placeholder data
+// Player scorecards - use full game state if available, otherwise empty
 interface PlayerScoreData {
 	playerId: string;
+	displayName: string;
+	isHost: boolean;
 	scores: Record<string, number | null>;
 	upperBonus: number;
 	diceeBonus: number;
 	total: number;
 }
 
-// Placeholder - in real implementation, this would be populated from game state
+/**
+ * Extract scores from a Scorecard object
+ */
+function extractScores(scorecard: Scorecard | undefined): Record<string, number | null> {
+	if (!scorecard) return {};
+	const scores: Record<string, number | null> = {};
+	for (const cat of UPPER_CATEGORIES) {
+		const val = scorecard[cat.key as keyof Scorecard];
+		scores[cat.key] = typeof val === 'number' ? val : null;
+	}
+	for (const cat of LOWER_CATEGORIES) {
+		const val = scorecard[cat.key as keyof Scorecard];
+		scores[cat.key] = typeof val === 'number' ? val : null;
+	}
+	return scores;
+}
+
+// Derive player scores from game state or fallback to empty
 const playerScores = $derived<PlayerScoreData[]>(
-	players.map((p) => ({
-		playerId: p.id,
-		scores: {},
-		upperBonus: 0,
-		diceeBonus: 0,
-		total: 0,
-	})),
+	players.map((p) => {
+		const gameState = playerGameStates?.[p.id];
+		if (gameState) {
+			return {
+				playerId: p.id,
+				displayName: gameState.displayName ?? p.displayName,
+				isHost: gameState.isHost ?? p.isHost,
+				scores: extractScores(gameState.scorecard),
+				upperBonus: gameState.scorecard?.upperBonus ?? 0,
+				diceeBonus: gameState.scorecard?.diceeBonus ?? 0,
+				total: gameState.totalScore ?? 0,
+			};
+		}
+		// Fallback to empty if no game state
+		return {
+			playerId: p.id,
+			displayName: p.displayName,
+			isHost: p.isHost,
+			scores: {},
+			upperBonus: 0,
+			diceeBonus: 0,
+			total: 0,
+		};
+	}),
 );
 
 function getScore(data: PlayerScoreData, key: string): number | null {
@@ -74,19 +113,18 @@ function getScore(data: PlayerScoreData, key: string): number | null {
 		</div>
 	{:else}
 		<div class="scorecards-grid">
-			{#each players as player, idx (player.id)}
-				{@const scoreData = playerScores[idx]}
-				{@const isCurrentTurn = player.id === currentPlayerId}
+			{#each playerScores as scoreData (scoreData.playerId)}
+				{@const isCurrentTurn = scoreData.playerId === currentPlayerId}
 				<div class="player-card" class:current-turn={isCurrentTurn}>
 					<!-- Player Header -->
 					<div class="player-header">
-						<span class="player-name" title={player.displayName}>
-							{player.displayName}
+						<span class="player-name" title={scoreData.displayName}>
+							{scoreData.displayName}
 						</span>
 						{#if isCurrentTurn}
 							<span class="turn-indicator">▶</span>
 						{/if}
-						{#if player.isHost}
+						{#if scoreData.isHost}
 							<span class="host-badge">HOST</span>
 						{/if}
 					</div>

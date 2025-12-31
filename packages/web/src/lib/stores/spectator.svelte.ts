@@ -13,6 +13,7 @@ import {
 	type PredictionType,
 	type SpectatorConnectionStatus,
 	type SpectatorEventHandler,
+	type SpectatorGameState,
 	type SpectatorInfo,
 	spectatorService,
 } from '$lib/services/spectatorService.svelte';
@@ -43,6 +44,8 @@ export interface SpectatorStore {
 	readonly error: string | null;
 	/** Display text for spectator count */
 	readonly spectatorDisplay: string;
+	/** Full game state (dice, scorecards, etc.) - null until game starts or sync received */
+	readonly gameState: SpectatorGameState | null;
 
 	// Prediction state (D4)
 	/** Current predictions for this turn */
@@ -99,6 +102,7 @@ export function createSpectatorStore(_userId: string): SpectatorStore {
 	let spectators = $state<SpectatorInfo[]>([]);
 	let spectatorCount = $state(0);
 	let error = $state<string | null>(null);
+	let gameState = $state<SpectatorGameState | null>(null);
 
 	// Prediction state (D4)
 	let predictions = $state<Prediction[]>([]);
@@ -130,6 +134,7 @@ export function createSpectatorStore(_userId: string): SpectatorStore {
 		spectators = state.spectators;
 		spectatorCount = state.spectatorCount;
 		error = state.error;
+		gameState = state.gameState;
 		// Sync prediction state
 		predictions = spectatorService.predictions;
 		predictionStats = spectatorService.predictionStats;
@@ -229,6 +234,9 @@ export function createSpectatorStore(_userId: string): SpectatorStore {
 		},
 		get spectatorDisplay() {
 			return spectatorDisplay;
+		},
+		get gameState() {
+			return gameState;
 		},
 		// Prediction getters (D4)
 		get predictions() {

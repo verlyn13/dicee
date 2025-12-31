@@ -12,6 +12,7 @@
  */
 
 import type { Category, KeptMask, MultiplayerGameState, Scorecard } from '../game';
+import { type Logger, createLogger } from '../lib/logger';
 import type { AIBrain } from './brain';
 import { createBrain, initializeBrainFactory } from './brain';
 import { getProfile } from './profiles';
@@ -87,9 +88,11 @@ export class AIController {
 	private players: Map<string, AIPlayerState> = new Map();
 	private brains: Map<string, AIBrain> = new Map();
 	private initialized = false;
+	private logger: Logger;
 
 	constructor(config: Partial<AIControllerConfig> = {}) {
 		this.config = { ...DEFAULT_CONFIG, ...config };
+		this.logger = createLogger({ component: 'AIController' });
 	}
 
 	/**
@@ -218,7 +221,10 @@ export class AIController {
 		}
 
 		if (!turnComplete) {
-			console.error(`[AIController] Turn did not complete for ${playerId} (maxSteps reached)`);
+			this.logger.warn('Turn did not complete (maxSteps reached)', {
+				operation: 'ai_turn_incomplete',
+				playerId,
+			});
 		}
 	}
 
@@ -253,9 +259,10 @@ export class AIController {
 			context.dice && context.dice.length === 5 && context.dice.some((d) => d >= 1 && d <= 6);
 
 		if (!hasValidDice) {
-			console.log(
-				`[AIController] No valid dice for ${playerId} - issuing roll without brain consultation`,
-			);
+			this.logger.debug('No valid dice - issuing roll without brain consultation', {
+				operation: 'ai_turn_step',
+				playerId,
+			});
 			const rollDecision: TurnDecision = {
 				action: 'roll',
 				reasoning: 'Turn start - must roll first',

@@ -13,6 +13,7 @@
 
 import type { Category, KeptMask } from '../../game';
 import { calculateAllPotentialScores, getRemainingCategories } from '../../game';
+import { type Logger, createLogger } from '../../lib/logger';
 import type { AIProfile, AITraits, GameContext, TurnDecision } from '../types';
 import { OptimalBrain } from './optimal';
 import type { AIBrain } from './types';
@@ -39,9 +40,11 @@ export class AdaptivePersonalityBrain implements AIBrain {
 	private profile: AIProfile | null = null;
 	private baseTraits: AITraits | null = null;
 	private optimalBrain: OptimalBrain;
+	private logger: Logger;
 
 	constructor() {
 		this.optimalBrain = new OptimalBrain(false);
+		this.logger = createLogger({ component: 'AdaptiveBrain' });
 	}
 
 	async initialize(profile: AIProfile): Promise<void> {
@@ -62,7 +65,9 @@ export class AdaptivePersonalityBrain implements AIBrain {
 			context.dice && context.dice.length === 5 && context.dice.some((d) => d >= 1 && d <= 6);
 
 		if (!hasValidDice) {
-			console.log('[AdaptiveBrain] No valid dice - returning roll action');
+			this.logger.debug('No valid dice - returning roll action', {
+				operation: 'brain_decide_no_dice',
+			});
 			return {
 				action: 'roll',
 				reasoning: 'No dice yet - must roll first',

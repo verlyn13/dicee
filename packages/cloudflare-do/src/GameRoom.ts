@@ -729,6 +729,39 @@ export class GameRoom extends DurableObject<Env> {
 	}
 
 	/**
+	 * Send full game state sync to a specific connection.
+	 * Used for reconnection and spectator mid-game joins.
+	 *
+	 * This ensures the client has the COMPLETE, AUTHORITATIVE game state,
+	 * not just incremental updates. Critical for session continuity.
+	 */
+	private async sendGameStateSync(
+		ws: WebSocket,
+		gameState: MultiplayerGameState,
+		isReconnection: boolean,
+	): Promise<void> {
+		// Derive currentPlayerId from playerOrder and currentPlayerIndex
+		const currentPlayerId =
+			gameState.playerOrder[gameState.currentPlayerIndex] ?? gameState.playerOrder[0] ?? '';
+
+		ws.send(
+			JSON.stringify({
+				type: 'GAME_STATE_SYNC',
+				payload: {
+					playerOrder: gameState.playerOrder,
+					currentPlayerId,
+					turnNumber: gameState.turnNumber,
+					roundNumber: gameState.roundNumber,
+					phase: gameState.phase,
+					players: gameState.players,
+					isReconnection,
+					timestamp: Date.now(),
+				},
+			}),
+		);
+	}
+
+	/**
 	 * Send to specific user by ID.
 	 */
 	private sendToUser(userId: string, message: object): void {
@@ -846,6 +879,9 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Handle player reconnection - reclaim their seat.
 	 * Returns true if reconnection succeeded, false if seat expired.
+	 *
+	 * IMPORTANT: If seat has expired, this function CLEANS UP the expired seat
+	 * and removes the player from playerOrder to avoid inconsistent state.
 	 */
 	private async handleReconnection(
 		userId: string,
@@ -861,9 +897,31 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Check if reconnect window is still valid
 		if (!seat.isConnected && seat.reconnectDeadline !== null && seat.reconnectDeadline < now) {
-			// Seat expired
+			// Seat expired - CLEAN UP the expired seat to avoid inconsistent state
+			const turnOrder = seat.turnOrder;
+			seats.delete(userId);
+			await this.saveSeats(seats);
+
+			// Also remove from playerOrder in room state
+			const roomState = await this.ctx.storage.get<RoomState>('room');
+			if (roomState && roomState.playerOrder.includes(userId)) {
+				roomState.playerOrder = roomState.playerOrder.filter((id) => id !== userId);
+				await this.ctx.storage.put('room', roomState);
+			}
+
+			// Log the cleanup - seatRelease captures the expiration,
+			// seatReclaimAttempt with withinWindow=false indicates failed reclaim
+			this.instr?.seatRelease(userId, turnOrder, 'expired_on_reconnect');
+			this.instr?.seatReclaimAttempt(userId, true, false, false);
+
 			return { success: false, seat: null };
 		}
+
+		// Log pre-reclaim state for debugging (capture before we modify)
+		const hadReservedSeat = seat.reconnectDeadline !== null;
+		const gameState = await this.gameStateManager.getState();
+		const hasActiveGame = gameState !== null && gameState.phase !== 'waiting';
+		const withinWindow = seat.reconnectDeadline !== null && seat.reconnectDeadline >= now;
 
 		// Reclaim seat
 		seat.isConnected = true;
@@ -874,10 +932,7 @@ export class GameRoom extends DurableObject<Env> {
 		await this.saveSeats(seats);
 
 		// Log seat reclaim attempt and result
-		const hasReservedSeat = seat.reconnectDeadline !== null;
-		const hasActiveGame = false; // TODO: Check if game is active
-		const withinWindow = seat.reconnectDeadline !== null && seat.reconnectDeadline >= now;
-		this.instr?.seatReclaimAttempt(userId, hasReservedSeat, hasActiveGame, withinWindow);
+		this.instr?.seatReclaimAttempt(userId, hadReservedSeat, hasActiveGame, withinWindow);
 		this.instr?.seatReclaimResult(userId, 'reclaimed');
 		return { success: true, seat };
 	}
@@ -1215,6 +1270,16 @@ export class GameRoom extends DurableObject<Env> {
 			// Send chat history to spectator
 			this.sendChatHistory(ws);
 
+			// CRITICAL: Send full game state sync if game is active
+			// This ensures spectators joining mid-game see complete state
+			const currentGameState = await this.gameStateManager.getState();
+			if (
+				currentGameState &&
+				(roomState.status === 'playing' || roomState.status === 'starting')
+			) {
+				await this.sendGameStateSync(ws, currentGameState, false);
+			}
+
 			// Notify everyone about new spectator
 			const spectatorMsg = await this.chatManager.createSystemMessage(
 				`${connState.displayName} is now watching`,
@@ -1362,6 +1427,16 @@ export class GameRoom extends DurableObject<Env> {
 					avatarSeed: connState.avatarSeed,
 				},
 			});
+
+			// CRITICAL: Send full game state sync if game is active
+			// This ensures reconnecting players have complete, authoritative state
+			const currentGameState = await this.gameStateManager.getState();
+			if (
+				currentGameState &&
+				(roomState.status === 'playing' || roomState.status === 'starting')
+			) {
+				await this.sendGameStateSync(ws, currentGameState, true);
+			}
 		} else if (isInitialCreation) {
 			// Host created the room - welcome is shown on the waiting room UI
 			// No chat message needed since the user is alone

@@ -6,6 +6,9 @@
  */
 
 import * as jose from 'jose';
+import { createLogger } from './lib/logger';
+
+const authLogger = createLogger({ component: 'Auth' });
 
 // =============================================================================
 // Types
@@ -218,7 +221,9 @@ export async function verifySupabaseJWT(
 		} catch (jwksError) {
 			// If JWKS fails and we have a JWT secret, try HS256 fallback
 			if (jwtSecret && jwksError instanceof jose.errors.JWKSNoMatchingKey) {
-				console.log('[Auth] JWKS verification failed, trying HS256 fallback');
+				authLogger.debug('JWKS verification failed, trying HS256 fallback', {
+					operation: 'jwt_verify_hs256_fallback',
+				});
 				const secret = new TextEncoder().encode(jwtSecret);
 
 				const { payload } = await jose.jwtVerify(token, secret, {
@@ -282,7 +287,10 @@ export async function verifySupabaseJWT(
 			error instanceof Error &&
 			(error.message.includes('fetch') || error.message.includes('network'))
 		) {
-			console.error('JWKS fetch error:', error);
+			authLogger.error('JWKS fetch error', {
+				operation: 'jwt_verify_jwks_error',
+				error: error.message,
+			});
 			return {
 				success: false,
 				error: 'Unable to verify token (JWKS unavailable)',
@@ -291,7 +299,10 @@ export async function verifySupabaseJWT(
 		}
 
 		// Log unexpected errors
-		console.error('JWT verification failed:', error);
+		authLogger.error('JWT verification failed', {
+			operation: 'jwt_verify_error',
+			error: error instanceof Error ? error.message : String(error),
+		});
 
 		return {
 			success: false,

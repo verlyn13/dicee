@@ -49,11 +49,15 @@ import NewsDev from './NewsDev.svelte';
 
 <style>
 	.hub {
+		min-height: 100vh;
+		/* biome-ignore lint/suspicious/noDuplicateProperties: svh fallback */
 		min-height: 100svh;
 		padding: var(--space-2);
 		background: var(--color-background);
 		display: flex;
 		flex-direction: column;
+		/* Prevent pinch-zoom that corrupts iOS viewport */
+		touch-action: manipulation;
 	}
 
 	.hub-grid {

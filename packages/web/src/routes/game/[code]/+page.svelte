@@ -131,9 +131,12 @@ $effect(() => {
 		justify-content: center;
 		/* Use svh for stable height (accounts for browser chrome) */
 		min-height: 100vh;
+		/* biome-ignore lint/suspicious/noDuplicateProperties: svh fallback */
 		min-height: 100svh;
 		padding: var(--space-3);
 		background: var(--color-background);
+		/* Prevent pinch-zoom that corrupts iOS viewport */
+		touch-action: manipulation;
 	}
 
 	.loading-content,

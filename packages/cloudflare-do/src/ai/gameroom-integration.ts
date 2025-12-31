@@ -19,6 +19,7 @@
  */
 
 import type { MultiplayerGameState, PlayerGameState } from '../game';
+import { type Logger, createLogger } from '../lib/logger';
 import { type AICommand, AIController } from './controller';
 import { getProfile } from './profiles';
 import type { AIEvent } from './types';
@@ -49,6 +50,7 @@ export class AIRoomManager {
 	private aiPlayers: Set<string> = new Set();
 	private turnInProgress = false;
 	private turnStartedAt: number | null = null;
+	private logger: Logger;
 	/** Maximum time (ms) an AI turn can take before we consider it stale */
 	private static readonly TURN_TIMEOUT_MS = 30000; // 30 seconds
 
@@ -59,6 +61,7 @@ export class AIRoomManager {
 			enableChat: true,
 			emitThinkingEvents: true,
 		});
+		this.logger = createLogger({ component: 'AIRoomManager' });
 	}
 
 	/**
@@ -144,7 +147,10 @@ export class AIRoomManager {
 
 		// Check for stale turn and force reset if needed
 		if (this.isTurnStale()) {
-			console.warn(`[AIRoomManager] Stale turn detected, force resetting`);
+			this.logger.warn('Stale turn detected, force resetting', {
+				operation: 'ai_turn_stale_reset',
+				playerId,
+			});
 			this.turnInProgress = false;
 			this.turnStartedAt = null;
 		}
@@ -163,7 +169,10 @@ export class AIRoomManager {
 
 			// Re-check staleness during wait
 			if (this.isTurnStale()) {
-				console.warn(`[AIRoomManager] Turn became stale during wait, force resetting`);
+				this.logger.warn('Turn became stale during wait, force resetting', {
+					operation: 'ai_turn_stale_wait',
+					playerId,
+				});
 				this.turnInProgress = false;
 				this.turnStartedAt = null;
 				break;
@@ -171,7 +180,10 @@ export class AIRoomManager {
 		}
 
 		if (this.turnInProgress) {
-			console.error(`[AIRoomManager] Timeout waiting for previous turn, skipping ${playerId}`);
+			this.logger.error('Timeout waiting for previous turn, skipping player', {
+				operation: 'ai_turn_timeout',
+				playerId,
+			});
 			return;
 		}
 
@@ -192,7 +204,11 @@ export class AIRoomManager {
 			// Execute the turn with state getter
 			await this.controller.executeTurn(playerId, getGameState, executor, emitter);
 		} catch (error) {
-			console.error(`[AIRoomManager] Turn execution failed for ${playerId}:`, error);
+			this.logger.error('Turn execution failed', {
+				operation: 'ai_turn_error',
+				playerId,
+				error: error instanceof Error ? error.message : String(error),
+			});
 			throw error;
 		} finally {
 			this.turnInProgress = false;

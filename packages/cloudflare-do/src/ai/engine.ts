@@ -16,6 +16,9 @@
 
 import type { Category, KeptMask, Scorecard } from '../game';
 import { getRemainingCategories } from '../game';
+import { createLogger } from '../lib/logger';
+
+const engineLogger = createLogger({ component: 'DiceeEngine' });
 
 // ============================================================================
 // WASM Types (from dicee_engine.d.ts)
@@ -492,7 +495,9 @@ export function getEngine(useWasm = false): DiceeEngine {
 
 	if (useWasm) {
 		// TODO: Implement WASM engine when bundling is configured
-		console.warn('WASM engine not available, using TypeScript fallback');
+		engineLogger.info('WASM engine not available, using TypeScript fallback', {
+			operation: 'engine_init',
+		});
 	}
 
 	engineInstance = new TypeScriptEngine();

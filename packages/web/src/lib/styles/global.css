@@ -7,30 +7,83 @@
 @import "./cartridge-tokens.css";
 
 /* ==========================================================================
- * Mobile Keyboard Handling
+ * iOS Viewport & Mobile Handling
  * 
- * 2025 paradigm for handling mobile keyboard layout issues:
- * - interactive-widget=resizes-content in viewport meta (Chrome 108+, Firefox 132+)
- * - svh units for stable viewport height (accounts for browser chrome)
- * - --keyboard-height CSS var updated by VisualViewport API (all browsers)
- * - calc(100svh - var(--keyboard-height)) for keyboard-aware containers
+ * Addresses iOS Safari viewport issues:
+ * - Dynamic viewport height (dvh/svh) with fallback for older browsers
+ * - Safe area insets for notched devices
+ * - Pinch-zoom corruption detection and prevention
+ * - Mobile keyboard handling
  * 
- * IMPORTANT: dvh/svh units do NOT respond to keyboard - only browser chrome!
- * JavaScript (keyboard.ts) is required for actual keyboard height detection.
+ * The iOS viewport issue stems from Safari's dynamic UI - the address bar
+ * collapses on scroll, changing the actual viewport height. dvh/svh units
+ * handle this, but older browsers need a JavaScript fallback.
  * 
  * @see docs/references/keyboard-layout-research.md
  * ========================================================================== */
 
 :root {
+	/* ===== Dynamic Viewport Units ===== */
+	/* 
+	 * Viewport height variables with fallback chain:
+	 * 1. dvh (dynamic) - changes as browser chrome appears/disappears
+	 * 2. svh (small) - viewport with all browser UI visible
+	 * 3. lvh (large) - viewport with minimal browser UI
+	 * 4. vh - legacy fallback
+	 */
+	--viewport-height-dynamic: 100dvh;
+	--viewport-height-small: 100svh;
+	--viewport-height-large: 100lvh;
+
+	/* JavaScript-calculated fallback (set by viewport.ts) */
+	--vh-fallback: 1vh;
+	--viewport-height: 100vh;
+
+	/* ===== Safe Area Insets ===== */
+	/* For notch and home indicator on iOS devices */
+	--safe-top: env(safe-area-inset-top, 0px);
+	--safe-bottom: env(safe-area-inset-bottom, 0px);
+	--safe-left: env(safe-area-inset-left, 0px);
+	--safe-right: env(safe-area-inset-right, 0px);
+
+	/* ===== Keyboard Handling ===== */
 	/* Updated by keyboard.ts via VisualViewport API */
 	--keyboard-height: 0px;
 }
+
+/* Fallback for browsers without dvh support */
+@supports not (height: 100dvh) {
+	:root {
+		--viewport-height-dynamic: calc(var(--vh-fallback) * 100);
+	}
+}
+
+/* Class added by viewport.ts when dvh is not supported */
+.no-dvh {
+	--viewport-height-dynamic: var(--viewport-height);
+}
+
+/* ==========================================================================
+ * Viewport Utility Classes
+ * ========================================================================== */
 
 /* Full-height container using svh (stable, accounts for browser chrome) */
 .h-screen-safe {
 	height: 100vh;
 	/* biome-ignore lint/suspicious/noDuplicateProperties: Intentional fallback - svh not supported in older browsers */
 	height: 100svh;
+}
+
+/* Full-height container using dvh (dynamic, responds to browser chrome) */
+.h-screen-dynamic {
+	height: 100vh;
+	/* biome-ignore lint/suspicious/noDuplicateProperties: Intentional fallback */
+	height: 100dvh;
+}
+
+/* Fallback for no-dvh browsers */
+.no-dvh .h-screen-dynamic {
+	height: var(--viewport-height);
 }
 
 /* Keyboard-aware full-height container */
@@ -47,7 +100,92 @@
 
 /* Safe area insets for notched devices */
 .safe-area-bottom {
-	padding-bottom: env(safe-area-inset-bottom, 0px);
+	padding-bottom: var(--safe-bottom);
+}
+
+.safe-area-top {
+	padding-top: var(--safe-top);
+}
+
+.safe-area-all {
+	padding-top: var(--safe-top);
+	padding-bottom: var(--safe-bottom);
+	padding-left: var(--safe-left);
+	padding-right: var(--safe-right);
+}
+
+/* ==========================================================================
+ * App Shell Layout (iOS-safe)
+ * 
+ * Use for full-screen app layouts that need to handle iOS viewport issues.
+ * Combines dynamic viewport height with safe area handling.
+ * ========================================================================== */
+
+.app-shell {
+	display: flex;
+	flex-direction: column;
+	height: 100dvh;
+	/* biome-ignore lint/suspicious/noDuplicateProperties: Intentional fallback for no-dvh browsers */
+	height: var(--viewport-height-dynamic);
+	width: 100%;
+	overflow: hidden;
+}
+
+.app-shell__header {
+	flex-shrink: 0;
+	padding-top: var(--safe-top);
+}
+
+.app-shell__content {
+	flex: 1 1 auto;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-y: contain;
+	min-height: 0; /* Critical for flex scroll containers */
+}
+
+.app-shell__footer {
+	flex-shrink: 0;
+	padding-bottom: var(--safe-bottom);
+}
+
+/* ==========================================================================
+ * Touch Action Control (Pinch-Zoom Prevention)
+ * 
+ * Apply to game containers to prevent accidental pinch-zoom that
+ * can corrupt the iOS viewport.
+ * ========================================================================== */
+
+/* Prevent all touch actions except tap and horizontal scroll */
+.touch-action-pan-x {
+	touch-action: pan-x;
+}
+
+/* Prevent zoom gestures but allow pan */
+.touch-action-manipulation {
+	touch-action: manipulation;
+}
+
+/* Prevent all gestures (use sparingly) */
+.touch-action-none {
+	touch-action: none;
+}
+
+/* ==========================================================================
+ * Viewport Corruption Recovery
+ * 
+ * Applied by viewport.ts when pinch-zoom corruption is detected.
+ * Forces a repaint to help recover from viewport issues.
+ * ========================================================================== */
+
+html.viewport-corrupted body {
+	/* Force reflow */
+	transform: translateZ(0);
+}
+
+html.viewport-repair body {
+	/* Temporary state during repair */
+	opacity: 0.999;
 }
 
 /* ==========================================================================

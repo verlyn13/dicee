@@ -20,6 +20,7 @@ import type {
 	AIActivity,
 	MultiplayerGameStore,
 	ScoringNotification,
+	SpectatorEngagement,
 } from '$lib/stores/multiplayerGame.svelte';
 import type { Category as CoreCategory, DiceArray, DieValue, TurnAnalysis } from '$lib/types';
 import { isWireCategory, toCoreCategory, type WireCategory } from '$lib/types/category-convert';
@@ -30,6 +31,7 @@ import DisconnectedPlayersBanner from './DisconnectedPlayersBanner.svelte';
 import MultiplayerGameOverModal from './MultiplayerGameOverModal.svelte';
 import MultiplayerScorecard from './MultiplayerScorecard.svelte';
 import OpponentPanel from './OpponentPanel.svelte';
+import SpectatorEngagementBanner from './SpectatorEngagementBanner.svelte';
 import TurnIndicator from './TurnIndicator.svelte';
 
 interface Props {
@@ -86,6 +88,9 @@ const scoringNotifications = $derived(store.scoringNotifications);
 // Reconnection state (Phase 3)
 const disconnectedPlayers = $derived(store.disconnectedPlayers);
 const didReconnect = $derived(store.didReconnect);
+
+// Spectator engagement (Phase 4)
+const spectatorEngagements = $derived(store.spectatorEngagements);
 
 // Active player's dice (show opponent's dice when watching their turn)
 const activeDice = $derived(
@@ -371,6 +376,11 @@ function handleDismissReconnect(): void {
 			</div>
 		{/if}
 
+		<!-- Spectator Engagement Notifications (Phase 4) -->
+		{#if spectatorEngagements.length > 0}
+			<SpectatorEngagementBanner engagements={spectatorEngagements} />
+		{/if}
+
 		<!-- Game Header -->
 		<header class="game-header">
 			<button class="leave-btn" onclick={handleLeave} type="button">
@@ -567,8 +577,11 @@ function handleDismissReconnect(): void {
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
+		/* biome-ignore lint/suspicious/noDuplicateProperties: svh fallback */
 		min-height: 100svh;
 		background: var(--color-background);
+		/* Prevent pinch-zoom that corrupts iOS viewport */
+		touch-action: manipulation;
 	}
 
 	/* Desktop: Fixed viewport, internal scrolling */

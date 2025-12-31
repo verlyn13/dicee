@@ -34,6 +34,7 @@ const players = $derived(store.players);
 const spectatorCount = $derived(store.spectatorCount);
 const spectatorDisplay = $derived(store.spectatorDisplay);
 const error = $derived(store.error);
+const gameState = $derived(store.gameState);
 
 // Chat state
 let chatCollapsed = $state(true);
@@ -60,7 +61,7 @@ let hasRolled = $state(false);
 
 /**
  * Handle game events for dice state updates
- * Processes DICE_ROLLED, DICE_KEPT, TURN_STARTED, etc.
+ * Processes DICE_ROLLED, DICE_KEPT, TURN_STARTED, GAME_STATE_SYNC, etc.
  */
 function handleGameEvent(event: unknown): void {
 	if (!event) return;
@@ -69,6 +70,35 @@ function handleGameEvent(event: unknown): void {
 	const payload = (event as { payload?: Record<string, unknown> }).payload;
 
 	switch (eventType) {
+		case 'GAME_STATE_SYNC':
+			// Full state sync - restore dice state from current player
+			if (payload?.currentPlayerId) {
+				currentPlayerId = payload.currentPlayerId as string;
+				const playerStates = payload.players as
+					| Record<
+							string,
+							{ currentDice?: number[]; keptDice?: boolean[]; rollsRemaining?: number }
+					  >
+					| undefined;
+				const currentPlayerState = playerStates?.[currentPlayerId];
+				if (currentPlayerState?.currentDice) {
+					currentDice = (currentPlayerState.currentDice as number[]).map(
+						(d) => Math.max(1, Math.min(6, d)) as DieValue,
+					) as DiceArray;
+					hasRolled = true;
+				} else {
+					currentDice = defaultDice;
+					hasRolled = false;
+				}
+				if (currentPlayerState?.keptDice) {
+					keptDice = currentPlayerState.keptDice as [boolean, boolean, boolean, boolean, boolean];
+				} else {
+					keptDice = [false, false, false, false, false];
+				}
+				rollsRemaining = currentPlayerState?.rollsRemaining ?? 3;
+			}
+			break;
+
 		case 'DICE_ROLLED':
 			if (payload?.dice) {
 				currentDice = (payload.dice as number[]).map(
@@ -267,7 +297,7 @@ onMount(() => {
 
 		<!-- Right: All Player Scorecards -->
 		<aside class="scorecards-area">
-			<AllScorecards {players} {currentPlayerId} />
+			<AllScorecards {players} {currentPlayerId} playerGameStates={gameState?.players} />
 		</aside>
 	</div>
 
@@ -282,8 +312,11 @@ onMount(() => {
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
+		/* biome-ignore lint/suspicious/noDuplicateProperties: svh fallback */
 		min-height: 100svh;
 		background: var(--color-background);
+		/* Prevent pinch-zoom that corrupts iOS viewport */
+		touch-action: manipulation;
 	}
 
 	/* Error Banner */

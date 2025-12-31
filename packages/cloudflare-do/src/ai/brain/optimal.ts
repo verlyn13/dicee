@@ -7,6 +7,7 @@
 
 import type { Category, KeptMask, Scorecard } from '../../game';
 import { calculateAllPotentialScores, getRemainingCategories } from '../../game';
+import { type Logger, createLogger } from '../../lib/logger';
 import type { AIProfile, GameContext, TurnDecision } from '../types';
 import type { AIBrain, CategoryEV, KeepAnalysis } from './types';
 
@@ -33,9 +34,11 @@ const UPPER_CATEGORY_VALUES: Record<string, number> = {
 export class OptimalBrain implements AIBrain {
 	readonly type = 'optimal';
 	private useWasm: boolean;
+	private logger: Logger;
 
 	constructor(useWasm = false) {
 		this.useWasm = useWasm;
+		this.logger = createLogger({ component: 'OptimalBrain' });
 	}
 
 	async initialize(_profile: AIProfile): Promise<void> {
@@ -51,12 +54,16 @@ export class OptimalBrain implements AIBrain {
 		// Dice are null/undefined at turn start before first roll
 		const hasValidDice =
 			context.dice && context.dice.length === 5 && context.dice.some((d) => d >= 1 && d <= 6);
-		console.log(
-			`[OptimalBrain] decide() - dice: ${JSON.stringify(context.dice)}, hasValidDice: ${hasValidDice}, rollsRemaining: ${context.rollsRemaining}`,
-		);
+		this.logger.debug('Decision request', {
+			operation: 'brain_decide',
+			hasValidDice,
+			rollsRemaining: context.rollsRemaining,
+		});
 
 		if (!hasValidDice) {
-			console.log('[OptimalBrain] No valid dice - returning roll action');
+			this.logger.debug('No valid dice - returning roll action', {
+				operation: 'brain_decide_no_dice',
+			});
 			return {
 				action: 'roll',
 				reasoning: 'No dice yet - must roll first',

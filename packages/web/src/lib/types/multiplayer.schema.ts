@@ -880,6 +880,28 @@ export const JoinRequestErrorEventSchema = BaseEventSchema.extend({
 });
 
 // =============================================================================
+// Game State Sync Event Schema (Server → Client)
+// =============================================================================
+
+/**
+ * Full game state sync - sent on reconnection or state request
+ * Contains the complete MultiplayerGameState for clients to restore
+ */
+export const GameStateSyncEventSchema = BaseEventSchema.extend({
+	type: z.literal('GAME_STATE_SYNC'),
+	payload: z.object({
+		playerOrder: z.array(z.string()),
+		currentPlayerId: z.string(),
+		turnNumber: z.number().int().min(1),
+		roundNumber: z.number().int().min(1),
+		phase: z.string(),
+		players: z.record(z.string(), PlayerGameStateSchema),
+		isReconnection: z.boolean().optional(),
+		timestamp: z.number().int().positive().optional(),
+	}),
+});
+
+// =============================================================================
 // Shout Event Schemas (Server → Client)
 // =============================================================================
 
@@ -898,6 +920,24 @@ export const ShoutCooldownEventSchema = BaseEventSchema.extend({
 	type: z.literal('SHOUT_COOLDOWN'),
 	payload: z.object({
 		remainingMs: z.number().int().nonnegative(),
+	}),
+});
+
+/**
+ * Spectator reaction notification (Phase 4 - Spectator Engagement)
+ */
+export const SpectatorReactionEventSchema = BaseEventSchema.extend({
+	type: z.literal('SPECTATOR_REACTION'),
+	payload: z.object({
+		reaction: z.object({
+			id: z.string(),
+			spectatorId: z.string(),
+			spectatorName: z.string(),
+			emoji: z.string(),
+			targetPlayerId: z.string().optional(),
+		}),
+		comboCount: z.number().int().nonnegative().default(1),
+		playSound: z.boolean().default(false),
 	}),
 });
 
@@ -956,6 +996,10 @@ export const ServerEventSchema = z.discriminatedUnion('type', [
 	// Shout events
 	ShoutReceivedEventSchema,
 	ShoutCooldownEventSchema,
+	// State sync events (reconnection)
+	GameStateSyncEventSchema,
+	// Spectator engagement (Phase 4)
+	SpectatorReactionEventSchema,
 ]);
 
 /** Server event input type (before validation) */

@@ -9,12 +9,16 @@
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { browser } from '$app/environment';
 import type {
+	PlayerGameState,
 	QuickChatKey,
 	ReactionEmoji,
 	RoomCode,
 	RoomPlayer,
 	ServerEvent,
 } from '$lib/types/multiplayer';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('SpectatorService');
 
 // =============================================================================
 // Prediction Types (D4)
@@ -345,6 +349,18 @@ export interface SpectatorState {
 	spectatorCount: number;
 	/** Last error message */
 	error: string | null;
+	/** Full game state (includes scorecards, dice, etc.) - populated via GAME_STATE_SYNC */
+	gameState: SpectatorGameState | null;
+}
+
+/** Game state for spectator view - contains all player game data */
+export interface SpectatorGameState {
+	playerOrder: string[];
+	currentPlayerId: string;
+	turnNumber: number;
+	roundNumber: number;
+	phase: string;
+	players: Record<string, PlayerGameState>;
 }
 
 export type SpectatorEventHandler = (event: ServerEvent | SpectatorServerEvent) => void;
@@ -387,6 +403,7 @@ class SpectatorService {
 	private _spectators: SpectatorInfo[] = [];
 	private _spectatorCount = 0;
 	private _error: string | null = null;
+	private _gameState: SpectatorGameState | null = null;
 
 	/** Prediction state (D4) */
 	private _predictions: Prediction[] = [];
@@ -450,6 +467,10 @@ class SpectatorService {
 		return this._error;
 	}
 
+	get gameState(): SpectatorGameState | null {
+		return this._gameState;
+	}
+
 	get state(): SpectatorState {
 		return {
 			status: this._status,
@@ -459,6 +480,7 @@ class SpectatorService {
 			spectators: this._spectators,
 			spectatorCount: this._spectatorCount,
 			error: this._error,
+			gameState: this._gameState,
 		};
 	}
 
@@ -664,7 +686,7 @@ class SpectatorService {
 	private connectToServer(roomCode: RoomCode, accessToken: string): void {
 		if (!browser) return;
 
-		console.log(`[SpectatorService] Connecting as spectator to room: ${roomCode}`);
+		log.debug('Connecting as spectator', { roomCode });
 
 		// Use same-origin WebSocket proxy with role=spectator
 		const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -704,6 +726,7 @@ class SpectatorService {
 		this._players = [];
 		this._spectators = [];
 		this._spectatorCount = 0;
+		this._gameState = null;
 		// Clear prediction state
 		this._predictions = [];
 		this._predictionStats = null;
@@ -735,7 +758,7 @@ class SpectatorService {
 	 */
 	triggerReconnect(): void {
 		if (this.socket && this._status !== 'connected' && this._status !== 'connecting') {
-			console.log('[SpectatorService] Triggering reconnect due to visibility change');
+			log.debug('Triggering reconnect due to visibility change');
 			this.socket.reconnect();
 		}
 	}
@@ -935,7 +958,7 @@ class SpectatorService {
 		// Check if emoji requires rooting
 		const metadata = REACTION_METADATA[emoji];
 		if (metadata.requiresRooting && !this._myRootingChoice) {
-			console.warn('[SpectatorService] Cannot use rooting reaction without backing a player');
+			log.warn('Cannot use rooting reaction without backing a player');
 			return;
 		}
 
@@ -1074,7 +1097,7 @@ class SpectatorService {
 	// =========================================================================
 
 	private handleOpen(): void {
-		console.log('[SpectatorService] Connected as spectator to room:', this._roomCode);
+		log.debug('Connected as spectator', { roomCode: this._roomCode });
 		this.setStatus('connected');
 		this._error = null;
 	}
@@ -1091,16 +1114,16 @@ class SpectatorService {
 				try {
 					handler(raw as unknown as ServerEvent | SpectatorServerEvent);
 				} catch (error) {
-					console.error('[SpectatorService] Event handler error:', error);
+					log.error('Event handler error', error as Error);
 				}
 			}
 		} catch (error) {
-			console.error('[SpectatorService] Failed to parse message:', error);
+			log.error('Failed to parse message', error as Error);
 		}
 	}
 
 	private handleClose(event: CloseEvent): void {
-		console.log('[SpectatorService] Disconnected:', event.code, event.reason);
+		log.debug('Disconnected', { code: event.code, reason: event.reason });
 
 		// Handle specific close codes
 		if (event.code === 4004) {
@@ -1115,7 +1138,7 @@ class SpectatorService {
 	}
 
 	private handleError(): void {
-		console.error('[SpectatorService] Connection error');
+		log.error('Connection error');
 		this._error = 'Connection error';
 		this.setStatus('error');
 	}
@@ -1126,7 +1149,7 @@ class SpectatorService {
 			try {
 				listener(status);
 			} catch (error) {
-				console.error('[SpectatorService] Status listener error:', error);
+				log.error('Status listener error', error as Error);
 			}
 		}
 	}
@@ -1137,8 +1160,18 @@ class SpectatorService {
 		// Route to specialized handlers by event category
 		if (event.type.startsWith('SPECTATOR_') || event.type.startsWith('PLAYER_')) {
 			this.handleConnectionEvent(event.type, payload);
+		} else if (event.type === 'GAME_STATE_SYNC') {
+			this.handleGameStateSync(payload);
 		} else if (event.type.startsWith('GAME_')) {
-			this.handleGameEvent(event.type);
+			this.handleGameEvent(event.type, payload);
+		} else if (
+			event.type === 'DICE_ROLLED' ||
+			event.type === 'DICE_KEPT' ||
+			event.type === 'CATEGORY_SCORED' ||
+			event.type === 'TURN_STARTED' ||
+			event.type === 'TURN_CHANGED'
+		) {
+			this.handleIncrementalGameEvent(event.type, payload);
 		} else if (event.type.startsWith('PREDICTION') || event.type === 'TURN_STARTED') {
 			this.handlePredictionEvent(event.type, payload);
 		} else if (event.type.startsWith('ROOTING')) {
@@ -1217,14 +1250,165 @@ class SpectatorService {
 	}
 
 	/** Handle game state events */
-	private handleGameEvent(type: string): void {
+	private handleGameEvent(type: string, payload: Record<string, unknown>): void {
 		switch (type) {
 			case 'GAME_STARTING':
 				this._roomStatus = 'starting';
 				break;
 			case 'GAME_STARTED':
 				this._roomStatus = 'playing';
+				// Initialize game state from GAME_STARTED payload
+				if (payload) {
+					this._gameState = {
+						playerOrder: (payload.playerOrder as string[]) ?? [],
+						currentPlayerId: (payload.currentPlayerId as string) ?? '',
+						turnNumber: (payload.turnNumber as number) ?? 1,
+						roundNumber: (payload.roundNumber as number) ?? 1,
+						phase: (payload.phase as string) ?? 'turn_roll',
+						players: (payload.players as Record<string, PlayerGameState>) ?? {},
+					};
+				}
 				break;
+			case 'GAME_OVER':
+				this._roomStatus = 'completed';
+				if (this._gameState) {
+					this._gameState = { ...this._gameState, phase: 'game_over' };
+				}
+				break;
+		}
+	}
+
+	/**
+	 * Handle full game state synchronization (sent on spectator mid-game join).
+	 * This ensures spectators joining mid-game see complete state.
+	 */
+	private handleGameStateSync(payload: Record<string, unknown>): void {
+		if (!payload) return;
+
+		this._gameState = {
+			playerOrder: (payload.playerOrder as string[]) ?? [],
+			currentPlayerId: (payload.currentPlayerId as string) ?? '',
+			turnNumber: (payload.turnNumber as number) ?? 1,
+			roundNumber: (payload.roundNumber as number) ?? 1,
+			phase: (payload.phase as string) ?? 'turn_roll',
+			players: (payload.players as Record<string, PlayerGameState>) ?? {},
+		};
+
+		// Also update room status based on phase
+		const phase = payload.phase as string;
+		if (phase === 'game_over') {
+			this._roomStatus = 'completed';
+		} else if (phase && phase !== 'waiting') {
+			this._roomStatus = 'playing';
+		}
+	}
+
+	/**
+	 * Handle incremental game events to keep game state up-to-date.
+	 * These are events like DICE_ROLLED, DICE_KEPT, CATEGORY_SCORED that update
+	 * individual parts of the game state.
+	 */
+	private handleIncrementalGameEvent(type: string, payload: Record<string, unknown>): void {
+		if (!this._gameState || !payload) return;
+
+		const playerId = payload.playerId as string;
+		if (!playerId) return;
+
+		const player = this._gameState.players[playerId];
+		if (!player) return;
+
+		switch (type) {
+			case 'DICE_ROLLED': {
+				const dice = payload.dice as number[] | undefined;
+				const rollsRemaining = payload.rollsRemaining as number | undefined;
+				this._gameState = {
+					...this._gameState,
+					phase: 'turn_decide',
+					players: {
+						...this._gameState.players,
+						[playerId]: {
+							...player,
+							currentDice: dice
+								? (dice as [number, number, number, number, number])
+								: player.currentDice,
+							rollsRemaining: rollsRemaining ?? player.rollsRemaining,
+						},
+					},
+				};
+				break;
+			}
+
+			case 'DICE_KEPT': {
+				const kept = payload.kept as boolean[] | undefined;
+				this._gameState = {
+					...this._gameState,
+					players: {
+						...this._gameState.players,
+						[playerId]: {
+							...player,
+							keptDice: kept
+								? (kept as [boolean, boolean, boolean, boolean, boolean])
+								: player.keptDice,
+						},
+					},
+				};
+				break;
+			}
+
+			case 'CATEGORY_SCORED': {
+				const category = payload.category as string;
+				const score = payload.score as number;
+				const totalScore = payload.totalScore as number;
+				const isDiceeBonus = payload.isDiceeBonus as boolean | undefined;
+
+				const newScorecard = { ...player.scorecard, [category]: score };
+				if (isDiceeBonus) {
+					newScorecard.diceeBonus = (player.scorecard.diceeBonus ?? 0) + 100;
+				}
+
+				this._gameState = {
+					...this._gameState,
+					players: {
+						...this._gameState.players,
+						[playerId]: {
+							...player,
+							scorecard: newScorecard,
+							totalScore: totalScore ?? player.totalScore,
+							currentDice: null,
+							keptDice: null,
+						},
+					},
+				};
+				break;
+			}
+
+			case 'TURN_STARTED':
+			case 'TURN_CHANGED': {
+				const newPlayerId = (payload.playerId ?? payload.currentPlayerId) as string;
+				const turnNumber = payload.turnNumber as number | undefined;
+				const roundNumber = payload.roundNumber as number | undefined;
+
+				// Reset turn state for the new current player
+				const newPlayers = { ...this._gameState.players };
+				if (newPlayerId && newPlayers[newPlayerId]) {
+					newPlayers[newPlayerId] = {
+						...newPlayers[newPlayerId],
+						currentDice: null,
+						keptDice: null,
+						rollsRemaining: 3,
+					};
+				}
+
+				this._gameState = {
+					...this._gameState,
+					currentPlayerId: newPlayerId ?? this._gameState.currentPlayerId,
+					turnNumber: turnNumber ?? this._gameState.turnNumber,
+					roundNumber: roundNumber ?? this._gameState.roundNumber,
+					phase: 'turn_roll',
+					players: newPlayers,
+				};
+				break;
+			}
 		}
 	}
 
@@ -1429,7 +1613,7 @@ class SpectatorService {
 						try {
 							listener(event);
 						} catch (error) {
-							console.error('[SpectatorService] Reaction listener error:', error);
+							log.error('Reaction listener error', error as Error);
 						}
 					}
 				}
@@ -1513,7 +1697,7 @@ class SpectatorService {
 				this._isTransitioning = false;
 				this._queueState = null;
 				this._warmSeatTransition = null;
-				console.log('[SpectatorService] Transition complete - now a player');
+				log.debug('Transition complete - now a player');
 				break;
 
 			case 'WARM_SEAT_COMPLETE':
@@ -1583,7 +1767,7 @@ class SpectatorService {
 							try {
 								listener(achievement);
 							} catch (error) {
-								console.error('[SpectatorService] Achievement listener error:', error);
+								log.error('Achievement listener error', error as Error);
 							}
 						}
 					}

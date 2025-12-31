@@ -17,6 +17,7 @@ import { auth } from '$lib/stores/auth.svelte';
 import { lobby } from '$lib/stores/lobby.svelte';
 import { profileStore } from '$lib/stores/profile.svelte';
 import { initKeyboardHandler } from '$lib/utils/keyboard';
+import { initViewportFix } from '$lib/utils/viewport';
 
 let { data, children } = $props();
 
@@ -90,6 +91,9 @@ onMount(() => {
 	// Initialize mobile keyboard handler (Safari VisualViewport fallback)
 	const cleanupKeyboard = initKeyboardHandler();
 
+	// Initialize iOS viewport fix (pinch-zoom corruption prevention)
+	const cleanupViewport = initViewportFix();
+
 	// Handle page unload for telemetry shutdown
 	const handleBeforeUnload = () => {
 		shutdownTelemetry();
@@ -100,6 +104,7 @@ onMount(() => {
 		subscription.unsubscribe();
 		window.removeEventListener('beforeunload', handleBeforeUnload);
 		cleanupKeyboard();
+		cleanupViewport();
 		shutdownTelemetry();
 	};
 });

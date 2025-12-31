@@ -314,11 +314,15 @@ function handleBackToLobby() {
 	}
 
 	.game-container {
+		min-height: 100vh;
+		/* biome-ignore lint/suspicious/noDuplicateProperties: svh fallback */
 		min-height: 100svh;
 		display: flex;
 		flex-direction: column;
 		background: var(--color-background);
 		position: relative;
+		/* Prevent pinch-zoom that corrupts iOS viewport */
+		touch-action: manipulation;
 	}
 
 	.game-header {

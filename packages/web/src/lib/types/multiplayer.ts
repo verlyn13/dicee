@@ -40,6 +40,7 @@ import type {
 	GameOverEventSchema,
 	GameStartedEventSchema,
 	GameStartingEventSchema,
+	GameStateSyncEventSchema,
 	InviteAcceptedEventSchema,
 	InviteCancelledEventSchema,
 	InviteDeclinedEventSchema,
@@ -332,6 +333,9 @@ export type GameOverEvent = z.infer<typeof GameOverEventSchema>;
 
 /** Rematch started - return to waiting room */
 export type RematchStartedEvent = z.infer<typeof RematchStartedEventSchema>;
+
+/** Game state sync - full state on reconnection */
+export type GameStateSyncEvent = z.infer<typeof GameStateSyncEventSchema>;
 
 /** Error event */
 export type ErrorEvent = z.infer<typeof ErrorEventSchema>;

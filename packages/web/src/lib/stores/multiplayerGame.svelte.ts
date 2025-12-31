@@ -58,6 +58,20 @@ export interface DisconnectedPlayer {
 }
 
 // =============================================================================
+// Spectator Engagement (Phase 4 - Spectator Notifications)
+// =============================================================================
+
+/** A spectator reaction notification for players to see */
+export interface SpectatorEngagement {
+	id: string;
+	spectatorName: string;
+	emoji: string;
+	targetPlayerId?: string;
+	comboCount: number;
+	timestamp: number;
+}
+
+// =============================================================================
 // Store Factory
 // =============================================================================
 
@@ -82,6 +96,10 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 	// Disconnected players tracking (Phase 3 - Reconnection)
 	let disconnectedPlayers = $state<DisconnectedPlayer[]>([]);
 	let didReconnect = $state(false); // True if we reconnected (reclaimed seat)
+
+	// Spectator engagement tracking (Phase 4)
+	let spectatorEngagements = $state<SpectatorEngagement[]>([]);
+	const SPECTATOR_ENGAGEMENT_DURATION = 4000; // 4 seconds display time
 
 	// ==========================================================================
 	// Derived States
@@ -228,6 +246,16 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 
 			case 'PLAYER_SEAT_EXPIRED':
 				handlePlayerSeatExpired(event as unknown as Parameters<typeof handlePlayerSeatExpired>[0]);
+				break;
+
+			// Spectator engagement (Phase 4)
+			case 'SPECTATOR_REACTION':
+				handleSpectatorReaction(event);
+				break;
+
+			// Full game state sync (reconnection/spectator join)
+			case 'GAME_STATE_SYNC':
+				handleGameStateSync(event as unknown as Parameters<typeof handleGameStateSync>[0]);
 				break;
 		}
 	}
@@ -749,6 +777,136 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 	}
 
 	// ==========================================================================
+	// Spectator Engagement Handler (Phase 4)
+	// ==========================================================================
+
+	function handleSpectatorReaction(event: ServerEvent): void {
+		if (event.type !== 'SPECTATOR_REACTION') return;
+
+		const payload = event.payload;
+		if (!payload?.reaction) return;
+
+		const { reaction, comboCount = 1 } = payload;
+		if (!reaction.id || !reaction.spectatorName || !reaction.emoji) return;
+
+		const engagement: SpectatorEngagement = {
+			id: reaction.id,
+			spectatorName: reaction.spectatorName,
+			emoji: reaction.emoji,
+			targetPlayerId: reaction.targetPlayerId,
+			comboCount,
+			timestamp: Date.now(),
+		};
+
+		// Add to list (max 5 shown at once)
+		spectatorEngagements = [...spectatorEngagements, engagement].slice(-5);
+
+		// Schedule auto-dismiss
+		setTimeout(() => {
+			spectatorEngagements = spectatorEngagements.filter((e) => e.id !== engagement.id);
+		}, SPECTATOR_ENGAGEMENT_DURATION);
+	}
+
+	// ==========================================================================
+	// Game State Sync Handler (Phase 1 Reconnection)
+	// ==========================================================================
+
+	/**
+	 * Handle GAME_STATE_SYNC event - full state restoration for reconnection/spectator join
+	 *
+	 * This event is sent when:
+	 * 1. A player reconnects to an active game
+	 * 2. A spectator joins mid-game
+	 *
+	 * The payload contains the COMPLETE, AUTHORITATIVE game state.
+	 * This REPLACES any partial state the client may have built from
+	 * incremental events.
+	 */
+	function handleGameStateSync(event: {
+		playerOrder?: string[];
+		currentPlayerId?: string;
+		turnNumber?: number;
+		roundNumber?: number;
+		phase?: string;
+		players?: Record<string, unknown>;
+		isReconnection?: boolean;
+		timestamp?: number;
+		payload?: {
+			playerOrder?: string[];
+			currentPlayerId?: string;
+			turnNumber?: number;
+			roundNumber?: number;
+			phase?: string;
+			players?: Record<string, unknown>;
+			isReconnection?: boolean;
+			timestamp?: number;
+		};
+	}): void {
+		// Support both direct properties and nested payload (UPPERCASE format)
+		const data = event.payload ?? event;
+		const playerOrder = data.playerOrder ?? [];
+		const currentPlayerId = data.currentPlayerId ?? '';
+		const phase = (data.phase ?? 'turn_roll') as import('$lib/types/multiplayer').GamePhase;
+		const turnNumber = data.turnNumber ?? 1;
+		const roundNumber = data.roundNumber ?? 1;
+		const players = (data.players ?? {}) as Record<
+			string,
+			import('$lib/types/multiplayer').PlayerGameState
+		>;
+		const isReconnection = data.isReconnection ?? false;
+
+		const now = new Date().toISOString();
+
+		// REPLACE game state completely with server's authoritative state
+		gameState = {
+			roomCode: gameState?.roomCode ?? '',
+			phase,
+			playerOrder,
+			currentPlayerIndex: playerOrder.indexOf(currentPlayerId),
+			turnNumber,
+			roundNumber,
+			players,
+			turnStartedAt: now,
+			gameStartedAt: gameState?.gameStartedAt ?? now,
+			gameCompletedAt: phase === 'game_over' ? now : null,
+			rankings: gameState?.rankings ?? null,
+			config: gameState?.config ?? {
+				maxPlayers: 2,
+				turnTimeoutSeconds: 60,
+				isPublic: false,
+			},
+		};
+
+		// Set UI phase based on current game state
+		if (phase === 'game_over') {
+			uiPhase = 'IDLE';
+		} else if (currentPlayerId === myPlayerId) {
+			// It's our turn
+			const myPlayerState = players[myPlayerId];
+			if (myPlayerState?.currentDice) {
+				uiPhase = 'RESOLVED'; // We have dice showing
+			} else {
+				uiPhase = 'IDLE'; // Need to roll
+			}
+		} else {
+			uiPhase = 'WAITING';
+		}
+
+		// Clear pending/error states on sync
+		pending = false;
+		error = null;
+		afkWarning = null;
+
+		// If this is a reconnection, show banner (handled by CONNECTED event already)
+		if (isReconnection && !didReconnect) {
+			didReconnect = true;
+			setTimeout(() => {
+				didReconnect = false;
+			}, 5000);
+		}
+	}
+
+	// ==========================================================================
 	// Scoring Notification Helpers
 	// ==========================================================================
 
@@ -946,6 +1104,11 @@ export function createMultiplayerGameStore(myPlayerId: string) {
 		},
 		get didReconnect() {
 			return didReconnect;
+		},
+
+		// Spectator engagement (Phase 4)
+		get spectatorEngagements() {
+			return spectatorEngagements;
 		},
 
 		// Commands
