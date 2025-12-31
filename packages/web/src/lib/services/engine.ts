@@ -161,8 +161,8 @@ async function ensureEngine(): Promise<typeof import('$lib/engine')> {
  * ```
  */
 export function preloadEngine(): void {
-	initializeEngine().catch((err) => {
-		console.warn('Engine preload failed (stats will be unavailable):', err);
+	initializeEngine().catch((_err) => {
+		// Silent fallback - engine stats will be unavailable but game is still playable
 	});
 }
 

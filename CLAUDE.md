@@ -59,13 +59,20 @@ Archived docs (completed migrations, past research): `docs/archive/`
 ## Tech Stack
 - **Frontend**: SvelteKit (Svelte 5 with runes) on Cloudflare Pages
 - **Engine**: Rust/WASM probability calculations
-- **Realtime**: Cloudflare Durable Objects (GlobalLobby singleton + GameRoom per-room)
+- **Persistent Data**: Supabase (PostgreSQL) - profiles, stats, game history, leaderboards
+- **Realtime State**: Cloudflare Durable Objects (GlobalLobby singleton + GameRoom per-room)
+- **Authentication**: Supabase Auth (JWT verified by DO worker)
 - **Edge Compute**: Cloudflare (Workers, Pages, D1, KV, R2)
 - **Secrets**: Infisical (self-hosted at infisical.jefahnierocks.com)
 - **Deployment**: Cloudflare (unified stack: Pages + Workers via Service Bindings)
 - **Package Manager**: pnpm (monorepo)
 
-**Note**: This project does NOT use Supabase. Supabase is used in other projects on this machine.
+### Hybrid Persistence Architecture
+| Layer | Technology | Data |
+|-------|------------|------|
+| **Persistent User Data** | Supabase (PostgreSQL) | Profiles, stats, game history, leaderboards, feature flags |
+| **Real-time State** | Cloudflare DO (SQLite) | Active game rooms, lobby presence, WebSocket sessions, chat |
+| **Authentication** | Supabase Auth | JWT tokens verified by DO worker |
 
 ## Project Structure
 ```
@@ -87,7 +94,7 @@ docs/
 .claude/
   AGENT-GUARDRAILS.md       # CRITICAL: Mandatory rules for all agents
   CONVENTIONS.md            # Naming conventions and code patterns
-  cli-reference.yaml          # CLI tool reference (Supabase/Wrangler/Infisical)
+  cli-reference.yaml          # CLI tool reference (Wrangler/Infisical)
   environment-strategy.yaml   # Environment, secrets, and agent guardrails
   gopass-structure.yaml       # Local credential storage architecture
   typescript-biome-strategy.md # TypeScript patterns and Biome 2.3 config
@@ -121,6 +128,8 @@ scripts/
 ## MCP Tools (PRIMARY - Use First!)
 
 **CRITICAL**: MCP tools are PRIMARY tools. Always use them FIRST before falling back to other methods.
+
+> **Authoritative Reference**: `docs/PROJECT-MCP-CONFIG.md` - Contains the full MCP Tool Decision Matrix with task-to-tool mapping, auto-invoke rules, and examples. This is the canonical source for "which MCP tool should I use?"
 
 **Auto-Invoke Rule**: Context7 should be automatically used for any code generation, setup steps, or library/API documentation queries. You should automatically use Context7 MCP tools (`resolve-library-id` and `get-library-docs`) without the user having to explicitly ask.
 
@@ -161,14 +170,13 @@ scripts/
 | `cloudflare-builds` | Build status | **FIRST** for build info | `workers_builds_list_builds` |
 | `cloudflare-bindings` | Workers resources | **FIRST** for KV/R2/D1 | `kv_namespaces_list`, `r2_buckets_list` |
 | `cloudflare-graphql` | Analytics queries | **FIRST** for GraphQL queries | `graphql_query` |
+| `supabase` | Database & Auth | **FIRST** for tables, migrations, types | `list_tables`, `apply_migration`, `execute_sql` |
 | `akg` | Architecture (Dicee) | **ALWAYS** before imports | `akg_check_import`, `akg_layer_rules` |
 | `memory` | Knowledge graph | For persistent context | `create_entities`, `search_nodes` |
 
 ## CLI Tools Reference
 
-**CRITICAL**: For Wrangler and Infisical CLI commands, always consult `.claude/cli-reference.yaml` first. This file contains accurate, version-specific command documentation generated from actual `--help` output. Do NOT rely on training data for these CLIs as they evolve rapidly.
-
-**Note**: This project does NOT use Supabase. Supabase CLI references in other docs are for different projects.
+**CRITICAL**: For Supabase, Wrangler, and Infisical CLI commands, always consult `.claude/cli-reference.yaml` first. This file contains accurate, version-specific command documentation generated from actual `--help` output. Do NOT rely on training data for these CLIs as they evolve rapidly.
 
 ### Current CLI Versions
 - Supabase CLI: 2.62.10
@@ -182,7 +190,31 @@ scripts/
 - **Environments**: dev, staging, prod
 
 ### Supabase Project Configuration
-**Note**: This project does NOT use Supabase. Supabase is used in other projects on this machine. Any Supabase references in documentation are for those other projects.
+- **Project Ref**: duhsbuyxyppgbkwbbtqg
+- **Region**: us-east-1
+- **Dashboard**: https://supabase.com/dashboard/project/duhsbuyxyppgbkwbbtqg
+
+**Database Tables** (see `packages/web/src/lib/types/database.ts`):
+| Table | Purpose |
+|-------|---------|
+| `profiles` | User profiles, display names, avatars, skill ratings |
+| `player_stats` | Aggregate game statistics (wins, scores, decisions) |
+| `games` | Game records and completion data |
+| `game_players` | Player participation in games |
+| `domain_events` | Game event log (turns, scores, analysis) |
+| `solo_leaderboard` | Leaderboard rankings |
+| `feature_flags` | Feature flag management |
+| `rooms` | Room metadata (created by DO, queried by client) |
+| `telemetry_events` | Analytics and telemetry |
+
+**Supabase CLI Commands:**
+```bash
+supabase login                       # Authenticate
+supabase db diff                     # Generate migration from schema changes
+supabase migration new <name>        # Create new migration file
+supabase db push                     # Push migrations to remote
+supabase gen types typescript        # Generate TypeScript types
+```
 
 ### Google Cloud Project (OAuth)
 - **Project Name**: dicee
@@ -233,9 +265,6 @@ scripts/
 
 ### Quick Reference
 
-#### Supabase - Not Used in This Project
-**Note**: This project does NOT use Supabase. Supabase CLI commands are for other projects on this machine.
-
 #### Cloudflare Pages - Deployment
 ```bash
 # Build and deploy
@@ -247,7 +276,7 @@ wrangler pages deployment list                  # List deployments
 wrangler pages dev .svelte-kit/cloudflare --compatibility-flags=nodejs_compat
 
 # Secrets for Pages
-wrangler pages secret put SUPABASE_SERVICE_KEY --project-name gamelobby-pages
+wrangler pages secret put SECRET_NAME --project-name gamelobby-pages
 wrangler pages secret list --project-name gamelobby-pages
 ```
 
@@ -384,15 +413,11 @@ Environment variables are managed through:
 1. **Infisical**: Primary secret store (all environments) via `infisical secrets`
 2. **Cloudflare Pages**: Env vars via dashboard or `wrangler pages secret`
 3. **Cloudflare Workers**: Secrets via `wrangler secret`
-4. **Supabase**: Edge function secrets via `supabase secrets`
-5. **Local**: `.env.local` file (git-ignored) - export from Infisical
+4. **Local**: `.env.local` file (git-ignored) - export from Infisical
 
 **Required variables (Pages):**
-- `PUBLIC_SUPABASE_URL` - Supabase project URL
-- `PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
 - `PUBLIC_APP_NAME` - "Game Lobby"
 - `PUBLIC_APP_VERSION` - Current version
-- `SUPABASE_SERVICE_KEY` - Server-side Supabase key (secret)
 
 **Service Bindings (auto-configured in wrangler.toml):**
 - `GAME_WORKER` - Binding to gamelobby worker (provides DO access)
@@ -597,29 +622,9 @@ const wsUrl = `${protocol}//${location.host}/ws/room/${code}?token=${encodeURICo
 
 // Server: +server.ts
 const token = url.searchParams.get('token');
-const { data: { user }, error } = await supabase.auth.getUser(token);
-if (error || !user) return new Response('Invalid token', { status: 401 });
+// Validate token with your auth provider
+if (!token || !validateToken(token)) return new Response('Invalid token', { status: 401 });
 ```
-
-#### ProfileAutoCreationPattern
-**Problem**: New users get 500 errors when profiles don't exist.
-
-**Solution**: Handle PGRST116 (no rows) as null, auto-create in +page.server.ts.
-```typescript
-// profiles.ts - Return null instead of error for no rows
-if (error?.code === 'PGRST116') return { data: null, error: null };
-
-// +page.server.ts - Auto-create if missing
-let { data: profile, error } = await getProfile(supabase, user.id);
-if (!profile && !error) {
-  const { data: newProfile } = await createProfile(supabase, user.id, {
-    display_name: user.user_metadata?.full_name || user.email?.split('@')[0],
-    is_anonymous: user.is_anonymous ?? false
-  });
-  profile = newProfile;
-}
-```
-**RLS Note**: Requires INSERT policy: `WITH CHECK (id = auth.uid())`
 
 #### OnlineIndicatorPattern
 **Problem**: Users need visual feedback for connection state.
@@ -749,45 +754,12 @@ See `.claude/workflow-orchestration.md` for complete specification.
 | Server | Purpose | Transport |
 |--------|---------|-----------|
 | **memory** | Knowledge Graph for persistent project state | stdio (local) |
-| **supabase** | Database, migrations, types, edge functions | HTTP (hosted) |
-| **github** | PRs, issues, commits (global config) | stdio (local) |
-
-#### Supabase MCP Authentication
-
-The Supabase MCP uses token-based authentication loaded from gopass. **Start Claude Code with the `dicee-claude` function** to ensure the token is available:
-
-```bash
-# Start Claude Code with Supabase MCP token pre-loaded
-dicee-claude
-
-# The function loads SUPABASE_MCP_TOKEN from gopass before starting
-# Token stored at: dicee/supabase/mcp-token
-```
-
-**Setup (one-time)**:
-```bash
-# Store your Supabase PAT in gopass
-gopass insert dicee/supabase/mcp-token
-
-# Fish function is at ~/.config/fish/functions/dicee-claude.fish
-```
+| **akg** | Architecture validation (Dicee-specific) | stdio (local) |
+| **cloudflare-*** | CF docs, observability, builds, bindings | HTTP (remote) |
+| **context7** | Library documentation (global) | HTTP (remote) |
+| **github** | PRs, issues, commits (global) | stdio (local) |
 
 **Check status**: `claude mcp list`
-- `✓ Connected` = Token loaded successfully
-- `⚠ Needs authentication` = Started without `dicee-claude`, restart with it
-
-Configuration in `.mcp.json`:
-```json
-{
-  "supabase": {
-    "type": "http",
-    "url": "https://mcp.supabase.com/mcp?project_ref=duhsbuyxyppgbkwbbtqg&read_only=false&features=database,docs,functions",
-    "headers": {
-      "Authorization": "Bearer ${SUPABASE_MCP_TOKEN}"
-    }
-  }
-}
-```
 
 ### Slash Commands
 

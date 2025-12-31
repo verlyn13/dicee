@@ -12,15 +12,6 @@
       "description": "Dicee project knowledge graph for persistent state",
       "tools": ["*"]
     },
-    "supabase": {
-      "type": "http",
-      "url": "https://mcp.supabase.com/mcp?project_ref=duhsbuyxyppgbkwbbtqg&read_only=false&features=database,docs,functions",
-      "headers": {
-        "Authorization": "Bearer ${SUPABASE_MCP_TOKEN}"
-      },
-      "description": "Dicee Supabase database, migrations, and edge functions",
-      "tools": ["*"]
-    },
     "akg": {
       "type": "local",
       "command": "bun",

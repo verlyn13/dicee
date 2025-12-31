@@ -2,6 +2,9 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { AdminRole, Profile } from '$lib/supabase/profiles';
 import { getProfile, hasRolePrivilege, isAdmin, isSuperAdmin } from '$lib/supabase/profiles';
 import type { Database } from '$lib/types/database';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('ProfileStore');
 
 /**
  * Profile state store using Svelte 5 runes.
@@ -54,11 +57,11 @@ class ProfileState {
 	async loadProfile(userId: string): Promise<void> {
 		if (!this.#supabase) {
 			this.#error = 'Supabase not initialized';
-			console.warn('[ProfileStore] loadProfile failed: Supabase not initialized');
+			log.warn('loadProfile failed: Supabase not initialized');
 			return;
 		}
 
-		console.log('[ProfileStore] loadProfile starting for userId:', userId);
+		log.debug('loadProfile starting', { userId });
 		this.#loading = true;
 		this.#error = null;
 
@@ -66,11 +69,11 @@ class ProfileState {
 			const { data, error } = await getProfile(this.#supabase, userId);
 
 			if (error) {
-				console.error('[ProfileStore] loadProfile error:', error.message);
+				log.error('loadProfile error', { message: error.message });
 				this.#error = error.message;
 				this.#profile = null;
 			} else {
-				console.log('[ProfileStore] loadProfile success:', {
+				log.debug('loadProfile success', {
 					id: data?.id,
 					role: data?.role,
 					displayName: data?.display_name,
@@ -79,13 +82,13 @@ class ProfileState {
 			}
 		} catch (e) {
 			const errorMsg = e instanceof Error ? e.message : 'Unknown error loading profile';
-			console.error('[ProfileStore] loadProfile exception:', errorMsg);
+			log.error('loadProfile exception', { message: errorMsg });
 			this.#error = errorMsg;
 			this.#profile = null;
 		} finally {
 			this.#loading = false;
 			this.#initialized = true;
-			console.log('[ProfileStore] loadProfile complete:', {
+			log.debug('loadProfile complete', {
 				initialized: this.#initialized,
 				hasProfile: !!this.#profile,
 				role: this.#profile?.role,

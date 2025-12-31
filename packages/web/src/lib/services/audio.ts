@@ -5,6 +5,10 @@
  * Provides low-latency audio for game events.
  */
 
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('Audio');
+
 // =============================================================================
 // Types
 // =============================================================================
@@ -189,7 +193,7 @@ class AudioManager {
 			this.#context.addEventListener('statechange', () => {
 				if (this.#context?.state === 'interrupted') {
 					// iOS interrupted - will need user gesture to resume
-					console.log('AudioContext interrupted (iOS)');
+					log.debug('AudioContext interrupted (iOS)');
 				}
 			});
 
@@ -212,7 +216,7 @@ class AudioManager {
 
 			return true;
 		} catch (error) {
-			console.warn('Audio initialization failed:', error);
+			log.warn('Audio initialization failed', { error });
 			this.#state.initialized = true;
 			this.#state.supported = false;
 			return false;
@@ -305,7 +309,7 @@ class AudioManager {
 
 		const config = SOUND_BANK[soundId];
 		if (!config) {
-			console.warn(`Unknown sound: ${soundId}`);
+			log.warn('Unknown sound', { soundId });
 			return;
 		}
 
@@ -358,7 +362,7 @@ class AudioManager {
 			// Play
 			source.start(0);
 		} catch (error) {
-			console.warn(`Failed to play sound ${soundId}:`, error);
+			log.warn('Failed to play sound', { soundId, error });
 		}
 	}
 
@@ -516,20 +520,20 @@ class AudioManager {
 				if (cacheKey !== soundId) {
 					const fallbackResponse = await fetch(config.src);
 					if (!fallbackResponse.ok) {
-						console.warn(`Sound not found: ${src}`);
+						log.warn('Sound not found', { src });
 						return null;
 					}
 					const arrayBuffer = await fallbackResponse.arrayBuffer();
 					return await this.#context.decodeAudioData(arrayBuffer);
 				}
-				console.warn(`Sound not found: ${src}`);
+				log.warn('Sound not found', { src });
 				return null;
 			}
 
 			const arrayBuffer = await response.arrayBuffer();
 			return await this.#context.decodeAudioData(arrayBuffer);
 		} catch (error) {
-			console.warn(`Failed to load sound ${src}:`, error);
+			log.warn('Failed to load sound', { src, error });
 			return null;
 		}
 	}

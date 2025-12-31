@@ -3,8 +3,11 @@
  * Svelte 5 runes-based scorecard with automatic calculations
  */
 
+import { createServiceLogger } from '$lib/utils/logger';
 import type { Category, Scorecard } from '../types.js';
 import { ALL_CATEGORIES, UPPER_CATEGORIES } from '../types.js';
+
+const log = createServiceLogger('ScorecardStore');
 
 // =============================================================================
 // Constants
@@ -116,12 +119,12 @@ export class ScorecardState {
 	// Actions
 	setScore(category: Category, score: number): boolean {
 		if (!this.isAvailable(category)) {
-			console.warn(`Category ${category} already scored`);
+			log.warn('Category already scored', { category });
 			return false;
 		}
 
 		if (score < 0) {
-			console.warn(`Invalid score: ${score}`);
+			log.warn('Invalid score', { score });
 			return false;
 		}
 

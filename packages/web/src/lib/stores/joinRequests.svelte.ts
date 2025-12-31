@@ -7,6 +7,9 @@
 
 import { roomService } from '$lib/services/roomService.svelte';
 import type { ServerEvent } from '$lib/types/multiplayer';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('JoinRequestsStore');
 
 // =============================================================================
 // Types
@@ -81,7 +84,7 @@ class JoinRequestsStore {
 		this.boundHandler = this.handleServerEvent.bind(this);
 		roomService.addEventHandler(this.boundHandler);
 		this.isListening = true;
-		console.log('[JoinRequestsStore] Started listening for join request events');
+		log.debug('Started listening for join request events');
 	}
 
 	/**
@@ -95,7 +98,7 @@ class JoinRequestsStore {
 		this.boundHandler = null;
 		this.isListening = false;
 		this.pendingRequests = [];
-		console.log('[JoinRequestsStore] Stopped listening and cleared state');
+		log.debug('Stopped listening and cleared state');
 	}
 
 	/**
@@ -161,7 +164,7 @@ class JoinRequestsStore {
 	approve(requestId: string): void {
 		const request = this.pendingRequests.find((r) => r.id === requestId);
 		if (!request) {
-			console.warn('[JoinRequestsStore] Cannot approve - request not found:', requestId);
+			log.warn('Cannot approve - request not found', { requestId });
 			return;
 		}
 
@@ -185,7 +188,7 @@ class JoinRequestsStore {
 	decline(requestId: string): void {
 		const request = this.pendingRequests.find((r) => r.id === requestId);
 		if (!request) {
-			console.warn('[JoinRequestsStore] Cannot decline - request not found:', requestId);
+			log.warn('Cannot decline - request not found', { requestId });
 			return;
 		}
 

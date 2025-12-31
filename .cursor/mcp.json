@@ -1,4 +1,5 @@
 {
+  "$schema": "https://modelcontextprotocol.io/schema/mcp-config.schema.json",
   "mcpServers": {
     "memory": {
       "command": "node",
@@ -7,6 +8,13 @@
       ],
       "env": {
         "MEMORY_FILE_PATH": "${workspaceFolder}/.claude/state/memory.jsonl"
+      }
+    },
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=duhsbuyxyppgbkwbbtqg&read_only=false&features=database,docs,functions",
+      "headers": {
+        "Authorization": "Bearer ${env:SUPABASE_MCP_TOKEN}"
       }
     },
     "akg": {
@@ -19,13 +27,6 @@
         "AKG_GRAPH_PATH": "${workspaceFolder}/docs/architecture/akg/graph/current.json",
         "AKG_DIAGRAMS_PATH": "${workspaceFolder}/docs/architecture/akg/diagrams",
         "AKG_PROJECT_ROOT": "${workspaceFolder}"
-      }
-    },
-    "context7": {
-      "type": "http",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"
       }
     },
     "cloudflare-docs": {

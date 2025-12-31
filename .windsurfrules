@@ -1,152 +1,103 @@
 # Dicee Project - Windsurf/Cascade Rules
 
 ## Agent Identity
-You are Cascade, the AI assistant in Windsurf IDE, working on the Dicee project - a dice probability engine and multiplayer game platform.
+You are Cascade, the AI assistant in Windsurf IDE, working on Dicee - a dice probability engine and multiplayer game platform running on Cloudflare (Pages + Durable Objects).
 
-## Session Startup
+**Production**: https://gamelobby.jefahnierocks.com
 
-**CRITICAL**: Before starting any work:
-1. Run `/awaken` to initialize session and verify MCP connectivity
-2. Read `.claude/state/session-handoff.md` for context from previous sessions
-3. Check `.claude/state/current-phase.json` for active tasks
-
-## Core Guardrails
+## Critical Rules
 
 ### Three Strikes Rule (MANDATORY)
-If you fail at the same operation **3 times**, you must **STOP and ask the human**.
-This applies to: build failures, test failures, file operations, anything.
-Do NOT try a 4th time - escalate immediately.
+If you fail at the same operation **3 times**, **STOP and ask the human**.
 
 ### Read Before Edit
-NEVER modify a file you haven't read in this session. Always read first.
+NEVER modify a file you haven't read in this session.
 
 ### Verify After Change
-Run tests/typecheck after every edit:
 ```bash
 pnpm check && pnpm biome:check && pnpm web:vitest
 ```
 
-### Update State
-Update `.claude/state/current-phase.json` after completing tasks.
+## MCP Tools
 
-## MCP Tools (PRIMARY - Use First!)
+> **Reference**: `docs/PROJECT-MCP-CONFIG.md` - Full MCP Tool Decision Matrix
 
-**CRITICAL**: MCP tools are PRIMARY tools. Always use them FIRST before falling back to other methods.
+### Tool Priority
+1. **Library docs** → `context7` (auto-invoke for SvelteKit, Zod, etc.)
+2. **Cloudflare docs** → `cloudflare-docs`
+3. **Worker logs** → `cloudflare-observability`
+4. **Import validation** → `akg_check_import` (ALWAYS before adding imports)
+5. **Project memory** → `memory`
 
-**Auto-Invoke Rule**: Context7 should be automatically used for any code generation, setup steps, or library/API documentation queries. You should automatically use Context7 MCP tools (`resolve-library-id` and `get-library-docs`) without the user having to explicitly ask.
-
-### MCP Tool Priority Order
-
-1. **For Code Documentation & Library APIs**: Use `context7` MCP server
-   - **ALWAYS** use `get-library-docs` for SvelteKit, Cloudflare, Rust, or any library documentation
-   - **NEVER** search the web or guess - use Context7 first
-   - Tool: `resolve-library-id` - Find library IDs
-   - Tool: `get-library-docs` - Get up-to-date library documentation
-
-2. **For Cloudflare Queries**: Use Cloudflare MCP servers
-   - `cloudflare-docs` - Search Cloudflare documentation (use FIRST for CF docs)
-   - `cloudflare-observability` - Query Workers logs, metrics, analytics (use FIRST for telemetry)
-   - `cloudflare-builds` - Check build status and logs (use FIRST for build info)
-   - `cloudflare-bindings` - Manage KV, R2, D1, Hyperdrive (use FIRST for resources)
-   - `cloudflare-graphql` - Query Cloudflare GraphQL API (use FIRST for analytics)
-   - **ALWAYS** use Cloudflare MCP tools for Cloudflare-related queries
-   - **NEVER** use web search for Cloudflare documentation or telemetry
-
-3. **For Architecture Validation**: Use `akg` MCP server (Dicee-specific)
-   - **IMPORTANT**: This is the Dicee project AKG, NOT the budget triage AKG
-   - **ALWAYS** validate imports before adding them using `akg_check_import`
-   - **ALWAYS** check layer rules before importing between layers
-   - Tools: `akg_check_import`, `akg_layer_rules`, `akg_invariant_status`
-
-4. **For Persistent Memory**: Use `memory` MCP server
-   - Tools: `create_entities`, `search_nodes`, `read_graph`
-   - Use for storing project context, decisions, and state
-
-### MCP Server Reference
-
-| Server | Purpose | When to Use | Key Tools |
-|--------|---------|-------------|-----------|
-| `context7` | Library documentation | **FIRST** for any library/API docs | `get-library-docs`, `resolve-library-id` |
-| `cloudflare-docs` | Cloudflare docs | **FIRST** for Cloudflare questions | `search_cloudflare_documentation` |
-| `cloudflare-observability` | Workers telemetry | **FIRST** for logs/metrics | `query_worker_observability` |
-| `cloudflare-builds` | Build status | **FIRST** for build info | `workers_builds_list_builds` |
-| `cloudflare-bindings` | Workers resources | **FIRST** for KV/R2/D1 | `kv_namespaces_list`, `r2_buckets_list` |
-| `cloudflare-graphql` | Analytics queries | **FIRST** for GraphQL queries | `graphql_query` |
-| `akg` | Architecture (Dicee) | **ALWAYS** before imports | `akg_check_import`, `akg_layer_rules` |
-| `memory` | Knowledge graph | For persistent context | `create_entities`, `search_nodes` |
+### Key Tools
+| Task | MCP Tool |
+|------|----------|
+| SvelteKit/Svelte 5 API | `context7.get-library-docs` |
+| Cloudflare questions | `cloudflare-docs` |
+| Debugging gamelobby | `cloudflare-observability` |
+| "Can I import X here?" | `akg.akg_check_import` |
+| Architecture rules | `akg.akg_layer_rules` |
 
 ## Naming Conventions
 
 ```
-Component files:  PascalCase.svelte (Avatar.svelte)
-Callback props:   onVerb (onRoll, onScore, onClose) - camelCase!
-DOM events:       lowercase (onclick, onkeydown) - Svelte 5
-Handlers:         handleVerb (handleRoll)
-Booleans:         is/has/can prefix (isLoading, hasError)
-CSS classes:      kebab-case (.game-container)
-Stores:           *.svelte.ts extension
+Components:   PascalCase.svelte
+Callbacks:    onVerb (onRoll, onScore)
+DOM events:   lowercase (onclick)
+Handlers:     handleVerb
+Booleans:     is/has/can prefix
+CSS classes:  kebab-case
+Stores:       *.svelte.ts
 ```
 
-## Layer Architecture (AKG Enforced - Dicee-Specific)
+## Layer Architecture (AKG Enforced)
 
-**IMPORTANT**: This is the Dicee project AKG, NOT the budget triage AKG. This AKG is specific to the Dicee codebase architecture.
-
-**ALWAYS use `akg_check_import` MCP tool before adding imports!**
+**Use `akg_check_import` before adding imports!**
 
 ```
 routes      → components, stores, services, types, wasm
 components  → components, types (NOT stores, services)
 stores      → services, types (NOT components, routes)
 services    → types, wasm (NOT components, routes, stores)
-types       → types only
-wasm        → types only
 ```
-
-**Note**: This project does NOT use Supabase. Supabase is used in other projects on this machine.
 
 ## Svelte 5 Patterns
 
-Use runes syntax (NOT legacy stores):
 ```svelte
 <script lang="ts">
   // State
   let count = $state(0);
-
-  // Derived
   let doubled = $derived(count * 2);
 
-  // Effects
-  $effect(() => {
-    console.log('Count changed:', count);
-  });
-
-  // Props with callbacks
+  // Props
   interface Props {
     value: number;
-    onUpdate: (newValue: number) => void;  // onVerb pattern
+    onUpdate: (n: number) => void;  // onVerb pattern
   }
   let { value, onUpdate }: Props = $props();
+
+  // Effects
+  $effect(() => { console.log(count); });
 </script>
 ```
 
-## Quality Checks
+## Quality Gate
 
-Before marking any task complete:
-```bash
-pnpm check          # TypeScript + Svelte
-pnpm biome:check    # Lint
-pnpm web:vitest     # Tests
-pnpm akg:check      # Architectural invariants
-```
-
-Or run the full quality gate:
 ```bash
 ./scripts/quality-gate.sh
 ```
 
+Or individual checks:
+```bash
+pnpm check          # TypeScript + Svelte
+pnpm biome:check    # Lint
+pnpm web:vitest     # Tests
+pnpm akg:check      # Architecture invariants
+```
+
 ## Testing
 
-Co-locate tests with components:
+Co-locate tests with source:
 ```
 src/lib/components/ui/
 ├── Avatar.svelte
@@ -156,52 +107,27 @@ src/lib/components/ui/
 
 Run tests:
 ```bash
-pnpm web:vitest -- Avatar          # Run Avatar tests
-pnpm web:vitest -- --coverage      # With coverage
+pnpm web:vitest -- Avatar
 ```
-
-## Phase State
-
-- **Active phase**: `phase-11-ux-enhancement` (UX Enhancement)
-- **Current tracks**: A (complete), B (complete), C (complete), D (in-progress)
-- **Archived phases**: `.claude/state/archives/phases/`
-
-Read current state:
-```bash
-cat .claude/state/current-phase.json | jq '.phases."phase-11-ux-enhancement".parallelTracks'
-```
-
-## Session Cleanup
-
-Before ending session, run `/tidyup` to:
-1. Update timestamps in state files
-2. Generate handoff notes
-3. Persist any pending state
 
 ## Slash Commands
 
 | Command | Purpose |
 |---------|---------|
-| `/awaken` | Initialize session, verify MCP |
-| `/tidyup` | Clean up, prepare handoff |
-| `/status` | Show current phase/tasks |
-| `/health` | Quick environment check |
+| `/status` | Current phase/tasks |
 | `/akg` | Architecture queries |
 | `/build-component` | Guided component creation |
-| `/verify-task` | Full task verification |
 
-## Handoff Protocol
+## Handoff
 
-When handing off to Claude Code or Codex:
-1. Run `/tidyup` to update state
-2. Add summary to `.claude/state/session-handoff.md`
-3. Note which agent should pick up next
-4. Include any blockers or decisions needed
+When handing off to Claude Code:
+1. Update `.claude/state/session-handoff.md`
+2. Note what's complete and what's next
+3. Include any blockers
 
 ## References
 
 - Guardrails: `.claude/AGENT-GUARDRAILS.md`
 - Conventions: `.claude/CONVENTIONS.md`
-- Workflows: `.claude/workflow-orchestration.md`
-- Full config: `.windsurf/README.md`
+- MCP Decision Matrix: `docs/PROJECT-MCP-CONFIG.md`
 - AKG docs: `docs/architecture/akg/`

@@ -1,5 +1,8 @@
 import type { AuthChangeEvent, Session, SupabaseClient, User } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('AuthStore');
 
 /**
  * Auth state store using Svelte 5 runes.
@@ -204,7 +207,7 @@ class AuthState {
 			.eq('id', this.userId);
 
 		if (error) {
-			console.error('Failed to sync profile anonymous status:', error);
+			log.error('Failed to sync profile anonymous status', error as Error);
 		}
 	}
 

@@ -2,6 +2,9 @@ import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 import type { FeatureFlag } from '$lib/supabase/flags';
 import { getAllFlags, subscribeToFlags } from '$lib/supabase/flags';
 import type { Database } from '$lib/types/database';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('FlagsStore');
 
 /**
  * User context for flag evaluation
@@ -83,7 +86,7 @@ class FlagStore {
 			// Fetch all flags
 			const { data, error } = await getAllFlags(supabase);
 			if (error) {
-				console.error('[flags] Failed to load feature flags:', error);
+				log.error('Failed to load feature flags', error as Error);
 			} else if (data) {
 				this.#flags = new Map(data.map((f) => [f.id, f]));
 			}

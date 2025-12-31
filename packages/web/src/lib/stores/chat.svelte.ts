@@ -39,6 +39,9 @@ import {
 	type ShoutReceivedEvent,
 	type TypingState,
 } from '$lib/types/multiplayer';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('ChatStore');
 
 // =============================================================================
 // Store Types
@@ -525,7 +528,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 			roomService.sendReaction(messageId, emoji, action);
 		} catch (e) {
 			// Revert on error (will be corrected by server event anyway)
-			console.error('[ChatStore] Failed to send reaction:', e);
+			log.error('Failed to send reaction', e as Error);
 		}
 	}
 
@@ -644,7 +647,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 			// Start cooldown optimistically
 			startShoutCooldown();
 		} catch (_e) {
-			console.error('[ChatStore] Failed to send shout:', _e);
+			log.error('Failed to send shout');
 		}
 	}
 

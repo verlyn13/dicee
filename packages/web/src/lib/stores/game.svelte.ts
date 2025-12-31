@@ -4,6 +4,7 @@
  * Integrates with WASM probability engine for scoring and analysis
  */
 
+import { createServiceLogger } from '$lib/utils/logger';
 import { analyzeTurnOptimal } from '../services/engine.js';
 import type {
 	Category,
@@ -18,6 +19,9 @@ import type {
 	TurnPhase,
 } from '../types.js';
 import { DiceState } from './dice.svelte.js';
+
+const log = createServiceLogger('GameStore');
+
 import { ScorecardState } from './scorecard.svelte.js';
 
 // =============================================================================
@@ -289,7 +293,7 @@ export class GameState {
 
 	startGame(): void {
 		if (this.#status !== 'idle' && this.#status !== 'completed') {
-			console.warn('Cannot start game: already in progress');
+			log.warn('Cannot start game: already in progress');
 			return;
 		}
 
@@ -316,7 +320,7 @@ export class GameState {
 
 	roll(): DiceArray | null {
 		if (!this.canRoll) {
-			console.warn('Cannot roll: no rolls remaining or game not active');
+			log.warn('Cannot roll: no rolls remaining or game not active');
 			return null;
 		}
 
@@ -372,7 +376,7 @@ export class GameState {
 			// Also store the full analysis
 			this.#currentAnalysis = analysis;
 		} catch (err) {
-			console.warn('WASM analysis failed, using fallback:', err);
+			log.warn('WASM analysis failed, using fallback', { error: err });
 			// Scores will use fallback calculation
 		} finally {
 			this.#scoresLoading = false;
@@ -420,12 +424,12 @@ export class GameState {
 
 	score(category: Category): DecisionFeedback | null {
 		if (!this.canScore) {
-			console.warn('Cannot score: no roll yet or already scored this turn');
+			log.warn('Cannot score: no roll yet or already scored this turn');
 			return null;
 		}
 
 		if (!this.scorecard.isAvailable(category)) {
-			console.warn(`Category ${category} already scored`);
+			log.warn('Category already scored', { category });
 			return null;
 		}
 

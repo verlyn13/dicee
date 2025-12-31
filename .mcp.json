@@ -1,31 +1,33 @@
 {
+  "$schema": "https://modelcontextprotocol.io/schema/mcp-config.schema.json",
   "mcpServers": {
     "memory": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "${workspaceFolder}/node_modules/@modelcontextprotocol/server-memory/dist/index.js"
+        "-y",
+        "@modelcontextprotocol/server-memory"
       ],
       "env": {
-        "MEMORY_FILE_PATH": "${workspaceFolder}/.claude/state/memory.jsonl"
+        "MEMORY_FILE_PATH": ".claude/state/memory.jsonl"
+      }
+    },
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=duhsbuyxyppgbkwbbtqg&read_only=false&features=database,docs,functions",
+      "headers": {
+        "Authorization": "Bearer ${SUPABASE_MCP_TOKEN}"
       }
     },
     "akg": {
       "command": "bun",
       "args": [
         "run",
-        "${workspaceFolder}/packages/web/src/tools/akg/mcp/server.ts"
+        "packages/web/src/tools/akg/mcp/server.ts"
       ],
       "env": {
-        "AKG_GRAPH_PATH": "${workspaceFolder}/docs/architecture/akg/graph/current.json",
-        "AKG_DIAGRAMS_PATH": "${workspaceFolder}/docs/architecture/akg/diagrams",
-        "AKG_PROJECT_ROOT": "${workspaceFolder}"
-      }
-    },
-    "context7": {
-      "type": "http",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"
+        "AKG_GRAPH_PATH": "docs/architecture/akg/graph/current.json",
+        "AKG_DIAGRAMS_PATH": "docs/architecture/akg/diagrams",
+        "AKG_PROJECT_ROOT": "."
       }
     },
     "cloudflare-docs": {

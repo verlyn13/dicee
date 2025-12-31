@@ -17,6 +17,9 @@ import type {
 	RoomCode,
 	ServerEvent,
 } from '$lib/types/multiplayer';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('RoomService');
 
 // =============================================================================
 // Types
@@ -131,7 +134,7 @@ class RoomService {
 	private connectToServer(roomCode: RoomCode, accessToken: string): void {
 		if (!browser) return;
 
-		console.log(`[RoomService] Connecting to room: ${roomCode}`);
+		log.debug('Connecting to room', { roomCode });
 
 		// Use same-origin WebSocket proxy for zero-CORS connection
 		// Pass token as query param since cookies don't work reliably with CF WebSocket
@@ -178,7 +181,7 @@ class RoomService {
 	 */
 	triggerReconnect(): void {
 		if (this.socket && this._status !== 'connected' && this._status !== 'connecting') {
-			console.log('[RoomService] Triggering reconnect due to visibility change');
+			log.debug('Triggering reconnect due to visibility change');
 			this.socket.reconnect();
 		}
 	}
@@ -428,11 +431,11 @@ class RoomService {
 				try {
 					handler(serverEvent);
 				} catch (error) {
-					console.error('[RoomService] Event handler error:', error);
+					log.error('Event handler error', error as Error);
 				}
 			}
 		} catch (error) {
-			console.error('[RoomService] Failed to parse message:', error);
+			log.error('Failed to parse message', error as Error);
 		}
 	}
 
@@ -517,7 +520,7 @@ class RoomService {
 	}
 
 	private handleError(): void {
-		console.error('[RoomService] Connection error');
+		log.error('Connection error');
 		this._error = 'Connection error';
 		this.setStatus('error');
 	}
@@ -528,7 +531,7 @@ class RoomService {
 			try {
 				listener(status);
 			} catch (error) {
-				console.error('[RoomService] Status listener error:', error);
+				log.error('Status listener error', error as Error);
 			}
 		}
 	}

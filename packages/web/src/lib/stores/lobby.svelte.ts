@@ -18,6 +18,9 @@ import {
 	type RoomIdentity,
 } from '@dicee/shared';
 import { browser } from '$app/environment';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('Lobby');
 
 // Types
 export interface ChatMessage {
@@ -231,7 +234,7 @@ class LobbyState {
 					const data = JSON.parse(event.data);
 					this.handleMessage(data);
 				} catch (e) {
-					console.error('[lobby] Failed to parse message:', e);
+					log.error('Failed to parse message', e as Error);
 				}
 			};
 
@@ -269,7 +272,7 @@ class LobbyState {
 	}
 
 	private handleMessage(data: { type: string; payload: unknown; timestamp?: string | number }) {
-		console.log('[lobby] handleMessage:', data.type, data);
+		log.debug('handleMessage', { type: data.type, data });
 
 		// Validate with @dicee/shared schema for protocol compliance
 		// Non-standard events (pong, legacy) are handled after validation attempt
@@ -393,7 +396,7 @@ class LobbyState {
 			case 'LOBBY_ONLINE_USERS': {
 				const usersPayload = data.payload as { users: OnlineUser[] };
 				this.onlineUsers = usersPayload.users;
-				console.log('[lobby] Set onlineUsers to:', this.onlineUsers);
+				log.debug('Set onlineUsers', { count: this.onlineUsers.length });
 				break;
 			}
 
@@ -414,7 +417,7 @@ class LobbyState {
 
 			case 'LOBBY_ERROR': {
 				const errorPayload = data.payload as { message: string; code?: string };
-				console.error('[lobby] Server error:', errorPayload.code, errorPayload.message);
+				log.error('Server error', { code: errorPayload.code, message: errorPayload.message });
 				break;
 			}
 
@@ -476,7 +479,7 @@ class LobbyState {
 				break;
 
 			default:
-				console.warn('[lobby] Unknown message type:', data.type);
+				log.warn('Unknown message type', { type: data.type });
 		}
 	}
 
@@ -502,7 +505,7 @@ class LobbyState {
 					status: 'pending',
 					expiresAt: sentPayload.expiresAt,
 				};
-				console.log('[lobby] Join request sent:', this.activeJoinRequest);
+				log.debug('Join request sent', { request: this.activeJoinRequest });
 				break;
 			}
 
@@ -534,7 +537,7 @@ class LobbyState {
 						this.activeJoinRequest = null;
 					}
 				}, 3000);
-				console.log('[lobby] Join request error:', errorPayload);
+				log.debug('Join request error', { error: errorPayload });
 				break;
 			}
 
@@ -548,7 +551,7 @@ class LobbyState {
 						...this.activeJoinRequest,
 						status: 'approved',
 					};
-					console.log('[lobby] Join request approved:', approvedPayload.roomCode);
+					log.debug('Join request approved', { roomCode: approvedPayload.roomCode });
 					// Note: Navigation to room should be handled by the UI component
 				}
 				break;
@@ -571,7 +574,7 @@ class LobbyState {
 							this.activeJoinRequest = null;
 						}
 					}, 3000);
-					console.log('[lobby] Join request declined:', declinedPayload);
+					log.debug('Join request declined', { payload: declinedPayload });
 				}
 				break;
 			}
@@ -591,7 +594,7 @@ class LobbyState {
 							this.activeJoinRequest = null;
 						}
 					}, 3000);
-					console.log('[lobby] Join request expired');
+					log.debug('Join request expired');
 				}
 				break;
 			}
@@ -602,7 +605,7 @@ class LobbyState {
 				};
 				if (this.activeJoinRequest?.requestId === cancelledPayload.requestId) {
 					this.activeJoinRequest = null;
-					console.log('[lobby] Join request cancelled');
+					log.debug('Join request cancelled');
 				}
 				break;
 			}
@@ -665,7 +668,7 @@ class LobbyState {
 
 		// Validate content using @dicee/shared schema
 		if (!isValidLobbyChatContent(trimmed)) {
-			console.warn('[lobby] Invalid chat content length');
+			log.warn('Invalid chat content length');
 			return;
 		}
 
@@ -703,13 +706,13 @@ class LobbyState {
 	 * Called when user clicks on the online indicator.
 	 */
 	requestOnlineUsers() {
-		console.log('[lobby] requestOnlineUsers called, ws state:', this.ws?.readyState);
+		log.debug('requestOnlineUsers called', { wsState: this.ws?.readyState });
 		if (this.ws?.readyState === WebSocket.OPEN) {
 			// Using UPPERCASE command format (Phase 3)
-			console.log('[lobby] Sending GET_ONLINE_USERS');
+			log.debug('Sending GET_ONLINE_USERS');
 			this.ws.send(JSON.stringify({ type: 'GET_ONLINE_USERS' }));
 		} else {
-			console.warn('[lobby] Cannot request online users - WebSocket not open');
+			log.warn('Cannot request online users - WebSocket not open');
 		}
 	}
 
@@ -804,17 +807,17 @@ class LobbyState {
 	sendJoinRequest(roomCode: string) {
 		// Can't send if already have an active pending request
 		if (this.hasActiveJoinRequest) {
-			console.warn('[lobby] Already have an active join request');
+			log.warn('Already have an active join request');
 			return;
 		}
 
 		if (this.ws?.readyState !== WebSocket.OPEN) {
-			console.warn('[lobby] Cannot send join request - WebSocket not open');
+			log.warn('Cannot send join request - WebSocket not open');
 			return;
 		}
 
 		// Using UPPERCASE command format (Phase 3)
-		console.log('[lobby] Sending REQUEST_JOIN to room:', roomCode);
+		log.debug('Sending REQUEST_JOIN', { roomCode });
 		this.ws.send(
 			JSON.stringify({
 				type: 'REQUEST_JOIN',
@@ -828,7 +831,7 @@ class LobbyState {
 	 */
 	cancelJoinRequest() {
 		if (!this.activeJoinRequest || this.activeJoinRequest.status !== 'pending') {
-			console.warn('[lobby] No active pending join request to cancel');
+			log.warn('No active pending join request to cancel');
 			return;
 		}
 
@@ -839,7 +842,7 @@ class LobbyState {
 		}
 
 		// Using UPPERCASE command format (Phase 3)
-		console.log('[lobby] Cancelling join request:', this.activeJoinRequest.requestId);
+		log.debug('Cancelling join request', { requestId: this.activeJoinRequest.requestId });
 		this.ws.send(
 			JSON.stringify({
 				type: 'CANCEL_JOIN_REQUEST',

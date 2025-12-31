@@ -16,6 +16,9 @@ import {
 } from '@dicee/shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database, Json } from '$lib/types/database';
+import { createServiceLogger } from '$lib/utils/logger';
+
+const log = createServiceLogger('Preferences');
 
 // =============================================================================
 // Constants
@@ -96,7 +99,7 @@ class PreferencesService {
 	 */
 	async onLogin(userId: string): Promise<void> {
 		if (!this.#supabase) {
-			console.warn('[preferences] Supabase not initialized, skipping sync');
+			log.warn('Supabase not initialized, skipping sync');
 			return;
 		}
 
@@ -118,7 +121,7 @@ class PreferencesService {
 				await this.#saveToSupabase(userId, merged);
 			}
 		} catch (error) {
-			console.error('[preferences] Sync on login failed:', error);
+			log.error('Sync on login failed', error as Error);
 			// Keep using local preferences - don't block on sync failure
 		} finally {
 			this.#syncing = false;
@@ -220,7 +223,7 @@ class PreferencesService {
 			try {
 				await this.#saveToSupabase(this.#userId, DEFAULT_PREFERENCES);
 			} catch (error) {
-				console.error('[preferences] Reset sync failed:', error);
+				log.error('Reset sync failed', error as Error);
 			}
 		}
 	}
@@ -302,7 +305,7 @@ class PreferencesService {
 			try {
 				await this.#saveToSupabase(this.#userId, prefs);
 			} catch (error) {
-				console.error('[preferences] Debounced sync failed:', error);
+				log.error('Debounced sync failed', error as Error);
 			} finally {
 				this.#syncing = false;
 			}

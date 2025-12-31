@@ -86,16 +86,20 @@ Query the architectural knowledge graph:
 
 ## MCP Servers
 
+> **Authoritative Reference**: `docs/PROJECT-MCP-CONFIG.md` - Contains the full MCP Tool Decision Matrix.
+> Consult this document for when to use which MCP tool across all agents.
+
 ### dicee-memory
 - **Type**: stdio (local node process)
 - **File**: `.claude/state/memory.jsonl`
 - **Purpose**: Shared state across Claude Code and Cascade
 - **Tools**: `mcp0_create_entities`, `mcp0_search_nodes`, `mcp0_read_graph`
 
-### supabase
+### supabase (NOT USED)
 - **Type**: HTTP (hosted)
 - **URL**: https://mcp.supabase.com/mcp
 - **Purpose**: Database schema, migrations, edge functions
+- **Note**: **This project does NOT use Supabase**. Server is configured but unused.
 - **Tools**: `mcp1_execute_sql`, `mcp1_list_tables`, `mcp1_search_docs`
 
 ### akg (Architectural Knowledge Graph)

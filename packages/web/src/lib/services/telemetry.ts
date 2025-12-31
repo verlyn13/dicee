@@ -7,7 +7,7 @@
  * @module services/telemetry
  */
 
-import { browser } from '$app/environment';
+import { browser, dev } from '$app/environment';
 import type {
 	TelemetryConfig,
 	TelemetryEvent,
@@ -16,6 +16,11 @@ import type {
 	TelemetryPayloadMap,
 } from '$lib/types/telemetry';
 import { DEFAULT_TELEMETRY_CONFIG } from '$lib/types/telemetry';
+
+// Debug logging only in development when debug mode enabled
+function debugLog(message: string, ...args: unknown[]): void {
+	if (dev) console.log(`[Telemetry] ${message}`, ...args);
+}
 
 // =============================================================================
 // Constants
@@ -163,7 +168,7 @@ export function initializeTelemetry(userConfig: Partial<TelemetryConfig> = {}): 
 	}
 
 	if (config.debug) {
-		console.log('[Telemetry] Initialized with session:', sessionId);
+		debugLog('Initialized with session:', sessionId);
 	}
 }
 
@@ -199,7 +204,7 @@ export function track<T extends TelemetryEventType>(
 ): void {
 	if (state.status !== 'ready') {
 		if (config.debug) {
-			console.log('[Telemetry] Skipped (not ready):', eventType);
+			debugLog('Skipped (not ready):', eventType);
 		}
 		return;
 	}
@@ -218,7 +223,7 @@ export function track<T extends TelemetryEventType>(
 	eventQueue.push(event as unknown as TelemetryEvent);
 
 	if (config.debug) {
-		console.log('[Telemetry] Tracked:', eventType, payload);
+		debugLog('Tracked:', eventType, payload);
 	}
 
 	// Auto-flush if batch size reached
@@ -281,7 +286,7 @@ async function flush(): Promise<void> {
 	try {
 		await sendEvents(eventsToSend);
 		if (config.debug) {
-			console.log('[Telemetry] Flushed', eventsToSend.length, 'events');
+			debugLog('Flushed', eventsToSend.length, 'events');
 		}
 	} catch (error) {
 		// Re-queue events on failure
