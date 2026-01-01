@@ -34,10 +34,13 @@ import {
 	type KeptMask,
 	type MultiplayerGameState,
 } from './game';
+import { AlarmQueue, createAlarmQueue } from './lib/alarm-queue';
 import { createJoinRequestManager, type JoinRequestManager } from './lib/join-request';
+import { Loggers } from './lib/logger';
 import { createInstrumentation, type Instrumentation } from './lib/observability/instrumentation';
 import type {
 	AlarmData,
+	AlarmType,
 	ConnectionRole,
 	ConnectionState,
 	Env,
@@ -75,6 +78,7 @@ import type {
 	RoomStatusUpdate,
 	RootingChoice,
 	RootingUpdate,
+	ScheduledAlarm,
 	SpectatorInfo,
 	SpectatorPredictionStats,
 	SpectatorReaction,
@@ -165,6 +169,9 @@ export class GameRoom extends DurableObject<Env> {
 	/** AI Room Manager for handling AI player turns */
 	private aiManager: AIRoomManager;
 
+	/** Logger for structured logging (Phase 1) */
+	private logger = Loggers.GameRoom();
+
 	/** Pending invites (key: targetUserId, value: PendingInvite) */
 	private pendingInvites: Map<string, PendingInvite> = new Map();
 
@@ -197,6 +204,14 @@ export class GameRoom extends DurableObject<Env> {
 	private pauseCheckPending = false;
 	private static readonly PAUSE_CHECK_DELAY_MS = 2000;
 
+	/**
+	 * Phase 1: Alarm Queue for multiple concurrent alarms
+	 *
+	 * Manages SEAT_EXPIRATION, PAUSE_TIMEOUT, AI_TURN_TIMEOUT, etc. concurrently
+	 * without the DO's single-alarm constraint causing overwrites.
+	 */
+	private alarmQueue: AlarmQueue;
+
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
 
@@ -219,6 +234,9 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Initialize join request manager
 		this.joinRequestManager = createJoinRequestManager();
+
+		// Phase 1: Initialize alarm queue for multiple concurrent alarms
+		this.alarmQueue = createAlarmQueue(ctx);
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -416,9 +434,72 @@ export class GameRoom extends DurableObject<Env> {
 			this._roomCode = (await this.ctx.storage.get<string>('room_code')) ?? 'UNKNOWN';
 		}
 
-		const alarmData = await this.ctx.storage.get<AlarmData>('alarm_data');
-		if (!alarmData) return;
+		// Phase 1: Process all due alarms from the queue
+		const dueAlarms = await this.alarmQueue.processAlarms();
 
+		// If no alarms from queue, check legacy alarm_data for backwards compatibility
+		if (dueAlarms.length === 0) {
+			const alarmData = await this.ctx.storage.get<AlarmData>('alarm_data');
+			if (alarmData) {
+				await this.handleLegacyAlarm(alarmData);
+				return;
+			}
+			return;
+		}
+
+		// Process each due alarm
+		for (const alarm of dueAlarms) {
+			await this.handleScheduledAlarm(alarm);
+		}
+	}
+
+	/**
+	 * Handle a scheduled alarm from the AlarmQueue.
+	 * Phase 1 implementation for concurrent alarm support.
+	 */
+	private async handleScheduledAlarm(alarm: ScheduledAlarm): Promise<void> {
+		switch (alarm.type) {
+			case 'TURN_TIMEOUT':
+				await this.handleTurnTimeout(alarm.targetId ?? undefined);
+				break;
+			case 'AFK_CHECK':
+				await this.handleAfkCheck(alarm.targetId ?? undefined);
+				break;
+			case 'ROOM_CLEANUP':
+				// Check for warm seat completion (metadata.warmSeat)
+				if (alarm.metadata?.warmSeat) {
+					await this.completeWarmSeatTransition();
+				} else {
+					await this.handleRoomCleanup();
+				}
+				break;
+			case 'SEAT_EXPIRATION':
+				// targetId is the odal of the seat to expire
+				if (alarm.targetId) {
+					await this.handleSingleSeatExpiration(alarm.targetId);
+				} else {
+					// Fallback for alarms scheduled without targetId
+					await this.handleSeatExpiration();
+				}
+				break;
+			case 'JOIN_REQUEST_EXPIRATION':
+				await this.handleJoinRequestExpiration(alarm.metadata?.requestId as string);
+				break;
+			case 'AI_TURN_TIMEOUT':
+				// AI turn timeout needs special handling for retries
+				await this.handleAITurnTimeoutFromQueue(alarm);
+				break;
+			case 'PAUSE_TIMEOUT':
+				await this.handlePauseTimeout();
+				break;
+		}
+	}
+
+	/**
+	 * Handle legacy alarm_data format for backwards compatibility.
+	 * This handles alarms scheduled before Phase 1 deployment.
+	 */
+	private async handleLegacyAlarm(alarmData: AlarmData): Promise<void> {
 		switch (alarmData.type) {
 			case 'TURN_TIMEOUT':
 				await this.handleTurnTimeout(alarmData.userId);
@@ -427,7 +508,12 @@ export class GameRoom extends DurableObject<Env> {
 				await this.handleAfkCheck(alarmData.userId);
 				break;
 			case 'ROOM_CLEANUP':
-				await this.handleRoomCleanup();
+				// Legacy warmSeat handling
+				if (alarmData.metadata?.warmSeat) {
+					await this.completeWarmSeatTransition();
+				} else {
+					await this.handleRoomCleanup();
+				}
 				break;
 			case 'SEAT_EXPIRATION':
 				await this.handleSeatExpiration();
@@ -694,14 +780,14 @@ export class GameRoom extends DurableObject<Env> {
 
 	/**
 	 * Schedule the pause timeout alarm (30 minutes).
-	 * Imports PAUSE_TIMEOUT_MS from types.
+	 * Phase 1: Uses AlarmQueue for concurrent alarm support.
 	 */
 	private async schedulePauseTimeoutAlarm(): Promise<void> {
-		const alarmData: AlarmData = {
+		await this.alarmQueue.schedule({
 			type: 'PAUSE_TIMEOUT',
-		};
-		await this.ctx.storage.put('alarm_data', alarmData);
-		await this.ctx.storage.setAlarm(Date.now() + PAUSE_TIMEOUT_MS);
+			targetId: null, // Room-level alarm
+			scheduledFor: Date.now() + PAUSE_TIMEOUT_MS,
+		});
 	}
 
 	/**
@@ -717,11 +803,13 @@ export class GameRoom extends DurableObject<Env> {
 		roomState.pausedAt = null;
 		await this.ctx.storage.put('room', roomState);
 
-		// Cancel the pause timeout alarm if it was the pending alarm
+		// Phase 1: Cancel pause timeout via alarm queue
+		await this.alarmQueue.cancel('PAUSE_TIMEOUT', null);
+
+		// Also clean up legacy alarm_data if present
 		const alarmData = await this.ctx.storage.get<AlarmData>('alarm_data');
 		if (alarmData?.type === 'PAUSE_TIMEOUT') {
 			await this.ctx.storage.delete('alarm_data');
-			await this.ctx.storage.deleteAlarm();
 		}
 
 		// Notify lobby of status change
@@ -798,14 +886,16 @@ export class GameRoom extends DurableObject<Env> {
 		// Recovery attempt logged via error handler if it fails
 
 		if (retryCount < 3) {
-			// Retry the AI turn
-			const newAlarmData: AlarmData = {
+			// Phase 1: Schedule retry via AlarmQueue
+			await this.alarmQueue.schedule({
 				type: 'AI_TURN_TIMEOUT',
-				playerId,
-				retryCount: retryCount + 1,
-			};
-			await this.ctx.storage.put('alarm_data', newAlarmData);
-			await this.ctx.storage.setAlarm(Date.now() + 5000); // Retry in 5s
+				targetId: playerId,
+				scheduledFor: Date.now() + 5000,
+				metadata: { retryCount: retryCount + 1 },
+			});
+
+			// Clean up legacy alarm_data
+			await this.ctx.storage.delete('alarm_data');
 
 			// Try executing turn again
 			this.ctx.waitUntil(this.executeAITurnWithRecovery(playerId));
@@ -1056,8 +1146,8 @@ export class GameRoom extends DurableObject<Env> {
 		seats.set(userId, seat);
 		await this.saveSeats(seats);
 
-		// Schedule alarm for seat expiration
-		await this.scheduleSeatExpirationAlarm(seat.reconnectDeadline);
+		// Schedule alarm for seat expiration (Phase 1: with odal for targeted expiration)
+		await this.scheduleSeatExpirationAlarm(seat.reconnectDeadline, seat.odal);
 
 		// Reserve seat for reconnection
 		this.instr?.seatReserve(userId, seat.turnOrder, seat.reconnectDeadline);
@@ -1119,6 +1209,9 @@ export class GameRoom extends DurableObject<Env> {
 		seats.set(userId, seat);
 		await this.saveSeats(seats);
 
+		// Phase 1: Cancel the seat expiration alarm for this player
+		await this.alarmQueue.cancel('SEAT_EXPIRATION', seat.odal);
+
 		// If room was paused because all players disconnected, resume
 		await this.resumeFromPause();
 
@@ -1130,27 +1223,23 @@ export class GameRoom extends DurableObject<Env> {
 
 	/**
 	 * Schedule seat expiration alarm.
-	 * Only sets alarm if it's sooner than existing alarm.
+	 * Phase 1: Uses AlarmQueue for concurrent seat expirations.
 	 */
-	private async scheduleSeatExpirationAlarm(deadline: number): Promise<void> {
-		const existingAlarm = await this.ctx.storage.getAlarm();
-
-		// Only set if no alarm exists or new deadline is sooner
-		if (!existingAlarm || deadline < existingAlarm) {
-			const alarmData: AlarmData = { type: 'SEAT_EXPIRATION' };
-			await this.ctx.storage.put('alarm_data', alarmData);
-			await this.ctx.storage.setAlarm(deadline);
-			// Alarm scheduling logged via state transition events
-		}
+	private async scheduleSeatExpirationAlarm(deadline: number, odal: string): Promise<void> {
+		await this.alarmQueue.schedule({
+			type: 'SEAT_EXPIRATION',
+			targetId: odal,
+			scheduledFor: deadline,
+		});
 	}
 
 	/**
-	 * Handle seat expiration alarm - remove expired seats.
+	 * Handle seat expiration alarm - remove expired seats (legacy bulk handler).
+	 * Used for backwards compatibility with alarms scheduled before Phase 1.
 	 */
 	private async handleSeatExpiration(): Promise<void> {
 		const seats = await this.getSeats();
 		const now = Date.now();
-		let nextAlarm: number | null = null;
 		const expiredSeats: PlayerSeat[] = [];
 
 		for (const [userId, seat] of seats) {
@@ -1159,57 +1248,139 @@ export class GameRoom extends DurableObject<Env> {
 					// Seat expired - remove
 					expiredSeats.push(seat);
 					seats.delete(userId);
-				} else if (!nextAlarm || seat.reconnectDeadline < nextAlarm) {
-					// Not yet expired - track for next alarm
-					nextAlarm = seat.reconnectDeadline;
+				} else {
+					// Not yet expired - schedule via queue (Phase 1)
+					await this.alarmQueue.schedule({
+						type: 'SEAT_EXPIRATION',
+						targetId: seat.odal,
+						scheduledFor: seat.reconnectDeadline,
+					});
 				}
 			}
 		}
 
-		// Save updated seats
+		// Save updated seats and broadcast
 		if (expiredSeats.length > 0) {
 			await this.saveSeats(seats);
+			await this.broadcastSeatExpirations(expiredSeats);
+		}
+	}
 
-			// Broadcast seat expirations
-			for (const seat of expiredSeats) {
-				this.instr?.seatRelease(seat.userId, seat.turnOrder, 'timeout');
+	/**
+	 * Handle single seat expiration by odal (Phase 1).
+	 * Called by AlarmQueue for targeted seat expiration.
+	 */
+	private async handleSingleSeatExpiration(odal: string): Promise<void> {
+		const seats = await this.getSeats();
+		const now = Date.now();
+		let expiredSeat: PlayerSeat | null = null;
+		let seatUserId: string | null = null;
 
-				this.broadcast({
-					type: 'PLAYER_SEAT_EXPIRED',
-					payload: {
-						userId: seat.userId,
-						displayName: seat.displayName,
-					},
-				});
-
-				// Also notify spectators
-				this.broadcastToSpectators({
-					type: 'PLAYER_SEAT_EXPIRED',
-					payload: {
-						userId: seat.userId,
-						displayName: seat.displayName,
-					},
-				});
+		// Find and remove the specific seat
+		for (const [userId, seat] of seats) {
+			if (seat.odal === odal) {
+				// Check if actually expired (might have reconnected)
+				if (
+					!seat.isConnected &&
+					seat.reconnectDeadline !== null &&
+					now >= seat.reconnectDeadline
+				) {
+					expiredSeat = seat;
+					seatUserId = userId;
+					seats.delete(userId);
+				}
+				break;
 			}
-
-			// Update room playerOrder to remove expired players
-			const roomState = await this.ctx.storage.get<RoomState>('room');
-			if (roomState) {
-				const expiredUserIds = new Set(expiredSeats.map((s) => s.userId));
-				roomState.playerOrder = roomState.playerOrder.filter((id) => !expiredUserIds.has(id));
-				await this.ctx.storage.put('room', roomState);
-			}
-
-			// Notify lobby of player count change
-			await this.notifyLobbyOfUpdate();
 		}
 
-		// Schedule next alarm if there are pending expirations
-		if (nextAlarm) {
-			const alarmData: AlarmData = { type: 'SEAT_EXPIRATION' };
-			await this.ctx.storage.put('alarm_data', alarmData);
-			await this.ctx.storage.setAlarm(nextAlarm);
+		// Process expiration if seat was actually expired
+		if (expiredSeat && seatUserId) {
+			await this.saveSeats(seats);
+			await this.broadcastSeatExpirations([expiredSeat]);
 		}
+	}
+
+	/**
+	 * Broadcast seat expiration events and update room state.
+	 */
+	private async broadcastSeatExpirations(expiredSeats: PlayerSeat[]): Promise<void> {
+		if (expiredSeats.length === 0) return;
+
+		// Broadcast each expiration
+		for (const seat of expiredSeats) {
+			this.instr?.seatRelease(seat.userId, seat.turnOrder, 'timeout');
+
+			this.broadcast({
+				type: 'PLAYER_SEAT_EXPIRED',
+				payload: {
+					userId: seat.userId,
+					displayName: seat.displayName,
+				},
+			});
+
+			// Also notify spectators
+			this.broadcastToSpectators({
+				type: 'PLAYER_SEAT_EXPIRED',
+				payload: {
+					userId: seat.userId,
+					displayName: seat.displayName,
+				},
+			});
+		}
+
+		// Update room playerOrder to remove expired players
+		const roomState = await this.ctx.storage.get<RoomState>('room');
+		if (roomState) {
+			const expiredUserIds = new Set(expiredSeats.map((s) => s.userId));
+			roomState.playerOrder = roomState.playerOrder.filter((id) => !expiredUserIds.has(id));
+			await this.ctx.storage.put('room', roomState);
+		}
+
+		// Notify lobby of player count change
+		await this.notifyLobbyOfUpdate();
+	}
+
+	/**
+	 * Handle AI turn timeout from AlarmQueue (Phase 1).
+	 * Supports retries via rescheduling in the queue.
+	 */
+	private async handleAITurnTimeoutFromQueue(alarm: ScheduledAlarm): Promise<void> {
+		const playerId = alarm.targetId;
+		if (!playerId) return;
+
+		const retryCount = (alarm.metadata?.retryCount as number) ?? 0;
+
+		// Check if AI is still current player
+		const gameState = await this.gameStateManager.getState();
+		if (!gameState) return;
+
+		const currentPlayerId = gameState.playerOrder[gameState.currentPlayerIndex];
+		if (currentPlayerId !== playerId) {
+			// Not current player anymore - no action needed
+			return;
+		}
+
+		// If max retries exceeded, force end turn
+		if (retryCount >= 3) {
+			this.logger.warn('AI turn timeout max retries exceeded, forcing turn skip', {
+				playerId,
+				retryCount,
+			});
+			// Force a turn skip similar to player timeout
+			await this.handleTurnTimeout(playerId);
+			return;
+		}
+
+		// Schedule retry
+		await this.alarmQueue.schedule({
+			type: 'AI_TURN_TIMEOUT',
+			targetId: playerId,
+			scheduledFor: Date.now() + 5000,
+			metadata: { retryCount: retryCount + 1 },
+		});
+
+		// Execute AI turn
+		this.ctx.waitUntil(this.executeAITurnWithRecovery(playerId));
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -2511,13 +2682,13 @@ export class GameRoom extends DurableObject<Env> {
 			return;
 		}
 
-		// Schedule the alarm
-		const alarmData: AlarmData = {
+		// Phase 1: Schedule via AlarmQueue
+		await this.alarmQueue.schedule({
 			type: 'JOIN_REQUEST_EXPIRATION',
+			targetId: requestId,
+			scheduledFor: expiresAt,
 			metadata: { requestId },
-		};
-		await this.ctx.storage.put('alarm_data', alarmData);
-		await this.ctx.storage.setAlarm(expiresAt);
+		});
 	}
 
 	/**
@@ -3603,16 +3774,14 @@ export class GameRoom extends DurableObject<Env> {
 		};
 		await this.ctx.storage.put('ai_turn_state', aiTurnState);
 
-		// STEP 2: Schedule safety-net alarm (35 seconds)
+		// STEP 2: Phase 1 - Schedule safety-net alarm via AlarmQueue (35 seconds)
 		// This will fire if the waitUntil callback is killed by hibernation
-		const alarmTime = Date.now() + 35000;
-		const alarmData: AlarmData = {
+		await this.alarmQueue.schedule({
 			type: 'AI_TURN_TIMEOUT',
-			playerId,
-			retryCount: 0,
-		};
-		await this.ctx.storage.put('alarm_data', alarmData);
-		await this.ctx.storage.setAlarm(alarmTime);
+			targetId: playerId,
+			scheduledFor: Date.now() + 35000,
+			metadata: { retryCount: 0 },
+		});
 
 		// STEP 3: Execute AI turn in background (still use waitUntil for non-blocking)
 		this.ctx.waitUntil(this.executeAITurnWithRecovery(playerId));
@@ -3642,8 +3811,10 @@ export class GameRoom extends DurableObject<Env> {
 				},
 			);
 
-			// SUCCESS: Clear the AI turn state (alarm handler will check this)
+			// SUCCESS: Clear the AI turn state and cancel the alarm
 			await this.ctx.storage.delete('ai_turn_state');
+			// Phase 1: Cancel the alarm via queue instead of just deleting alarm_data
+			await this.alarmQueue.cancel('AI_TURN_TIMEOUT', playerId);
 
 			// AI turn complete (logged via state transition)
 		} catch (error) {
@@ -5375,13 +5546,13 @@ export class GameRoom extends DurableObject<Env> {
 			});
 		}
 
-		// Schedule alarm for countdown completion
-		const alarmData: AlarmData = {
-			type: 'ROOM_CLEANUP', // Reuse for warm seat completion
+		// Phase 1: Schedule alarm for countdown completion via AlarmQueue
+		await this.alarmQueue.schedule({
+			type: 'ROOM_CLEANUP',
+			targetId: null, // Room-level alarm
+			scheduledFor: Date.now() + WARM_SEAT_COUNTDOWN_SECONDS * 1000,
 			metadata: { warmSeat: true },
-		};
-		await this.ctx.storage.put('alarm_data', alarmData);
-		await this.ctx.storage.setAlarm(Date.now() + WARM_SEAT_COUNTDOWN_SECONDS * 1000);
+		});
 
 		// Warm seat transition started (logged via state transition events)
 

@@ -126,5 +126,16 @@ export const Loggers = {
 	GameRoom: (roomCode?: string) => createLogger({ component: 'GameRoom', roomCode }),
 	GlobalLobby: () => createLogger({ component: 'GlobalLobby' }),
 	ChatManager: (roomCode?: string) => createLogger({ component: 'ChatManager', roomCode }),
-	JoinRequestRepo: (roomCode?: string) => createLogger({ component: 'JoinRequestRepo', roomCode }),
+	JoinRequestRepo: (roomCode?: string) =>
+		createLogger({ component: 'JoinRequestRepo', roomCode }),
+	// AI components
+	AIController: (roomCode?: string) => createLogger({ component: 'AIController', roomCode }),
+	AIRoomManager: (roomCode?: string) => createLogger({ component: 'AIRoomManager', roomCode }),
+	AIEngine: () => createLogger({ component: 'AIEngine' }),
+	OptimalBrain: () => createLogger({ component: 'OptimalBrain' }),
+	AdaptiveBrain: () => createLogger({ component: 'AdaptiveBrain' }),
+	// Auth
+	Auth: () => createLogger({ component: 'Auth' }),
+	// Alarm system (Phase 1)
+	AlarmQueue: () => createLogger({ component: 'AlarmQueue' }),
 } as const;

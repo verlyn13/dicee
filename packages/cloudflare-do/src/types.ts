@@ -126,6 +126,13 @@ export interface PlayerSeat {
 
 	/** Turn order position (0-indexed) */
 	turnOrder: number;
+
+	/**
+	 * Unique seat identifier for alarm targeting (Phase 1).
+	 * Used by AlarmQueue to target specific seat expiration alarms.
+	 * Format: `seat-{userId}-{joinedAt}`
+	 */
+	odal: string;
 }
 
 /**
@@ -153,16 +160,19 @@ export function createPlayerSeat(
 	isHost: boolean,
 	turnOrder: number,
 ): PlayerSeat {
+	const joinedAt = Date.now();
 	return {
 		userId,
 		displayName,
 		avatarSeed,
-		joinedAt: Date.now(),
+		joinedAt,
 		isConnected: true,
 		disconnectedAt: null,
 		reconnectDeadline: null,
 		isHost,
 		turnOrder,
+		// Phase 1: Unique identifier for alarm targeting
+		odal: `seat-${userId}-${joinedAt}`,
 	};
 }
 
@@ -317,7 +327,7 @@ export type AlarmType =
 export const PAUSE_TIMEOUT_MS = 30 * 60 * 1000;
 
 /**
- * Data stored with scheduled alarms
+ * Data stored with scheduled alarms (legacy - used for single alarm)
  */
 export interface AlarmData {
 	type: AlarmType;
@@ -327,6 +337,25 @@ export interface AlarmData {
 	playerId?: string;
 	/** Retry count for AI turn timeout (max 3) */
 	retryCount?: number;
+}
+
+/**
+ * Scheduled alarm for the AlarmQueue system.
+ *
+ * Phase 1: Supports multiple concurrent alarms via a queue stored in DO storage.
+ * The DO's single native alarm is set to fire for the earliest item in the queue.
+ */
+export interface ScheduledAlarm {
+	/** Type of alarm */
+	type: AlarmType;
+	/** Target identifier (e.g., odal for seat expiration, null for room-level alarms) */
+	targetId: string | null;
+	/** When the alarm should fire (epoch ms) */
+	scheduledFor: number;
+	/** When the alarm was created (epoch ms) */
+	createdAt: number;
+	/** Optional metadata for the alarm */
+	metadata?: Record<string, unknown>;
 }
 
 // =============================================================================
