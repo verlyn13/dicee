@@ -3,15 +3,16 @@
 	<head>
 		<meta charset="utf-8" />
 		<!-- 
-			iOS Viewport Configuration:
+			iOS Viewport Configuration (Phase 2 - Simplified):
 			- width=device-width: Proper mobile sizing
 			- initial-scale=1: No initial zoom
-			- maximum-scale=1.0: Prevent pinch-zoom that corrupts viewport
-			- user-scalable=no: Disable zoom gestures
 			- viewport-fit=cover: Full bleed for notched devices (safe areas via CSS)
 			- interactive-widget=resizes-content: Keyboard resizes content, not viewport (Chrome 108+)
+			
+			Note: We intentionally allow user scaling for accessibility.
+			Emoji rendering issues are now fixed via GPU compositing (Phase 3).
 		-->
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
 		<!-- iOS Safari theme -->
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

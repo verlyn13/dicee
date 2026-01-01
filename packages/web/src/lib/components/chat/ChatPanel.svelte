@@ -235,6 +235,9 @@ function handleTouchEnd(): void {
 		background: var(--color-background);
 		border: var(--border-thick);
 		overflow: hidden;
+		/* Phase 2: Prevent double-tap zoom in chat area */
+		touch-action: manipulation;
+		-webkit-overflow-scrolling: touch;
 	}
 
 	/* Mobile: Full-screen overlay when open, completely hidden when closed.
@@ -246,7 +249,7 @@ function handleTouchEnd(): void {
 			display: none;
 		}
 
-		/* Expanded: full screen overlay */
+		/* Expanded: full screen overlay with safe areas */
 		.chat-panel:not(.collapsed) {
 			position: fixed;
 			top: 0;
@@ -255,7 +258,11 @@ function handleTouchEnd(): void {
 			bottom: 0;
 			z-index: var(--z-bottomsheet);
 			border-radius: 0;
+			/* Phase 2: Safe area handling for notched devices */
+			padding-top: env(safe-area-inset-top, 0px);
 			padding-bottom: env(safe-area-inset-bottom, 0px);
+			padding-left: env(safe-area-inset-left, 0px);
+			padding-right: env(safe-area-inset-right, 0px);
 		}
 	}
 

@@ -311,12 +311,17 @@ onMount(() => {
 	.spectator-view {
 		display: flex;
 		flex-direction: column;
+		/* Phase 2: Use dvh with fallbacks for iOS viewport stability */
 		min-height: 100vh;
-		/* biome-ignore lint/suspicious/noDuplicateProperties: svh fallback */
-		min-height: 100svh;
+		/* biome-ignore lint/suspicious/noDuplicateProperties: dvh fallback chain */
+		min-height: 100dvh;
+		/* biome-ignore lint/suspicious/noDuplicateProperties: -webkit-fill-available fallback for older iOS */
+		min-height: -webkit-fill-available;
 		background: var(--color-background);
-		/* Prevent pinch-zoom that corrupts iOS viewport */
+		/* Prevent double-tap zoom, allow pinch (accessibility) */
 		touch-action: manipulation;
+		/* Safe area padding for notched devices */
+		padding-bottom: env(safe-area-inset-bottom, 0);
 	}
 
 	/* Error Banner */
@@ -517,6 +522,11 @@ onMount(() => {
 		.game-main {
 			order: 1;
 		}
+	}
+
+	/* Fallback for browsers without dvh - use JS-calculated viewport height */
+	:global(.no-dvh) .spectator-view {
+		min-height: var(--viewport-height, 100vh);
 	}
 
 	/* ==========================================================================
