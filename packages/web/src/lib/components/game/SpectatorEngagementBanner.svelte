@@ -79,6 +79,14 @@ function getLabel(emoji: string): string {
 		font-size: var(--text-small);
 		animation: engagement-pop 0.3s ease-out, engagement-fade 4s ease-in forwards;
 		box-shadow: 2px 2px 0 var(--color-border);
+
+		/* Phase 3 Fix: Force GPU compositing layer for iOS Safari */
+		will-change: transform, opacity;
+		transform: translateZ(0);
+		backface-visibility: hidden;
+
+		/* Delay animation start by 1 frame to ensure paint before animation */
+		animation-delay: 16ms;
 	}
 
 	.engagement-item.combo {
@@ -111,14 +119,14 @@ function getLabel(emoji: string): string {
 	@keyframes engagement-pop {
 		0% {
 			opacity: 0;
-			transform: scale(0.8) translateY(10px);
+			transform: scale(0.8) translateY(10px) translateZ(0);
 		}
 		50% {
-			transform: scale(1.05) translateY(-2px);
+			transform: scale(1.05) translateY(-2px) translateZ(0);
 		}
 		100% {
 			opacity: 1;
-			transform: scale(1) translateY(0);
+			transform: scale(1) translateY(0) translateZ(0);
 		}
 	}
 

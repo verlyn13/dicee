@@ -89,7 +89,12 @@ onDestroy(() => {
 		right: 0;
 		height: 200px;
 		pointer-events: none;
-		overflow: hidden;
 		z-index: 50;
+
+		/* Phase 3 Fix: Use clip-path instead of overflow:hidden
+		   overflow:hidden can interfere with GPU compositing on iOS Safari,
+		   causing absolutely positioned animated elements to be invisible
+		   until a zoom gesture forces a recomposite */
+		clip-path: inset(0);
 	}
 </style>

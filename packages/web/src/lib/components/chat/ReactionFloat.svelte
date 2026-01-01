@@ -60,20 +60,28 @@ onMount(() => {
 		display: flex;
 		align-items: center;
 		gap: var(--space-1);
+
+		/* Phase 3 Fix: Force GPU compositing layer for iOS Safari */
+		will-change: transform, opacity;
+		transform: translateX(-50%) translateZ(0);
+		backface-visibility: hidden;
+
+		/* Delay animation start by 1 frame to ensure paint before animation */
+		animation-delay: 16ms;
 	}
 
 	@keyframes floatUp {
 		0% {
 			opacity: 1;
-			transform: translateX(-50%) translateY(0) scale(1);
+			transform: translateX(-50%) translateY(0) translateZ(0) scale(1);
 		}
 		50% {
 			opacity: 1;
-			transform: translateX(-50%) translateY(-30px) scale(1.2);
+			transform: translateX(-50%) translateY(-30px) translateZ(0) scale(1.2);
 		}
 		100% {
 			opacity: 0;
-			transform: translateX(-50%) translateY(-60px) scale(0.8);
+			transform: translateX(-50%) translateY(-60px) translateZ(0) scale(0.8);
 		}
 	}
 
