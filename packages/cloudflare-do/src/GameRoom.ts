@@ -87,12 +87,12 @@ import {
 	createEmptyGalleryPoints,
 	createInitialRoomState,
 	createPlayerSeat,
-	PAUSE_TIMEOUT_MS,
 	DEFAULT_REACTION_RATE_LIMIT,
 	GALLERY_ACHIEVEMENTS,
 	GALLERY_POINT_VALUES,
 	INVITE_EXPIRATION_MS,
 	MAX_QUEUE_SIZE,
+	PAUSE_TIMEOUT_MS,
 	REACTION_METADATA,
 	RECONNECT_WINDOW_MS,
 	ROOTING_REACTIONS,
@@ -187,6 +187,15 @@ export class GameRoom extends DurableObject<Env> {
 		improves: 10, // Player improves their position
 		bricks: 10, // Player gets nothing/minimal
 	} as const;
+
+	/**
+	 * Phase 0 Hotfix: Pause check debounce
+	 *
+	 * Prevents cascading disconnections when multiple players refresh simultaneously.
+	 * The 2-second delay allows reconnection before checking if room should pause.
+	 */
+	private pauseCheckPending = false;
+	private static readonly PAUSE_CHECK_DELAY_MS = 2000;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
@@ -606,8 +615,41 @@ export class GameRoom extends DurableObject<Env> {
 	}
 
 	/**
+	 * Schedule a delayed pause check to allow reconnection during page refresh.
+	 *
+	 * This prevents cascading disconnections when multiple players refresh
+	 * simultaneously - the 2-second window allows them to reconnect before
+	 * the room considers transitioning to PAUSED state.
+	 *
+	 * Uses waitUntil + setTimeout instead of DO alarm to avoid overwriting
+	 * existing seat expiration alarms (single-alarm constraint).
+	 */
+	private scheduleDelayedPauseCheck(): void {
+		if (this.pauseCheckPending) {
+			// Already scheduled, don't duplicate
+			return;
+		}
+
+		this.pauseCheckPending = true;
+
+		// Use waitUntil to ensure the DO stays alive during the delay
+		this.ctx.waitUntil(
+			new Promise<void>((resolve) => {
+				setTimeout(async () => {
+					this.pauseCheckPending = false;
+
+					// Re-check if we should pause (players may have reconnected)
+					await this.checkIfRoomShouldPause();
+
+					resolve();
+				}, GameRoom.PAUSE_CHECK_DELAY_MS);
+			}),
+		);
+	}
+
+	/**
 	 * Check if the room should transition to PAUSED state.
-	 * Called after a player disconnects.
+	 * Called after the debounce delay (not directly on disconnect).
 	 *
 	 * Room enters PAUSED when:
 	 * - Game is in 'playing' state
@@ -711,7 +753,10 @@ export class GameRoom extends DurableObject<Env> {
 		await this.ensureInstrumentation();
 		const playerId = alarmData.playerId;
 		if (!playerId) {
-			this.instr?.errorHandlerFailed('aiTurnTimeout', new Error('AI turn timeout alarm with no playerId'));
+			this.instr?.errorHandlerFailed(
+				'aiTurnTimeout',
+				new Error('AI turn timeout alarm with no playerId'),
+			);
 			await this.ctx.storage.delete('alarm_data');
 			return;
 		}
@@ -731,7 +776,10 @@ export class GameRoom extends DurableObject<Env> {
 		// CRITICAL: Reload game state from storage (hibernation-safe)
 		const gameState = await this.gameStateManager.getState();
 		if (!gameState) {
-			this.instr?.errorHandlerFailed('aiTurnTimeout', new Error('AI turn timeout - no game state found'));
+			this.instr?.errorHandlerFailed(
+				'aiTurnTimeout',
+				new Error('AI turn timeout - no game state found'),
+			);
 			await this.ctx.storage.delete('alarm_data');
 			await this.ctx.storage.delete('ai_turn_state');
 			return;
@@ -763,7 +811,10 @@ export class GameRoom extends DurableObject<Env> {
 			this.ctx.waitUntil(this.executeAITurnWithRecovery(playerId));
 		} else {
 			// Give up - force a valid action
-			this.instr?.errorHandlerFailed('aiTurnTimeout', new Error(`AI turn retries exhausted - forcing action for ${playerId}`));
+			this.instr?.errorHandlerFailed(
+				'aiTurnTimeout',
+				new Error(`AI turn retries exhausted - forcing action for ${playerId}`),
+			);
 			await this.forceAIAction(playerId);
 			await this.ctx.storage.delete('alarm_data');
 			await this.ctx.storage.delete('ai_turn_state');
@@ -830,11 +881,7 @@ export class GameRoom extends DurableObject<Env> {
 					sentCount++;
 				} catch (error) {
 					const connState = ws.deserializeAttachment() as ConnectionState | null;
-					this.instr?.errorBroadcastFailed(
-						msgType,
-						connState?.userId ?? 'unknown',
-						error,
-					);
+					this.instr?.errorBroadcastFailed(msgType, connState?.userId ?? 'unknown', error);
 				}
 			}
 		}
@@ -1454,10 +1501,7 @@ export class GameRoom extends DurableObject<Env> {
 			// CRITICAL: Send full game state sync if game is active
 			// This ensures spectators joining mid-game see complete state
 			const currentGameState = await this.gameStateManager.getState();
-			if (
-				currentGameState &&
-				(roomState.status === 'playing' || roomState.status === 'starting')
-			) {
+			if (currentGameState && (roomState.status === 'playing' || roomState.status === 'starting')) {
 				await this.sendGameStateSync(ws, currentGameState, false);
 			}
 
@@ -1519,7 +1563,7 @@ export class GameRoom extends DurableObject<Env> {
 				reconnectedSeat = reconnectionResult.seat;
 				connState.isHost = reconnectedSeat.isHost;
 				ws.serializeAttachment(connState);
-				
+
 				// Get connection ID from WebSocket tags or generate one
 				const connectionId = `conn-${connState.userId}-${Date.now()}`;
 				this.instr?.clientReconnect(
@@ -1612,10 +1656,7 @@ export class GameRoom extends DurableObject<Env> {
 			// CRITICAL: Send full game state sync if game is active
 			// This ensures reconnecting players have complete, authoritative state
 			const currentGameState = await this.gameStateManager.getState();
-			if (
-				currentGameState &&
-				(roomState.status === 'playing' || roomState.status === 'starting')
-			) {
+			if (currentGameState && (roomState.status === 'playing' || roomState.status === 'starting')) {
 				await this.sendGameStateSync(ws, currentGameState, true);
 			}
 		} else if (isInitialCreation) {
@@ -1678,169 +1719,169 @@ export class GameRoom extends DurableObject<Env> {
 			}
 
 			switch (type) {
-			case 'START_GAME':
-				await this.handleStartGame(ws, connState);
-				break;
+				case 'START_GAME':
+					await this.handleStartGame(ws, connState);
+					break;
 
-			case 'QUICK_PLAY_START':
-				await this.handleQuickPlayStart(ws, connState, payload as { aiProfiles: string[] });
-				break;
+				case 'QUICK_PLAY_START':
+					await this.handleQuickPlayStart(ws, connState, payload as { aiProfiles: string[] });
+					break;
 
-			case 'ADD_AI_PLAYER':
-				await this.handleAddAIPlayer(ws, connState, payload as { profileId: string });
-				break;
+				case 'ADD_AI_PLAYER':
+					await this.handleAddAIPlayer(ws, connState, payload as { profileId: string });
+					break;
 
-			case 'REMOVE_AI_PLAYER':
-				await this.handleRemoveAIPlayer(ws, connState, payload as { playerId: string });
-				break;
+				case 'REMOVE_AI_PLAYER':
+					await this.handleRemoveAIPlayer(ws, connState, payload as { playerId: string });
+					break;
 
-			// ─────────────────────────────────────────────────────────────────────────
-			// Core Game Loop Commands (DO-4)
-			// ─────────────────────────────────────────────────────────────────────────
+				// ─────────────────────────────────────────────────────────────────────────
+				// Core Game Loop Commands (DO-4)
+				// ─────────────────────────────────────────────────────────────────────────
 
-			case 'DICE_ROLL':
-				await this.handleDiceRoll(ws, connState, payload as { kept?: boolean[] });
-				break;
+				case 'DICE_ROLL':
+					await this.handleDiceRoll(ws, connState, payload as { kept?: boolean[] });
+					break;
 
-			case 'DICE_KEEP':
-				await this.handleDiceKeep(ws, connState, payload as { indices: number[] });
-				break;
+				case 'DICE_KEEP':
+					await this.handleDiceKeep(ws, connState, payload as { indices: number[] });
+					break;
 
-			case 'CATEGORY_SCORE':
-				await this.handleCategoryScore(ws, connState, payload as { category: Category });
-				break;
+				case 'CATEGORY_SCORE':
+					await this.handleCategoryScore(ws, connState, payload as { category: Category });
+					break;
 
-			case 'PREDICTION':
-				await this.handlePrediction(
-					ws,
-					connState,
-					payload as {
-						playerId: string;
-						type: PredictionType;
-						exactScore?: number;
-					},
-				);
-				break;
+				case 'PREDICTION':
+					await this.handlePrediction(
+						ws,
+						connState,
+						payload as {
+							playerId: string;
+							type: PredictionType;
+							exactScore?: number;
+						},
+					);
+					break;
 
-			case 'CANCEL_PREDICTION':
-				this.handleCancelPrediction(ws, connState, payload as { predictionId: string });
-				break;
+				case 'CANCEL_PREDICTION':
+					this.handleCancelPrediction(ws, connState, payload as { predictionId: string });
+					break;
 
-			case 'GET_PREDICTIONS':
-				this.handleGetPredictions(ws);
-				break;
+				case 'GET_PREDICTIONS':
+					this.handleGetPredictions(ws);
+					break;
 
-			case 'GET_PREDICTION_STATS':
-				this.handleGetPredictionStats(ws, connState);
-				break;
+				case 'GET_PREDICTION_STATS':
+					this.handleGetPredictionStats(ws, connState);
+					break;
 
-			case 'ROOT_FOR_PLAYER':
-				this.handleRootForPlayer(ws, connState, payload as { playerId: string });
-				break;
+				case 'ROOT_FOR_PLAYER':
+					this.handleRootForPlayer(ws, connState, payload as { playerId: string });
+					break;
 
-			case 'CLEAR_ROOTING':
-				this.handleClearRooting(ws, connState);
-				break;
+				case 'CLEAR_ROOTING':
+					this.handleClearRooting(ws, connState);
+					break;
 
-			case 'GET_ROOTING':
-				this.handleGetRooting(ws);
-				break;
+				case 'GET_ROOTING':
+					this.handleGetRooting(ws);
+					break;
 
-			case 'KIBITZ':
-				this.handleKibitz(
-					ws,
-					connState,
-					payload as {
-						playerId: string;
-						voteType: KibitzVoteType;
-						category?: string;
-						keepPattern?: number;
-						action?: 'roll' | 'score';
-					},
-				);
-				break;
+				case 'KIBITZ':
+					this.handleKibitz(
+						ws,
+						connState,
+						payload as {
+							playerId: string;
+							voteType: KibitzVoteType;
+							category?: string;
+							keepPattern?: number;
+							action?: 'roll' | 'score';
+						},
+					);
+					break;
 
-			case 'CLEAR_KIBITZ':
-				this.handleClearKibitz(ws, connState);
-				break;
+				case 'CLEAR_KIBITZ':
+					this.handleClearKibitz(ws, connState);
+					break;
 
-			case 'GET_KIBITZ':
-				this.handleGetKibitz(ws);
-				break;
+				case 'GET_KIBITZ':
+					this.handleGetKibitz(ws);
+					break;
 
-			// ─────────────────────────────────────────────────────────────────────────
-			// Spectator Reaction Messages (D7)
-			// ─────────────────────────────────────────────────────────────────────────
+				// ─────────────────────────────────────────────────────────────────────────
+				// Spectator Reaction Messages (D7)
+				// ─────────────────────────────────────────────────────────────────────────
 
-			case 'SPECTATOR_REACTION':
-				this.handleSpectatorReaction(
-					ws,
-					connState,
-					payload as {
-						emoji: SpectatorReactionEmoji;
-						targetPlayerId?: string;
-					},
-				);
-				break;
+				case 'SPECTATOR_REACTION':
+					this.handleSpectatorReaction(
+						ws,
+						connState,
+						payload as {
+							emoji: SpectatorReactionEmoji;
+							targetPlayerId?: string;
+						},
+					);
+					break;
 
-			// ─────────────────────────────────────────────────────────────────────────
-			// Join Queue Messages (D8)
-			// ─────────────────────────────────────────────────────────────────────────
+				// ─────────────────────────────────────────────────────────────────────────
+				// Join Queue Messages (D8)
+				// ─────────────────────────────────────────────────────────────────────────
 
-			case 'JOIN_QUEUE':
-				this.handleJoinQueue(ws, connState);
-				break;
+				case 'JOIN_QUEUE':
+					this.handleJoinQueue(ws, connState);
+					break;
 
-			case 'LEAVE_QUEUE':
-				this.handleLeaveQueue(ws, connState);
-				break;
+				case 'LEAVE_QUEUE':
+					this.handleLeaveQueue(ws, connState);
+					break;
 
-			case 'GET_QUEUE':
-				this.handleGetQueue(ws);
-				break;
+				case 'GET_QUEUE':
+					this.handleGetQueue(ws);
+					break;
 
-			// ─────────────────────────────────────────────────────────────────────────
-			// Gallery Points Messages (D9)
-			// ─────────────────────────────────────────────────────────────────────────
+				// ─────────────────────────────────────────────────────────────────────────
+				// Gallery Points Messages (D9)
+				// ─────────────────────────────────────────────────────────────────────────
 
-			case 'GET_GALLERY_POINTS':
-				this.handleGetGalleryPoints(ws, connState);
-				break;
+				case 'GET_GALLERY_POINTS':
+					this.handleGetGalleryPoints(ws, connState);
+					break;
 
-			// ─────────────────────────────────────────────────────────────────────────
-			// Invite System Messages
-			// ─────────────────────────────────────────────────────────────────────────
+				// ─────────────────────────────────────────────────────────────────────────
+				// Invite System Messages
+				// ─────────────────────────────────────────────────────────────────────────
 
-			case 'SEND_INVITE':
-				await this.handleSendInvite(ws, connState, payload as { targetUserId: string });
-				break;
+				case 'SEND_INVITE':
+					await this.handleSendInvite(ws, connState, payload as { targetUserId: string });
+					break;
 
-			case 'CANCEL_INVITE':
-				await this.handleCancelInvite(ws, connState, payload as { targetUserId: string });
-				break;
+				case 'CANCEL_INVITE':
+					await this.handleCancelInvite(ws, connState, payload as { targetUserId: string });
+					break;
 
-			// ─────────────────────────────────────────────────────────────────────────
-			// Join Request Messages (host response to join requests)
-			// ─────────────────────────────────────────────────────────────────────────
+				// ─────────────────────────────────────────────────────────────────────────
+				// Join Request Messages (host response to join requests)
+				// ─────────────────────────────────────────────────────────────────────────
 
-			case 'JOIN_REQUEST_RESPONSE':
-				await this.handleJoinRequestResponse(
-					ws,
-					connState,
-					payload as { requestId: string; approved: boolean },
-				);
-				break;
+				case 'JOIN_REQUEST_RESPONSE':
+					await this.handleJoinRequestResponse(
+						ws,
+						connState,
+						payload as { requestId: string; approved: boolean },
+					);
+					break;
 
-			case 'PING':
-				ws.send(JSON.stringify({ type: 'PONG', payload: Date.now() }));
-				break;
+				case 'PING':
+					ws.send(JSON.stringify({ type: 'PONG', payload: Date.now() }));
+					break;
 
-			case 'REMATCH':
-				await this.handleRematch(ws, connState);
-				break;
+				case 'REMATCH':
+					await this.handleRematch(ws, connState);
+					break;
 
-			default:
-				this.sendError(ws, 'UNKNOWN_COMMAND', `Unknown message type: ${type}`);
+				default:
+					this.sendError(ws, 'UNKNOWN_COMMAND', `Unknown message type: ${type}`);
 			}
 		} catch (error) {
 			// Log handler errors with correlation ID preserved
@@ -1949,11 +1990,17 @@ export class GameRoom extends DurableObject<Env> {
 		// Notify GlobalLobby of player count change
 		await this.notifyLobbyOfUpdate();
 
-		// Check if all players are disconnected and we should pause
-		await this.checkIfRoomShouldPause();
+		// Schedule delayed pause check (Phase 0 Hotfix)
+		// The 2-second delay prevents cascading disconnections during page refresh
+		// by allowing players to reconnect before checking if room should pause
+		this.scheduleDelayedPauseCheck();
 
-		// Notify GlobalLobby that user left this room
-		this.notifyLobbyUserRoomStatus(connState.userId, 'left');
+		// Only notify GlobalLobby that user "left" if they don't have a reserved seat
+		// If they have a seat, the lobby already knows they're "disconnected" via notifyLobbyOfUpdate()
+		// Sending 'left' would incorrectly signal they've permanently departed
+		if (!seat) {
+			this.notifyLobbyUserRoomStatus(connState.userId, 'left');
+		}
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
