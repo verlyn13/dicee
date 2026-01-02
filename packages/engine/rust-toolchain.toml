@@ -1,0 +1,7 @@
+# Rust toolchain configuration for dicee-engine
+# Ensures consistent builds across all environments (CI, local, mise, standalone)
+
+[toolchain]
+channel = "stable"
+targets = ["wasm32-unknown-unknown"]
+components = ["rustfmt", "clippy"]

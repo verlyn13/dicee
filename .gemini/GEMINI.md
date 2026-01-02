@@ -6,24 +6,25 @@ Dicee is a dice probability engine and web application for calculating and visua
 
 ## Tech Stack
 
-- **Frontend**: SvelteKit (Svelte 5 with runes)
+- **Frontend**: SvelteKit (Svelte 5 with runes) on Cloudflare Pages
 - **Engine**: Rust/WASM probability calculations
-- **Backend**: Supabase (Auth, Database, Edge Functions)
-- **Realtime**: PartyKit (multiplayer/collaboration)
+- **Backend**: Supabase (Auth, Database)
+- **Realtime**: Cloudflare Durable Objects (multiplayer, lobby)
 - **Edge**: Cloudflare (Workers, Pages, D1, KV, R2)
 - **Secrets**: Infisical (self-hosted)
 - **Package Manager**: pnpm (monorepo)
+- **Runtime Management**: mise (delegates Rust to rustup)
 
 ## Project Structure
 
 ```
 packages/
-  engine/     # Rust/WASM probability engine
-  web/        # SvelteKit frontend
-  partykit/   # Real-time collaboration server
-docs/         # Architecture and planning docs
-.claude/      # Claude Code config and state
-scripts/      # Build and deployment scripts
+  engine/        # Rust/WASM probability engine
+  web/           # SvelteKit frontend (Cloudflare Pages)
+  cloudflare-do/ # Durable Objects (GameRoom, GlobalLobby)
+docs/            # Architecture and planning docs
+.claude/         # Claude Code config and state
+scripts/         # Build and deployment scripts
 ```
 
 ## Development Commands
@@ -43,7 +44,15 @@ pnpm format           # Format with Biome
 - **Biome 2.3+** for formatting and linting (NOT Prettier)
 - **Svelte 5** runes syntax (`$state`, `$derived`, `$effect`)
 - **Strict TypeScript** - No `any` types
-- **Rust**: `cargo fmt` + `cargo clippy`
+- **Rust**: `cargo fmt` + `cargo clippy` (managed via rustup, NOT Homebrew)
+
+### Rust Toolchain
+
+Rust is managed via `rustup` (delegated from mise). The project includes:
+- `.mise.toml` - Sets `rust = "stable"`
+- `packages/engine/rust-toolchain.toml` - Explicit wasm32 target
+
+**Do NOT install Rust via Homebrew** - it conflicts with the wasm32 target.
 
 ## Key Conventions
 

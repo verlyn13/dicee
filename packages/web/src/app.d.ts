@@ -5,12 +5,12 @@ import type { Session, User, SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database';
 
 /**
- * Cloudflare Service Binding to the gamelobby Worker
+ * Cloudflare Service Binding to the dicee Worker
  * Provides zero-latency RPC access to Durable Objects
  */
 interface GameWorkerBinding {
 	/**
-	 * Fetch from the gamelobby worker
+	 * Fetch from the dicee worker
 	 * Routes: /lobby, /lobby/*, /room/:code, /health
 	 */
 	fetch(request: Request): Promise<Response>;
@@ -53,7 +53,7 @@ declare global {
 		 */
 		interface Platform {
 			env: {
-				/** Service Binding to gamelobby Worker (Durable Objects) */
+				/** Service Binding to dicee Worker (Durable Objects) */
 				GAME_WORKER: GameWorkerBinding;
 			};
 			/** Cloudflare context for waitUntil, passThroughOnException */

@@ -3,6 +3,9 @@
 
 [tools]
 node = "24"
+# Rust: mise delegates to rustup via RUSTUP_TOOLCHAIN=stable
+# Do NOT install Rust via Homebrew - it conflicts with wasm32 target
+# See packages/engine/rust-toolchain.toml for explicit target config
 rust = "stable"
 # Python available if needed for scripting
 # python = "3.12"
@@ -29,9 +32,8 @@ format = "pnpm format"
 "engine:test" = "cargo test --manifest-path packages/engine/Cargo.toml"
 "engine:check" = "pnpm check:rust"
 
-# PartyKit
-"party:dev" = "pnpm dev:party"
-"party:deploy" = "pnpm party:deploy"
-
 # Quality gate
 quality = "./scripts/quality-gate.sh"
+
+[env]
+DICEE_ENV = "development"

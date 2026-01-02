@@ -45,7 +45,7 @@
 │    → Full deployment: quality-gate → deploy-do → deploy-pages               │
 │                                                                              │
 │  ./scripts/copilot-mcp-wrapper.sh tail-logs                                 │
-│    → Stream production logs from gamelobby worker                           │
+│    → Stream production logs from dicee worker                               │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 
@@ -109,7 +109,7 @@
 │                                                                              │
 │  MONITOR PRODUCTION                                                          │
 │    copilot > "Tail production logs"                                         │
-│    → Runs tail-logs (wrangler tail gamelobby)                               │
+│    → Runs tail-logs (wrangler tail dicee)                                   │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 

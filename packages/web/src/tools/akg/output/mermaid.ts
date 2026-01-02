@@ -206,7 +206,7 @@ See \`pnpm akg:check\` for current invariant status.
 
 	// Build JSON sidecar
 	const json: DiagramJson = {
-		$schema: 'https://dicee.jefahnierocks.com/schemas/akg-diagram.json',
+		$schema: 'https://dicee.games/schemas/akg-diagram.json',
 		version: '1.0.0',
 		diagramType: 'layer_architecture',
 		generatedAt: timestamp,
@@ -355,7 +355,7 @@ ${stores.map((s) => `- **${s.name.replace(/\.svelte\.ts$/, '')}**: \`${s.filePat
 `;
 
 	const json: DiagramJson = {
-		$schema: 'https://dicee.jefahnierocks.com/schemas/akg-diagram.json',
+		$schema: 'https://dicee.games/schemas/akg-diagram.json',
 		version: '1.0.0',
 		diagramType: 'store_dependencies',
 		generatedAt: timestamp,
@@ -475,7 +475,7 @@ ${components.map((c) => `- **${c.name.replace(/\.svelte$/, '')}**: \`${c.filePat
 `;
 
 	const json: DiagramJson = {
-		$schema: 'https://dicee.jefahnierocks.com/schemas/akg-diagram.json',
+		$schema: 'https://dicee.games/schemas/akg-diagram.json',
 		version: '1.0.0',
 		diagramType: 'component_dependencies',
 		generatedAt: timestamp,
@@ -628,7 +628,7 @@ ${layerOrder.map((l) => `| ${l} | ${layerGroups.get(l)?.length ?? 0} | ${getLaye
 `;
 
 	const json: DiagramJson = {
-		$schema: 'https://dicee.jefahnierocks.com/schemas/akg-diagram.json',
+		$schema: 'https://dicee.games/schemas/akg-diagram.json',
 		version: '1.0.0',
 		diagramType: 'dataflow',
 		generatedAt: timestamp,

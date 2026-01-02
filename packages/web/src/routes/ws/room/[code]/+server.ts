@@ -6,7 +6,7 @@
  * WebSocket connections without CORS.
  *
  * The Service Binding (GAME_WORKER) provides zero-latency RPC
- * to the gamelobby Worker.
+ * to the dicee Worker.
  *
  * Auth: Token passed via query param (cookies unreliable for CF WebSocket)
  */

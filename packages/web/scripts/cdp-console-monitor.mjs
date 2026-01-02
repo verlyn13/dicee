@@ -46,9 +46,9 @@ const logLevelColors = {
 
 // Tab URL patterns for environment detection
 const URL_PATTERNS = {
-	production: 'gamelobby\\.jefahnierocks\\.com',
+	production: 'dicee\\.games',
 	local: 'localhost|192\\.168\\.',
-	dicee: 'dicee|gamelobby|localhost:5173|192\\.168.*:5173',
+	dicee: 'dicee|localhost:5173|192\\.168.*:5173',
 };
 
 async function listTabs() {
@@ -313,7 +313,7 @@ async function main() {
 	if (!targetTab) {
 		// Determine appropriate error message
 		if (args.includes('--production')) {
-			await handleMissingTab(tabs, 'No production tab found (gamelobby.jefahnierocks.com)');
+			await handleMissingTab(tabs, 'No production tab found (dicee.games)');
 		} else if (args.includes('--local')) {
 			await handleMissingTab(tabs, 'No localhost/local network tab found');
 		} else if (args.includes('--tab')) {

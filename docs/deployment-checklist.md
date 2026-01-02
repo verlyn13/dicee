@@ -96,14 +96,13 @@ wrangler pages deploy .svelte-kit/cloudflare --project-name=dicee
 
 | Domain | Target |
 |--------|--------|
-| `gamelobby.jefahnierocks.com` | Cloudflare Pages (main site) |
-| `dicee.jefahnierocks.com` | Redirect to `/games/dicee` |
+| `dicee.games` | Cloudflare Pages (main site) |
 
 ### Custom Domain Setup
 
 1. Go to Cloudflare Dashboard → Pages → dicee
 2. Click "Custom domains"
-3. Add `gamelobby.jefahnierocks.com`
+3. Add `dicee.games`
 4. DNS will be auto-configured
 
 ## Verification Steps
@@ -113,11 +112,11 @@ After deployment, verify:
 ### 1. Worker Health
 ```bash
 # Check worker is responding
-curl https://gamelobby.jefahnierocks.com/api/health
+curl https://dicee.games/api/health
 ```
 
 ### 2. WebSocket Connection
-- Open browser to `https://gamelobby.jefahnierocks.com`
+- Open browser to `https://dicee.games`
 - Open DevTools → Network → WS
 - Create/join a room
 - Verify WebSocket connects to Worker
@@ -157,7 +156,7 @@ wrangler rollback
 ## Monitoring
 
 ### Cloudflare Analytics
-- Workers → Analytics → gamelobby
+- Workers → Analytics → dicee
 - Pages → Analytics → dicee
 
 ### Logs
@@ -187,8 +186,8 @@ wrangler tail --env production
 
 The GitHub Actions workflow (`.github/workflows/ci.yml`) handles:
 
-1. **Rust Tests** - Engine unit tests, property tests
-2. **WASM Build** - Build and size check (150KB limit)
+1. **Rust Tests** - Engine unit tests, property tests (uses `dtolnay/rust-toolchain@stable`)
+2. **WASM Build** - Build and size check (150KB limit) - adds `wasm32-unknown-unknown` target
 3. **Web Tests** - TypeScript, Svelte, Vitest
 4. **DO Tests** - Cloudflare DO unit tests
 5. **AKG Checks** - Architecture validation

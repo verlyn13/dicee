@@ -915,7 +915,7 @@ export const CDP_CONFIG = {
 export const ENVIRONMENT_PATTERNS = {
 	local: /localhost|127\.0\.0\.1|192\.168\.|10\.\d+\.\d+\.|172\.(1[6-9]|2\d|3[01])\./,
 	staging: /staging\.|preview\.|dev\./,
-	production: /gamelobby\.jefahnierocks\.com/,
+	production: /dicee\.games/,
 } as const;
 
 /**

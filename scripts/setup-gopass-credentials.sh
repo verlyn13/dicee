@@ -54,9 +54,7 @@ echo "c3a61530-ad44-48c1-beb8-fdad4d4042c0" | gopass insert -f dicee/infisical/p
 
 echo "Setting up Cloudflare configuration..."
 echo "13eb584192d9cefb730fde0cfd271328" | gopass insert -f dicee/cloudflare/account-id
-echo "8d5f44e67ab4b37e47b034ff48b03099" | gopass insert -f dicee/cloudflare/zone-id
-echo "jefahnierocks.com" | gopass insert -f dicee/cloudflare/domain
-echo "dicee.jefahnierocks.com" | gopass insert -f dicee/cloudflare/subdomain
+echo "dicee.games" | gopass insert -f dicee/cloudflare/domain
 
 # =============================================================================
 # SUPABASE CONFIGURATION (structure only - values entered manually)

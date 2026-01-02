@@ -160,7 +160,7 @@ describe('Worker Integration Tests', () => {
 		it('should allow requests from any origin', async () => {
 			const response = await worker.fetch('/health', {
 				headers: {
-					Origin: 'https://dicee.jefahnierocks.com',
+					Origin: 'https://dicee.games',
 				},
 			});
 

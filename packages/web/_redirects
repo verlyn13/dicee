@@ -3,9 +3,7 @@
 #
 # NOTE: These redirects only work for STATIC assets.
 # SvelteKit dynamic routes bypass this file entirely.
-# For host-based redirects (dicee.jefahnierocks.com → gamelobby),
-# use Cloudflare Single Redirects in the dashboard:
-#   Rules → Overview → Create rule → Redirect Rule
+# Domain: dicee.games (www → apex redirect in CF dashboard)
 
 # Legacy route redirects for static assets only
 /dicee /games/dicee 301

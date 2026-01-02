@@ -1,12 +1,10 @@
-# Game Lobby - Cloudflare Pages Configuration
-# SvelteKit frontend with Service Binding to gamelobby Worker
+# Dicee - Cloudflare Pages Configuration
+# SvelteKit frontend with Service Binding to dicee Worker
 #
-# Domain Structure:
-#   gamelobby.jefahnierocks.com → Main lobby (this Pages site)
-#   dicee.jefahnierocks.com     → Redirects to /games/dicee
+# Domain: dicee.games
 #
 # Custom domain setup in Cloudflare Dashboard:
-#   Pages → dicee → Custom domains → Add gamelobby.jefahnierocks.com
+#   Pages → dicee → Custom domains → Add dicee.games
 
 name = "dicee"
 pages_build_output_dir = ".svelte-kit/cloudflare"
@@ -15,11 +13,11 @@ compatibility_date = "2024-12-01"
 # Enable Node.js compatibility for SSR
 compatibility_flags = ["nodejs_compat"]
 
-# Service Binding to the gamelobby Worker (Durable Objects)
+# Service Binding to the dicee Worker (Durable Objects)
 # This enables zero-latency RPC between Pages and Workers
 [[services]]
 binding = "GAME_WORKER"
-service = "gamelobby"
+service = "dicee"
 
 # Non-sensitive environment variables (via wrangler.toml)
 # Secrets (SUPABASE_ANON_KEY) should be set via dashboard or wrangler secret
@@ -38,16 +36,16 @@ PUBLIC_SUPABASE_URL = "https://duhsbuyxyppgbkwbbtqg.supabase.co"
 
 [[env.preview.services]]
 binding = "GAME_WORKER"
-service = "gamelobby"
+service = "dicee"
 
-# Production (gamelobby.jefahnierocks.com)
+# Production (dicee.games)
 [env.production.vars]
 ENVIRONMENT = "production"
 PUBLIC_SUPABASE_URL = "https://duhsbuyxyppgbkwbbtqg.supabase.co"
 
 [[env.production.services]]
 binding = "GAME_WORKER"
-service = "gamelobby"
+service = "dicee"
 # Note: No environment specified - binds to the default (non-environment) deployment
 
 # ─────────────────────────────────────────────────────────────

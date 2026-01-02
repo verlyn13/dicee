@@ -6,7 +6,7 @@ _Last updated: 2025-12-17 • Codex CLI with GPT models_
 
 Codex CLI handles boilerplate-heavy tasks: CRUD APIs, Cloudflare DO helpers, integration tests. Focus on deterministic backend work where GPT's reasoning efficiency shines.
 
-**Production**: https://gamelobby.jefahnierocks.com
+**Production**: https://dicee.games
 
 ## Quick Start
 
@@ -48,7 +48,7 @@ If you fail 3 times at the same operation → **STOP and ask human**.
 ### Auto-Invoke
 - **Writing imports** → `akg_check_import`
 - **Library questions** → `context7.get-library-docs`
-- **Debugging gamelobby** → `cloudflare-observability`
+- **Debugging dicee** → `cloudflare-observability`
 
 ## Layer Architecture (AKG)
 

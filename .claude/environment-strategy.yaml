@@ -1,7 +1,7 @@
 # Dicee Project: Environment & Secrets Strategy
 # Comprehensive architecture for agentic development
 # Last updated: 2025-12-07
-# Production URL: https://gamelobby.jefahnierocks.com (unified CF stack)
+# Production URL: https://dicee.games (unified CF stack)
 # Architecture Docs: docs/unified-cloudflare-stack.md, docs/lobby-ux-ui-refactor.md
 
 # =============================================================================
@@ -46,7 +46,7 @@ environments:
     cf_pages_target: "production"  # main branch auto-deploys
     cf_workers_env: "production"   # wrangler deploy
     supabase_branch: "main"
-    production_url: "https://gamelobby.jefahnierocks.com"
+    production_url: "https://dicee.games"
     purpose:
       - Live user traffic
       - Production workloads
@@ -150,7 +150,7 @@ services:
     project:
       name: "dicee"
       team: "jeffrey-johnsons-projects-4efd9acb"
-      legacy_url: "https://dicee.jefahnierocks.com"
+      legacy_url: "https://dicee.games"  # Migrated from dicee.jefahnierocks.com
       dashboard: "https://vercel.com/jeffrey-johnsons-projects-4efd9acb/dicee"
 
   # Cloudflare Pages - PRIMARY frontend deployment
@@ -158,14 +158,14 @@ services:
     description: "SvelteKit frontend on Cloudflare Pages (unified architecture)"
 
     project:
-      name: "gamelobby-pages"
-      production_url: "https://gamelobby.jefahnierocks.com"
+      name: "dicee"
+      production_url: "https://dicee.games"
       adapter: "@sveltejs/adapter-cloudflare"
       build_output: ".svelte-kit/cloudflare"
 
     service_binding:
       name: "GAME_WORKER"
-      target: "gamelobby"  # Binds to DO worker
+      target: "dicee"  # Binds to DO worker
       purpose: "Zero-latency RPC to Durable Objects (no CORS)"
 
     env_vars_from_infisical:
@@ -177,8 +177,8 @@ services:
 
     deployment:
       local: "wrangler pages dev .svelte-kit/cloudflare --compatibility-flags=nodejs_compat"
-      deploy: "wrangler pages deploy .svelte-kit/cloudflare --project-name gamelobby-pages"
-      secrets: "wrangler pages secret put KEY --project-name gamelobby-pages"
+      deploy: "wrangler pages deploy .svelte-kit/cloudflare --project-name dicee"
+      secrets: "wrangler pages secret put KEY --project-name dicee"
 
     deployment_targets:
       dev: "Preview (PR branches auto-deploy)"
@@ -188,8 +188,8 @@ services:
   # Durable Objects - Real-time multiplayer infrastructure
   durable_objects:
     description: "Real-time multiplayer infrastructure (Game Lobby)"
-    worker_name: "gamelobby"
-    domain: "gamelobby.jefahnierocks.com"
+    worker_name: "dicee"
+    domain: "dicee.games"
     package: "packages/cloudflare-do"
 
     secrets_in_infisical:
@@ -209,9 +209,7 @@ services:
 
     account_details:
       account_id: "13eb584192d9cefb730fde0cfd271328"
-      zone_id: "8d5f44e67ab4b37e47b034ff48b03099"
-      domain: "jefahnierocks.com"
-      subdomain: "dicee.jefahnierocks.com"
+      domain: "dicee.games"
 
     credentials_in_gopass:
       - dicee/cloudflare/api-token  # Account API Token (not User token)
@@ -443,9 +441,9 @@ commands:
     local_pages_dev:
       - "pnpm build && wrangler pages dev .svelte-kit/cloudflare --compatibility-flags=nodejs_compat"
     preview:
-      - "pnpm build && wrangler pages deploy .svelte-kit/cloudflare --project-name gamelobby-pages"
+      - "pnpm build && wrangler pages deploy .svelte-kit/cloudflare --project-name dicee"
     production:
-      - "pnpm build && wrangler pages deploy .svelte-kit/cloudflare --project-name gamelobby-pages --branch main"
+      - "pnpm build && wrangler pages deploy .svelte-kit/cloudflare --project-name dicee --branch main"
     workers:
       - "cd packages/cloudflare-do && wrangler deploy"
       - "cd packages/cloudflare-do && wrangler deploy --env staging  # Staging only"

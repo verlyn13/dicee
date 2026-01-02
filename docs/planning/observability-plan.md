@@ -483,7 +483,7 @@ Broadcast → requestId: 1, correlationId: abc123
 
 **Pattern 1: Find All Seat Reclamation Attempts**
 ```
-Using cloudflare-observability, query logs from gamelobby worker
+Using cloudflare-observability, query logs from dicee worker
 where event contains "seat.reclaim.attempt"
 in the last hour
 show me the sequence of events for each user
@@ -491,7 +491,7 @@ show me the sequence of events for each user
 
 **Pattern 2: Detect Storage Read Failures**
 ```
-Using cloudflare-observability, query logs from gamelobby worker
+Using cloudflare-observability, query logs from dicee worker
 where event is "storage.read.end" and found is false
 in the last 24 hours
 group by roomCode and show count
@@ -499,7 +499,7 @@ group by roomCode and show count
 
 **Pattern 3: Find Connection Instability**
 ```
-Using cloudflare-observability, query logs from gamelobby worker
+Using cloudflare-observability, query logs from dicee worker
 where event is "lifecycle.disconnect" and closeCode is 1006
 in the last hour
 show me the frequency and which rooms are affected
@@ -507,14 +507,14 @@ show me the frequency and which rooms are affected
 
 **Pattern 4: Correlate Client-Server Events**
 ```
-Using cloudflare-observability, query logs from gamelobby worker
+Using cloudflare-observability, query logs from dicee worker
 where correlationId matches "abc123"
 show me all events in chronological order
 ```
 
 **Pattern 5: Detect State Corruption**
 ```
-Using cloudflare-observability, query logs from gamelobby worker
+Using cloudflare-observability, query logs from dicee worker
 where event is "error.state.corruption"
 in the last 7 days
 show me the roomCode and the state snapshot
@@ -528,7 +528,7 @@ show me the roomCode and the state snapshot
 # Query seat reclamation failures using MCP
 
 # This would be called via MCP, but for manual use:
-wrangler tail gamelobby --format json | \
+wrangler tail dicee --format json | \
   jq 'select(.logs[].message[] | contains("seat.reclaim.result"))' | \
   jq 'select(.result == "spectator")'
 ```
@@ -538,7 +538,7 @@ wrangler tail gamelobby --format json | \
 #!/bin/bash
 # Query storage read/write failures
 
-wrangler tail gamelobby --format json | \
+wrangler tail dicee --format json | \
   jq 'select(.logs[].message[] | 
     (contains("storage.read.end") or contains("storage.write.end")) and 
     (.success == false or .found == false)
@@ -553,7 +553,7 @@ wrangler tail gamelobby --format json | \
 
 ## Query All Failed Reclamations
 ```
-Using cloudflare-observability MCP server, query the gamelobby worker logs
+Using cloudflare-observability MCP server, query the dicee worker logs
 where:
   - event contains "seat.reclaim.result"
   - result equals "spectator"
@@ -568,7 +568,7 @@ Group by roomCode and show failure count
 
 ## Query Reclamation Timeline
 ```
-Using cloudflare-observability MCP server, query the gamelobby worker logs
+Using cloudflare-observability MCP server, query the dicee worker logs
 where:
   - correlationId equals "{correlationId}"
 Show me all events in chronological order:
@@ -586,7 +586,7 @@ Show me all events in chronological order:
 
 ## Find Missing Game State
 ```
-Using cloudflare-observability MCP server, query the gamelobby worker logs
+Using cloudflare-observability MCP server, query the dicee worker logs
 where:
   - event is "storage.read.end"
   - key equals "game"
@@ -601,7 +601,7 @@ Show me:
 
 ## Find Slow Storage Operations
 ```
-Using cloudflare-observability MCP server, query the gamelobby worker logs
+Using cloudflare-observability MCP server, query the dicee worker logs
 where:
   - event contains "storage.write.end"
   - durationMs greater than 1000
@@ -1165,7 +1165,7 @@ export default {
   async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
     // Query logs via Cloudflare API
     const logs = await queryLogs({
-      worker: 'gamelobby',
+      worker: 'dicee',
       filter: { level: 'error' },
       timeRange: '1h',
     });
@@ -1232,7 +1232,7 @@ async function sendSlackAlert(alert: Alert) {
 
 1. **Query Recent Disconnects:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event is "lifecycle.disconnect"
   - userId equals "{userId}"
@@ -1245,7 +1245,7 @@ Show me:
 
 2. **Check Seat Reservation:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event contains "seat.reserve"
   - userId equals "{userId}"
@@ -1257,7 +1257,7 @@ Show me:
 
 3. **Check Reconnection:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event contains "seat.reclaim"
   - userId equals "{userId}"
@@ -1271,7 +1271,7 @@ Show me:
 
 4. **Check Storage State:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event is "lifecycle.wake"
   - roomCode equals "{roomCode}"
@@ -1284,7 +1284,7 @@ Show me:
 
 5. **Correlate Full Flow:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - correlationId equals "{correlationId}"
   - OR userId equals "{userId}" AND roomCode equals "{roomCode}"
@@ -1303,7 +1303,7 @@ Show me all events in chronological order
 
 1. **Analyze Close Codes:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event is "lifecycle.disconnect"
   - time range: last hour
@@ -1313,7 +1313,7 @@ Order by count descending
 
 2. **Check Token Expiration:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event is "connection.token.expired"
   - time range: last hour
@@ -1325,7 +1325,7 @@ Show me:
 
 3. **Check Rate Limiting:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event is "connection.rate_limit"
   - time range: last hour
@@ -1337,7 +1337,7 @@ Show me:
 
 4. **Check DO Hibernation:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event is "lifecycle.wake"
   - time range: last hour
@@ -1356,7 +1356,7 @@ Show rooms with > 10 wakes
 
 1. **Check State Transitions:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event contains "state.transition"
   - roomCode equals "{roomCode}"
@@ -1370,7 +1370,7 @@ Show me:
 
 2. **Check Rejected Transitions:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event is "state.transition.rejected"
   - roomCode equals "{roomCode}"
@@ -1384,7 +1384,7 @@ Show me:
 
 3. **Get State Snapshot:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event is "diagnostic.snapshot"
   - roomCode equals "{roomCode}"
@@ -1394,7 +1394,7 @@ Show me the latest snapshot
 
 4. **Check Broadcast Failures:**
 ```
-Using cloudflare-observability MCP server, query gamelobby worker logs
+Using cloudflare-observability MCP server, query dicee worker logs
 where:
   - event is "broadcast.sent"
   - failureCount > 0
@@ -1424,7 +1424,7 @@ echo "=== Room Debug: $ROOM_CODE ==="
 echo ""
 
 echo "1. Recent Events:"
-wrangler tail gamelobby --format json | \
+wrangler tail dicee --format json | \
   jq -r --arg code "$ROOM_CODE" '
     select(.logs[].message[] | 
       select(type == "string") | 
@@ -1439,7 +1439,7 @@ wrangler tail gamelobby --format json | \
 
 echo ""
 echo "2. Storage Operations:"
-wrangler tail gamelobby --format json | \
+wrangler tail dicee --format json | \
   jq -r --arg code "$ROOM_CODE" '
     select(.logs[].message[] | 
       select(type == "string") | 
@@ -1454,7 +1454,7 @@ wrangler tail gamelobby --format json | \
 
 echo ""
 echo "3. Errors:"
-wrangler tail gamelobby --format json | \
+wrangler tail dicee --format json | \
   jq -r --arg code "$ROOM_CODE" '
     select(.logs[].message[] | 
       select(type == "string") | 
@@ -1492,7 +1492,7 @@ elif [ -n "$USER_ID" ]; then
   fi
 fi
 
-wrangler tail gamelobby --format json | \
+wrangler tail dicee --format json | \
   jq -r "
     .logs[].message[] | 
     select(type == \"string\") | 
@@ -1651,7 +1651,7 @@ Using cloudflare-docs MCP server, search for
 **Querying Logs:**
 ```
 Using cloudflare-observability MCP server, query logs from
-worker "gamelobby" where event contains "seat.reclaim"
+worker "dicee" where event contains "seat.reclaim"
 in the last hour
 ```
 

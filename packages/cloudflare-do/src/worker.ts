@@ -30,7 +30,7 @@ export default {
 					lobbyOnline: '/lobby/online (REST) - Online count',
 					room: '/room/:roomCode (WebSocket) - Game room',
 				},
-				frontend: 'https://gamelobby.jefahnierocks.com',
+				frontend: 'https://dicee.games',
 			});
 		}
 

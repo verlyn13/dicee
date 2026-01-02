@@ -98,7 +98,7 @@ case "$COMMAND" in
     echo "🚀 Deploying Durable Objects worker..."
     cd packages/cloudflare-do
     wrangler deploy
-    echo "✅ Deployed to gamelobby.jefahnierocks.com"
+    echo "✅ Deployed to dicee.games"
     ;;
     
   deploy-pages)
@@ -126,7 +126,7 @@ case "$COMMAND" in
   tail-logs)
     echo "📜 Tailing Cloudflare Worker logs..."
     cd packages/cloudflare-do
-    wrangler tail gamelobby
+    wrangler tail dicee
     ;;
     
   check-env)
@@ -178,13 +178,13 @@ case "$COMMAND" in
     # Service status
     echo ""
     echo "🌐 Services:"
-    echo "  Production: https://gamelobby.jefahnierocks.com"
-    
+    echo "  Production: https://dicee.games"
+
     # Recent deployments
     echo ""
     echo "🚀 Recent DO Deployments:"
     cd packages/cloudflare-do
-    wrangler deployments list --name gamelobby 2>/dev/null | head -6 || echo "  Not authenticated"
+    wrangler deployments list --name dicee 2>/dev/null | head -6 || echo "  Not authenticated"
     cd "$PROJECT_ROOT"
     ;;
     

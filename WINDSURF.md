@@ -33,7 +33,7 @@ See `.claude/CONVENTIONS.md` for full documentation.
 ## Project Overview
 Dicee is a dice probability engine and web application for learning probability through Dicee-style gameplay. Part of the Game Lobby platform.
 
-**Production URL**: https://gamelobby.jefahnierocks.com
+**Production URL**: https://dicee.games
 
 See `docs/` for architecture RFCs and milestone plans:
 - `docs/unified-cloudflare-stack.md` - Migration guide for CF Pages architecture
@@ -264,12 +264,12 @@ Full quality gate:
 
 ## Cloudflare Configuration (PRIMARY)
 - **Account ID**: 13eb584192d9cefb730fde0cfd271328
-- **Production URL**: gamelobby.jefahnierocks.com
+- **Production URL**: dicee.games
 
 ### Cloudflare Pages (SvelteKit Frontend)
 - **Project Name**: dicee
 - **Adapter**: `@sveltejs/adapter-cloudflare`
-- **Service Binding**: `GAME_WORKER` → `gamelobby` worker
+- **Service Binding**: `GAME_WORKER` → `dicee` worker
 - **Auto-deploy**: CI deploys on push to `main` after tests pass
 
 ### GitHub Secrets Required

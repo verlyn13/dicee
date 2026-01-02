@@ -1127,7 +1127,7 @@ docs/architecture/akg/diagrams/
 
 ```json
 {
-  "$schema": "https://dicee.jefahnierocks.com/schemas/akg-diagram.json",
+  "$schema": "https://dicee.games/schemas/akg-diagram.json",
   "version": "1.0.0",
   "diagramType": "layer_architecture",
   "generatedAt": "2025-12-07T03:15:00Z",

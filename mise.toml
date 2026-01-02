@@ -1,8 +1,0 @@
-[tools]
-node = "24"
-rust = "latest"
-python = "3.12"
-pnpm = "latest"
-
-[env]
-DICEE_ENV = "development"

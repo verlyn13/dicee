@@ -3,7 +3,7 @@
 ## Agent Identity
 You are Cascade, the AI assistant in Windsurf IDE, working on Dicee - a dice probability engine and multiplayer game platform running on Cloudflare (Pages + Durable Objects).
 
-**Production**: https://gamelobby.jefahnierocks.com
+**Production**: https://dicee.games
 
 ## Critical Rules
 
@@ -34,7 +34,7 @@ pnpm check && pnpm biome:check && pnpm web:vitest
 |------|----------|
 | SvelteKit/Svelte 5 API | `context7.get-library-docs` |
 | Cloudflare questions | `cloudflare-docs` |
-| Debugging gamelobby | `cloudflare-observability` |
+| Debugging dicee | `cloudflare-observability` |
 | "Can I import X here?" | `akg.akg_check_import` |
 | Architecture rules | `akg.akg_layer_rules` |
 

@@ -3,7 +3,7 @@
 > **Version**: 4.0.0
 > **Last Updated**: 2025-12-07
 > **Context**: MCP-first agentic development with Opus 4.5, multi-agent orchestration
-> **Project Status**: Phases 0-8 complete, production live at https://gamelobby.jefahnierocks.com
+> **Project Status**: Phases 0-8 complete, production live at https://dicee.games
 > **Active Phase**: Unified Cloudflare Architecture (CF Pages + Durable Objects)
 > **Architecture Docs**: [unified-cloudflare-stack.md](../docs/unified-cloudflare-stack.md), [lobby-ux-ui-refactor.md](../docs/lobby-ux-ui-refactor.md)
 > **Active**: AKG MCP Server with 7 tools for architecture-aware development
@@ -500,14 +500,14 @@ interface ProjectState {
     };
     cloudflare_pages: {
       configured: boolean;
-      projectName: string;  // gamelobby-pages
-      productionUrl: string;  // gamelobby.jefahnierocks.com
+      projectName: string;  // dicee
+      productionUrl: string;  // dicee.games
       adapter: string;  // @sveltejs/adapter-cloudflare
     };
     cloudflare_workers: {
       configured: boolean;
       deployed: boolean;
-      workerName: string;  // gamelobby
+      workerName: string;  // dicee
       durableObjectClasses: string[];  // [GameRoom, GlobalLobby]
       serviceBinding: string;  // GAME_WORKER
     };

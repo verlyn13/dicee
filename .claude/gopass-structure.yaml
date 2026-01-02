@@ -163,19 +163,8 @@ structure:
             description: "Vercel API token for deployments"
             sensitive: true
 
-    partykit:
-      description: "PartyKit real-time multiplayer infrastructure"
-      paths:
-        config:
-          - path: "dicee/partykit/project-name"
-            value: "dicee-rooms"
-            description: "PartyKit project name"
-
-        credentials:
-          - path: "dicee/partykit/token"
-            value: "[MANUAL_ENTRY]"
-            description: "PartyKit API token"
-            sensitive: true
+    # partykit: DEPRECATED - migrated to Cloudflare Durable Objects
+    # Credentials can be removed: gopass rm -r dicee/partykit
 
     cloudflare:
       description: "Cloudflare credentials for Workers, Pages, D1, KV, R2"
@@ -184,15 +173,9 @@ structure:
           - path: "dicee/cloudflare/account-id"
             value: "13eb584192d9cefb730fde0cfd271328"
             description: "Cloudflare account ID"
-          - path: "dicee/cloudflare/zone-id"
-            value: "8d5f44e67ab4b37e47b034ff48b03099"
-            description: "Zone ID for jefahnierocks.com"
           - path: "dicee/cloudflare/domain"
-            value: "jefahnierocks.com"
-            description: "Primary domain"
-          - path: "dicee/cloudflare/subdomain"
-            value: "dicee.jefahnierocks.com"
-            description: "Dicee project subdomain"
+            value: "dicee.games"
+            description: "Primary domain (apex)"
 
         api_tokens:
           # IMPORTANT: Use Account API Token (not User API Token) for CI/CD

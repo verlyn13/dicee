@@ -153,10 +153,10 @@ adb reverse --list
 
 ### Production URL Testing
 
-For testing against `gamelobby.jefahnierocks.com`:
+For testing against `dicee.games`:
 
 1. Open Chrome on Pixel
-2. Navigate to `https://gamelobby.jefahnierocks.com`
+2. Navigate to `https://dicee.games`
 3. Inspect via `chrome://inspect` on Mac
 4. Use Console, Network, and Performance tabs normally
 

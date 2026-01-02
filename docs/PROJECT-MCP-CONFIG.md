@@ -31,7 +31,7 @@
 | **Migrations** | `supabase` | Schema changes, type generation |
 | **User data queries** | `supabase` | Persistent user data |
 | **Cloudflare docs** | `cloudflare-docs` | CF-specific questions |
-| **Worker logs** | `cloudflare-observability` | Debug `gamelobby` worker |
+| **Worker logs** | `cloudflare-observability` | Debug `dicee` worker |
 | **Build status** | `cloudflare-builds` | Check deployment failures |
 | **KV/R2/D1** | `cloudflare-bindings` | Manage CF resources |
 | **CF analytics** | `cloudflare-graphql` | Zone analytics |

@@ -539,12 +539,16 @@ class RoomService {
 	private processEvent(event: ServerEvent): void {
 		// All events use UPPERCASE format with payload structure
 		switch (event.type) {
-			case 'CONNECTED':
+			case 'CONNECTED': {
 				// Convert CONNECTED payload to room structure
-				this._room = this.convertDOPayloadToRoom(
-					(event as { payload: Record<string, unknown> }).payload,
-				);
+				const payload = (event as { payload: Record<string, unknown> }).payload;
+				console.log('[DEBUG] CONNECTED received - payload:', JSON.stringify(payload, null, 2));
+				console.log('[DEBUG] CONNECTED received - payload.isHost:', payload.isHost);
+				console.log('[DEBUG] CONNECTED received - payload.players:', payload.players);
+				this._room = this.convertDOPayloadToRoom(payload);
+				console.log('[DEBUG] CONNECTED processed - room.hostId:', this._room?.hostId);
 				break;
+			}
 
 			case 'PLAYER_JOINED': {
 				if (this._room) {

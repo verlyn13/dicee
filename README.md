@@ -2,7 +2,7 @@
 
 Family-friendly game platform for mobile browsers. No app install required.
 
-**Live:** https://gamelobby.jefahnierocks.com
+**Live:** https://dicee.games
 
 ## Architecture
 
@@ -31,6 +31,21 @@ packages/
 ```
 
 ## Development
+
+### Prerequisites
+
+- Node.js 24+ (via mise or nvm)
+- Rust stable (via rustup, NOT Homebrew)
+- pnpm
+- wasm-pack
+
+```bash
+# Verify Rust toolchain
+rustup show       # Should show stable with wasm32-unknown-unknown
+which rustc       # Should be ~/.cargo/bin/rustc
+```
+
+### Commands
 
 ```bash
 pnpm install
