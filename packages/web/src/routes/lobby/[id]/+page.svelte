@@ -11,6 +11,7 @@ import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
 import { page } from '$app/stores';
 import RoomLobby from '$lib/components/lobby/RoomLobby.svelte';
+import { roomService } from '$lib/services/roomService.svelte';
 import { auth } from '$lib/stores/auth.svelte';
 import { createChatStore, setChatStore } from '$lib/stores/chat.svelte';
 import { createRoomStore, setRoomStore } from '$lib/stores/room.svelte';
@@ -44,9 +45,10 @@ const displayName = $derived.by(() => {
 });
 
 // Create chat store when we have a valid user
+// Lobby uses roomService for chat
 const chatStore = $derived.by(() => {
 	if (!auth.userId) return null;
-	return createChatStore(auth.userId, displayName);
+	return createChatStore(auth.userId, displayName, roomService);
 });
 
 // Set chat store in context when available

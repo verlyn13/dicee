@@ -48,7 +48,7 @@ onMount(async () => {
 			(user?.user_metadata?.full_name as string) ||
 			auth.email?.split('@')[0] ||
 			'Player';
-	chatStore = createChatStore(auth.userId, displayName);
+	chatStore = createChatStore(auth.userId, displayName, roomService);
 	setChatStore(chatStore);
 
 	// Connect to room

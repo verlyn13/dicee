@@ -13,6 +13,7 @@
 
 import type { Category, KeptMask, MultiplayerGameState, Scorecard } from '../game';
 import { type Logger, createLogger } from '../lib/logger';
+import { TimeoutError, withTimeout } from '../lib/timeout';
 import type { AIBrain } from './brain';
 import { createBrain, initializeBrainFactory } from './brain';
 import { getProfile } from './profiles';
@@ -63,6 +64,9 @@ const DEFAULT_CONFIG: AIControllerConfig = {
 	enableChat: true,
 	emitThinkingEvents: true,
 };
+
+/** Timeout for brain.decide() - if exceeded, use fallback decision */
+const BRAIN_DECIDE_TIMEOUT_MS = 8000;
 
 // ============================================================================
 // AI Controller
@@ -311,8 +315,25 @@ export class AIController {
 		// Wait for "thinking" time
 		await this.delay(clampedThinkTime);
 
-		// Get brain decision
-		const decision = await brain.decide(context);
+		// Get brain decision with timeout protection
+		let decision: TurnDecision;
+		try {
+			decision = await withTimeout(
+				brain.decide(context),
+				BRAIN_DECIDE_TIMEOUT_MS,
+				'brain.decide',
+			);
+		} catch (error) {
+			if (error instanceof TimeoutError) {
+				this.logger.warn('Brain decision timed out, using fallback', {
+					playerId,
+					timeoutMs: BRAIN_DECIDE_TIMEOUT_MS,
+				});
+				decision = this.createFallbackDecision(context);
+			} else {
+				throw error;
+			}
+		}
 
 		// Execute the decision
 		await this.executeDecision(playerId, decision, execute, emit);
@@ -412,33 +433,51 @@ export class AIController {
 		execute: CommandExecutor,
 		emit: EventEmitter,
 	): Promise<void> {
-		switch (decision.action) {
-			case 'roll':
-				emit({ type: 'ai_roll', playerId });
-				await execute({ type: 'roll' });
-				break;
+		try {
+			switch (decision.action) {
+				case 'roll':
+					emit({ type: 'ai_roll', playerId });
+					await execute({ type: 'roll' });
+					break;
 
-			case 'keep':
-				if (decision.keepMask) {
-					emit({ type: 'ai_keep', playerId, keptDice: decision.keepMask });
-					await execute({ type: 'keep', keepMask: decision.keepMask });
-				}
-				// After keeping, roll the dice
-				emit({ type: 'ai_roll', playerId });
-				await execute({ type: 'roll' });
-				break;
+				case 'keep':
+					if (decision.keepMask) {
+						emit({ type: 'ai_keep', playerId, keptDice: decision.keepMask });
+						try {
+							await execute({ type: 'keep', keepMask: decision.keepMask });
+						} catch (keepError) {
+							// If keep fails, don't proceed to roll - abort the turn step
+							this.logger.error('Keep failed, aborting roll', {
+								playerId,
+								error: keepError instanceof Error ? keepError.message : String(keepError),
+							});
+							throw keepError;
+						}
+					}
+					// After keeping, roll the dice
+					emit({ type: 'ai_roll', playerId });
+					await execute({ type: 'roll' });
+					break;
 
-			case 'score':
-				if (decision.category) {
-					emit({
-						type: 'ai_score',
-						playerId,
-						category: decision.category,
-						score: 0, // Will be filled in by game room
-					});
-					await execute({ type: 'score', category: decision.category });
-				}
-				break;
+				case 'score':
+					if (decision.category) {
+						emit({
+							type: 'ai_score',
+							playerId,
+							category: decision.category,
+							score: 0, // Will be filled in by game room
+						});
+						await execute({ type: 'score', category: decision.category });
+					}
+					break;
+			}
+		} catch (error) {
+			this.logger.error('Failed to execute AI decision', {
+				playerId,
+				action: decision.action,
+				error: error instanceof Error ? error.message : String(error),
+			});
+			throw error;
 		}
 	}
 
@@ -484,6 +523,35 @@ export class AIController {
 		}
 
 		return total;
+	}
+
+	/**
+	 * Create a fallback decision when brain times out or fails.
+	 *
+	 * Scores the first available category to ensure turn completes.
+	 */
+	private createFallbackDecision(context: GameContext): TurnDecision {
+		const remainingCategories = Object.entries(context.scorecard)
+			.filter(([key, score]) => score === null && key !== 'diceeBonus')
+			.map(([cat]) => cat as Category);
+
+		if (remainingCategories.length === 0) {
+			this.logger.error('No remaining categories for fallback decision');
+			// This shouldn't happen, but return a safe default
+			return {
+				action: 'score',
+				category: 'chance',
+				reasoning: 'Fallback - no categories remaining',
+				confidence: 0.1,
+			};
+		}
+
+		return {
+			action: 'score',
+			category: remainingCategories[0],
+			reasoning: 'Fallback - brain timeout',
+			confidence: 0.1,
+		};
 	}
 
 	private delay(ms: number): Promise<void> {

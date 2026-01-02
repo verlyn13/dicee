@@ -17,7 +17,7 @@
  */
 
 import { getContext, setContext } from 'svelte';
-import { roomService, type ServerEventHandler } from '$lib/services/roomService.svelte';
+import type { SpectatorServerEvent } from '$lib/services/spectatorService.svelte';
 import {
 	CHAT_RATE_LIMITS,
 	type ChatErrorCode,
@@ -31,6 +31,7 @@ import {
 	type QuickChatKey,
 	REACTION_EMOJIS,
 	type ReactionEmoji,
+	type ServerEvent,
 	SHOUT_COOLDOWN_MS,
 	SHOUT_DISPLAY_DURATION_MS,
 	SHOUT_MAX_LENGTH,
@@ -69,6 +70,28 @@ export interface MessageGroup {
 	messages: ChatMessageWithMeta[];
 	/** Timestamp of first message in group */
 	timestamp: number;
+}
+
+/**
+ * Chat connection interface - abstracts roomService vs spectatorService
+ * Both services implement these methods for chat functionality.
+ *
+ * Uses the union of ServerEvent | SpectatorServerEvent as the event type,
+ * which is the superset that allows both roomService and spectatorService
+ * to satisfy this interface.
+ */
+export type ChatConnectionEventHandler = (event: ServerEvent | SpectatorServerEvent) => void;
+
+export interface ChatConnection {
+	readonly isConnected: boolean;
+	sendChatMessage(content: string): void;
+	sendQuickChat(key: QuickChatKey): void;
+	sendReaction(messageId: string, emoji: ReactionEmoji, action: 'add' | 'remove'): void;
+	sendTypingStart(): void;
+	sendTypingStop(): void;
+	sendShout?(content: string): void; // Optional - only roomService has this
+	addEventHandler(handler: ChatConnectionEventHandler): void;
+	removeEventHandler(handler: ChatConnectionEventHandler): void;
 }
 
 /** Chat store preferences (persisted to localStorage) */
@@ -192,8 +215,13 @@ const DEFAULT_PREFERENCES: ChatPreferences = {
  *
  * @param userId - Current user's ID
  * @param displayName - Current user's display name
+ * @param connection - Chat connection service (roomService or spectatorService)
  */
-export function createChatStore(userId: string, displayName: string): ChatStore {
+export function createChatStore(
+	userId: string,
+	displayName: string,
+	connection: ChatConnection,
+): ChatStore {
 	// -------------------------------------------------------------------------
 	// Core State
 	// -------------------------------------------------------------------------
@@ -224,7 +252,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 	// Derived State
 	// -------------------------------------------------------------------------
 
-	const canSendMessage = $derived(sendCooldownValue <= 0 && roomService.isConnected);
+	const canSendMessage = $derived(sendCooldownValue <= 0 && connection.isConnected);
 
 	const sendCooldown = $derived(sendCooldownValue);
 
@@ -247,8 +275,10 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 
 	const maxMessageLength = CHAT_RATE_LIMITS.MAX_MESSAGE_LENGTH;
 
-	// Shout derived state
-	const canShout = $derived(shoutCooldownMs <= 0 && roomService.isConnected);
+	// Shout derived state (only available if connection supports shouts)
+	const canShout = $derived(
+		shoutCooldownMs <= 0 && connection.isConnected && !!connection.sendShout,
+	);
 	const shoutCooldownSeconds = $derived(Math.ceil(shoutCooldownMs / 1000));
 	const maxShoutLength = SHOUT_MAX_LENGTH;
 
@@ -256,7 +286,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 	// Event Handler
 	// -------------------------------------------------------------------------
 
-	const handleServerEvent: ServerEventHandler = (event) => {
+	const handleServerEvent: ChatConnectionEventHandler = (event) => {
 		// Handle shout events first
 		if (isShoutEvent(event)) {
 			const shoutEvent = event as ShoutReceivedEvent | ShoutCooldownEvent;
@@ -302,7 +332,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 	};
 
 	// Register event handler
-	roomService.addEventHandler(handleServerEvent);
+	connection.addEventHandler(handleServerEvent);
 
 	// -------------------------------------------------------------------------
 	// Event Handlers
@@ -453,7 +483,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 
 		// Send to server
 		try {
-			roomService.sendChatMessage(trimmed);
+			connection.sendChatMessage(trimmed);
 			_lastMessageTime = Date.now();
 			startCooldown();
 		} catch (_e) {
@@ -491,7 +521,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 		messages = [...messages, optimisticMessage];
 
 		try {
-			roomService.sendQuickChat(key);
+			connection.sendQuickChat(key);
 			_lastMessageTime = Date.now();
 			startCooldown();
 		} catch (_e) {
@@ -525,7 +555,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 
 		// Send to server
 		try {
-			roomService.sendReaction(messageId, emoji, action);
+			connection.sendReaction(messageId, emoji, action);
 		} catch (e) {
 			// Revert on error (will be corrected by server event anyway)
 			log.error('Failed to send reaction', e as Error);
@@ -534,11 +564,11 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 
 	/** Starts typing indicator with auto-timeout */
 	function startTypingIndicator(): void {
-		roomService.sendTypingStart();
+		connection.sendTypingStart();
 		if (typingTimeout) clearTimeout(typingTimeout);
 		typingTimeout = setTimeout(() => {
 			isTyping = false;
-			roomService.sendTypingStop();
+			connection.sendTypingStop();
 		}, CHAT_RATE_LIMITS.TYPING_TIMEOUT_MS);
 	}
 
@@ -548,7 +578,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 			clearTimeout(typingTimeout);
 			typingTimeout = null;
 		}
-		roomService.sendTypingStop();
+		connection.sendTypingStop();
 	}
 
 	function setTyping(typing: boolean): void {
@@ -642,8 +672,14 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 		if (!trimmed || !canShout) return;
 		if (trimmed.length > maxShoutLength) return;
 
+		// sendShout is optional (only available for players, not spectators)
+		if (!connection.sendShout) {
+			log.warn('Shout not available for this connection type');
+			return;
+		}
+
 		try {
-			roomService.sendShout(trimmed);
+			connection.sendShout(trimmed);
 			// Start cooldown optimistically
 			startShoutCooldown();
 		} catch (_e) {
@@ -656,7 +692,7 @@ export function createChatStore(userId: string, displayName: string): ChatStore 
 	}
 
 	function destroy(): void {
-		roomService.removeEventHandler(handleServerEvent);
+		connection.removeEventHandler(handleServerEvent);
 		if (typingTimeout) clearTimeout(typingTimeout);
 		if (typingDebounce) clearTimeout(typingDebounce);
 		if (cooldownInterval) clearInterval(cooldownInterval);

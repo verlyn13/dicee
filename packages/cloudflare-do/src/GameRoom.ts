@@ -3799,12 +3799,13 @@ export class GameRoom extends DurableObject<Env> {
 		};
 		await this.ctx.storage.put('ai_turn_state', aiTurnState);
 
-		// STEP 2: Phase 1 - Schedule safety-net alarm via AlarmQueue (35 seconds)
+		// STEP 2: Phase 1 - Schedule safety-net alarm via AlarmQueue (15 seconds)
 		// This will fire if the waitUntil callback is killed by hibernation
+		// Reduced from 35s to 15s for better UX on failure
 		await this.alarmQueue.schedule({
 			type: 'AI_TURN_TIMEOUT',
 			targetId: playerId,
-			scheduledFor: Date.now() + 35000,
+			scheduledFor: Date.now() + 15000,
 			metadata: { retryCount: 0 },
 		});
 

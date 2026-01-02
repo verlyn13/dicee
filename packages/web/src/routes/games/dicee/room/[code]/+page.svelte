@@ -19,7 +19,7 @@ import { SpectatorView } from '$lib/components/spectator';
 import { roomService } from '$lib/services/roomService.svelte';
 import { spectatorService } from '$lib/services/spectatorService.svelte';
 import { auth } from '$lib/stores/auth.svelte';
-import { createChatStore, setChatStore } from '$lib/stores/chat.svelte';
+import { type ChatConnection, createChatStore, setChatStore } from '$lib/stores/chat.svelte';
 import {
 	createMultiplayerGameStore,
 	setMultiplayerGameStore,
@@ -81,8 +81,11 @@ $effect(() => {
 			auth.email?.split('@')[0] ||
 			'Player';
 
-	// Create chat store (used by both roles)
-	chatStore = createChatStore(auth.userId, displayName);
+	// Create chat store with appropriate connection based on role
+	// Spectators use spectatorService, players use roomService
+	const chatConnection: ChatConnection =
+		actualRole === 'spectator' ? spectatorService : roomService;
+	chatStore = createChatStore(auth.userId, displayName, chatConnection);
 	setChatStore(chatStore);
 
 	// Check for quick play mode (from LobbyLanding)
