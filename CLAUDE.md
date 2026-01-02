@@ -47,7 +47,7 @@ See `.claude/CONVENTIONS.md` for full documentation.
 ## Project Overview
 Dicee is a dice probability engine and web application for learning probability through Dicee-style gameplay. It's part of a unified Game Lobby platform.
 
-**Production URL**: https://gamelobby.jefahnierocks.com
+**Production URL**: https://dicee.games
 
 See `docs/architecture/` for current production architecture:
 - `docs/architecture/MULTIPLAYER_PERSISTENCE_ARCHITECTURE.md` - Multiplayer system (5-min seats, storage-first)
@@ -66,6 +66,25 @@ Archived docs (completed migrations, past research): `docs/archive/`
 - **Secrets**: Infisical (self-hosted at infisical.jefahnierocks.com)
 - **Deployment**: Cloudflare (unified stack: Pages + Workers via Service Bindings)
 - **Package Manager**: pnpm (monorepo)
+- **Runtime Management**: mise (delegates Rust to rustup)
+
+### Runtime Prerequisites
+
+| Tool | Version | Management |
+|------|---------|------------|
+| Node.js | 24 | mise |
+| Rust | stable | rustup (via mise) |
+| pnpm | latest | mise |
+| wasm-pack | 0.13+ | Homebrew |
+
+**Important**: Rust must be installed via `rustup`, not Homebrew. The project's `rust-toolchain.toml` ensures the correct wasm32 target is available.
+
+```bash
+# Verify setup
+mise doctor           # Check mise configuration
+rustup show           # Should show stable toolchain with wasm32-unknown-unknown
+which rustc           # Should be ~/.cargo/bin/rustc (NOT /opt/homebrew/bin/rustc)
+```
 
 ### Hybrid Persistence Architecture
 | Layer | Technology | Data |
@@ -225,22 +244,21 @@ supabase gen types typescript        # Generate TypeScript types
 
 ### Cloudflare Configuration
 - **Account ID**: 13eb584192d9cefb730fde0cfd271328
-- **Zone ID**: 8d5f44e67ab4b37e47b034ff48b03099
-- **Domain**: jefahnierocks.com
-- **Production URL**: gamelobby.jefahnierocks.com
+- **Domain**: dicee.games
+- **Production URL**: dicee.games
 - **Services**: Workers, Pages, Durable Objects, D1 (SQLite), KV, R2
 
 ### Cloudflare Pages (SvelteKit Frontend)
-- **Project Name**: gamelobby-pages
+- **Project Name**: dicee
 - **Adapter**: `@sveltejs/adapter-cloudflare`
 - **Build Output**: `.svelte-kit/cloudflare`
-- **Service Binding**: `GAME_WORKER` → `gamelobby` worker
+- **Service Binding**: `GAME_WORKER` → `dicee` worker
 - **Compatibility Flags**: `nodejs_compat`
 
 ### Durable Objects Configuration
-- **Worker Name**: gamelobby
+- **Worker Name**: dicee
 - **Package**: packages/cloudflare-do/
-- **Production URL**: gamelobby.jefahnierocks.com
+- **Production URL**: dicee.games
 
 **Durable Object Classes:**
 | Class | Type | Purpose |
@@ -261,7 +279,7 @@ supabase gen types typescript        # Generate TypeScript types
 | `/lobby/rooms` | GET public rooms list |
 | `/lobby/online` | GET online count |
 
-**Auth Flow**: Users land on gamelobby.jefahnierocks.com → lobby with chat + game list → select game (dicee) → create/join room → play
+**Auth Flow**: Users land on dicee.games → lobby with chat + game list → select game (dicee) → create/join room → play
 
 ### Quick Reference
 
@@ -276,8 +294,8 @@ wrangler pages deployment list                  # List deployments
 wrangler pages dev .svelte-kit/cloudflare --compatibility-flags=nodejs_compat
 
 # Secrets for Pages
-wrangler pages secret put SECRET_NAME --project-name gamelobby-pages
-wrangler pages secret list --project-name gamelobby-pages
+wrangler pages secret put SECRET_NAME --project-name dicee
+wrangler pages secret list --project-name dicee
 ```
 
 #### Wrangler - Durable Objects Development
@@ -303,7 +321,7 @@ wrangler r2 bucket list                         # List R2 buckets
 wrangler secret put API_KEY   # Set worker secret (prompts)
 wrangler secret list          # List worker secrets
 wrangler tail                 # Stream production logs
-wrangler tail gamelobby       # Tail specific worker
+wrangler tail dicee           # Tail specific worker
 ```
 
 #### Infisical - Secret Management (Self-hosted)
@@ -391,10 +409,28 @@ pnpm akg:discover --watch      # Watch mode (developer use, not agents)
 - `noDoubleEquals` - Use `===`
 - `useConst` - Immutability by default
 
-### Rust
-- `cargo fmt` for formatting
-- `cargo clippy` for linting
-- Target: `wasm32-unknown-unknown`
+### Rust/WASM Engine
+
+**Toolchain Management**: Rust is managed via `rustup` (delegated from mise). Do NOT install Rust via Homebrew.
+
+**Configuration Files**:
+- `.mise.toml` - Sets `rust = "stable"` and `RUSTUP_TOOLCHAIN=stable`
+- `packages/engine/rust-toolchain.toml` - Explicit toolchain with wasm32 target
+
+```toml
+# packages/engine/rust-toolchain.toml
+[toolchain]
+channel = "stable"
+targets = ["wasm32-unknown-unknown"]
+components = ["rustfmt", "clippy"]
+```
+
+**Commands**:
+- `cargo fmt` - Format code
+- `cargo clippy` - Lint with warnings as errors
+- `wasm-pack build --target web` - Build WASM module
+
+**Build Output**: `packages/web/src/lib/wasm/` (45KB optimized)
 
 ### Testing
 - Vitest for unit tests
@@ -420,7 +456,7 @@ Environment variables are managed through:
 - `PUBLIC_APP_VERSION` - Current version
 
 **Service Bindings (auto-configured in wrangler.toml):**
-- `GAME_WORKER` - Binding to gamelobby worker (provides DO access)
+- `GAME_WORKER` - Binding to dicee worker (provides DO access)
 
 **CI/CD variables:**
 - `INFISICAL_CLIENT_ID` - For machine identity auth
@@ -450,9 +486,7 @@ dicee/
 │       └── client-secret
 ├── cloudflare/
 │   ├── account-id                # 13eb584192d9cefb730fde0cfd271328
-│   ├── zone-id                   # 8d5f44e67ab4b37e47b034ff48b03099
-│   ├── domain                    # jefahnierocks.com
-│   ├── subdomain                 # dicee.jefahnierocks.com
+│   ├── domain                    # dicee.games
 │   └── api-token                 # Wrangler CLI API token
 └── github/
     └── pat                       # Fine-grained PAT
@@ -520,7 +554,7 @@ See `.claude/environment-strategy.yaml` for full architecture.
 **Deployment Flow:**
 1. Local dev: `pnpm dev` + `wrangler dev` (separate terminals)
 2. Preview: Push to PR branch → auto-deploy to CF Pages preview
-3. Production: Merge to main → auto-deploy to gamelobby.jefahnierocks.com
+3. Production: Merge to main → auto-deploy to dicee.games
 
 ### Infisical Secret Paths
 ```
@@ -741,6 +775,29 @@ async initialize(): Promise<void> {
 // GameRoom.onConnect() - send history to new connections
 this.sendChatHistory(ws);  // Sends CHAT_HISTORY event
 ```
+
+#### WorkerRenameSecretMigrationPattern (2026-01-01)
+**Problem**: After renaming Cloudflare Worker (e.g., `gamelobby` → `dicee`), WebSocket connections fail silently.
+
+**Cause**: When you rename a worker, Cloudflare creates a NEW worker - secrets are NOT transferred from the old worker.
+
+**Symptoms**:
+- WebSocket connections fail without clear errors
+- JWT verification returns "Supabase URL not configured" (503)
+- No `lifecycle.connect` events in logs, only `lifecycle.wake`
+- `wrangler secret list` returns empty array `[]`
+
+**Solution**:
+```bash
+# After renaming a worker, re-add all required secrets:
+wrangler secret list  # Verify secrets are missing
+wrangler secret put SUPABASE_URL
+wrangler secret put SUPABASE_ANON_KEY
+# Optional: wrangler secret put SUPABASE_JWT_SECRET
+wrangler deploy
+```
+
+**Prevention**: Added `validateSecrets()` method to GameRoom constructor that logs a CRITICAL error if secrets are missing, making the issue immediately visible in logs.
 
 **Full documentation**: `docs/architecture/MULTIPLAYER_PERSISTENCE_ARCHITECTURE.md`
 

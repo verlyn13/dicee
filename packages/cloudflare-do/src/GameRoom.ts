@@ -237,6 +237,27 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Phase 1: Initialize alarm queue for multiple concurrent alarms
 		this.alarmQueue = createAlarmQueue(ctx);
+
+		// Validate required secrets are configured (logs warning if missing)
+		this.validateSecrets();
+	}
+
+	/**
+	 * Validates that required secrets are configured.
+	 * Logs a warning if any are missing - helps catch deployment issues early.
+	 * See: wrangler secret put SUPABASE_URL, SUPABASE_ANON_KEY
+	 */
+	private validateSecrets(): void {
+		const missing: string[] = [];
+		if (!this.env.SUPABASE_URL) missing.push('SUPABASE_URL');
+		if (!this.env.SUPABASE_ANON_KEY) missing.push('SUPABASE_ANON_KEY');
+
+		if (missing.length > 0) {
+			console.error(
+				`[GameRoom] CRITICAL: Missing required secrets: ${missing.join(', ')}. ` +
+					`WebSocket connections will fail. Run: wrangler secret put <SECRET_NAME>`,
+			);
+		}
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -245,6 +266,8 @@ export class GameRoom extends DurableObject<Env> {
 
 	async fetch(request: Request): Promise<Response> {
 		const url = new URL(request.url);
+
+		const upgradeHeader = request.headers.get('Upgrade');
 
 		// Extract room code from URL path on first fetch (e.g., /room/FFDVNG or just /FFDVNG)
 		if (!this._roomCode) {
@@ -263,7 +286,7 @@ export class GameRoom extends DurableObject<Env> {
 		await this.ensureInstrumentation();
 
 		// WebSocket upgrade request
-		if (request.headers.get('Upgrade') === 'websocket') {
+		if (upgradeHeader === 'websocket') {
 			return this.handleWebSocketUpgrade(request, url);
 		}
 
@@ -1770,13 +1793,15 @@ export class GameRoom extends DurableObject<Env> {
 		}
 
 		// Send initial state to connection
+		// Pass ws to ensure the just-connected player is included in the player list
+		const playerList = await this.getPlayerList(ws);
 		ws.send(
 			JSON.stringify({
 				type: 'CONNECTED',
 				payload: {
 					roomCode: roomState.roomCode,
 					isHost: connState.isHost,
-					players: await this.getPlayerList(),
+					players: playerList,
 					aiPlayers: roomState.aiPlayers ?? [],
 					spectators: this.getSpectatorList(),
 					roomStatus: roomState.status,
@@ -4062,19 +4087,35 @@ export class GameRoom extends DurableObject<Env> {
 		ws.send(JSON.stringify(createChatHistoryResponse(history)));
 	}
 
-	private async getPlayerList(): Promise<PlayerInfo[]> {
+	/**
+	 * Get list of connected players with host flag.
+	 * @param currentWs - Optional WebSocket to include if not yet in getWebSockets() list.
+	 *                    This handles the race condition where a just-accepted WebSocket
+	 *                    may not be immediately available via getWebSockets().
+	 */
+	private async getPlayerList(currentWs?: WebSocket): Promise<PlayerInfo[]> {
 		const roomState = await this.ctx.storage.get<RoomState>('room');
 		const players: PlayerInfo[] = [];
 		const roomCode = this.getRoomCode();
 
 		// Only get players, not spectators
-		for (const ws of this.ctx.getWebSockets(`player:${roomCode}`)) {
+		const webSockets = this.ctx.getWebSockets(`player:${roomCode}`);
+
+		// Include currentWs if provided and not already in the list
+		// This ensures the just-connected player is included in their own CONNECTED event
+		const wsSet = new Set(webSockets);
+		if (currentWs && !wsSet.has(currentWs)) {
+			webSockets.push(currentWs);
+		}
+
+		for (const ws of webSockets) {
 			const state = ws.deserializeAttachment() as ConnectionState;
+			const isHost = state.userId === roomState?.hostUserId;
 			players.push({
 				userId: state.userId,
 				displayName: state.displayName,
 				avatarSeed: state.avatarSeed,
-				isHost: state.userId === roomState?.hostUserId,
+				isHost,
 				isConnected: true,
 			});
 		}
