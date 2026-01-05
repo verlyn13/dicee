@@ -17,6 +17,10 @@ class_name = "GameRoom"
 name = "GLOBAL_LOBBY"
 class_name = "GlobalLobby"
 
+# Workers AI binding for audio transcription
+[ai]
+binding = "AI"
+
 # SQLite-backed storage (better than KV for game state)
 # This enables ctx.storage.sql for SQL queries
 [[migrations]]

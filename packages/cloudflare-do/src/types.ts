@@ -36,6 +36,9 @@ export interface Env {
 	/** GlobalLobby Durable Object namespace binding (singleton) */
 	GLOBAL_LOBBY: DurableObjectNamespace;
 
+	/** Workers AI binding for audio transcription */
+	AI: Ai;
+
 	/** Supabase project URL */
 	SUPABASE_URL: string;
 

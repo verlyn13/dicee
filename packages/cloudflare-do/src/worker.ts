@@ -8,6 +8,7 @@
 
 import { GameRoom } from './GameRoom';
 import { GlobalLobby } from './GlobalLobby';
+import { handleTranscribe } from './api/transcribe';
 import type { Env } from './types';
 
 // Export Durable Object classes for Cloudflare
@@ -25,6 +26,7 @@ export default {
 				status: 'running',
 				endpoints: {
 					health: '/health',
+					transcribe: '/api/transcribe - Audio transcription',
 					lobby: '/lobby (WebSocket) - Global chat & presence',
 					lobbyRooms: '/lobby/rooms (REST) - Public rooms list',
 					lobbyOnline: '/lobby/online (REST) - Online count',
@@ -40,6 +42,11 @@ export default {
 				status: 'healthy',
 				timestamp: new Date().toISOString(),
 			});
+		}
+
+		// Audio transcription endpoint
+		if (url.pathname === '/api/transcribe') {
+			return handleTranscribe(request, env);
 		}
 
 		// Global Lobby (singleton) - all /lobby and /_debug paths
