@@ -8,6 +8,7 @@
  * Uses prop injection pattern to avoid layer violations.
  */
 
+import BugReportTrigger from '$lib/components/BugReportTrigger.svelte';
 import { isHapticsSupported } from '$lib/utils/haptics';
 
 interface Props {
@@ -167,6 +168,17 @@ function handleKeydown(e: KeyboardEvent) {
 				</span>
 			</div>
 		{/if}
+
+		<!-- Bug Report Section -->
+		<div class="control-group">
+			<h4 class="group-title">🐛 Support</h4>
+			<div class="bug-report-section">
+				<BugReportTrigger size="sm" variant="outline" class="w-full" />
+				<span class="setting-description">
+					Report bugs or issues with the game
+				</span>
+			</div>
+		</div>
 
 		<!-- Reset Section -->
 		<div class="control-group reset-section">
@@ -347,6 +359,17 @@ function handleKeydown(e: KeyboardEvent) {
 		font-size: var(--text-tiny);
 		color: var(--color-text-muted);
 		font-style: italic;
+	}
+
+	/* Bug Report Section */
+	.bug-report-section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+	}
+
+	.bug-report-section :global(button) {
+		justify-content: center;
 	}
 
 	/* Setting Description */
