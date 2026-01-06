@@ -39,7 +39,7 @@ import {
 import { AlarmQueue, createAlarmQueue } from './lib/alarm-queue';
 import { createJoinRequestManager, type JoinRequestManager } from './lib/join-request';
 import {
-	GamePersistenceService,
+	SupabaseRpcClient,
 	PersistenceQueue,
 	initPersistenceTables,
 	setSupabaseGameId,
@@ -229,11 +229,11 @@ export class GameRoom extends DurableObject<Env> {
 	private alarmQueue: AlarmQueue;
 
 	// ─────────────────────────────────────────────────────────────────────────────
-	// Persistence (Phase 1: DO→Supabase Bridge)
+	// Persistence (Phase 4: RPC-Based Persistence)
 	// ─────────────────────────────────────────────────────────────────────────────
 
-	/** Persistence service for Supabase writes */
-	private persistenceService: GamePersistenceService | null = null;
+	/** RPC client for atomic Supabase writes */
+	private rpcClient: SupabaseRpcClient | null = null;
 
 	/** Persistence queue for reliable async persistence with retry */
 	private persistenceQueue: PersistenceQueue | null = null;
@@ -321,20 +321,19 @@ export class GameRoom extends DurableObject<Env> {
 			// 1. Initialize DO SQLite tables for pending events and queue
 			initPersistenceTables(this.ctx);
 
-			// 2. Initialize persistence service (requires service role key)
+			// 2. Initialize RPC client (requires service role key)
 			if (this.env.SUPABASE_SERVICE_ROLE_KEY) {
 				this.logger.info('persistence.init.start', { roomCode, hasServiceKey: true });
 
-				this.persistenceService = new GamePersistenceService({
-					SUPABASE_URL: this.env.SUPABASE_URL,
-					SUPABASE_SERVICE_ROLE_KEY: this.env.SUPABASE_SERVICE_ROLE_KEY,
-					SUPABASE_ANON_KEY: this.env.SUPABASE_ANON_KEY,
+				this.rpcClient = new SupabaseRpcClient({
+					supabaseUrl: this.env.SUPABASE_URL,
+					serviceRoleKey: this.env.SUPABASE_SERVICE_ROLE_KEY,
 				});
 
-				// 3. Initialize persistence queue with error handler
+				// 3. Initialize persistence queue with RPC client
 				this.persistenceQueue = new PersistenceQueue(
 					this.ctx,
-					this.persistenceService,
+					this.rpcClient,
 					(task, error) => {
 						console.error(`[GameRoom] Persistence task failed permanently:`, {
 							type: task.type,
@@ -344,6 +343,10 @@ export class GameRoom extends DurableObject<Env> {
 						});
 						// Log as handler failure for observability
 						this.instr?.errorHandlerFailed(`persistence_${task.type}`, error);
+					},
+					{
+						supabaseUrl: this.env.SUPABASE_URL,
+						anonKey: this.env.SUPABASE_ANON_KEY,
 					},
 				);
 
@@ -444,8 +447,8 @@ export class GameRoom extends DurableObject<Env> {
 			isHost: boolean;
 		}>,
 	): Promise<string | null> {
-		if (!this.persistenceService) {
-			this.logger.debug('persistence.gameStart.skipped', { roomCode, reason: 'no service' });
+		if (!this.rpcClient) {
+			this.logger.debug('persistence.gameStart.skipped', { roomCode, reason: 'no rpc client' });
 			return null;
 		}
 
@@ -464,53 +467,36 @@ export class GameRoom extends DurableObject<Env> {
 			humanCount,
 		});
 
-		// Create game record
-		const gameResult = await this.persistenceService.createGame({
-			id: gameId,
-			room_code: roomCode,
-			host_id: hostId,
-			status: 'active',
-			game_mode: gameMode,
-			started_at: new Date().toISOString(),
+		// Create game and player records atomically via RPC
+		const result = await this.rpcClient.createGame({
+			gameId,
+			roomCode,
+			hostId,
+			gameMode,
+			settings: {},
+			players: players.map((player, index) => ({
+				user_id: player.id,
+				seat_number: index,
+				turn_order: index,
+				is_ai: player.type === 'ai',
+			})),
 		});
 
-		if (!gameResult.success) {
-			this.logger.error('persistence.gameStart.gameRecordFailed', {
+		if (!result.success) {
+			this.logger.error('persistence.gameStart.failed', {
 				roomCode,
 				gameId,
-				error: gameResult.error,
+				error: result.error,
+				retriable: result.retriable,
 			});
 			return null;
 		}
 
-		this.logger.debug('persistence.gameStart.gameRecordCreated', { roomCode, gameId });
-
-		// Create player records (matching game_players table schema)
-		const playerRecords = players.map((player, index) => ({
-			game_id: gameId,
-			user_id: player.id,
-			seat_number: index,
-			turn_order: index,
-			is_connected: true,
-			joined_at: new Date().toISOString(),
-		}));
-
-		const playersResult = await this.persistenceService.addGamePlayers(playerRecords);
-
-		if (!playersResult.success) {
-			this.logger.error('persistence.gameStart.playerRecordsFailed', {
-				roomCode,
-				gameId,
-				error: playersResult.error,
-			});
-			// Game was created, so continue but log the error
-		} else {
-			this.logger.debug('persistence.gameStart.playerRecordsCreated', {
-				roomCode,
-				gameId,
-				count: playerRecords.length,
-			});
-		}
+		this.logger.debug('persistence.gameStart.atomicCreate', {
+			roomCode,
+			gameId,
+			affectedRows: result.data.affected_rows,
+		});
 
 		// Store game ID for hibernation recovery
 		setSupabaseGameId(this.ctx, gameId);
