@@ -46,3 +46,6 @@ export {
 	setEventSequence,
 	getPendingEvents,
 } from './migrations';
+
+// Schema validation (compile-time only, ensures no schema drift)
+export { SCHEMA_MAPPINGS } from './schema-validation';
