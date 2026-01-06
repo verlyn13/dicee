@@ -111,6 +111,81 @@ export type Database = {
           },
         ]
       }
+      bug_reports: {
+        Row: {
+          audio_duration_ms: number | null
+          audio_file_path: string | null
+          audio_transcription: string | null
+          breadcrumbs: Json | null
+          connection_state: Json | null
+          console_capture: Json | null
+          created_at: string | null
+          description: string | null
+          game_state: Json | null
+          id: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          status: string | null
+          title: string
+          ui_state: Json | null
+          updated_at: string | null
+          user_context: Json | null
+          user_display_name: string | null
+          user_email: string | null
+          user_id: string
+        }
+        Insert: {
+          audio_duration_ms?: number | null
+          audio_file_path?: string | null
+          audio_transcription?: string | null
+          breadcrumbs?: Json | null
+          connection_state?: Json | null
+          console_capture?: Json | null
+          created_at?: string | null
+          description?: string | null
+          game_state?: Json | null
+          id?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: string
+          status?: string | null
+          title: string
+          ui_state?: Json | null
+          updated_at?: string | null
+          user_context?: Json | null
+          user_display_name?: string | null
+          user_email?: string | null
+          user_id: string
+        }
+        Update: {
+          audio_duration_ms?: number | null
+          audio_file_path?: string | null
+          audio_transcription?: string | null
+          breadcrumbs?: Json | null
+          connection_state?: Json | null
+          console_capture?: Json | null
+          created_at?: string | null
+          description?: string | null
+          game_state?: Json | null
+          id?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string | null
+          title?: string
+          ui_state?: Json | null
+          updated_at?: string | null
+          user_context?: Json | null
+          user_display_name?: string | null
+          user_email?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       domain_events: {
         Row: {
           event_type: string

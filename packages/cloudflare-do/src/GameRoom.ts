@@ -25,6 +25,8 @@ import {
 } from './chat';
 import type { GlobalLobby } from './GlobalLobby';
 import {
+	AFK_TIMEOUT_SECONDS,
+	AFK_WARNING_SECONDS,
 	type Category,
 	canKeepDice,
 	canRematch,
@@ -36,6 +38,20 @@ import {
 } from './game';
 import { AlarmQueue, createAlarmQueue } from './lib/alarm-queue';
 import { createJoinRequestManager, type JoinRequestManager } from './lib/join-request';
+import {
+	GamePersistenceService,
+	PersistenceQueue,
+	initPersistenceTables,
+	setSupabaseGameId,
+	getSupabaseGameId,
+	getEventSequence,
+	setEventSequence,
+	getPendingEvents,
+	clearPendingEvents,
+	clearGameMetadata,
+	type DomainEvent,
+	type DomainEventType,
+} from './lib/persistence';
 import { Loggers } from './lib/logger';
 import { createInstrumentation, type Instrumentation } from './lib/observability/instrumentation';
 import type {
@@ -212,6 +228,28 @@ export class GameRoom extends DurableObject<Env> {
 	 */
 	private alarmQueue: AlarmQueue;
 
+	// ─────────────────────────────────────────────────────────────────────────────
+	// Persistence (Phase 1: DO→Supabase Bridge)
+	// ─────────────────────────────────────────────────────────────────────────────
+
+	/** Persistence service for Supabase writes */
+	private persistenceService: GamePersistenceService | null = null;
+
+	/** Persistence queue for reliable async persistence with retry */
+	private persistenceQueue: PersistenceQueue | null = null;
+
+	/** Supabase game ID (persisted in DO SQLite for hibernation recovery) */
+	private supabaseGameId: string | null = null;
+
+	/** Game start time for duration tracking */
+	private gameStartTime: number | null = null;
+
+	/** Domain event sequence number for ordering */
+	private eventSequence = 0;
+
+	/** Flag to track if persistence tables have been initialized */
+	private persistenceInitialized = false;
+
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
 
@@ -240,6 +278,12 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Validate required secrets are configured (logs warning if missing)
 		this.validateSecrets();
+
+		// Phase 1: Initialize persistence (DO→Supabase bridge)
+		// Uses blockConcurrencyWhile to ensure tables are ready before any requests
+		ctx.blockConcurrencyWhile(async () => {
+			await this.initializePersistence();
+		});
 	}
 
 	/**
@@ -258,6 +302,349 @@ export class GameRoom extends DurableObject<Env> {
 					`WebSocket connections will fail. Run: wrangler secret put <SECRET_NAME>`,
 			);
 		}
+	}
+
+	/**
+	 * Initialize persistence layer (Phase 1: DO→Supabase Bridge)
+	 *
+	 * Called via blockConcurrencyWhile to ensure:
+	 * - DO SQLite tables are created
+	 * - Service and queue are ready
+	 * - Supabase game ID is recovered after hibernation
+	 */
+	private async initializePersistence(): Promise<void> {
+		if (this.persistenceInitialized) return;
+
+		const roomCode = this.ctx.id.name ?? 'UNKNOWN';
+
+		try {
+			// 1. Initialize DO SQLite tables for pending events and queue
+			initPersistenceTables(this.ctx);
+
+			// 2. Initialize persistence service (requires service role key)
+			if (this.env.SUPABASE_SERVICE_ROLE_KEY) {
+				this.logger.info('persistence.init.start', { roomCode, hasServiceKey: true });
+
+				this.persistenceService = new GamePersistenceService({
+					SUPABASE_URL: this.env.SUPABASE_URL,
+					SUPABASE_SERVICE_ROLE_KEY: this.env.SUPABASE_SERVICE_ROLE_KEY,
+					SUPABASE_ANON_KEY: this.env.SUPABASE_ANON_KEY,
+				});
+
+				// 3. Initialize persistence queue with error handler
+				this.persistenceQueue = new PersistenceQueue(
+					this.ctx,
+					this.persistenceService,
+					(task, error) => {
+						console.error(`[GameRoom] Persistence task failed permanently:`, {
+							type: task.type,
+							gameId: task.gameId,
+							error,
+							retryCount: task.retryCount,
+						});
+						// Log as handler failure for observability
+						this.instr?.errorHandlerFailed(`persistence_${task.type}`, error);
+					},
+				);
+
+				// 4. Recover Supabase game ID after hibernation
+				this.supabaseGameId = getSupabaseGameId(this.ctx);
+				if (this.supabaseGameId) {
+					this.logger.info('persistence.init.recovered', {
+						roomCode,
+						supabaseGameId: this.supabaseGameId,
+					});
+				}
+
+				// 5. Recover event sequence number after hibernation (P0 fix)
+				const recoveredSequence = getEventSequence(this.ctx);
+				if (recoveredSequence > 0) {
+					this.eventSequence = recoveredSequence;
+					this.logger.info('persistence.init.sequence_recovered', {
+						roomCode,
+						eventSequence: this.eventSequence,
+					});
+				}
+
+				this.logger.info('persistence.init.complete', { roomCode, enabled: true });
+			} else {
+				this.logger.warn('persistence.init.disabled', {
+					roomCode,
+					reason: 'SUPABASE_SERVICE_ROLE_KEY not configured',
+				});
+			}
+
+			this.persistenceInitialized = true;
+		} catch (err) {
+			this.logger.error('persistence.init.failed', {
+				roomCode,
+				error: err instanceof Error ? err.message : String(err),
+			});
+			// Don't throw - game should still work, just without persistence
+		}
+	}
+
+	/**
+	 * Record a domain event for later persistence.
+	 * Events are stored in DO SQLite and batched at game end.
+	 */
+	private recordDomainEvent(
+		eventType: DomainEventType,
+		playerId: string,
+		payload: Record<string, unknown> = {},
+		turnNumber?: number,
+		rollNumber?: number,
+	): void {
+		if (!this.supabaseGameId) return;
+
+		// Increment and persist sequence number (P0 fix: survives hibernation)
+		const sequenceNumber = this.eventSequence++;
+		setEventSequence(this.ctx, this.eventSequence);
+
+		const event: DomainEvent = {
+			id: crypto.randomUUID(),
+			game_id: this.supabaseGameId,
+			player_id: playerId,
+			event_type: eventType,
+			event_version: '1.0',
+			sequence_number: sequenceNumber,
+			turn_number: turnNumber ?? null,
+			roll_number: rollNumber ?? null,
+			payload,
+		};
+
+		// Store in DO SQLite (pending_domain_events table)
+		this.ctx.storage.sql.exec(
+			`INSERT INTO pending_domain_events (id, game_id, player_id, event_type, event_version, sequence_number, turn_number, roll_number, payload, timestamp)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			event.id,
+			event.game_id,
+			event.player_id,
+			event.event_type,
+			'1.0', // event_version
+			event.sequence_number,
+			event.turn_number,
+			event.roll_number,
+			JSON.stringify(event.payload),
+			Date.now(), // timestamp in milliseconds
+		);
+	}
+
+	/**
+	 * Persist game and player records to Supabase at game start.
+	 * Returns the Supabase game ID on success.
+	 */
+	private async persistGameStart(
+		roomCode: string,
+		hostId: string,
+		players: Array<{
+			id: string;
+			displayName: string;
+			type?: 'human' | 'ai';
+			isHost: boolean;
+		}>,
+	): Promise<string | null> {
+		if (!this.persistenceService) {
+			this.logger.debug('persistence.gameStart.skipped', { roomCode, reason: 'no service' });
+			return null;
+		}
+
+		// Generate Supabase game ID
+		const gameId = crypto.randomUUID();
+
+		// Determine game mode
+		const humanCount = players.filter((p) => p.type !== 'ai').length;
+		const gameMode = humanCount <= 1 ? 'solo' : 'multiplayer';
+
+		this.logger.info('persistence.gameStart.begin', {
+			roomCode,
+			gameId,
+			gameMode,
+			playerCount: players.length,
+			humanCount,
+		});
+
+		// Create game record
+		const gameResult = await this.persistenceService.createGame({
+			id: gameId,
+			room_code: roomCode,
+			host_id: hostId,
+			status: 'active',
+			game_mode: gameMode,
+			started_at: new Date().toISOString(),
+		});
+
+		if (!gameResult.success) {
+			this.logger.error('persistence.gameStart.gameRecordFailed', {
+				roomCode,
+				gameId,
+				error: gameResult.error,
+			});
+			return null;
+		}
+
+		this.logger.debug('persistence.gameStart.gameRecordCreated', { roomCode, gameId });
+
+		// Create player records (matching game_players table schema)
+		const playerRecords = players.map((player, index) => ({
+			game_id: gameId,
+			user_id: player.id,
+			seat_number: index,
+			turn_order: index,
+			is_connected: true,
+			joined_at: new Date().toISOString(),
+		}));
+
+		const playersResult = await this.persistenceService.addGamePlayers(playerRecords);
+
+		if (!playersResult.success) {
+			this.logger.error('persistence.gameStart.playerRecordsFailed', {
+				roomCode,
+				gameId,
+				error: playersResult.error,
+			});
+			// Game was created, so continue but log the error
+		} else {
+			this.logger.debug('persistence.gameStart.playerRecordsCreated', {
+				roomCode,
+				gameId,
+				count: playerRecords.length,
+			});
+		}
+
+		// Store game ID for hibernation recovery
+		setSupabaseGameId(this.ctx, gameId);
+		this.supabaseGameId = gameId;
+		this.gameStartTime = Date.now();
+		this.eventSequence = 0;
+
+		this.logger.info('persistence.gameStart.complete', { roomCode, gameId, gameMode });
+
+		return gameId;
+	}
+
+	/**
+	 * Schedule persistence tasks at game completion.
+	 * Uses the persistence queue for reliable async processing.
+	 */
+	private async schedulePersistenceTasks(
+		rankings: Array<{
+			playerId: string;
+			displayName: string;
+			rank: number;
+			score: number;
+			diceeCount: number;
+		}>,
+	): Promise<void> {
+		const roomCode = this._roomCode ?? 'UNKNOWN';
+
+		if (!this.persistenceQueue || !this.supabaseGameId) {
+			this.logger.debug('persistence.schedule.skipped', {
+				roomCode,
+				reason: !this.persistenceQueue ? 'no queue' : 'no gameId',
+			});
+			return;
+		}
+
+		const gameId = this.supabaseGameId;
+		const durationMs = this.gameStartTime ? Date.now() - this.gameStartTime : 0;
+
+		this.logger.info('persistence.schedule.begin', {
+			roomCode,
+			gameId,
+			durationMs,
+			winnerId: rankings[0]?.playerId,
+			playerCount: rankings.length,
+		});
+
+		// Get pending events from DO SQLite
+		const pendingEvents = getPendingEvents(this.ctx, gameId);
+
+		// Get game state for player scorecard and type data
+		const gameState = await this.gameStateManager.getState();
+		const players = gameState?.players ?? {};
+
+		// 1. Schedule game completion persistence
+		await this.persistenceQueue.schedule({
+			type: 'PERSIST_GAME_COMPLETION',
+			gameId,
+			payload: {
+				winnerId: rankings[0]?.playerId ?? null,
+				rankings: rankings.map((r) => {
+					const player = players[r.playerId];
+					// Convert Scorecard to Record<string, number> (null values become 0)
+					const scorecardRecord: Record<string, number> = {};
+					if (player?.scorecard) {
+						for (const [key, value] of Object.entries(player.scorecard)) {
+							scorecardRecord[key] = value ?? 0;
+						}
+					}
+					return {
+						playerId: r.playerId,
+						rank: r.rank,
+						score: r.score,
+						scorecard: scorecardRecord,
+						isAi: player?.type === 'ai',
+					};
+				}),
+				durationMs,
+			},
+		});
+
+		// 2. Schedule domain events persistence (if any)
+		if (pendingEvents.length > 0) {
+			const eventsForPersistence: DomainEvent[] = pendingEvents.map((e) => ({
+				id: e.id,
+				game_id: e.game_id,
+				player_id: e.player_id,
+				event_type: e.event_type as DomainEventType,
+				event_version: e.event_version,
+				sequence_number: e.sequence_number,
+				turn_number: e.turn_number,
+				roll_number: e.roll_number,
+				payload: e.payload,
+				timestamp: new Date(e.timestamp).toISOString(), // Convert ms to ISO datetime
+			}));
+
+			await this.persistenceQueue.schedule({
+				type: 'PERSIST_DOMAIN_EVENTS',
+				gameId,
+				payload: { events: eventsForPersistence },
+			});
+		}
+
+		// 3. Schedule aggregation (with delay to ensure completion persisted first)
+		// Only for multiplayer games with human players
+		const humanPlayers = Object.values(players).filter((p) => p.type !== 'ai');
+		const isMultiplayer = humanPlayers.length >= 2;
+
+		await this.persistenceQueue.schedule(
+			{
+				type: 'TRIGGER_AGGREGATION',
+				gameId,
+				payload: {
+					skipRatings: !isMultiplayer, // Only update ratings for multiplayer
+					skipBadges: false,
+				},
+			},
+			500, // 500ms delay to ensure completion is persisted
+		);
+
+		// 4. Clear pending events after scheduling
+		clearPendingEvents(this.ctx, gameId);
+		clearGameMetadata(this.ctx);
+
+		// Reset persistence state for next game
+		this.supabaseGameId = null;
+		this.gameStartTime = null;
+		this.eventSequence = 0;
+
+		this.logger.info('persistence.schedule.complete', {
+			roomCode,
+			gameId,
+			tasksScheduled: 3,
+			eventsQueued: pendingEvents.length,
+		});
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -460,6 +847,16 @@ export class GameRoom extends DurableObject<Env> {
 		// Phase 1: Process all due alarms from the queue
 		const dueAlarms = await this.alarmQueue.processAlarms();
 
+		// Phase 1: Also process persistence queue tasks
+		// Both queues share the DO's single alarm, so we process both when it fires
+		if (this.persistenceQueue) {
+			try {
+				await this.persistenceQueue.processDueTasks();
+			} catch (err) {
+				console.error(`[GameRoom] Error processing persistence queue:`, err);
+			}
+		}
+
 		// If no alarms from queue, check legacy alarm_data for backwards compatibility
 		if (dueAlarms.length === 0) {
 			const alarmData = await this.ctx.storage.get<AlarmData>('alarm_data');
@@ -487,6 +884,12 @@ export class GameRoom extends DurableObject<Env> {
 				break;
 			case 'AFK_CHECK':
 				await this.handleAfkCheck(alarm.targetId ?? undefined);
+				break;
+			case 'AFK_WARNING':
+				await this.handleAfkWarning(alarm.targetId ?? undefined);
+				break;
+			case 'AFK_TIMEOUT':
+				await this.handleAfkTimeout(alarm.targetId ?? undefined);
 				break;
 			case 'ROOM_CLEANUP':
 				// Check for warm seat completion (metadata.warmSeat)
@@ -529,6 +932,14 @@ export class GameRoom extends DurableObject<Env> {
 				break;
 			case 'AFK_CHECK':
 				await this.handleAfkCheck(alarmData.userId);
+				break;
+			case 'AFK_WARNING':
+				// Phase 3: Support AFK warning alarms
+				await this.handleAfkWarning(alarmData.userId ?? alarmData.playerId);
+				break;
+			case 'AFK_TIMEOUT':
+				// Phase 3: Support AFK timeout alarms
+				await this.handleAfkTimeout(alarmData.userId ?? alarmData.playerId);
 				break;
 			case 'ROOM_CLEANUP':
 				// Legacy warmSeat handling
@@ -615,10 +1026,14 @@ export class GameRoom extends DurableObject<Env> {
 				},
 			});
 
-			// Schedule timeout for next player
+			// Schedule timeout for next player (Phase 3: unified alarms)
 			const roomState = await this.ctx.storage.get<RoomState>('room');
 			if (roomState?.settings.turnTimeoutSeconds && roomState.settings.turnTimeoutSeconds > 0) {
-				await this.gameStateManager.scheduleAfkWarning(result.nextPlayerId);
+				await this.alarmQueue.schedule({
+					type: 'AFK_WARNING',
+					targetId: result.nextPlayerId,
+					scheduledFor: Date.now() + AFK_WARNING_SECONDS * 1000,
+				});
 			}
 		}
 
@@ -659,6 +1074,61 @@ export class GameRoom extends DurableObject<Env> {
 				await this.handleTurnTimeout(userId);
 			}
 		}
+	}
+
+	/**
+	 * Handle AFK warning - notify player they're about to timeout (Phase 3: unified alarms)
+	 */
+	private async handleAfkWarning(userId: string | undefined): Promise<void> {
+		if (!userId) return;
+
+		const gameState = await this.gameStateManager.getState();
+		if (!gameState) return;
+
+		// Verify this player is still the current player
+		const currentPlayerId = gameState.playerOrder[gameState.currentPlayerIndex];
+		if (currentPlayerId !== userId) return;
+
+		// Check if user is connected - if so, cancel the warning
+		const userConnections = this.ctx.getWebSockets(`user:${userId}`);
+		if (userConnections.length === 0) {
+			// User is disconnected, skip straight to timeout
+			await this.handleAfkTimeout(userId);
+			return;
+		}
+
+		// Broadcast AFK warning to the player
+		this.broadcast({
+			type: 'AFK_WARNING',
+			payload: {
+				userId,
+				secondsUntilTimeout: AFK_TIMEOUT_SECONDS,
+			},
+		});
+
+		// Schedule the timeout alarm
+		await this.alarmQueue.schedule({
+			type: 'AFK_TIMEOUT',
+			targetId: userId,
+			scheduledFor: Date.now() + AFK_TIMEOUT_SECONDS * 1000,
+		});
+	}
+
+	/**
+	 * Handle AFK timeout - auto-skip player's turn (Phase 3: unified alarms)
+	 */
+	private async handleAfkTimeout(userId: string | undefined): Promise<void> {
+		if (!userId) return;
+
+		const gameState = await this.gameStateManager.getState();
+		if (!gameState) return;
+
+		// Verify this player is still the current player
+		const currentPlayerId = gameState.playerOrder[gameState.currentPlayerIndex];
+		if (currentPlayerId !== userId) return;
+
+		// Use existing turn timeout logic
+		await this.handleTurnTimeout(userId);
 	}
 
 	/**
@@ -1849,6 +2319,11 @@ export class GameRoom extends DurableObject<Env> {
 				},
 			});
 
+			// Phase 5: Record PlayerReconnected domain event
+			this.recordDomainEvent('PlayerReconnected', connState.userId, {
+				displayName: connState.displayName,
+			});
+
 			// CRITICAL: Send full game state sync if game is active
 			// This ensures reconnecting players have complete, authoritative state
 			const currentGameState = await this.gameStateManager.getState();
@@ -2175,6 +2650,14 @@ export class GameRoom extends DurableObject<Env> {
 					displayName: connState.displayName,
 					reason,
 				},
+			});
+		}
+
+		// Phase 5: Record PlayerDisconnected domain event
+		if (connState.role === 'player') {
+			this.recordDomainEvent('PlayerDisconnected', connState.userId, {
+				reason,
+				reconnectDeadline: seat?.reconnectDeadline ?? null,
 			});
 		}
 
@@ -2890,6 +3373,25 @@ export class GameRoom extends DurableObject<Env> {
 		this.instr?.gameStart(players.length, connState.userId);
 		this.instr?.gameTurnStart(startResult.currentPlayerId, startResult.turnNumber);
 
+		// Phase 1: Persist game start to Supabase (async, non-blocking)
+		const gameId = await this.persistGameStart(roomCode, connState.userId, players);
+		if (gameId) {
+			// Record GameStarted domain event
+			this.recordDomainEvent('GameStarted', connState.userId, {
+				playerCount: players.length,
+				playerIds: players.map((p) => p.id),
+				gameMode: players.filter((p) => p.type !== 'ai').length > 1 ? 'multiplayer' : 'solo',
+				roomCode,
+			});
+			// Record first TurnStarted event
+			this.recordDomainEvent(
+				'TurnStarted',
+				startResult.currentPlayerId,
+				{ turnNumber: startResult.turnNumber },
+				startResult.turnNumber,
+			);
+		}
+
 		// Update room status to playing
 		roomState.status = 'playing';
 		await this.ctx.storage.put('room', roomState);
@@ -2910,12 +3412,16 @@ export class GameRoom extends DurableObject<Env> {
 			},
 		});
 
-		// Schedule turn timeout if configured (only for human players)
+		// Schedule turn timeout if configured (only for human players, Phase 3: unified alarms)
 		if (
 			roomState.settings.turnTimeoutSeconds > 0 &&
 			!this.aiManager.isAIPlayer(startResult.currentPlayerId)
 		) {
-			await this.gameStateManager.scheduleAfkWarning(startResult.currentPlayerId);
+			await this.alarmQueue.schedule({
+				type: 'AFK_WARNING',
+				targetId: startResult.currentPlayerId,
+				scheduledFor: Date.now() + AFK_WARNING_SECONDS * 1000,
+			});
 		}
 
 		// Notify lobby
@@ -3329,6 +3835,19 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Reset kibitz votes on new roll
 		this.kibitzVotes.clear();
+
+		// Phase 5: Record DiceRolled domain event
+		this.recordDomainEvent(
+			'DiceRolled',
+			connState.userId,
+			{
+				dice: result.dice,
+				kept: keptMask,
+				rollsRemaining: result.rollsRemaining,
+			},
+			gameState.turnNumber,
+			result.rollNumber,
+		);
 	}
 
 	/**
@@ -3379,6 +3898,17 @@ export class GameRoom extends DurableObject<Env> {
 				kept: newKept,
 			},
 		});
+
+		// Phase 5: Record DiceKept domain event
+		this.recordDomainEvent(
+			'DiceKept',
+			connState.userId,
+			{
+				kept: newKept,
+				indices,
+			},
+			gameState.turnNumber,
+		);
 	}
 
 	/**
@@ -3427,6 +3957,19 @@ export class GameRoom extends DurableObject<Env> {
 			finalScore: result.score,
 		});
 
+		// Phase 5: Record TurnScored domain event
+		this.recordDomainEvent(
+			'TurnScored',
+			connState.userId,
+			{
+				category,
+				score: result.score,
+				totalScore: result.totalScore,
+				isDiceeBonus: result.isDiceeBonus,
+			},
+			gameState.turnNumber,
+		);
+
 		// Broadcast category scored
 		this.broadcast({
 			type: 'CATEGORY_SCORED',
@@ -3474,6 +4017,28 @@ export class GameRoom extends DurableObject<Env> {
 			}
 			this.instr?.gameTurnStart(result.nextPlayerId, result.nextTurnNumber);
 
+			// Phase 5: Record TurnEnded domain event for current player
+			this.recordDomainEvent(
+				'TurnEnded',
+				connState.userId,
+				{
+					category,
+					score: result.score,
+					totalScore: result.totalScore,
+				},
+				gameState.turnNumber,
+			);
+
+			// Phase 5: Record TurnStarted domain event for next player
+			this.recordDomainEvent(
+				'TurnStarted',
+				result.nextPlayerId,
+				{
+					roundNumber: result.nextRoundNumber,
+				},
+				result.nextTurnNumber,
+			);
+
 			// Next player's turn
 			this.broadcast({
 				type: 'TURN_CHANGED',
@@ -3505,12 +4070,16 @@ export class GameRoom extends DurableObject<Env> {
 			// Clear kibitz votes for new turn
 			this.kibitzVotes.clear();
 
-			// Schedule turn timeout for next player (only for human players)
+			// Schedule turn timeout for next player (only for human players, Phase 3: unified alarms)
 			const roomState = await this.ctx.storage.get<RoomState>('room');
 			const isNextPlayerAI = this.aiManager.isAIPlayer(result.nextPlayerId);
 			if (roomState?.settings.turnTimeoutSeconds && roomState.settings.turnTimeoutSeconds > 0) {
 				if (!isNextPlayerAI) {
-					await this.gameStateManager.scheduleAfkWarning(result.nextPlayerId);
+					await this.alarmQueue.schedule({
+						type: 'AFK_WARNING',
+						targetId: result.nextPlayerId,
+						scheduledFor: Date.now() + AFK_WARNING_SECONDS * 1000,
+					});
 				}
 			}
 
@@ -3608,6 +4177,25 @@ export class GameRoom extends DurableObject<Env> {
 
 		// Notify lobby
 		this.notifyLobbyOfUpdate();
+
+		// Phase 1: Record GameCompleted event and schedule persistence
+		if (this.supabaseGameId) {
+			const winnerId = rankings[0]?.playerId;
+			this.recordDomainEvent('GameCompleted', winnerId ?? 'system', {
+				winnerId,
+				rankings: rankings.map((r) => ({
+					playerId: r.playerId,
+					rank: r.rank,
+					score: r.score,
+					diceeCount: r.diceeCount,
+				})),
+			});
+
+			// Schedule persistence tasks via queue (async, non-blocking)
+			this.schedulePersistenceTasks(rankings).catch((err) => {
+				console.error(`[GameRoom] Failed to schedule persistence tasks:`, err);
+			});
+		}
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────────
@@ -3760,12 +4348,16 @@ export class GameRoom extends DurableObject<Env> {
 						},
 					});
 
-					// Schedule turn timeout for next player (if human)
+					// Schedule turn timeout for next player (if human, Phase 3: unified alarms)
 					const roomState = await this.ctx.storage.get<RoomState>('room');
 					if (roomState?.settings.turnTimeoutSeconds && roomState.settings.turnTimeoutSeconds > 0) {
 						// Only schedule timeout for human players
 						if (!this.aiManager.isAIPlayer(result.nextPlayerId)) {
-							await this.gameStateManager.scheduleAfkWarning(result.nextPlayerId);
+							await this.alarmQueue.schedule({
+								type: 'AFK_WARNING',
+								targetId: result.nextPlayerId,
+								scheduledFor: Date.now() + AFK_WARNING_SECONDS * 1000,
+							});
 						}
 					}
 

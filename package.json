@@ -23,6 +23,7 @@
     "format:web": "pnpm --filter @dicee/web format",
     "web:sync": "pnpm --filter @dicee/web exec svelte-kit sync",
     "web:vitest": "pnpm --filter @dicee/web exec vitest",
+    "db:types": "supabase gen types typescript --project-id duhsbuyxyppgbkwbbtqg > packages/web/src/lib/types/database.ts",
     "do:deploy": "cd packages/cloudflare-do && wrangler deploy",
     "do:tail": "cd packages/cloudflare-do && wrangler tail",
     "pages:deploy": "pnpm build && pnpm --filter @dicee/web pages:deploy",

@@ -45,6 +45,9 @@ export interface Env {
 	/** Supabase anonymous key */
 	SUPABASE_ANON_KEY: string;
 
+	/** Supabase service role key for bypassing RLS (server-to-server only) */
+	SUPABASE_SERVICE_ROLE_KEY: string;
+
 	/** Supabase JWT secret for legacy HS256 token verification (optional if using asymmetric keys) */
 	SUPABASE_JWT_SECRET?: string;
 
@@ -313,16 +316,29 @@ export interface SpectatorInfo {
 // =============================================================================
 
 /**
- * Types of alarms that can be scheduled
+ * Types of alarms that can be scheduled.
+ *
+ * Phase 3: Unified alarm types absorbing GameStateManager and PersistenceQueue.
+ * All alarm scheduling now goes through AlarmQueue.
  */
 export type AlarmType =
+	// Game room alarms
 	| 'TURN_TIMEOUT'
 	| 'AFK_CHECK'
 	| 'ROOM_CLEANUP'
 	| 'SEAT_EXPIRATION'
 	| 'JOIN_REQUEST_EXPIRATION'
 	| 'AI_TURN_TIMEOUT'
-	| 'PAUSE_TIMEOUT';
+	| 'PAUSE_TIMEOUT'
+	// Absorbed from GameStateManager (Phase 3)
+	| 'AFK_WARNING'
+	| 'AFK_TIMEOUT'
+	| 'GAME_START'
+	// Persistence alarms (Phase 3)
+	| 'PERSIST_GAME_COMPLETION'
+	| 'PERSIST_DOMAIN_EVENTS'
+	| 'TRIGGER_AGGREGATION'
+	| 'ABANDON_GAME';
 
 /**
  * Timeout duration for PAUSED state before room is abandoned (30 minutes)
@@ -346,6 +362,7 @@ export interface AlarmData {
  * Scheduled alarm for the AlarmQueue system.
  *
  * Phase 1: Supports multiple concurrent alarms via a queue stored in DO storage.
+ * Phase 3: Extended with payload for persistence tasks and retry support.
  * The DO's single native alarm is set to fire for the earliest item in the queue.
  */
 export interface ScheduledAlarm {
@@ -359,6 +376,12 @@ export interface ScheduledAlarm {
 	createdAt: number;
 	/** Optional metadata for the alarm */
 	metadata?: Record<string, unknown>;
+	/** Phase 3: Payload for persistence alarms */
+	payload?: Record<string, unknown>;
+	/** Phase 3: Retry count for persistence alarms */
+	retryCount?: number;
+	/** Phase 3: Max retries (default 3 for persistence) */
+	maxRetries?: number;
 }
 
 // =============================================================================

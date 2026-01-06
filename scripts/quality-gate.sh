@@ -30,7 +30,7 @@ FAILED=0
 
 # 1. TypeScript Check (Rust + Web)
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 1/7 TypeScript & Rust Check                                 │"
+echo "│ 1/8 TypeScript & Rust Check                                 │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm check; then
     echo -e "${GREEN}✓ TypeScript and Rust checks passed${NC}"
@@ -42,7 +42,7 @@ echo ""
 
 # 2. AKG Invariant Check
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 2/7 AKG Architectural Invariants                            │"
+echo "│ 2/8 AKG Architectural Invariants                            │"
 echo "└──────────────────────────────────────────────────────────────┘"
 # Run AKG check and capture result (warnings OK, errors fail)
 # Filter out pnpm header lines and graph validation warnings before JSON parsing
@@ -62,7 +62,7 @@ echo ""
 
 # 3. Lint Check (Biome - warnings only, no errors required)
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 3/7 Biome Lint                                              │"
+echo "│ 3/8 Biome Lint                                              │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if $FIX_MODE; then
     if pnpm --filter @dicee/web biome:fix; then
@@ -86,7 +86,7 @@ echo ""
 
 # 4. Tests
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 4/7 Test Suite                                              │"
+echo "│ 4/8 Test Suite                                              │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm test 2>/dev/null; then
     echo -e "${GREEN}✓ All tests passed${NC}"
@@ -109,7 +109,7 @@ echo ""
 
 # 5. Secrets Scan
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 5/7 Secrets Scan                                            │"
+echo "│ 5/8 Secrets Scan                                            │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if command -v infisical &> /dev/null; then
     if infisical scan --domain=https://infisical.jefahnierocks.com 2>/dev/null; then
@@ -124,7 +124,7 @@ echo ""
 
 # 6. Build Check
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 6/7 Build Check                                             │"
+echo "│ 6/8 Build Check                                             │"
 echo "└──────────────────────────────────────────────────────────────┘"
 if pnpm build 2>/dev/null; then
     echo -e "${GREEN}✓ Build succeeded${NC}"
@@ -136,7 +136,7 @@ echo ""
 
 # 7. AKG Diagram Staleness Check
 echo "┌──────────────────────────────────────────────────────────────┐"
-echo "│ 7/7 AKG Diagram Staleness                                   │"
+echo "│ 7/8 AKG Diagram Staleness                                   │"
 echo "└──────────────────────────────────────────────────────────────┘"
 DIAGRAM_OUTPUT=$(pnpm akg:mermaid --check 2>&1) || DIAGRAM_EXIT=$?
 if [ "${DIAGRAM_EXIT:-0}" -eq 0 ]; then
@@ -148,6 +148,26 @@ else
         echo -e "${RED}✗ AKG diagrams are stale - run 'pnpm akg:mermaid' to regenerate${NC}"
         FAILED=1
     fi
+fi
+echo ""
+
+# 8. Database Types Freshness Check
+echo "┌──────────────────────────────────────────────────────────────┐"
+echo "│ 8/8 Database Types Freshness                                │"
+echo "└──────────────────────────────────────────────────────────────┘"
+if command -v supabase &> /dev/null; then
+    # Regenerate types and check if they changed
+    pnpm db:types 2>/dev/null
+    if git diff --quiet packages/web/src/lib/types/database.ts 2>/dev/null; then
+        echo -e "${GREEN}✓ Database types are current${NC}"
+    else
+        echo -e "${YELLOW}⚠ Database types have changed - please commit the updated types${NC}"
+        git diff --stat packages/web/src/lib/types/database.ts 2>/dev/null || true
+        # Reset the file to not pollute the working directory
+        git checkout packages/web/src/lib/types/database.ts 2>/dev/null || true
+    fi
+else
+    echo -e "${YELLOW}⚠ Supabase CLI not installed, skipping database types check${NC}"
 fi
 echo ""
 
