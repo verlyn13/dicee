@@ -9,9 +9,9 @@
  */
 
 import { browser } from '$app/environment';
+import { roomService } from '$lib/services/roomService.svelte';
 import { auth } from '$lib/stores/auth.svelte';
 import { game } from '$lib/stores/game.svelte';
-import { getRoomStoreOptional } from '$lib/stores/room.svelte';
 
 export interface GameStateSnapshot {
 	// From game store (class-based singleton)
@@ -69,8 +69,8 @@ export interface FullStateSnapshot {
 }
 
 export function captureStateSnapshot(): FullStateSnapshot {
-	// Get room store from context if available
-	const roomStore = getRoomStoreOptional();
+	// Use roomService singleton directly (doesn't require Svelte context)
+	// This allows bug reports to be submitted from any context, not just component initialization
 
 	return {
 		game: {
@@ -90,10 +90,11 @@ export function captureStateSnapshot(): FullStateSnapshot {
 			categoriesRemaining: game.scorecard.categoriesRemaining,
 		},
 		connection: {
-			roomConnected: roomStore?.isConnected ?? false,
-			roomCode: roomStore?.roomCode ?? null,
-			isHost: roomStore?.isHost ?? false,
-			playerCount: roomStore?.playerCount ?? 0,
+			roomConnected: roomService.isConnected,
+			roomCode: roomService.roomCode,
+			isHost: roomService.room?.hostId === auth.userId,
+			playerCount:
+				(roomService.room?.players.length ?? 0) + (roomService.room?.aiPlayers?.length ?? 0),
 		},
 		ui: {
 			activeRoute: browser ? window.location.pathname : '',
