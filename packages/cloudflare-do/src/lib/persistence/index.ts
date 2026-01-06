@@ -27,6 +27,19 @@ export {
 // Services
 export { GamePersistenceService } from './game-persistence.service';
 
+// RPC Client
+export {
+	SupabaseRpcClient,
+	OperationResultSchema,
+	StatsUpdateResultSchema,
+	type OperationResult,
+	type StatsUpdateResult,
+	type PlayerRanking,
+	type GamePlayerInput,
+	type DomainEventInput,
+	type RpcResult,
+} from './supabase-rpc';
+
 // Queue
 export {
 	PersistenceQueue,
