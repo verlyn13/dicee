@@ -8,6 +8,25 @@
 import type { Category, DiceArray, KeptMask, Scorecard } from '../game';
 
 // ============================================================================
+// Speed Mode
+// ============================================================================
+
+/**
+ * Speed mode for AI gameplay.
+ * - 'normal': Standard timing (default, already ~40% faster than before)
+ * - 'fast': Additional 40% faster for snappy gameplay
+ */
+export type AISpeedMode = 'normal' | 'fast';
+
+/**
+ * Speed multipliers applied to base timing values.
+ */
+export const SPEED_MULTIPLIERS: Record<AISpeedMode, number> = {
+    normal: 1.0,
+    fast: 0.6, // 40% reduction
+};
+
+// ============================================================================
 // Brain Types
 // ============================================================================
 

@@ -17,7 +17,14 @@ import { TimeoutError, withTimeout } from '../lib/timeout';
 import type { AIBrain } from './brain';
 import { createBrain, initializeBrainFactory } from './brain';
 import { getProfile } from './profiles';
-import type { AIEvent, AIPlayerState, AIProfile, GameContext, TurnDecision } from './types';
+import type {
+    AIEvent,
+    AIPlayerState,
+    AIProfile,
+    AISpeedMode,
+    GameContext,
+    TurnDecision,
+} from './types';
 
 // ============================================================================
 // Types
@@ -56,17 +63,27 @@ export interface AIControllerConfig {
 
 	/** Whether to emit thinking events */
 	emitThinkingEvents: boolean;
+
+	/** Speed mode for timing adjustments */
+	speedMode?: AISpeedMode;
 }
 
 const DEFAULT_CONFIG: AIControllerConfig = {
-	minDelayMs: 500,
-	maxDelayMs: 10000,
+	minDelayMs: 300,      // was 500
+	maxDelayMs: 8000,     // was 10000
 	enableChat: true,
 	emitThinkingEvents: true,
+	speedMode: 'normal',
 };
 
 /** Timeout for brain.decide() - if exceeded, use fallback decision */
 const BRAIN_DECIDE_TIMEOUT_MS = 8000;
+
+// Speed multipliers (local fallback for safety)
+const SPEED_MULTIPLIERS_LOCAL: Record<AISpeedMode, number> = {
+	normal: 1.0,
+	fast: 0.6,
+};
 
 // ============================================================================
 // AI Controller
@@ -97,6 +114,13 @@ export class AIController {
 	constructor(config: Partial<AIControllerConfig> = {}) {
 		this.config = { ...DEFAULT_CONFIG, ...config };
 		this.logger = createLogger({ component: 'AIController' });
+	}
+
+	/**
+	 * Get the speed multiplier based on config.
+	 */
+	private getSpeedMultiplier(): number {
+		return SPEED_MULTIPLIERS_LOCAL[this.config.speedMode ?? 'normal'];
 	}
 
 	/**
@@ -273,8 +297,9 @@ export class AIController {
 				confidence: 1.0,
 			};
 
-			// Minimal think time for initial roll
-			const minThinkTime = Math.max(this.config.minDelayMs, 300);
+			// Minimal think time for initial roll with speed multiplier
+			const speedMultiplier = this.getSpeedMultiplier();
+			const minThinkTime = Math.max(this.config.minDelayMs, 200) * speedMultiplier;
 			if (this.config.emitThinkingEvents) {
 				emit({
 					type: 'ai_thinking',
@@ -296,11 +321,12 @@ export class AIController {
 			return rollDecision;
 		}
 
-		// Get thinking time estimate (only for valid dice scenarios)
-		const thinkTime = brain.estimateThinkingTime(context, playerState.profile);
+		// Get thinking time estimate with speed multiplier
+		const baseThinkTime = brain.estimateThinkingTime(context, playerState.profile);
+		const speedMultiplier = this.getSpeedMultiplier();
 		const clampedThinkTime = Math.max(
 			this.config.minDelayMs,
-			Math.min(this.config.maxDelayMs, thinkTime),
+			Math.min(this.config.maxDelayMs, baseThinkTime * speedMultiplier),
 		);
 
 		// Emit thinking event
@@ -333,6 +359,23 @@ export class AIController {
 			} else {
 				throw error;
 			}
+		}
+
+		// =====================================================================
+		// DEFENSIVE GUARDS: Validate decision before execution
+		// =====================================================================
+		if (decision.action === 'score' && !decision.category) {
+			this.logger.warn('Brain returned score without category, using fallback', {
+				playerId,
+			});
+			decision = this.createFallbackDecision(context);
+		}
+
+		if (decision.action === 'keep' && !decision.keepMask) {
+			this.logger.warn('Brain returned keep without mask, converting to roll', {
+				playerId,
+			});
+			decision = { action: 'roll', reasoning: 'Keep mask missing, rolling instead' };
 		}
 
 		// Execute the decision

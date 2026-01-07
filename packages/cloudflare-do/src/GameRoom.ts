@@ -4383,7 +4383,7 @@ export class GameRoom extends DurableObject<Env> {
 		await this.alarmQueue.schedule({
 			type: 'AI_TURN_TIMEOUT',
 			targetId: playerId,
-			scheduledFor: Date.now() + 15000,
+			scheduledFor: Date.now() + 20000,
 			metadata: { retryCount: 0 },
 		});
 
@@ -4399,7 +4399,7 @@ export class GameRoom extends DurableObject<Env> {
 		try {
 			// Small delay to ensure previous turn's finally block completes
 			// This is critical for AI-to-AI transitions
-			await new Promise((resolve) => setTimeout(resolve, 50));
+			await new Promise((resolve) => setTimeout(resolve, 150));
 
 			await this.aiManager.executeAITurn(
 				playerId,

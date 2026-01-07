@@ -22,7 +22,7 @@ import type { MultiplayerGameState, PlayerGameState } from '../game';
 import { type Logger, createLogger } from '../lib/logger';
 import { type AICommand, AIController } from './controller';
 import { getProfile } from './profiles';
-import type { AIEvent } from './types';
+import type { AIEvent, AISpeedMode } from './types';
 
 // ============================================================================
 // Types
@@ -51,15 +51,22 @@ export class AIRoomManager {
 	private turnInProgress = false;
 	private turnStartedAt: number | null = null;
 	private logger: Logger;
-	/** Maximum time (ms) an AI turn can take before we consider it stale */
-	private static readonly TURN_TIMEOUT_MS = 30000; // 30 seconds
+	/** Stale turn threshold - REDUCED from 30s to 20s */
+	private static readonly TURN_TIMEOUT_MS = 20000;
 
-	constructor() {
+	/** Max wait for previous turn - INCREASED from 2s to 3s */
+	private static readonly MAX_WAIT_MS = 3000;
+
+	/** Initial backoff interval */
+	private static readonly INITIAL_WAIT_MS = 50;
+
+	constructor(speedMode: AISpeedMode = 'normal') {
 		this.controller = new AIController({
-			minDelayMs: 800,
-			maxDelayMs: 8000,
+			minDelayMs: speedMode === 'fast' ? 200 : 300,
+			maxDelayMs: speedMode === 'fast' ? 5000 : 8000,
 			enableChat: true,
 			emitThinkingEvents: true,
+			speedMode,
 		});
 		this.logger = createLogger({ component: 'AIRoomManager' });
 	}
@@ -155,36 +162,46 @@ export class AIRoomManager {
 			this.turnStartedAt = null;
 		}
 
-		// Wait for any in-progress turn to complete (handles AI-to-AI transitions)
-		// This fixes a race condition where the previous AI's turn triggers the next
-		// AI's turn while still holding the turnInProgress flag
-		const MAX_WAIT_ATTEMPTS = 20;
-		const WAIT_INTERVAL_MS = 100;
+		// =====================================================================
+		// CRITICAL FIX: Exponential backoff with force-reset on timeout
+		// =====================================================================
+		let waitMs = AIRoomManager.INITIAL_WAIT_MS;
+		let totalWaited = 0;
 
-		for (let attempt = 0; attempt < MAX_WAIT_ATTEMPTS; attempt++) {
-			if (!this.turnInProgress) {
-				break;
-			}
-			await new Promise((resolve) => setTimeout(resolve, WAIT_INTERVAL_MS));
+		while (this.turnInProgress && totalWaited < AIRoomManager.MAX_WAIT_MS) {
+			await new Promise((resolve) => setTimeout(resolve, waitMs));
+			totalWaited += waitMs;
 
 			// Re-check staleness during wait
 			if (this.isTurnStale()) {
 				this.logger.warn('Turn became stale during wait, force resetting', {
 					operation: 'ai_turn_stale_wait',
 					playerId,
+					totalWaited,
 				});
 				this.turnInProgress = false;
 				this.turnStartedAt = null;
 				break;
 			}
+
+			// Exponential backoff: 50 → 100 → 200 → 400 → 500 (cap)
+			waitMs = Math.min(waitMs * 2, 500);
 		}
 
+		// =====================================================================
+		// CRITICAL FIX: Force reset instead of return
+		// Previous: `return;` here caused game to hang forever
+		// =====================================================================
 		if (this.turnInProgress) {
-			this.logger.error('Timeout waiting for previous turn, skipping player', {
-				operation: 'ai_turn_timeout',
+			this.logger.warn('Max wait exceeded, force resetting turn lock', {
+				operation: 'ai_turn_force_reset',
 				playerId,
+				totalWaited,
+				previousTurnStartedAt: this.turnStartedAt,
 			});
-			return;
+			this.turnInProgress = false;
+			this.turnStartedAt = null;
+			// CONTINUE - do NOT return!
 		}
 
 		this.turnInProgress = true;
@@ -203,6 +220,15 @@ export class AIRoomManager {
 
 			// Execute the turn with state getter
 			await this.controller.executeTurn(playerId, getGameState, executor, emitter);
+
+			// Telemetry
+			const turnDuration = Date.now() - (this.turnStartedAt ?? Date.now());
+			this.logger.info('AI turn completed', {
+				operation: 'ai_turn_complete',
+				playerId,
+				durationMs: turnDuration,
+				profileId: this.controller.getPlayerState(playerId)?.profile.id,
+			});
 		} catch (error) {
 			this.logger.error('Turn execution failed', {
 				operation: 'ai_turn_error',
@@ -230,6 +256,7 @@ export class AIRoomManager {
 		this.controller.dispose();
 		this.aiPlayers.clear();
 		this.turnInProgress = false;
+		this.turnStartedAt = null;
 	}
 
 	// ========================================================================
