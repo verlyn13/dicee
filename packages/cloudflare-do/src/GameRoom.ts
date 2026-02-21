@@ -2315,6 +2315,23 @@ export class GameRoom extends DurableObject<Env> {
 			const currentGameState = await this.gameStateManager.getState();
 			if (currentGameState && (roomState.status === 'playing' || roomState.status === 'starting')) {
 				await this.sendGameStateSync(ws, currentGameState, true);
+
+				// HIBERNATION RECOVERY: Check if it's AI's turn but no AI turn is in progress
+				// This can happen if DO hibernated after a human scored but before AI turn triggered
+				const currentPlayerId = currentGameState.playerOrder[currentGameState.currentPlayerIndex];
+				const currentPlayer = currentGameState.players[currentPlayerId];
+				if (currentPlayer?.type === 'ai') {
+					const aiTurnState = await this.ctx.storage.get('ai_turn_state');
+					if (!aiTurnState) {
+						this.logger.info('Detected stuck AI turn on reconnection, triggering recovery', {
+							operation: 'ai_stuck_recovery',
+							playerId: currentPlayerId,
+							aiProfileId: currentPlayer.aiProfileId,
+						});
+						// Use waitUntil to avoid blocking the reconnection flow
+						this.ctx.waitUntil(this.triggerAITurnIfNeeded(currentPlayerId));
+					}
+				}
 			}
 		} else if (isInitialCreation) {
 			// Host created the room - welcome is shown on the waiting room UI
@@ -3399,10 +3416,9 @@ export class GameRoom extends DurableObject<Env> {
 		});
 
 		// Schedule turn timeout if configured (only for human players, Phase 3: unified alarms)
-		if (
-			roomState.settings.turnTimeoutSeconds > 0 &&
-			!this.aiManager.isAIPlayer(startResult.currentPlayerId)
-		) {
+		// HIBERNATION-SAFE: Check game state, not in-memory AIRoomManager
+		const isFirstPlayerAI = gameState?.players[startResult.currentPlayerId]?.type === 'ai';
+		if (roomState.settings.turnTimeoutSeconds > 0 && !isFirstPlayerAI) {
 			await this.alarmQueue.schedule({
 				type: 'AFK_WARNING',
 				targetId: startResult.currentPlayerId,
@@ -4057,8 +4073,9 @@ export class GameRoom extends DurableObject<Env> {
 			this.kibitzVotes.clear();
 
 			// Schedule turn timeout for next player (only for human players, Phase 3: unified alarms)
+			// HIBERNATION-SAFE: Check game state, not in-memory AIRoomManager
 			const roomState = await this.ctx.storage.get<RoomState>('room');
-			const isNextPlayerAI = this.aiManager.isAIPlayer(result.nextPlayerId);
+			const isNextPlayerAI = await this.isPlayerAIFromGameState(result.nextPlayerId);
 			if (roomState?.settings.turnTimeoutSeconds && roomState.settings.turnTimeoutSeconds > 0) {
 				if (!isNextPlayerAI) {
 					await this.alarmQueue.schedule({
@@ -4337,8 +4354,9 @@ export class GameRoom extends DurableObject<Env> {
 					// Schedule turn timeout for next player (if human, Phase 3: unified alarms)
 					const roomState = await this.ctx.storage.get<RoomState>('room');
 					if (roomState?.settings.turnTimeoutSeconds && roomState.settings.turnTimeoutSeconds > 0) {
-						// Only schedule timeout for human players
-						if (!this.aiManager.isAIPlayer(result.nextPlayerId)) {
+						// Only schedule timeout for human players (HIBERNATION-SAFE: check game state)
+						const isNextAI = await this.isPlayerAIFromGameState(result.nextPlayerId);
+						if (!isNextAI) {
 							await this.alarmQueue.schedule({
 								type: 'AFK_WARNING',
 								targetId: result.nextPlayerId,
@@ -4361,10 +4379,40 @@ export class GameRoom extends DurableObject<Env> {
 	/**
 	 * Trigger AI turn execution if the given player is an AI.
 	 * HIBERNATION-SAFE: Persists AI turn state and schedules alarm for recovery.
+	 *
+	 * CRITICAL FIX: After hibernation, the AIRoomManager's in-memory Set is empty.
+	 * We must check the persisted game state and re-register AI players on-demand.
 	 */
 	private async triggerAITurnIfNeeded(playerId: string): Promise<void> {
-		if (!this.aiManager.isAIPlayer(playerId)) {
+		// HIBERNATION FIX: Check game state for AI players, not just in-memory Set
+		const gameState = await this.gameStateManager.getState();
+		if (!gameState) {
 			return;
+		}
+
+		const player = gameState.players[playerId];
+		if (!player || player.type !== 'ai') {
+			return;
+		}
+
+		// Re-register AI player if not already registered (survives hibernation)
+		if (!this.aiManager.isAIPlayer(playerId)) {
+			this.logger.info('Re-registering AI player after hibernation', {
+				operation: 'ai_rehydration',
+				playerId,
+				aiProfileId: player.aiProfileId,
+			});
+
+			if (player.aiProfileId) {
+				await this.aiManager.initialize();
+				await this.aiManager.addAIPlayer(playerId, player.aiProfileId);
+			} else {
+				this.logger.error('AI player missing profileId', {
+					operation: 'ai_rehydration_failed',
+					playerId,
+				});
+				return;
+			}
 		}
 
 		// AI turn scheduled (logged via state transition)
@@ -4425,6 +4473,17 @@ export class GameRoom extends DurableObject<Env> {
 			this.instr?.errorHandlerFailed('executeAITurnWithRecovery', error);
 			// Let the alarm handler retry if needed
 		}
+	}
+
+	/**
+	 * Check if a player is an AI from persisted game state.
+	 * HIBERNATION-SAFE: Checks game state, not in-memory AIRoomManager.
+	 */
+	private async isPlayerAIFromGameState(playerId: string): Promise<boolean> {
+		const gameState = await this.gameStateManager.getState();
+		if (!gameState) return false;
+		const player = gameState.players[playerId];
+		return player?.type === 'ai';
 	}
 
 	/**
