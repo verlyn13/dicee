@@ -48,7 +48,7 @@
     "prepare": "lefthook install || echo 'lefthook not installed'"
   },
   "devDependencies": {
-    "@modelcontextprotocol/server-memory": "^2025.11.25",
+    "@modelcontextprotocol/server-memory": "^2026.1.26",
     "lefthook": "^1.10.10",
     "wasm-pack": "^0.13.1"
   },
