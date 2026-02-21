@@ -29,29 +29,61 @@
         "AKG_PROJECT_ROOT": "${workspaceFolder}"
       }
     },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:CONTEXT7_API_KEY}"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${env:GITHUB_TOKEN}"
+      }
+    },
     "cloudflare-docs": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://docs.mcp.cloudflare.com/mcp"]
+      "args": ["-y", "mcp-remote", "https://docs.mcp.cloudflare.com/mcp", "--header", "Authorization:${CF_BEARER_TOKEN}"],
+      "env": {
+        "CF_BEARER_TOKEN": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
     },
     "cloudflare-bindings": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://bindings.mcp.cloudflare.com/mcp"]
+      "args": ["-y", "mcp-remote", "https://bindings.mcp.cloudflare.com/mcp", "--header", "Authorization:${CF_BEARER_TOKEN}"],
+      "env": {
+        "CF_BEARER_TOKEN": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
     },
     "cloudflare-observability": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://observability.mcp.cloudflare.com/mcp"]
+      "args": ["-y", "mcp-remote", "https://observability.mcp.cloudflare.com/mcp", "--header", "Authorization:${CF_BEARER_TOKEN}"],
+      "env": {
+        "CF_BEARER_TOKEN": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
     },
     "cloudflare-builds": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://builds.mcp.cloudflare.com/mcp"]
+      "args": ["-y", "mcp-remote", "https://builds.mcp.cloudflare.com/mcp", "--header", "Authorization:${CF_BEARER_TOKEN}"],
+      "env": {
+        "CF_BEARER_TOKEN": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
     },
     "cloudflare-logpush": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://logs.mcp.cloudflare.com/mcp"]
+      "args": ["-y", "mcp-remote", "https://logs.mcp.cloudflare.com/mcp", "--header", "Authorization:${CF_BEARER_TOKEN}"],
+      "env": {
+        "CF_BEARER_TOKEN": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
     },
     "cloudflare-graphql": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://graphql.mcp.cloudflare.com/mcp"]
+      "args": ["-y", "mcp-remote", "https://graphql.mcp.cloudflare.com/mcp", "--header", "Authorization:${CF_BEARER_TOKEN}"],
+      "env": {
+        "CF_BEARER_TOKEN": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
     }
   }
 }
