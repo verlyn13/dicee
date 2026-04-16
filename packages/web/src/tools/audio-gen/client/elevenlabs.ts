@@ -203,7 +203,7 @@ export function createClientFromEnv(options: ClientOptions = {}): ElevenLabsClie
 	if (!apiKey) {
 		throw new Error(
 			'ELEVENLABS_API_KEY environment variable is not set.\n' +
-				'Set it via: export ELEVENLABS_API_KEY=$(gopass show -o dicee/elevenlabs/api-key)',
+				'Run the command through ./scripts/with-dicee-elevenlabs-local.sh -- <command>.',
 		);
 	}
 

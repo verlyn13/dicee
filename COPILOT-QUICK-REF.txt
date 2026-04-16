@@ -52,14 +52,14 @@
 ┌─ ENVIRONMENT ──────────────────────────────────────────────────────────────┐
 │                                                                              │
 │  ./scripts/copilot-mcp-wrapper.sh check-env                                 │
-│    → Verify CLOUDFLARE_API_TOKEN, SUPABASE_MCP_TOKEN, DICEE_ENV             │
+│    → Verify 1Password bootstrap readiness and DICEE_ENV                     │
 │                                                                              │
 │  ./scripts/copilot-mcp-wrapper.sh status                                    │
 │    → Project status (git, phase, services, recent deployments)              │
 │                                                                              │
 │  Load credentials before deployment:                                        │
-│    dicee-cf                  # Cloudflare                                   │
-│    dicee-env dev             # Infisical                                    │
+│    ./scripts/check-1password-setup.sh                                       │
+│    ./scripts/with-dicee-cloudflare.sh -- wrangler whoami                    │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 

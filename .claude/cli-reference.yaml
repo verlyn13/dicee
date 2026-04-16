@@ -1332,8 +1332,8 @@ workflows:
       steps:
         - "wrangler login                                  # Browser-based OAuth login"
         - "wrangler whoami                                 # Verify authentication"
-        - "# Or use API token from gopass:"
-        - "export CLOUDFLARE_API_TOKEN=$(gopass show -o dicee/cloudflare/api-token)"
+        - "# Or use the Dicee Cloudflare wrapper:"
+        - "./scripts/with-dicee-cloudflare.sh -- wrangler whoami"
 
     project_init:
       description: "Initialize a new Worker project"
@@ -1495,91 +1495,31 @@ workflows:
         - "# Use Client::builder().base_url(\"https://infisical.jefahnierocks.com\")"
         - "# Project ID: b15c7b9c-4e1f-447a-a326-4c382b6db706"
 
-  gopass:
-    credential_retrieval:
-      description: "Retrieve credentials from gopass"
+  onepassword_local_bootstrap:
+    readiness_check:
+      description: "Validate 1Password access for Dicee local bootstrap"
       steps:
-        - "gopass show -o dicee/infisical/dev/client-id      # Get single value (no newline)"
-        - "gopass show dicee/infisical/dev/client-id         # Show with metadata"
-        - "gopass ls dicee                                    # List all dicee credentials"
-        - "gopass ls dicee/infisical                          # List Infisical credentials"
+        - "./scripts/check-1password-setup.sh"
 
-    environment_setup:
-      description: "Load credentials into environment"
+    infisical_wrapper:
+      description: "Run a command with Infisical universal-auth credentials"
       steps:
-        - "dicee-env dev                                      # Fish: load dev credentials"
-        - "dicee-env staging                                  # Fish: load staging credentials"
-        - "dicee-env prod                                     # Fish: load prod credentials"
-        - "dicee-env --clear                                  # Fish: clear credentials"
+        - "./scripts/with-dicee-infisical-auth.sh dev -- <command>"
+        - "./scripts/with-dicee-infisical-auth.sh staging -- <command>"
+        - "./scripts/with-dicee-infisical-auth.sh prod -- <command>"
 
-    infisical_auth_with_gopass:
-      description: "Authenticate Infisical CLI using gopass credentials"
+    cloudflare_wrapper:
+      description: "Run a Cloudflare operator command with 1Password-backed auth"
       steps:
-        - "# Load credentials and login:"
-        - "infisical login --method=universal-auth \\"
-        - "  --client-id=$(gopass show -o dicee/infisical/dev/client-id) \\"
-        - "  --client-secret=$(gopass show -o dicee/infisical/dev/client-secret) \\"
-        - "  --domain=$(gopass show -o dicee/infisical/instance-url)"
+        - "./scripts/with-dicee-cloudflare.sh -- wrangler whoami"
+        - "./scripts/with-dicee-cloudflare.sh -- wrangler deploy"
 
-    export_for_ci:
-      description: "Export credentials for CI/CD use"
+    supabase_mcp_wrapper:
+      description: "Launch a process with the Dicee Supabase MCP token"
       steps:
-        - "# Bash export:"
-        - "export INFISICAL_CLIENT_ID=$(gopass show -o dicee/infisical/prod/client-id)"
-        - "export INFISICAL_CLIENT_SECRET=$(gopass show -o dicee/infisical/prod/client-secret)"
-        - "export INFISICAL_API_URL=$(gopass show -o dicee/infisical/instance-url)"
+        - "./scripts/with-dicee-supabase-mcp.sh -- <command>"
 
-# ============================================================================
-# GOPASS CREDENTIAL STRUCTURE
-# ============================================================================
-
-gopass_structure:
-  description: "Local credential storage for dicee project services"
-  root: "dicee"
-
-  infisical:
-    shared:
-      instance_url: "dicee/infisical/instance-url"
-      project_id: "dicee/infisical/project-id"
-      project_slug: "dicee/infisical/project-slug"
-      org_name: "dicee/infisical/org-name"
-
-    environments:
-      dev:
-        identity_name: "dicee/infisical/dev/identity-name"
-        identity_id: "dicee/infisical/dev/identity-id"
-        client_id: "dicee/infisical/dev/client-id"
-        client_secret: "dicee/infisical/dev/client-secret"
-
-      staging:
-        identity_name: "dicee/infisical/staging/identity-name"
-        identity_id: "dicee/infisical/staging/identity-id"
-        client_id: "dicee/infisical/staging/client-id"
-        client_secret: "dicee/infisical/staging/client-secret"
-
-      prod:
-        identity_name: "dicee/infisical/prod/identity-name"
-        identity_id: "dicee/infisical/prod/identity-id"
-        client_id: "dicee/infisical/prod/client-id"
-        client_secret: "dicee/infisical/prod/client-secret"
-
-  github:
-    pat: "dicee/github/pat"
-    pat_name: "dicee/github/pat-name"
-    pat_expiry: "dicee/github/pat-expiry"
-
-  cloudflare:
-    config:
-      account_id: "dicee/cloudflare/account-id"
-      zone_id: "dicee/cloudflare/zone-id"
-      domain: "dicee/cloudflare/domain"
-      subdomain: "dicee/cloudflare/subdomain"
-    api_tokens:
-      api_token: "dicee/cloudflare/api-token"
-      token_name: "dicee/cloudflare/api-token-name"
-      token_expiry: "dicee/cloudflare/api-token-expiry"
-
-  # Reserved for future services
-  supabase: "dicee/supabase/"
-  # vercel: deprecated - now using Cloudflare Pages (no gopass needed)
-  # partykit: deprecated - now using Cloudflare Workers/DOs (via cloudflare/ path)
+local_bootstrap_metadata:
+  description: "Repo-owned non-secret metadata for Dicee operator flows"
+  bootstrap_contract: ".claude/local-secret-bootstrap.yaml"
+  repo_metadata_file: "scripts/lib/dicee-operator-metadata.sh"

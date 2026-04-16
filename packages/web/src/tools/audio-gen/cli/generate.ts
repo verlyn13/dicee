@@ -19,7 +19,8 @@
  *   --status           Show generation status from manifest
  *
  * Environment:
- *   ELEVENLABS_API_KEY  Required. Get from gopass: gopass show -o dicee/elevenlabs/api-key
+ *   ELEVENLABS_API_KEY  Required. Prefer:
+ *                       ./scripts/with-dicee-elevenlabs-local.sh -- bun run packages/web/src/tools/audio-gen/cli/generate.ts ...
  *
  * @see docs/references/audio-plan.md
  */
@@ -300,8 +301,8 @@ Options:
   --help             Show this help message
 
 Environment:
-  ELEVENLABS_API_KEY  Required for generation. Set via:
-    export ELEVENLABS_API_KEY=$(gopass show -o dicee/elevenlabs/api-key)
+  ELEVENLABS_API_KEY  Required for generation. Prefer:
+    ./scripts/with-dicee-elevenlabs-local.sh -- bun run packages/web/src/tools/audio-gen/cli/generate.ts ...
 
 Examples:
   # List all assets

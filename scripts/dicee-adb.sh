@@ -4,7 +4,7 @@
 #
 # Installation:
 #   chmod +x scripts/dicee-adb.sh
-#   # Add to ~/.zshrc or ~/.bashrc:
+#   # Optional: create a shell alias manually if you want a short command name
 #   alias dicee-adb="/path/to/dicee/scripts/dicee-adb.sh"
 #
 # Or add to PATH:
