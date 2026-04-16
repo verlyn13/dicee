@@ -71,6 +71,13 @@ const AI_PROFILES: AIProfile[] = [
 		skillLevel: 0.7,
 	},
 	{
+		id: 'sage',
+		name: 'Sage',
+		avatarSeed: 'sage-adaptive-dice',
+		tagline: 'Adapt, overcome, conquer.',
+		skillLevel: 0.85,
+	},
+	{
 		id: 'professor',
 		name: 'Professor',
 		avatarSeed: 'professor-expert-dice',
@@ -151,9 +158,6 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 		</span>
 	</div>
 
-	<div class="carousel-hint" aria-hidden="true">
-		← Scroll to see all AI opponents →
-	</div>
 
 	<div class="ai-selector__grid">
 		{#each AI_PROFILES as profile (profile.id)}
@@ -178,7 +182,7 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 				</div>
 
 				<div class="ai-card__avatar">
-					<Avatar seed={profile.avatarSeed} size="lg" alt={profile.name} />
+					<Avatar seed={profile.avatarSeed} size="md" alt={profile.name} />
 					<span class="ai-card__robot-badge" aria-label="AI Player">🤖</span>
 				</div>
 
@@ -238,20 +242,10 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 	}
 
 	.ai-selector__grid {
-		display: flex;
-		gap: var(--spacing-md);
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		scroll-behavior: smooth;
-		padding-bottom: var(--spacing-sm);
-
-		/* Hide scrollbar, keep functionality */
-		scrollbar-width: none;
-		-ms-overflow-style: none;
-	}
-
-	.ai-selector__grid::-webkit-scrollbar {
-		display: none;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--spacing-sm);
+		padding: var(--spacing-xs);
 	}
 
 	.ai-selector__hint {
@@ -261,13 +255,6 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 		text-align: center;
 	}
 
-	.carousel-hint {
-		text-align: center;
-		font-size: var(--font-size-sm);
-		color: var(--color-text-muted);
-		margin-bottom: var(--spacing-sm);
-		font-style: italic;
-	}
 
 	.ai-card {
 		/* Reset button styles */
@@ -276,22 +263,19 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 		background: none;
 		font: inherit;
 		cursor: pointer;
-		text-align: left;
+		text-align: center;
 
 		/* Card styling */
 		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: var(--spacing-sm);
-		padding: var(--spacing-md);
-		padding-top: calc(var(--spacing-md) + 8px);
+		gap: var(--spacing-xs);
+		padding: var(--spacing-sm);
+		padding-top: calc(var(--spacing-sm) + 4px);
 
-		/* Fixed width for carousel */
-		min-width: 180px;
-		max-width: 180px;
-		flex-shrink: 0;
-		scroll-snap-align: start;
+		/* Grid-friendly sizing */
+		min-height: 160px;
 
 		/* Neo-Brutalist */
 		background: var(--color-surface);
@@ -304,7 +288,7 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 
 	.ai-card:hover:not(.ai-card--disabled) {
 		transform: translate(-2px, -2px);
-		box-shadow: 4px 4px 0 var(--color-border);
+		box-shadow: 3px 3px 0 var(--color-border);
 	}
 
 	.ai-card:active:not(.ai-card--disabled) {
@@ -332,16 +316,16 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 	/* Selection checkbox indicator */
 	.ai-card__check {
 		position: absolute;
-		top: 8px;
-		right: 8px;
-		width: 24px;
-		height: 24px;
+		top: 6px;
+		right: 6px;
+		width: 20px;
+		height: 20px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		background: var(--color-surface);
 		border: 2px solid var(--color-border);
-		font-size: 14px;
+		font-size: 12px;
 		font-weight: bold;
 	}
 
@@ -360,12 +344,12 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 
 	.ai-card__robot-badge {
 		position: absolute;
-		bottom: -4px;
-		right: -4px;
-		font-size: 1.25rem;
+		bottom: -2px;
+		right: -2px;
+		font-size: 1rem;
 		background: var(--color-surface);
 		border: var(--border-thin);
-		padding: 2px 4px;
+		padding: 1px 3px;
 		line-height: 1;
 	}
 
@@ -378,21 +362,28 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 	}
 
 	.ai-card__name {
-		font-size: var(--font-size-md);
+		font-size: var(--font-size-sm);
 		font-weight: var(--font-weight-bold);
 	}
 
 	.ai-card__tagline {
-		font-size: var(--font-size-sm);
+		font-size: var(--font-size-xs);
 		color: var(--color-text-muted);
 		font-style: italic;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		line-height: 1.3;
 	}
 
 	.ai-card__difficulty {
 		width: 100%;
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacing-xs);
+		gap: 2px;
+		margin-top: auto;
 	}
 
 	.difficulty__label {
@@ -404,7 +395,7 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 	}
 
 	.difficulty__bar {
-		height: 6px;
+		height: 4px;
 		background: var(--color-surface-alt);
 		border: 1px solid var(--color-border);
 		overflow: hidden;
@@ -466,18 +457,70 @@ function handleKeydown(event: KeyboardEvent, profileId: string) {
 	/* Responsive */
 	@media (max-width: 480px) {
 		.ai-card {
-			padding: var(--spacing-sm);
-			padding-top: calc(var(--spacing-sm) + 8px);
-			min-width: 160px;
-			max-width: 160px;
+			padding: var(--spacing-xs);
+			padding-top: calc(var(--spacing-xs) + 2px);
+			min-height: 140px;
+		}
+
+		.ai-card__name {
+			font-size: var(--font-size-xs);
 		}
 
 		.ai-card__tagline {
-			display: none;
+			-webkit-line-clamp: 1;
+			line-clamp: 1;
+			font-size: 10px;
+		}
+	}
+
+	/* =========================================================================
+	 * Responsive breakpoints
+	 * ========================================================================= */
+
+	/* Mobile: 2 columns (default above) */
+
+	/* Tablet: 3 columns */
+	@media (min-width: 540px) {
+		.ai-selector__grid {
+			grid-template-columns: repeat(3, 1fr);
+			gap: var(--spacing-md);
 		}
 
-		.carousel-hint {
-			font-size: var(--font-size-xs);
+		.ai-card {
+			padding: var(--spacing-sm);
+			min-height: 170px;
+		}
+
+		.ai-card__name {
+			font-size: var(--font-size-md);
+		}
+	}
+
+	/* Desktop: 6 columns (all visible in one row) */
+	@media (min-width: 900px) {
+		.ai-selector__grid {
+			grid-template-columns: repeat(6, 1fr);
+		}
+
+		.ai-card {
+			min-height: 180px;
+		}
+	}
+
+	/* Large desktop: slightly larger cards */
+	@media (min-width: 1200px) {
+		.ai-selector__grid {
+			gap: var(--spacing-lg);
+		}
+
+		.ai-card {
+			padding: var(--spacing-md);
+			min-height: 200px;
+		}
+
+		.ai-card__tagline {
+			-webkit-line-clamp: 3;
+			line-clamp: 3;
 		}
 	}
 </style>

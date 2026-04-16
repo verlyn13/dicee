@@ -4,10 +4,10 @@
       "type": "local",
       "command": "node",
       "args": [
-        "./node_modules/@modelcontextprotocol/server-memory/dist/index.js"
+        "/absolute/path/to/dicee/node_modules/@modelcontextprotocol/server-memory/dist/index.js"
       ],
       "env": {
-        "MEMORY_FILE_PATH": "/Users/verlyn13/Development/personal/dicee/.claude/state/memory.jsonl"
+        "MEMORY_FILE_PATH": "/absolute/path/to/dicee/.claude/state/memory.jsonl"
       },
       "description": "Dicee project knowledge graph for persistent state",
       "tools": ["*"]
@@ -17,11 +17,11 @@
       "command": "bun",
       "args": [
         "run",
-        "./packages/web/src/tools/akg/mcp/server.ts"
+        "/absolute/path/to/dicee/packages/web/src/tools/akg/mcp/server.ts"
       ],
       "env": {
-        "AKG_GRAPH_PATH": "./docs/architecture/akg/graph/current.json",
-        "AKG_DIAGRAMS_PATH": "./docs/architecture/akg/diagrams"
+        "AKG_GRAPH_PATH": "/absolute/path/to/dicee/docs/architecture/akg/graph/current.json",
+        "AKG_DIAGRAMS_PATH": "/absolute/path/to/dicee/docs/architecture/akg/diagrams"
       },
       "description": "Dicee Architecture Knowledge Graph for layer validation and invariants",
       "tools": ["*"]

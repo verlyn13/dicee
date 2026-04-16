@@ -11,8 +11,7 @@
       "Bash(mise:*)",
       "Bash(supabase:*)",
       "Bash(wrangler:*)",
-      "Bash(infisical:*)",
-      "Bash(gopass:*)"
+      "Bash(infisical:*)"
     ]
   },
   "hooks": {

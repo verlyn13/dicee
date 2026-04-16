@@ -164,18 +164,14 @@ impl TurnAnalysis {
     /// Returns the category values sorted by expected value (descending).
     pub fn sorted_by_ev(&self) -> Vec<&CategoryValue> {
         let mut sorted: Vec<_> = self.category_values.iter().collect();
-        sorted.sort_by(|a, b| {
-            b.expected_value
-                .partial_cmp(&a.expected_value)
-                .unwrap_or(std::cmp::Ordering::Equal)
-        });
+        sorted.sort_by(|a, b| b.expected_value.total_cmp(&a.expected_value));
         sorted
     }
 
     /// Returns the category values sorted by immediate score (descending).
     pub fn sorted_by_immediate(&self) -> Vec<&CategoryValue> {
         let mut sorted: Vec<_> = self.category_values.iter().collect();
-        sorted.sort_by(|a, b| b.immediate_score.cmp(&a.immediate_score));
+        sorted.sort_by_key(|value| std::cmp::Reverse(value.immediate_score));
         sorted
     }
 

@@ -3,6 +3,7 @@
 
 [tools]
 node = "24"
+pnpm = "10"
 # Rust: mise delegates to rustup via RUSTUP_TOOLCHAIN=stable
 # Do NOT install Rust via Homebrew - it conflicts with wasm32 target
 # See packages/engine/rust-toolchain.toml for explicit target config

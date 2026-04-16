@@ -10,6 +10,10 @@ cd "$PROJECT_ROOT"
 # Parse command from MCP request
 COMMAND="${1:-help}"
 
+run_with_cloudflare() {
+  "$PROJECT_ROOT/scripts/with-dicee-cloudflare.sh" -- "$@"
+}
+
 case "$COMMAND" in
   quality-gate)
     exec ./scripts/quality-gate.sh "${@:2}"
@@ -38,11 +42,11 @@ case "$COMMAND" in
     # 4. Check Cloudflare Workers status
     echo "🌐 Checking Cloudflare Workers..."
     cd packages/cloudflare-do
-    if ! wrangler whoami &>/dev/null; then
+    if ! run_with_cloudflare wrangler whoami &>/dev/null; then
       echo "❌ Not authenticated with Cloudflare"
       exit 1
     fi
-    wrangler whoami
+    run_with_cloudflare wrangler whoami
     cd "$PROJECT_ROOT"
     
     echo "✅ All pre-deployment checks passed"
@@ -97,14 +101,14 @@ case "$COMMAND" in
   deploy-do)
     echo "🚀 Deploying Durable Objects worker..."
     cd packages/cloudflare-do
-    wrangler deploy
+    run_with_cloudflare wrangler deploy
     echo "✅ Deployed to dicee.games"
     ;;
     
   deploy-pages)
     echo "🚀 Deploying Pages..."
     pnpm build
-    pnpm --filter @dicee/web pages:deploy
+    run_with_cloudflare pnpm --filter @dicee/web pages:deploy
     echo "✅ Pages deployed"
     ;;
     
@@ -126,35 +130,27 @@ case "$COMMAND" in
   tail-logs)
     echo "📜 Tailing Cloudflare Worker logs..."
     cd packages/cloudflare-do
-    wrangler tail dicee
+    run_with_cloudflare wrangler tail dicee
     ;;
     
   check-env)
     echo "🔐 Checking environment configuration..."
-    
-    # Check Cloudflare credentials
-    if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
-      echo "⚠️  CLOUDFLARE_API_TOKEN not set"
-      echo "   Run: dicee-cf"
+
+    if "$PROJECT_ROOT/scripts/check-1password-setup.sh" --quiet; then
+      echo "✓ 1Password bootstrap contract is available"
     else
-      echo "✓ CLOUDFLARE_API_TOKEN set"
+      echo "⚠️  1Password bootstrap contract is not ready"
     fi
-    
-    # Check Supabase MCP token
-    if [[ -z "${SUPABASE_MCP_TOKEN:-}" ]]; then
-      echo "⚠️  SUPABASE_MCP_TOKEN not set"
-      echo "   Run: export SUPABASE_MCP_TOKEN=\$(gopass show -o dicee/supabase/mcp-token)"
-    else
-      echo "✓ SUPABASE_MCP_TOKEN set"
-    fi
-    
-    # Check Infisical
-    if [[ -z "${DICEE_ENV:-}" ]]; then
-      echo "⚠️  DICEE_ENV not set"
-      echo "   Run: dicee-env dev"
-    else
+
+    if [[ -n "${DICEE_ENV:-}" ]]; then
       echo "✓ DICEE_ENV=$DICEE_ENV"
+    else
+      echo "⚠️  DICEE_ENV not set"
+      echo "   Non-secret repo state is usually loaded by direnv"
     fi
+
+    echo "ℹ️  Supabase and Cloudflare MCP auth are resolved at process launch via repo wrappers"
+    echo "ℹ️  GitHub and Context7 auth are expected from your global tool baseline"
     ;;
     
   status)
@@ -184,7 +180,7 @@ case "$COMMAND" in
     echo ""
     echo "🚀 Recent DO Deployments:"
     cd packages/cloudflare-do
-    wrangler deployments list --name dicee 2>/dev/null | head -6 || echo "  Not authenticated"
+    run_with_cloudflare wrangler deployments list --name dicee 2>/dev/null | head -6 || echo "  Not authenticated"
     cd "$PROJECT_ROOT"
     ;;
     

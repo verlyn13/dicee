@@ -83,7 +83,8 @@ export const SOUND_BANK: Record<SoundId, SoundConfig> = {
 
 	// Scoring (range-based feedback per audio-plan.md Section 4)
 	// 0 points → scoreZero, 1-15 → scoreNegative, 16-29 → scorePositive, 30+ → scoreGood
-	scoreZero: { src: '/audio/sfx/score/score_zero.ogg', category: 'score', volume: 0.35 },
+	// Note: scoreZero uses score_negative.ogg, scoreGood uses score_positive.ogg (fallbacks)
+	scoreZero: { src: '/audio/sfx/score/score_negative.ogg', category: 'score', volume: 0.35 },
 	scoreNegative: { src: '/audio/sfx/score/score_negative.ogg', category: 'score', volume: 0.4 },
 	scorePositive: {
 		src: '/audio/sfx/score/score_positive.ogg',
@@ -91,7 +92,7 @@ export const SOUND_BANK: Record<SoundId, SoundConfig> = {
 		volume: 0.4,
 		preload: true,
 	},
-	scoreGood: { src: '/audio/sfx/score/score_good.ogg', category: 'score', volume: 0.5 },
+	scoreGood: { src: '/audio/sfx/score/score_positive.ogg', category: 'score', volume: 0.5 },
 	bonusAchieved: { src: '/audio/sfx/score/upper_bonus.ogg', category: 'score', volume: 0.6 },
 	dicee: { src: '/audio/sfx/score/dicee_fanfare.ogg', category: 'score', volume: 0.8 },
 

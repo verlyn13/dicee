@@ -16,7 +16,7 @@
 | 2 | Dual Alarm Queue Conflict | CRITICAL | ✅ Resolved | 7dd15af |
 | 3 | eventSequence Not Persisted | CRITICAL | ✅ Resolved | 7dd15af |
 | 4 | Incomplete Domain Event Coverage | HIGH | ✅ Resolved | 7dd15af |
-| 5 | Type Safety Lost in Queue Payload | HIGH | 🔄 In Progress | Phase 4 RPC |
+| 5 | Type Safety Lost in Queue Payload | HIGH | ✅ Resolved | Phase 4 RPC |
 | 6 | Scorecard Not Persisted | HIGH | ✅ Resolved | 7dd15af |
 | 7 | AI Player Tracking Hardcoded | HIGH | ✅ Resolved | 7dd15af |
 | 8 | No Idempotency Protection | MEDIUM | ✅ Resolved | Phase 4 RPC |
@@ -25,37 +25,42 @@
 | 11 | Tight Coupling | LOW | ✅ Resolved | Phase 4 RPC |
 | 12 | Missing Migration System | LOW | ✅ Resolved | Phase 4 RPC |
 
-**Progress**: 10/12 issues resolved, 1 in progress (Phase 4 integration), 1 pending
+**Progress**: 11/12 issues resolved, 1 pending (error handling - P2 improvement)
 
-### Phase 4: RPC-Based Persistence (In Progress)
+### Phase 4: RPC-Based Persistence ✅ COMPLETE
 
 Created atomic PostgreSQL RPC functions that provide:
 - **Transaction atomicity** - All operations succeed or all rollback
-- **Idempotency** - Safe to retry on failure (duplicate detection)
+- **Idempotency** - Safe to retry on failure (duplicate detection via ON CONFLICT)
 - **Type safety** - Zod schemas validate inputs, SQL validates data
 
 **Migration files** (`supabase/migrations/20260105*`):
-| Function | Purpose | Atomicity |
-|----------|---------|-----------|
-| `create_game_atomic` | Create game + players | Full transaction |
-| `complete_game_atomic` | Complete game + update players | Full transaction |
-| `persist_domain_events` | Bulk insert events | Full transaction + idempotent |
-| `abandon_game_atomic` | Mark game abandoned | Full transaction |
-| `aggregate_game_stats` | Update player stats | Per-player upserts |
+| Function | Purpose | Atomicity | Idempotency |
+|----------|---------|-----------|-------------|
+| `create_game_atomic` | Create game + players | Full transaction | ON CONFLICT DO NOTHING |
+| `complete_game_atomic` | Complete game + update players | Full transaction | Status check |
+| `persist_domain_events` | Bulk insert events | Full transaction | ON CONFLICT DO NOTHING |
+| `abandon_game_atomic` | Mark game abandoned | Full transaction | Status check |
+| `aggregate_game_stats` | Update player stats | Per-player upserts | INSERT ON CONFLICT UPDATE |
 
 **TypeScript client**: `packages/cloudflare-do/src/lib/persistence/supabase-rpc.ts`
+- Type-safe `SupabaseRpcClient` with discriminated union results (`RpcResult<T>`)
+- Full JSDoc documentation and usage examples
+- Proper error categorization (retriable vs non-retriable)
 
-**Remaining work**: Integrate RPC client into GameRoom persistence flow.
+**Integration**: `PersistenceQueue` uses `SupabaseRpcClient` for all database operations.
+
+**Test file**: `supabase/tests/rpc_functions.sql` - Tests atomicity and idempotency.
 
 ---
 
 ## Executive Summary
 
-The persistence layer implementation has several **structural weaknesses** that, while functional for testing, will cause problems at scale. This analysis identifies 12 architectural issues ranked by severity, with concrete recommendations for each.
+The persistence layer implementation has been **significantly strengthened** with atomic RPC functions, idempotency protection, and type-safe clients. Of 12 originally identified issues, **11 are now resolved**.
 
 **Critical Issues**: 3 → **0 remaining** ✅
-**High Severity**: 4 → **1 remaining** (Phase 4 integration)
-**Medium Severity**: 3 → **1 remaining**
+**High Severity**: 4 → **0 remaining** ✅
+**Medium Severity**: 3 → **1 remaining** (error handling - P2 improvement)
 **Low Severity**: 2 → **0 remaining** ✅
 
 ---

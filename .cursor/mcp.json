@@ -11,11 +11,10 @@
       }
     },
     "supabase": {
-      "type": "http",
-      "url": "https://mcp.supabase.com/mcp?project_ref=duhsbuyxyppgbkwbbtqg&read_only=false&features=database,docs,functions",
-      "headers": {
-        "Authorization": "Bearer ${env:SUPABASE_MCP_TOKEN}"
-      }
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/scripts/mcp-wrappers/supabase-wrapper.sh"
+      ]
     },
     "akg": {
       "command": "bun",
@@ -30,28 +29,46 @@
       }
     },
     "cloudflare-docs": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://docs.mcp.cloudflare.com/mcp"]
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/scripts/mcp-wrappers/cloudflare-wrapper.sh",
+        "docs"
+      ]
     },
     "cloudflare-bindings": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://bindings.mcp.cloudflare.com/mcp"]
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/scripts/mcp-wrappers/cloudflare-wrapper.sh",
+        "bindings"
+      ]
     },
     "cloudflare-observability": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://observability.mcp.cloudflare.com/mcp"]
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/scripts/mcp-wrappers/cloudflare-wrapper.sh",
+        "observability"
+      ]
     },
     "cloudflare-builds": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://builds.mcp.cloudflare.com/mcp"]
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/scripts/mcp-wrappers/cloudflare-wrapper.sh",
+        "builds"
+      ]
     },
     "cloudflare-logpush": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://logs.mcp.cloudflare.com/mcp"]
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/scripts/mcp-wrappers/cloudflare-wrapper.sh",
+        "logpush"
+      ]
     },
     "cloudflare-graphql": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://graphql.mcp.cloudflare.com/mcp"]
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/scripts/mcp-wrappers/cloudflare-wrapper.sh",
+        "graphql"
+      ]
     }
   }
 }

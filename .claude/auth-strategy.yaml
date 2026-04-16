@@ -24,8 +24,8 @@ supabase_auth:
 
     google:
       enabled: true
-      client_id: "gopass:dicee/google/oauth-client-id"
-      client_secret: "gopass:dicee/google/oauth-client-secret"
+      client_id: "infisical:GOOGLE_OAUTH_CLIENT_ID"
+      client_secret: "infisical:GOOGLE_OAUTH_CLIENT_SECRET"
       skip_nonce_checks: false      # Keep secure
       allow_users_without_email: false
 
@@ -355,7 +355,7 @@ checklist:
     - "[x] Add authorized domains"
     - "[x] Create OAuth 2.0 Web Client credentials"
     - "[x] Add authorized redirect URIs"
-    - "[x] Store credentials in Infisical (not gopass - app secrets)"
+    - "[x] Store runtime credentials in Infisical"
 
   codebase:
     - "[ ] Install @supabase/supabase-js and @supabase/ssr"
