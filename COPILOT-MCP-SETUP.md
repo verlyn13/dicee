@@ -5,8 +5,8 @@ Dicee no longer ships a repo script that edits `~/.copilot/mcp-config.json`.
 ## Supported Pattern
 
 1. Open `.copilot-mcp.json` in this repo.
-2. Manually merge the servers you want into your own `~/.copilot/mcp-config.json`.
-3. Keep the repo-owned command paths pointed at this checkout.
+2. Replace every `/absolute/path/to/dicee` placeholder with your local checkout path.
+3. Manually merge the servers you want into your own `~/.copilot/mcp-config.json`.
 
 ## What `.copilot-mcp.json` Provides
 

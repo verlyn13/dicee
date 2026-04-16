@@ -30,7 +30,7 @@ Copy the template in `docs/templates/windsurf-mcp-config.template.json` into you
 
 ### Copilot CLI
 
-Use `.copilot-mcp.json` as the repo-owned template and merge it into your own `~/.copilot/mcp-config.json` manually if you want those project tools available globally.
+Use `.copilot-mcp.json` as the repo-owned template, replace `/absolute/path/to/dicee` with your local checkout path, and merge it into your own `~/.copilot/mcp-config.json` manually if you want those project tools available globally.
 
 ## Prerequisites
 
