@@ -18,7 +18,7 @@ jobs:
       run:
         working-directory: packages/engine
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@1.95.0
@@ -26,7 +26,7 @@ jobs:
           components: clippy, rustfmt
 
       - name: Cache cargo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/bin/
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: rust
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@1.95.0
@@ -77,14 +77,14 @@ jobs:
         run: |
           SIZE=$(wc -c < packages/web/src/lib/wasm/dicee_engine_bg.wasm)
           echo "WASM size: ${SIZE} bytes"
-          if [ $SIZE -gt 153600 ]; then
+          if [ "$SIZE" -gt 153600 ]; then
             echo "::error::WASM binary too large: ${SIZE} bytes (limit: 150KB = 153600 bytes)"
             exit 1
           fi
           echo "✅ WASM size within limit"
 
       - name: Upload WASM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: wasm-pkg
           path: packages/web/src/lib/wasm/
@@ -100,7 +100,7 @@ jobs:
       PUBLIC_SUPABASE_URL: https://duhsbuyxyppgbkwbbtqg.supabase.co
       PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1aHNidXl4eXBwZ2Jrd2JidHFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI4NjQ0OTAsImV4cCI6MjA0ODQ0MDQ5MH0.placeholder
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -108,13 +108,13 @@ jobs:
           version: 10
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: pnpm
 
       - name: Download WASM artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: wasm-pkg
           path: packages/web/src/lib/wasm/
@@ -150,7 +150,7 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -158,7 +158,7 @@ jobs:
           version: 10
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: pnpm
@@ -190,11 +190,11 @@ jobs:
           # Run directly with bun to avoid pnpm output prefix in SARIF
           bun run packages/web/src/tools/akg/cli/check.ts --sarif > akg-results.sarif
           EXIT_CODE=$?
-          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
 
           # Check if SARIF has results (GitHub Code Scanning requires at least one location)
           RESULT_COUNT=$(jq '[.runs[].results[]] | length' akg-results.sarif 2>/dev/null || echo "0")
-          echo "result_count=$RESULT_COUNT" >> $GITHUB_OUTPUT
+          echo "result_count=$RESULT_COUNT" >> "$GITHUB_OUTPUT"
           echo "AKG found $RESULT_COUNT violations"
         continue-on-error: true
 
@@ -220,7 +220,7 @@ jobs:
     name: Cloudflare DO Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -228,7 +228,7 @@ jobs:
           version: 10
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: pnpm
@@ -273,7 +273,7 @@ jobs:
       contents: read
       deployments: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -281,7 +281,7 @@ jobs:
           version: 10
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: pnpm
@@ -320,7 +320,7 @@ jobs:
       PUBLIC_SUPABASE_URL: https://duhsbuyxyppgbkwbbtqg.supabase.co
       PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -328,13 +328,13 @@ jobs:
           version: 10
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: pnpm
 
       - name: Download WASM artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: wasm-pkg
           path: packages/web/src/lib/wasm/
