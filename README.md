@@ -35,14 +35,17 @@ packages/
 ### Prerequisites
 
 - Node.js 24+ (via mise or nvm)
-- Rust stable (via rustup, NOT Homebrew)
+- Rust 1.95.0 (activated by `use mise` in `.envrc`)
 - pnpm
 - wasm-pack
 
 ```bash
-# Verify Rust toolchain
-rustup show       # Should show stable with wasm32-unknown-unknown
-which rustc       # Should be ~/.cargo/bin/rustc
+mise install
+direnv allow
+cargo --version
+cargo clippy -V
+pnpm check:rust
+cargo test --manifest-path packages/engine/Cargo.toml
 ```
 
 ### Commands

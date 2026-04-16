@@ -186,7 +186,7 @@ wrangler tail --env production
 
 The GitHub Actions workflow (`.github/workflows/ci.yml`) handles:
 
-1. **Rust Tests** - Engine unit tests, property tests (uses `dtolnay/rust-toolchain@stable`)
+1. **Rust Tests** - Engine unit tests, property tests (uses `dtolnay/rust-toolchain@1.95.0`)
 2. **WASM Build** - Build and size check (150KB limit) - adds `wasm32-unknown-unknown` target
 3. **Web Tests** - TypeScript, Svelte, Vitest
 4. **DO Tests** - Cloudflare DO unit tests
