@@ -4,10 +4,8 @@
 [tools]
 node = "24"
 pnpm = "10"
-# Rust: mise delegates to rustup via RUSTUP_TOOLCHAIN=stable
-# Do NOT install Rust via Homebrew - it conflicts with wasm32 target
-# See packages/engine/rust-toolchain.toml for explicit target config
-rust = "stable"
+# Keep this pinned in sync with packages/engine/rust-toolchain.toml and CI.
+rust = "1.95.0"
 # Python available if needed for scripting
 # python = "3.12"
 
@@ -32,6 +30,11 @@ format = "pnpm format"
 "engine:build" = "pnpm build:engine"
 "engine:test" = "cargo test --manifest-path packages/engine/Cargo.toml"
 "engine:check" = "pnpm check:rust"
+
+# Database (local Supabase)
+"db:start" = "supabase start"
+"db:stop" = "supabase stop"
+"db:status" = "supabase status"
 
 # Quality gate
 quality = "./scripts/quality-gate.sh"

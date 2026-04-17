@@ -198,7 +198,7 @@ Origin: 'https://dicee.games'
 | `.claude/environment-strategy.yaml` | 4, 49, 162, 192, 213, 214 |
 | `.claude/auth-strategy.yaml` | 54, 65-66, 259-263 |
 | `.claude/cli-reference.yaml` | 20-22 |
-| `.claude/gopass-structure.yaml` | 189-191 |
+| `.claude/local-secret-bootstrap.yaml` | 189-191 |
 
 ### 3.3 Architecture Documentation
 
@@ -222,7 +222,7 @@ Origin: 'https://dicee.games'
 
 | File | Lines |
 |------|-------|
-| `scripts/setup-gopass-credentials.sh` | 58-59 |
+| `scripts/check-1password-setup.sh` | 58-59 |
 | `scripts/quality-gate.sh` | 115 (Infisical domain unchanged) |
 | `packages/web/scripts/cdp-console-monitor.mjs` | 49, 51, 316 |
 
@@ -321,8 +321,8 @@ Status code: 301 (Permanent)
 ### 5.3 Local Credential Updates
 
 ```bash
-echo "dicee.games" | gopass insert -f dicee/cloudflare/domain
-gopass rm dicee/cloudflare/subdomain
+# Cloudflare non-secret metadata is versioned in scripts/lib/dicee-operator-metadata.sh
+# Update that file if the domain model changes
 ```
 
 ### 5.4 Android Device Cleanup
@@ -434,6 +434,6 @@ If issues occur:
 - [ ] Remove old domains from Pages (gamelobby.jefahnierocks.com, dicee.jefahnierocks.com)
 - [ ] Delete old DNS records from jefahnierocks.com zone
 - [ ] dicee.games zone: Create www→apex redirect rule
-- [ ] Update gopass credentials
+- [ ] Update local bootstrap contract and repo metadata
 - [ ] Update documentation files (batch later)
 - [ ] Clear Android app data if testing on Android

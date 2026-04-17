@@ -4,7 +4,6 @@
  * Type-safe client for calling PostgreSQL RPC functions.
  * Part of Phase 4: RPC-Based Persistence.
  *
- * @see rpc.md for complete implementation plan
  * @see docs/architecture/PERSISTENCE_ARCHITECTURE_ANALYSIS.md
  */
 
