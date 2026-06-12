@@ -88,6 +88,24 @@ Non-secret operator metadata is versioned in `scripts/lib/dicee-operator-metadat
 - Never commit `.env` files with real secrets.
 - Do not reintroduce the legacy local secret flow or long-lived shell-secret exports.
 
+## Meta-Inventory Manifest
+
+`project.yaml` at the repo root is this project's interop header for the
+meta-inventory hub. Contract: meta-inventory
+`docs/decisions/0002-project-intelligence-spec.md` §D3 (local clone:
+`~/Repos/verlyn13/meta-inventory`).
+
+- Maintain it as part of normal work: update `status.local_phase` and
+  `status.as_of` (quoted ISO-8601 string) when project status changes.
+- `authority.status_of_record` is `.claude/state/current-phase.json`; keep
+  that file current.
+- When a hub directive asks to verify live state, the return must contain a
+  first-hand readback — URL + HTTP status + timestamp from a command run in
+  the current session. Never cite hub records (KB entries, prior audits)
+  back as confirmation; that is circular evidence and will be rejected.
+- Canonical public URL: `https://dicee.games`. `gamelobby.jefahnierocks.com`
+  is an alias of the same deployment (verified byte-identical 2026-06-12).
+
 ## MCP Notes
 
 Project-local MCP auth works like this:
