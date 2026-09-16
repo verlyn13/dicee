@@ -19,6 +19,8 @@
 
 The following are retired and must not be reintroduced: Windsurf and Cascade files, root client files other than `AGENTS.md` and `CLAUDE.md`, Cursor project rules, the Copilot MCP template, and path-scoped Copilot instruction files.
 
+`pnpm lint:docs` also refuses a `hooks` key in `.claude/settings.json`, and refuses tracked files in the Claude commands and hooks directories or a hooks directory under scripts. That is a ratchet, not a judgement on the features: those paths had accumulated roughly 3,500 lines of stale generated guidance and session scripts, which one 2026-09-13 change removed in favour of the two portable skills. Reversing it is an owner decision, and the argument has to be a concrete need rather than "the client supports it". Claude agent and rule directories are deliberately not part of the ratchet.
+
 ## MCP
 
 | Server | Transport | Auth | Default |
@@ -30,7 +32,7 @@ The following are retired and must not be reintroduced: Windsurf and Cascade fil
 
 - **Which tool for which task.** Use `akg` for imports and invariants and `cloudflare-docs` for Cloudflare product docs. `cloudflare-api` is for live account reads and read-only `supabase` for schema inspection. Migrations go through `supabase/migrations/` and the Supabase CLI under explicit authority, never through MCP.
 - **An MCP session is not authority.** Deploys, remote database writes, migrations, and binding or secret changes need explicit user authority, whatever the OAuth grant allows.
-- **Claude Code.** `.claude/settings.json` `enabledMcpjsonServers` approves `akg` and `cloudflare-docs`. Accept workspace trust. To keep an opt-in server off, list it under `disabledMcpjsonServers` in your ignored local settings file (settings.local.json next to the shared settings). Sign in with `/mcp` or `claude mcp login cloudflare-api` / `claude mcp login supabase`, granting the narrowest consent. Non-interactive runs load project servers without a prompt, and an OAuth server with no stored session exposes no tools.
+- **Claude Code.** `.claude/settings.json` `enabledMcpjsonServers` approves `akg` and `cloudflare-docs`. Accept workspace trust. To keep an opt-in server off, list it under `disabledMcpjsonServers` in your ignored local settings file (settings.local.json next to the shared settings). Never set `enableAllProjectMcpServers`: it enables every entry in `.mcp.json`, including the opt-in OAuth servers, and the docs gate cannot see it because it reads only the shared settings file. Sign in with `/mcp` or `claude mcp login cloudflare-api` / `claude mcp login supabase`, granting the narrowest consent. Non-interactive runs load project servers without a prompt, and an OAuth server with no stored session exposes no tools.
 - **Supabase project scope.** The URL reads `DICEE_SUPABASE_PROJECT_REF`. Set it as a non-secret export in the ignored `.envrc.local.nonsecret`, which `.envrc` sources. When the variable is unset, Claude Code keeps the literal placeholder and the server rejects it, so the entry fails closed. No project ref is ever committed.
 - **Cursor.** `.cursor/mcp.json` lists only `akg` (`"type": "stdio"`) and `cloudflare-docs` (`url`). An authorized opt-in adds `cloudflare-api` or `supabase` to that project-native file with client OAuth; never add Dicee servers to user-global configuration. Use Cursor's `${env:DICEE_SUPABASE_PROJECT_REF}` interpolation for the Supabase project parameter (Claude uses `${DICEE_SUPABASE_PROJECT_REF}`). Keep provider identifiers out of committed configuration and leave `supabase` off until its non-secret project variable is set.
 - **Codex.** `.codex/config.toml` declares `akg` and `cloudflare-docs` only.
@@ -38,7 +40,7 @@ The following are retired and must not be reintroduced: Windsurf and Cascade fil
 
 ## Skills
 
-- Portable skills live in `.agents/skills/<name>/SKILL.md` (`dicee-verify`, `akg-boundaries`). Each file needs `name`, matching its directory, and `description`.
+- Portable skills live in `.agents/skills/<name>/SKILL.md` (`dicee-verify`, `akg-boundaries`). Each file needs `name`, matching its directory, and `description`. `pnpm lint:docs` enforces both fields and a 60-line cap per skill.
 - Claude Code does not read `.agents/skills/`, so `.claude/skills/<name>` is a symlink to `../../.agents/skills/<name>`. Edit the target, never the link.
 - Codex reads `.agents/skills/` directly.
 - Cursor reads both directories, so it lists each skill twice. This is cosmetic.
